@@ -15,6 +15,7 @@ and may not be redistributed without written permission.*/
 
 
 #include "Graphics/Shader.h"
+#include "Gameplay/Camera.h"
 
 //Screen dimension constants
 static const int SCREEN_WIDTH = 1920;
@@ -177,17 +178,45 @@ int main(int argc, char* args[])
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
+	Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+	SDL_SetRelativeMouseMode(SDL_TRUE);
 
 	SDL_Event e; 
 	bool quit = false; 
+	Uint32 prevTimestamp = SDL_GetTicks();
+	Uint32 currTimestamp;
+	float deltaTime;
 
 	while (!quit) 
 	{ 
+		currTimestamp = SDL_GetTicks();
+		deltaTime = (currTimestamp - prevTimestamp) / 1000.0f;
+
+		prevTimestamp = currTimestamp;
+
 		while (SDL_PollEvent(&e)) 
 		{ 
 			if (e.type == SDL_QUIT) 
 				quit = true; 
+			if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP)
+			{
+				int x, y;
+				SDL_GetRelativeMouseState(&x, &y);
+
+				camera.ProcessMouseMovement(x, -y, true);
+			}
 		} 
+
+		const Uint8* pKeyState = SDL_GetKeyboardState(nullptr);
+
+		if (pKeyState[SDL_SCANCODE_W])
+			camera.ProcessKeyboard(FORWARD, deltaTime);
+		if (pKeyState[SDL_SCANCODE_A])
+			camera.ProcessKeyboard(LEFT, deltaTime);
+		if (pKeyState[SDL_SCANCODE_S])
+			camera.ProcessKeyboard(BACKWARD, deltaTime);
+		if (pKeyState[SDL_SCANCODE_D])
+			camera.ProcessKeyboard(RIGHT, deltaTime);
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -199,6 +228,7 @@ int main(int argc, char* args[])
 
 		// camera/view transformation
 		glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		view = camera.GetViewMatrix();
 		stdShader.SetMat4("view", view);
 
 		// render boxes

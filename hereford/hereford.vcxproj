@@ -158,6 +158,7 @@
     <ClCompile Include="hereford.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Gameplay\Camera.h" />
     <ClInclude Include="Graphics\Shader.h" />
   </ItemGroup>
   <ItemGroup>
