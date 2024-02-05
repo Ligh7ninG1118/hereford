@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-enum CameraMovement
+enum class CameraMovement
 {
 	FORWARD,
 	BACKWARD,
@@ -83,13 +83,13 @@ public:
 			tempFront.y = 0.0f;
 
 		float velocity = MovementSpeed * deltaTime;
-		if (direction == FORWARD)
+		if (direction == CameraMovement::FORWARD)
 			Position += tempFront * velocity;
-		if (direction == BACKWARD)
+		if (direction == CameraMovement::BACKWARD)
 			Position -= tempFront * velocity;
-		if (direction == LEFT)
+		if (direction == CameraMovement::LEFT)
 			Position -= Right * velocity;
-		if (direction == RIGHT)
+		if (direction == CameraMovement::RIGHT)
 			Position += Right * velocity;
 	}
 

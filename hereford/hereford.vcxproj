@@ -153,13 +153,26 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Core\Actor.cpp" />
+    <ClCompile Include="Core\Component.cpp" />
+    <ClCompile Include="Core\GameContext.cpp" />
+    <ClCompile Include="Gameplay\Camera.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Graphics\Shader.cpp" />
     <ClCompile Include="hereford.cpp" />
+    <ClCompile Include="Gameplay\InputComponent.cpp" />
+    <ClCompile Include="Graphics\RenderComponent.cpp" />
+    <ClCompile Include="Graphics\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Core\Actor.h" />
+    <ClInclude Include="Core\Component.h" />
+    <ClInclude Include="Core\GameContext.h" />
     <ClInclude Include="Gameplay\Camera.h" />
     <ClInclude Include="Graphics\Shader.h" />
+    <ClInclude Include="Gameplay\InputComponent.h" />
+    <ClInclude Include="Graphics\RenderComponent.h" />
+    <ClInclude Include="Graphics\Renderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Graphics\Shaders\standard_frag.glsl" />

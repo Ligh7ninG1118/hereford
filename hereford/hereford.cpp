@@ -210,13 +210,13 @@ int main(int argc, char* args[])
 		const Uint8* pKeyState = SDL_GetKeyboardState(nullptr);
 
 		if (pKeyState[SDL_SCANCODE_W])
-			camera.ProcessKeyboard(FORWARD, deltaTime);
+			camera.ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
 		if (pKeyState[SDL_SCANCODE_A])
-			camera.ProcessKeyboard(LEFT, deltaTime);
+			camera.ProcessKeyboard(CameraMovement::LEFT, deltaTime);
 		if (pKeyState[SDL_SCANCODE_S])
-			camera.ProcessKeyboard(BACKWARD, deltaTime);
+			camera.ProcessKeyboard(CameraMovement::BACKWARD, deltaTime);
 		if (pKeyState[SDL_SCANCODE_D])
-			camera.ProcessKeyboard(RIGHT, deltaTime);
+			camera.ProcessKeyboard(CameraMovement::RIGHT, deltaTime);
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
