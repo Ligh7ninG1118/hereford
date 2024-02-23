@@ -13,7 +13,7 @@ and may not be redistributed without written permission.*/
 #include <stdio.h>
 #include <string>
 
-
+#include "Math/Math.h"
 #include "Graphics/Shader.h"
 #include "Gameplay/Camera.h"
 
@@ -160,6 +160,7 @@ int main(int argc, char* args[])
 		glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
+
 	Shader stdShader("Graphics/Shaders/standard_vert.glsl", "Graphics/Shaders/standard_frag.glsl");
 
 	unsigned int VBO, VAO;
@@ -200,10 +201,10 @@ int main(int argc, char* args[])
 				quit = true; 
 			if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP)
 			{
-				int x, y;
-				SDL_GetRelativeMouseState(&x, &y);
+				int mX, mY;
+				SDL_GetRelativeMouseState(&mX, &mY);
 
-				camera.ProcessMouseMovement(x, -y, true);
+				camera.ProcessMouseMovement(mX, -mY, true);
 			}
 		} 
 
