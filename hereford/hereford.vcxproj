@@ -163,6 +163,10 @@
     <ClCompile Include="Gameplay\InputComponent.cpp" />
     <ClCompile Include="Graphics\RenderComponent.cpp" />
     <ClCompile Include="Graphics\Renderer.cpp" />
+    <ClCompile Include="Math\Math.cpp" />
+    <ClCompile Include="Math\Vector2.cpp" />
+    <ClCompile Include="Math\Vector3.cpp" />
+    <ClCompile Include="Math\Vector4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Actor.h" />
@@ -173,6 +177,10 @@
     <ClInclude Include="Gameplay\InputComponent.h" />
     <ClInclude Include="Graphics\RenderComponent.h" />
     <ClInclude Include="Graphics\Renderer.h" />
+    <ClInclude Include="Math\Math.h" />
+    <ClInclude Include="Math\Vector2.h" />
+    <ClInclude Include="Math\Vector3.h" />
+    <ClInclude Include="Math\Vector4.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Graphics\Shaders\standard_frag.glsl" />
