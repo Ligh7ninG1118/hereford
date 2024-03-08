@@ -1,4 +1,6 @@
 #include "GameContext.h"
+#include "Actor.h"
+
 
 #include <glad/glad.h>
 
@@ -7,6 +9,8 @@
 #include <stdio.h>
 #include <string>
 
+
+
 GameContext::GameContext()
 	: m_ScreenWidth(1920), m_ScreenHeight(1080)
 {
@@ -14,6 +18,10 @@ GameContext::GameContext()
 
 GameContext::GameContext(int width, int height)
 	: m_ScreenWidth(width), m_ScreenHeight(height)
+{
+}
+
+GameContext::~GameContext()
 {
 }
 
@@ -43,15 +51,20 @@ bool GameContext::Initialize()
 		return false;
 	}
 
-	
+	pRenderer = std::make_unique<Renderer>(pSDLWindow, m_ScreenWidth, m_ScreenHeight);
+	if (!pRenderer->Initialize())
+	{
+		printf("Renderer could not be initialized! SDL_Error: %s\n", SDL_GetError());
+		return false;
+	}
+
+	isRunning = true;
 
 	return true;
 }
 
 void GameContext::Shutdown()
 {
-
-	
 	SDL_DestroyWindow(pSDLWindow);
 	pSDLWindow = nullptr;
 	SDL_Quit();
@@ -59,18 +72,72 @@ void GameContext::Shutdown()
 
 void GameContext::RunLoop()
 {
+	while (isRunning)
+	{
+		ProcessInput();
+		UpdateGame();
+		GenerateOutput();
+	}
+	Shutdown();
 }
 
 void GameContext::ProcessInput()
 {
+	SDL_Event test_event;
+	while (SDL_PollEvent(&test_event))
+	{
+		switch (test_event.type)
+		{
+		case SDL_QUIT:
+			isRunning = false;
+			break;
+		default:
+			break;
+		}
+	}
+
+	const Uint8* pKeyState = SDL_GetKeyboardState(nullptr);
+	if (pKeyState[SDL_SCANCODE_ESCAPE])
+		isRunning = false;
+
 }
 
 void GameContext::UpdateGame()
 {
+	if (useVerticalSync)
+	{
+		do
+		{
+			currTimestamp = SDL_GetTicks();
+			deltaTime = (currTimestamp - prevTimestamp) / 1000.0f;
+		} while (deltaTime < 0.016);
+	}
+	else
+	{
+		currTimestamp = SDL_GetTicks();
+		deltaTime = (currTimestamp - prevTimestamp) / 1000.0f;
+	}
+	prevTimestamp = currTimestamp;
+
+	/*std::vector<Actor*> actorVector = mActors;
+	std::vector<Actor*> disabledActorVector;
+
+	for (Actor* actor : actorVector)
+	{
+		actor->Update(deltaTime);
+		if (actor->GetState() == ActorState::Destroy)
+			disabledActorVector.push_back(actor);
+	}
+
+	for (Actor* actor : disabledActorVector)
+	{
+		delete actor;
+	}*/
 }
 
 void GameContext::GenerateOutput()
 {
+	pRenderer->Render(deltaTime);
 }
 
 void GameContext::AddActor(Actor* actor)

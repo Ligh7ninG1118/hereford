@@ -7,9 +7,9 @@ struct Vector2
 	float mY;
 
 	Vector2();
-	Vector2(float x, float y);
-	Vector2(int x, int y);
-	Vector2(double x, double y);
+	explicit Vector2(float x, float y);
+	explicit Vector2(int x, int y);
+	explicit Vector2(double x, double y);
 	Vector2(const Vector2& rhs);
 
 	float Magnitude() const;

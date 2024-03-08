@@ -11,6 +11,18 @@ Vector2::Vector2(float x, float y)
 {
 }
 
+Vector2::Vector2(int x, int y)
+{
+}
+
+Vector2::Vector2(double x, double y)
+{
+}
+
+Vector2::Vector2(const Vector2& rhs)
+{
+}
+
 float Vector2::Magnitude() const
 {
 	return sqrt(SqrMagnitude());

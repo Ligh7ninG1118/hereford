@@ -25,10 +25,6 @@ Vector3::Vector3(const Vector3& rhs)
 {
 }
 
-Vector3::Vector3(const Vector2& rhs)
-{
-}
-
 float Vector3::Magnitude() const
 {
 	return sqrt(SqrMagnitude());

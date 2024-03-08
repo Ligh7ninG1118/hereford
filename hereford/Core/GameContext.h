@@ -1,7 +1,10 @@
 #pragma once
 
+#include "../Graphics/Renderer.h"
+#include "Actor.h"
 #include <SDL2/SDL.h>
 #include <vector>
+#include <memory>
 
 
 class GameContext
@@ -24,9 +27,10 @@ private:
 	void GenerateOutput();
 
 	SDL_Window* pSDLWindow;
-	class Renderer* pRenderer;
+	std::unique_ptr<Renderer> pRenderer;
 
 	bool isRunning;
+	bool useVerticalSync;
 	Uint32 prevTimestamp;
 	Uint32 currTimestamp;
 	float deltaTime;
@@ -34,7 +38,7 @@ private:
 	int m_ScreenWidth;
 	int m_ScreenHeight;
 
-	std::vector<class Actor*> mActors;
+	std::vector<Actor*> mActors;
 
 
 

@@ -11,8 +11,8 @@ struct Vector3
 	explicit Vector3(float x, float y, float z);
 	explicit Vector3(int x, int y, int z);
 	explicit Vector3(double x, double y, double z);
-	explicit Vector3(const Vector3& rhs);
-	explicit Vector3(const class Vector2& rhs);
+	Vector3(const Vector3& rhs);
+	//Vector3(const class Vector2& rhs);
 
 	float Magnitude() const;
 	float SqrMagnitude() const;
@@ -25,6 +25,15 @@ struct Vector3
 	static float Distance(const Vector3& lhs, const Vector3& rhs);
 	static float AngleAsDeg(const Vector3& lhs, const Vector3& rhs);
 	static float AngleAsRad(const Vector3& lhs, const Vector3& rhs);
+
+	static const Vector3 Zero;
+	static const Vector3 Up;
+	static const Vector3 Down;
+	static const Vector3 Left;
+	static const Vector3 Right;
+	static const Vector3 Forward;
+	static const Vector3 Back;
+
 
 	Vector3& operator=(const Vector3& rhs);
 	bool operator==(const Vector3* rhs) const;
