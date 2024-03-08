@@ -10,6 +10,7 @@
 Renderer::Renderer(SDL_Window* sdlWindow, int width, int height)
 	:
 	m_pSDLWindowContext(sdlWindow),
+	m_pMainCamera(nullptr),
 	m_ScreenWidth(width),
 	m_ScreenHeight(height)
 {
@@ -46,9 +47,48 @@ bool Renderer::Initialize()
 	stdShader = Shader("Graphics/Shaders/standard_vert.glsl", "Graphics/Shaders/standard_frag.glsl");
 
 	float vertices[] = {
-	-0.5f, -0.5f, 0.0f,
-	 0.5f, -0.5f, 0.0f,
-	 0.0f,  0.5f, 0.0f
+		// positions
+		-0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f,  0.5f, -0.5f,
+		 0.5f,  0.5f, -0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+
+		-0.5f, -0.5f,  0.5f,
+		 0.5f, -0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
+
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f, -0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+
+		 0.5f,  0.5f,  0.5f,
+		 0.5f,  0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+
+		-0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f, -0.5f,
+		 0.5f, -0.5f,  0.5f,
+		 0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f,  0.5f,
+		-0.5f, -0.5f, -0.5f,
+
+		-0.5f,  0.5f, -0.5f,
+		 0.5f,  0.5f, -0.5f,
+		 0.5f,  0.5f,  0.5f,
+		 0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f,  0.5f,
+		-0.5f,  0.5f, -0.5f,
 	};
 
 	glGenVertexArrays(1, &VAO);
@@ -83,15 +123,13 @@ void Renderer::Render(float deltaTime)
 
 	stdShader.Use();
 	glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-	glDrawArrays(GL_TRIANGLES, 0, 3);
 	
 
-	glm::mat4 projection = glm::perspective(glm::radians(fov), static_cast<float>(m_ScreenWidth) / static_cast<float>(m_ScreenHeight), 0.1f, 100.0f);
+	glm::mat4 projection = m_pMainCamera->GetPerspMatrix();
 	stdShader.SetMat4("projection", projection);
 
 	// camera/view transformation
-	glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-	view = camera.GetViewMatrix();
+	glm::mat4 view = m_pMainCamera->GetViewMatrix();
 	stdShader.SetMat4("view", view);
 
 	// render boxes
@@ -100,7 +138,7 @@ void Renderer::Render(float deltaTime)
 	{
 		// calculate the model matrix for each object and pass it to shader before drawing
 		glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-		model = glm::translate(model, cubePositions[i]);
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 		float angle = 20.0f * i;
 		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 		stdShader.SetMat4("model", model);
@@ -108,4 +146,9 @@ void Renderer::Render(float deltaTime)
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
 	SDL_GL_SwapWindow(m_pSDLWindowContext);
+}
+
+void Renderer::SetMainCamera(CameraComponent* pMainCam)
+{
+	m_pMainCamera = pMainCam;
 }

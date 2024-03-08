@@ -1,6 +1,6 @@
 #include "GameContext.h"
 #include "Actor.h"
-
+#include "../Gameplay/Player.h"
 
 #include <glad/glad.h>
 
@@ -59,7 +59,7 @@ bool GameContext::Initialize()
 	}
 
 	isRunning = true;
-
+	LoadData();
 	return true;
 }
 
@@ -81,6 +81,12 @@ void GameContext::RunLoop()
 	Shutdown();
 }
 
+void GameContext::LoadData()
+{
+	player = new Player(this);
+	pRenderer->SetMainCamera(player->GetMainCamera());
+}
+
 void GameContext::ProcessInput()
 {
 	SDL_Event test_event;
@@ -99,7 +105,11 @@ void GameContext::ProcessInput()
 	const Uint8* pKeyState = SDL_GetKeyboardState(nullptr);
 	if (pKeyState[SDL_SCANCODE_ESCAPE])
 		isRunning = false;
-
+	std::vector<Actor*> actorVector = mActors;
+	for (Actor* actor : actorVector)
+	{
+		actor->ProcessInput(pKeyState);
+	}
 }
 
 void GameContext::UpdateGame()
@@ -119,7 +129,7 @@ void GameContext::UpdateGame()
 	}
 	prevTimestamp = currTimestamp;
 
-	/*std::vector<Actor*> actorVector = mActors;
+	std::vector<Actor*> actorVector = mActors;
 	std::vector<Actor*> disabledActorVector;
 
 	for (Actor* actor : actorVector)
@@ -132,7 +142,7 @@ void GameContext::UpdateGame()
 	for (Actor* actor : disabledActorVector)
 	{
 		delete actor;
-	}*/
+	}
 }
 
 void GameContext::GenerateOutput()
@@ -142,8 +152,11 @@ void GameContext::GenerateOutput()
 
 void GameContext::AddActor(Actor* actor)
 {
+	mActors.push_back(actor);
 }
 
 void GameContext::RemoveActor(Actor* actor)
 {
+	mActors.erase(std::find(mActors.begin(), mActors.end(), actor));
+
 }

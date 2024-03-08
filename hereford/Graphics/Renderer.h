@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Shader.h"
+#include "../Gameplay/CameraComponent.h"
 #include <SDL2/SDL.h>
 #include <vector>
 
@@ -13,9 +14,12 @@ public:
 	void Shutdown();
 	void Render(float deltaTime);
 
+	void SetMainCamera(CameraComponent* pMainCam);
+
 private:
 	SDL_Window* m_pSDLWindowContext;
 	SDL_GLContext m_pGLContext;
+	CameraComponent* m_pMainCamera;
 
 	Shader stdShader;
 	unsigned int VAO, VBO;

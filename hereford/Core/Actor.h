@@ -22,22 +22,22 @@ public:
 	void ProcessInput(const Uint8* keyState);
 
 	// Getters/setters
-	//Vector3& GetPosition() const { return mPosition; } const
+	Vector3 GetPosition() const { return mPosition; };
 	// SetPosition(const Vector2& pos) { mPosition = pos; }
-	float GetScale() const { return mScale; }
-	void SetScale(float scale) { mScale = scale; }
-	float GetRotation() const { return mRotation; }
-	Vector3 GetForward() const
-	{
-		//return Vector3(Math::Cos(mRotation), -Math::Sin(mRotation));
+	//float GetScale() const { return mScale; }
+	//void SetScale(float scale) { mScale = scale; }
+	//float GetRotation() const { return mRotation; }
+	//Vector3 GetForward() const
+	//{
+	//	//return Vector3(Math::Cos(mRotation), -Math::Sin(mRotation));
 
-	}
-	void SetRotation(float rotation) { mRotation = rotation; }
+	//}
+	//void SetRotation(float rotation) { mRotation = rotation; }
 
 	ActorState GetState() const { return mState; }
 	void SetState(ActorState state) { mState = state; }
 
-	class Game* GetGame() { return mGame; }
+	class GameContext* GetGame() { return mGame; }
 
 	// Returns component of type T, or null if doesn't exist
 	template <typename T>
@@ -67,8 +67,8 @@ protected:
 
 	// Transform
 	Vector3 mPosition;
-	float mScale;
-	float mRotation;
+	Vector3 mScale;
+	Vector3 mRotation;
 
 	// Components
 	std::vector<class Component*> mComponents;

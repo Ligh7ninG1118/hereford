@@ -6,6 +6,7 @@ struct Vector3
 	float mY;
 	float mZ;
 
+
 	Vector3();
 	~Vector3() {};
 	explicit Vector3(float x, float y, float z);
@@ -27,12 +28,14 @@ struct Vector3
 	static float AngleAsRad(const Vector3& lhs, const Vector3& rhs);
 
 	static const Vector3 Zero;
+	static const Vector3 One;
 	static const Vector3 Up;
 	static const Vector3 Down;
 	static const Vector3 Left;
 	static const Vector3 Right;
 	static const Vector3 Forward;
 	static const Vector3 Back;
+
 
 
 	Vector3& operator=(const Vector3& rhs);

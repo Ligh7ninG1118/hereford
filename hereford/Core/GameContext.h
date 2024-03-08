@@ -21,6 +21,8 @@ public:
 	void Shutdown();
 	void RunLoop();
 
+	void LoadData();
+
 private:
 	void ProcessInput();
 	void UpdateGame();
@@ -28,6 +30,7 @@ private:
 
 	SDL_Window* pSDLWindow;
 	std::unique_ptr<Renderer> pRenderer;
+	class Player* player;
 
 	bool isRunning;
 	bool useVerticalSync;

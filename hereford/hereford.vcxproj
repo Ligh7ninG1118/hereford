@@ -156,7 +156,7 @@
     <ClCompile Include="Core\Actor.cpp" />
     <ClCompile Include="Core\Component.cpp" />
     <ClCompile Include="Core\GameContext.cpp" />
-    <ClCompile Include="Gameplay\Camera.cpp" />
+    <ClCompile Include="Gameplay\CameraComponent.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Graphics\Shader.cpp" />
     <ClCompile Include="hereford.cpp" />
@@ -167,12 +167,13 @@
     <ClCompile Include="Math\Vector2.cpp" />
     <ClCompile Include="Math\Vector3.cpp" />
     <ClCompile Include="Math\Vector4.cpp" />
+    <ClCompile Include="Gameplay\Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Actor.h" />
     <ClInclude Include="Core\Component.h" />
     <ClInclude Include="Core\GameContext.h" />
-    <ClInclude Include="Gameplay\Camera.h" />
+    <ClInclude Include="Gameplay\CameraComponent.h" />
     <ClInclude Include="Graphics\Shader.h" />
     <ClInclude Include="Gameplay\InputComponent.h" />
     <ClInclude Include="Graphics\RenderComponent.h" />
@@ -181,6 +182,7 @@
     <ClInclude Include="Math\Vector2.h" />
     <ClInclude Include="Math\Vector3.h" />
     <ClInclude Include="Math\Vector4.h" />
+    <ClInclude Include="Gameplay\Player.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Graphics\Shaders\standard_frag.glsl" />
