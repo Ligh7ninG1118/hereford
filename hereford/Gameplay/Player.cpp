@@ -12,8 +12,6 @@ Player::Player(GameContext* gameCtx)
 	lastMouseY(0)
 {
 	m_pCameraComponent = new CameraComponent(static_cast<Actor*>(this));
-	
-	//SetPosition(Vector3(0.0f, 0.0f, 3.0f));
 }
 
 Player::~Player()
@@ -29,51 +27,60 @@ void Player::OnUpdate(float deltaTime)
 
 void Player::OnProcessInput(const Uint8* keyState)
 {
-	inputMoveDir = Vector3::Zero;
-	hasMovementInput = false;
-
-	if (keyState[SDL_SCANCODE_W])
+	// Horizontal Movement
 	{
-		inputMoveDir += m_pCameraComponent->GetFrontVector();
-		hasMovementInput = true;
+		inputMoveDir = Vector3::Zero;
+		hasMovementInput = false;
+
+		if (keyState[SDL_SCANCODE_W])
+		{
+			inputMoveDir += m_pCameraComponent->GetFrontVector();
+			hasMovementInput = true;
+		}
+		if (keyState[SDL_SCANCODE_S])
+		{
+			inputMoveDir -= m_pCameraComponent->GetFrontVector();
+			hasMovementInput = true;
+		}
+		if (keyState[SDL_SCANCODE_A])
+		{
+			inputMoveDir -= m_pCameraComponent->GetRightVector();
+			hasMovementInput = true;
+		}
+		if (keyState[SDL_SCANCODE_D])
+		{
+			inputMoveDir += m_pCameraComponent->GetRightVector();
+			hasMovementInput = true;
+		}
+
+		inputMoveDir.mY = 0.0f;
+		inputMoveDir.Normalize();
 	}
-	if (keyState[SDL_SCANCODE_S])
+
+
+	// Mouse Input
 	{
-		inputMoveDir -= m_pCameraComponent->GetFrontVector();
-		hasMovementInput = true;
+
+		int currentMouseX, currentMouseY, deltaX, deltaY;
+		SDL_GetMouseState(&currentMouseX, &currentMouseY);
+		deltaX = currentMouseX - lastMouseX;
+		deltaY = currentMouseY - lastMouseY;
+
+		lastMouseX = currentMouseX;
+		lastMouseY = currentMouseY;
+
+		m_pCameraComponent->ProcessMouseInput(deltaX, -deltaY);
 	}
-	if (keyState[SDL_SCANCODE_A])
-	{
-		inputMoveDir -= m_pCameraComponent->GetRightVector();
-		hasMovementInput = true;
-	}
-	if (keyState[SDL_SCANCODE_D])
-	{
-		inputMoveDir += m_pCameraComponent->GetRightVector();
-		hasMovementInput = true;
-	}
-
-	inputMoveDir.mY = 0.0f;
-	inputMoveDir.Normalize();
-
-	int currentMouseX, currentMouseY, deltaX, deltaY;
-	SDL_GetMouseState(&currentMouseX, &currentMouseY);
-	deltaX = currentMouseX - lastMouseX;
-	deltaY = currentMouseY - lastMouseY;
-	//printf("Mouse Input: %d %d\n", deltaX, deltaY);
-
-	lastMouseX = currentMouseX;
-	lastMouseY = currentMouseY;
-
-	m_pCameraComponent->ProcessMouseInput(deltaX, -deltaY);
 }
 
-void Player::ProcessMovement(float deltaTime)
+void Player::ProcessMovement(const float& deltaTime)
 {
+	// Update Position
 	Vector3 updatedPos = GetPosition();
 	updatedPos += currentVelocity * deltaTime;
 	SetPosition(updatedPos);
 
+	// Update Velocity
 	if (hasMovementInput)
 	{
 		currentVelocity += inputMoveDir * accelerationSpeed * deltaTime;
@@ -83,8 +90,15 @@ void Player::ProcessMovement(float deltaTime)
 		currentVelocity -= currentVelocity.normalized() * decelerationSpeed * deltaTime;
 	}
 
+	// Cap velocity at top speed
 	if (currentVelocity.SqrMagnitude() > topMovementSpeed * topMovementSpeed)
 	{
 		currentVelocity = currentVelocity.normalized() * topMovementSpeed;
+	}
+
+	// Prevent drifting
+	if (currentVelocity.SqrMagnitude() < minVelocityOffset)
+	{
+		currentVelocity = Vector3::Zero;
 	}
 }

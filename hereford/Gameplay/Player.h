@@ -14,7 +14,7 @@ public:
 	class CameraComponent* GetMainCamera() const { return m_pCameraComponent; }
 
 private:
-	void ProcessMovement(float deltaTime);
+	void ProcessMovement(const float& deltaTime);
 
 
 	class CameraComponent* m_pCameraComponent;
@@ -30,5 +30,6 @@ private:
 	const float topMovementSpeed = 2.5f;
 	const float accelerationSpeed = 15.0f;
 	const float decelerationSpeed = 20.0f;
+	const float minVelocityOffset = 0.01f;
 };
 

@@ -40,7 +40,6 @@ void CameraComponent::ProcessMouseInput(int deltaX, int deltaY)
 	if (m_Rotation.mX < -89.0f)
 		m_Rotation.mX = -89.0f;
 
-	//printf("Cam Rot: %.2f %.2f %.2f\n", m_Rotation.mX, m_Rotation.mY, m_Rotation.mZ);
 }
 
 glm::mat4 CameraComponent::GetViewMatrix() const
