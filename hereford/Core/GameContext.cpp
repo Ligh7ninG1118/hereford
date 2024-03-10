@@ -58,6 +58,9 @@ bool GameContext::Initialize()
 		return false;
 	}
 
+	//SDL_SetWindowGrab(pSDLWindow, SDL_TRUE);
+	//SDL_SetRelativeMouseMode(SDL_TRUE);
+
 	isRunning = true;
 	LoadData();
 	return true;

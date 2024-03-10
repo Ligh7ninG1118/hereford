@@ -26,5 +26,8 @@ private:
 	class CameraComponent* m_pCameraComponent;
 
 	MoveDir mMoveDir;
+	int lastMouseX;
+	int lastMouseY;
+	float movementSpeed = 2.5f;
 };
 

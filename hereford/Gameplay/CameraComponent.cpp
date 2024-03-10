@@ -4,7 +4,7 @@
 CameraComponent::CameraComponent(Actor* owner)
 	: Component(owner),
 	m_PositionOffset(Vector3(0.0f, 1.8f, 0.0f)),
-	m_Rotation(Vector3::Zero),
+	m_Rotation(Vector3(0.0f, -90.0f, 0.0f)),
 	m_ScreenRatio(1.7778f),
 	m_HorFOV(80.0f),
 	m_NearPlane(0.1f),
@@ -25,17 +25,31 @@ void CameraComponent::ProcessInput(const Uint8* keyState)
 {
 }
 
+void CameraComponent::ProcessMouseInput(int deltaX, int deltaY)
+{
+	m_Rotation.mY += deltaX * mouseSens;
+	m_Rotation.mX += deltaY * mouseSens;
+
+	if (m_Rotation.mY > 360.0f)
+		m_Rotation.mY = 0.0f;
+	if (m_Rotation.mY < -360.0f)
+		m_Rotation.mY = 0.0f;
+
+	if (m_Rotation.mX > 89.0f)
+		m_Rotation.mX = 89.0f;
+	if (m_Rotation.mX < -89.0f)
+		m_Rotation.mX = -89.0f;
+
+	//printf("Cam Rot: %.2f %.2f %.2f\n", m_Rotation.mX, m_Rotation.mY, m_Rotation.mZ);
+}
+
 glm::mat4 CameraComponent::GetViewMatrix() const
 {
 	glm::vec3 front;
 
-	float Yaw, Pitch;
-	Yaw = m_Rotation.mY;
-	Pitch = m_Rotation.mX;
-
-	front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-	front.y = sin(glm::radians(Pitch));
-	front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+	front.x = cos(glm::radians(m_Rotation.mY)) * cos(glm::radians(m_Rotation.mX));
+	front.y = sin(glm::radians(m_Rotation.mX));
+	front.z = sin(glm::radians(m_Rotation.mY)) * cos(glm::radians(m_Rotation.mX));
 	glm::vec3 Front = glm::normalize(front);
 
 	glm::vec3 Right = glm::normalize(glm::cross(Front, glm::vec3(0.0f, 1.0f, 0.0f)));
@@ -63,6 +77,30 @@ glm::mat4 CameraComponent::GetPerspMatrix() const
 	glm::mat4 projection = glm::perspective(glm::radians(m_HorFOV), m_ScreenRatio, m_NearPlane, m_FarPlane);
 
 	return projection;
+}
+
+Vector3 CameraComponent::GetFrontVector() const
+{
+	glm::vec3 front;
+
+	front.x = cos(glm::radians(m_Rotation.mY)) * cos(glm::radians(m_Rotation.mX));
+	front.y = sin(glm::radians(m_Rotation.mX));
+	front.z = sin(glm::radians(m_Rotation.mY)) * cos(glm::radians(m_Rotation.mX));
+	glm::vec3 Front = glm::normalize(front);
+	return Vector3(Front.x, Front.y, Front.z);
+}
+
+Vector3 CameraComponent::GetRightVector() const
+{
+	glm::vec3 Front;
+	Vector3 front = GetFrontVector();
+	Front.x = front.mX;
+	Front.y = front.mY;
+	Front.z = front.mZ;
+
+	glm::vec3 Right = glm::normalize(glm::cross(Front, glm::vec3(0.0f, 1.0f, 0.0f)));
+
+	return Vector3(Right.x, Right.y, Right.z);
 }
 
 void CameraComponent::UpdateCameraVectors()
