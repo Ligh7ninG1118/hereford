@@ -21,12 +21,15 @@ private:
 	SDL_GLContext m_pGLContext;
 	CameraComponent* m_pMainCamera;
 
-	Shader stdShader;
-	unsigned int VAO, VBO;
-
 	int m_ScreenWidth;
 	int m_ScreenHeight;
 
+	std::vector<class RenderComponent*> mRenderComponents;
+
 	//std::vector<class RenderComponent> m_RenderCompons;
+	friend class RenderComponent;
+	// Adds component to Actor (this is automatically called
+	// in the component constructor)
+	void AddRenderComponent(class RenderComponent* c);
 };
 

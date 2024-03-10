@@ -23,13 +23,15 @@ public:
 
 	void LoadData();
 
+	Renderer* GetRenderer() const { return pRenderer; }
+
 private:
 	void ProcessInput();
 	void UpdateGame();
 	void GenerateOutput();
 
 	SDL_Window* pSDLWindow;
-	std::unique_ptr<Renderer> pRenderer;
+	Renderer* pRenderer;
 	class Player* player;
 
 	bool isRunning;

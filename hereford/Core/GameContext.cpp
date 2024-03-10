@@ -1,6 +1,7 @@
 #include "GameContext.h"
 #include "Actor.h"
 #include "../Gameplay/Player.h"
+#include "../Props/TestCube.h"
 
 #include <glad/glad.h>
 
@@ -51,7 +52,9 @@ bool GameContext::Initialize()
 		return false;
 	}
 
-	pRenderer = std::make_unique<Renderer>(pSDLWindow, m_ScreenWidth, m_ScreenHeight);
+	//pRenderer = std::make_unique<Renderer>(pSDLWindow, m_ScreenWidth, m_ScreenHeight);
+	pRenderer = new Renderer(pSDLWindow, m_ScreenWidth, m_ScreenHeight);
+
 	if (!pRenderer->Initialize())
 	{
 		printf("Renderer could not be initialized! SDL_Error: %s\n", SDL_GetError());
@@ -88,6 +91,26 @@ void GameContext::LoadData()
 {
 	player = new Player(this);
 	pRenderer->SetMainCamera(player->GetMainCamera());
+
+	Vector3 cubePositions[] =
+	{
+		Vector3(0.0f,  0.0f,  0.0f),
+		Vector3(2.0f,  5.0f, -15.0f),
+		Vector3(-1.5f, -2.2f, -2.5f),
+		Vector3(-3.8f, -2.0f, -12.3f),
+		Vector3(2.4f, -0.4f, -3.5f),
+		Vector3(-1.7f,  3.0f, -7.5f),
+		Vector3(1.3f, -2.0f, -2.5f),
+		Vector3(1.5f,  2.0f, -2.5f),
+		Vector3(1.5f,  0.2f, -1.5f),
+		Vector3(-1.3f,  1.0f, -1.5f)
+	};
+
+	for (int i = 0; i < 10; i++)
+	{
+		TestCube* cubeActor = new TestCube(this);
+		cubeActor->SetPosition(cubePositions[i]);
+	}
 }
 
 void GameContext::ProcessInput()

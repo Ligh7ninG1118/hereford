@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "RenderComponent.h"
 
 #include <glad/glad.h>
 
@@ -46,68 +47,6 @@ bool Renderer::Initialize()
 	glViewport(0, 0, m_ScreenWidth, m_ScreenHeight);
 	glClearColor(0.0f, 0.5f, 1.0f, 0.0f);
 
-	stdShader = Shader("Graphics/Shaders/standard_vert.glsl", "Graphics/Shaders/standard_frag.glsl");
-
-	float vertices[] = {
-		// positions
-		-0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f,  0.5f, -0.5f,
-		 0.5f,  0.5f, -0.5f,
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-
-		-0.5f, -0.5f,  0.5f,
-		 0.5f, -0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-		-0.5f, -0.5f,  0.5f,
-
-		-0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f, -0.5f,
-		-0.5f, -0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-
-		 0.5f,  0.5f,  0.5f,
-		 0.5f,  0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-
-		-0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f, -0.5f,
-		 0.5f, -0.5f,  0.5f,
-		 0.5f, -0.5f,  0.5f,
-		-0.5f, -0.5f,  0.5f,
-		-0.5f, -0.5f, -0.5f,
-
-		-0.5f,  0.5f, -0.5f,
-		 0.5f,  0.5f, -0.5f,
-		 0.5f,  0.5f,  0.5f,
-		 0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f,  0.5f,
-		-0.5f,  0.5f, -0.5f,
-	};
-
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	// note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
 
 	return true;
 }
@@ -123,45 +62,29 @@ void Renderer::Render(float deltaTime)
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f,  0.0f,  0.0f),
-		glm::vec3(2.0f,  5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f,  3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f,  2.0f, -2.5f),
-		glm::vec3(1.5f,  0.2f, -1.5f),
-		glm::vec3(-1.3f,  1.0f, -1.5f)
-	};
-
-	stdShader.Use();
-	glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
-	
-
-	glm::mat4 projection = m_pMainCamera->GetPerspMatrix();
-	stdShader.SetMat4("projection", projection);
-
-	// camera/view transformation
-	glm::mat4 view = m_pMainCamera->GetViewMatrix();
-	stdShader.SetMat4("view", view);
-
-	// render boxes
-	glBindVertexArray(VAO);
-
-	for (unsigned int i = 0; i < 10; i++)
+	for (auto renderComponent : mRenderComponents)
 	{
-		// calculate the model matrix for each object and pass it to shader before drawing
-		glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-		model = glm::translate(model, cubePositions[i]);
-		float angle = 20.0f * i;
-		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-		stdShader.SetMat4("model", model);
+		unsigned int VAO, VBO, shaderID;
+		VAO = renderComponent->GetVAOID();
+		VBO = renderComponent->GetVBOID();
+		shaderID = renderComponent->GetShaderID();
 
-		Vector3 color((double)rand()/RAND_MAX, (double)rand() / RAND_MAX, (double)rand() / RAND_MAX);
+		glBindVertexArray(VAO);
+		glUseProgram(shaderID);
 
-		stdShader.SetVec3("inColor", color.mX, color.mY, color.mZ);
+		glm::mat4 projection = m_pMainCamera->GetPerspMatrix();
+		Shader::SetMat4(shaderID, "projection", projection);
+
+		// camera/view transformation
+		glm::mat4 view = m_pMainCamera->GetViewMatrix();
+		Shader::SetMat4(shaderID, "view", view);
+
+		glm::mat4 model = renderComponent->GetModelMatrix();
+		Shader::SetMat4(shaderID, "model", model);
+
+		Vector3 color((double)rand() / RAND_MAX, (double)rand() / RAND_MAX, (double)rand() / RAND_MAX);
+
+		Shader::SetVec3(shaderID, "inColor", color);
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
@@ -172,3 +95,10 @@ void Renderer::SetMainCamera(CameraComponent* pMainCam)
 {
 	m_pMainCamera = pMainCam;
 }
+
+void Renderer::AddRenderComponent(RenderComponent* c)
+{
+	mRenderComponents.push_back(c);
+}
+
+//TODO: RemoveRenderComponent

@@ -21,6 +21,8 @@ public:
 	unsigned int GetVBOID();
 	void SetVBOID(unsigned int id);
 
+	glm::mat4 GetModelMatrix() const;
+
 
 private:
 	Renderer* pRenderer;
@@ -30,6 +32,5 @@ private:
 	unsigned int m_ShaderID;
 	unsigned int m_VertexAttributeObjectID;
 	unsigned int m_VertexBufferObjectID;
-
 };
 

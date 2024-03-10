@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../Math/Math.h"
+
 #include <string>
 
 #include <glad/glad.h>
@@ -17,19 +19,20 @@ public:
 
 	void Use();
 
-	void SetBool(const std::string& name, bool value) const;
-	void SetInt(const std::string& name, int value) const;
-	void SetFloat(const std::string& name, float value) const;
+	static void SetBool(const unsigned int& shaderID, const std::string& name, bool value);
+	static void SetInt(const unsigned int& shaderID, const std::string& name, int value);
+	static void SetFloat(const unsigned int& shaderID, const std::string& name, float value);
 
-	void SetVec2(const std::string& name, const glm::vec2& value) const;
-	void SetVec2(const std::string& name, float x, float y) const;
-	void SetVec3(const std::string& name, const glm::vec3& value) const;
-	void SetVec3(const std::string& name, float x, float y, float z) const;
-	void SetVec4(const std::string& name, const glm::vec4& value) const;
-	void SetVec4(const std::string& name, float x, float y, float z, float w) const;
-	void SetMat2(const std::string& name, const glm::mat2& mat) const;
-	void SetMat3(const std::string& name, const glm::mat3& mat) const;
-	void SetMat4(const std::string& name, const glm::mat4& mat) const;
+	static void SetVec2(const unsigned int& shaderID, const std::string& name, const glm::vec2& value);
+	static void SetVec2(const unsigned int& shaderID, const std::string& name, float x, float y);
+	static void SetVec3(const unsigned int& shaderID, const std::string& name, const Vector3& value);
+	static void SetVec3(const unsigned int& shaderID, const std::string& name, const glm::vec3& value);
+	static void SetVec3(const unsigned int& shaderID, const std::string& name, float x, float y, float z);
+	static void SetVec4(const unsigned int& shaderID, const std::string& name, const glm::vec4& value);
+	static void SetVec4(const unsigned int& shaderID, const std::string& name, float x, float y, float z, float w);
+	static void SetMat2(const unsigned int& shaderID, const std::string& name, const glm::mat2& mat);
+	static void SetMat3(const unsigned int& shaderID, const std::string& name, const glm::mat3& mat);
+	static void SetMat4(const unsigned int& shaderID, const std::string& name, const glm::mat4& mat);
 
 private:
 	void CheckCompileError(GLuint shader, std::string type);
