@@ -2,15 +2,6 @@
 #include "../Core/Actor.h"
 
 
-enum class MoveDir
-{
-	None,
-	Forward,
-	Back,
-	Left,
-	Right,
-};
-
 class Player : public Actor
 {
 public:
@@ -23,11 +14,21 @@ public:
 	class CameraComponent* GetMainCamera() const { return m_pCameraComponent; }
 
 private:
+	void ProcessMovement(float deltaTime);
+
+
 	class CameraComponent* m_pCameraComponent;
 
-	MoveDir mMoveDir;
+	bool hasMovementInput = false;
+	Vector3 inputMoveDir;
+
 	int lastMouseX;
 	int lastMouseY;
-	float movementSpeed = 2.5f;
+	Vector3 currentVelocity = Vector3::Zero;
+
+
+	const float topMovementSpeed = 2.5f;
+	const float accelerationSpeed = 15.0f;
+	const float decelerationSpeed = 20.0f;
 };
 

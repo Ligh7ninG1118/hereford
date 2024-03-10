@@ -22,49 +22,39 @@ Player::~Player()
 
 void Player::OnUpdate(float deltaTime)
 {
-	Vector3 pos = GetPosition();
-	Vector3 moveDir = Vector3::Zero;
-	switch (mMoveDir)
-	{
-	case MoveDir::None:
-		break;
-	case MoveDir::Forward:
-		moveDir = m_pCameraComponent->GetFrontVector();
-		break;
-	case MoveDir::Back:
-		moveDir = Vector3::Zero - m_pCameraComponent->GetFrontVector();
-		break;
-	case MoveDir::Left:
-		moveDir = Vector3::Zero - m_pCameraComponent->GetRightVector();
-		break;
-	case MoveDir::Right:
-		moveDir = m_pCameraComponent->GetRightVector();
-		break;
-	default:
-		break;
-	}
-
-	moveDir.mY = 0.0f;
-	moveDir.Normalize();
-
-	pos += moveDir * movementSpeed * deltaTime;
-
-	SetPosition(pos);
-
+	ProcessMovement(deltaTime);
 }
+
+
 
 void Player::OnProcessInput(const Uint8* keyState)
 {
+	inputMoveDir = Vector3::Zero;
+	hasMovementInput = false;
+
 	if (keyState[SDL_SCANCODE_W])
-		mMoveDir = MoveDir::Forward;
-	else if (keyState[SDL_SCANCODE_A])
-		mMoveDir = MoveDir::Left;
-	else if (keyState[SDL_SCANCODE_S])
-		mMoveDir = MoveDir::Back;
-	else if (keyState[SDL_SCANCODE_D])
-		mMoveDir = MoveDir::Right;
-	else
-		mMoveDir = MoveDir::None;
+	{
+		inputMoveDir += m_pCameraComponent->GetFrontVector();
+		hasMovementInput = true;
+	}
+	if (keyState[SDL_SCANCODE_S])
+	{
+		inputMoveDir -= m_pCameraComponent->GetFrontVector();
+		hasMovementInput = true;
+	}
+	if (keyState[SDL_SCANCODE_A])
+	{
+		inputMoveDir -= m_pCameraComponent->GetRightVector();
+		hasMovementInput = true;
+	}
+	if (keyState[SDL_SCANCODE_D])
+	{
+		inputMoveDir += m_pCameraComponent->GetRightVector();
+		hasMovementInput = true;
+	}
+
+	inputMoveDir.mY = 0.0f;
+	inputMoveDir.Normalize();
 
 	int currentMouseX, currentMouseY, deltaX, deltaY;
 	SDL_GetMouseState(&currentMouseX, &currentMouseY);
@@ -76,4 +66,25 @@ void Player::OnProcessInput(const Uint8* keyState)
 	lastMouseY = currentMouseY;
 
 	m_pCameraComponent->ProcessMouseInput(deltaX, -deltaY);
+}
+
+void Player::ProcessMovement(float deltaTime)
+{
+	Vector3 updatedPos = GetPosition();
+	updatedPos += currentVelocity * deltaTime;
+	SetPosition(updatedPos);
+
+	if (hasMovementInput)
+	{
+		currentVelocity += inputMoveDir * accelerationSpeed * deltaTime;
+	}
+	else // In case of no-gravity space combat, comment this part
+	{
+		currentVelocity -= currentVelocity.normalized() * decelerationSpeed * deltaTime;
+	}
+
+	if (currentVelocity.SqrMagnitude() > topMovementSpeed * topMovementSpeed)
+	{
+		currentVelocity = currentVelocity.normalized() * topMovementSpeed;
+	}
 }
