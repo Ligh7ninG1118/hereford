@@ -39,9 +39,11 @@ struct Vector3
 
 
 	Vector3& operator=(const Vector3& rhs);
-	bool operator==(const Vector3* rhs) const;
+	bool operator==(const Vector3& rhs) const;
+	bool operator!=(const Vector3& rhs) const;
 	Vector3 operator+(const Vector3& rhs) const;
 	Vector3 operator-(const Vector3& rhs) const;
+	Vector3 operator-() const;
 	Vector3 operator*(const float& scalar) const;
 	Vector3 operator/(const float& scalar) const;
 

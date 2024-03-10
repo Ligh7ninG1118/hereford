@@ -98,9 +98,14 @@ Vector3& Vector3::operator=(const Vector3& rhs)
 	return *this;
 }
 
-bool Vector3::operator==(const Vector3* rhs) const
+bool Vector3::operator==(const Vector3& rhs) const
 {
-	return (mX == rhs->mX)&& (mY == rhs->mY)&& (mZ == rhs->mZ);
+	return abs(mX - rhs.mX) < EPSILON && abs(mY - rhs.mY) < EPSILON && abs(mZ - rhs.mZ) < EPSILON;
+}
+
+bool Vector3::operator!=(const Vector3& rhs) const
+{
+	return !(*this==rhs);
 }
 
 Vector3 Vector3::operator+(const Vector3& rhs) const
@@ -111,6 +116,11 @@ Vector3 Vector3::operator+(const Vector3& rhs) const
 Vector3 Vector3::operator-(const Vector3& rhs) const
 {
 	return Vector3(mX - rhs.mX, mY - rhs.mY, mZ - rhs.mZ);
+}
+
+Vector3 Vector3::operator-() const
+{
+	return Vector3(-mX, -mY, -mZ);
 }
 
 Vector3 Vector3::operator*(const float& scalar) const
