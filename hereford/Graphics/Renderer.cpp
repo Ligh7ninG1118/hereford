@@ -5,6 +5,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include <string>
 
 Renderer::Renderer(SDL_Window* sdlWindow, int width, int height)
@@ -38,8 +40,8 @@ bool Renderer::Initialize()
 	printf("Renderer::Initialize(): Version:  %s\n", glGetString(GL_VERSION));
 
 	SDL_GL_SetSwapInterval(1);
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+	//glDisable(GL_CULL_FACE);
 
 	glViewport(0, 0, m_ScreenWidth, m_ScreenHeight);
 	glClearColor(0.0f, 0.5f, 1.0f, 0.0f);
@@ -116,10 +118,23 @@ void Renderer::Shutdown()
 
 void Renderer::Render(float deltaTime)
 {
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	srand(time(NULL));
 
-	
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
 
 	stdShader.Use();
 	glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
@@ -134,14 +149,19 @@ void Renderer::Render(float deltaTime)
 
 	// render boxes
 	glBindVertexArray(VAO);
+
 	for (unsigned int i = 0; i < 10; i++)
 	{
 		// calculate the model matrix for each object and pass it to shader before drawing
 		glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+		model = glm::translate(model, cubePositions[i]);
 		float angle = 20.0f * i;
 		model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 		stdShader.SetMat4("model", model);
+
+		Vector3 color((double)rand()/RAND_MAX, (double)rand() / RAND_MAX, (double)rand() / RAND_MAX);
+
+		stdShader.SetVec3("inColor", color.mX, color.mY, color.mZ);
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
