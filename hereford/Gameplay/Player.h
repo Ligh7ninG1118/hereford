@@ -22,8 +22,6 @@ private:
 	bool hasMovementInput = false;
 	Vector3 inputMoveDir;
 
-	int lastMouseX;
-	int lastMouseY;
 	Vector3 currentVelocity = Vector3::Zero;
 
 

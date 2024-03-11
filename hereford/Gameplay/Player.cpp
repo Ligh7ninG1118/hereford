@@ -8,8 +8,6 @@
 Player::Player(GameContext* gameCtx)
 	:
 	Actor(gameCtx),
-	lastMouseX(-1),
-	lastMouseY(-1)
 {
 	m_pCameraComponent = new CameraComponent(static_cast<Actor*>(this));
 }
