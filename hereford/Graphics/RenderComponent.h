@@ -21,7 +21,7 @@ public:
 	unsigned int GetVBOID();
 	void SetVBOID(unsigned int id);
 
-	glm::mat4 GetModelMatrix() const;
+	Mat4 GetModelMatrix() const;
 
 
 private:

@@ -46,6 +46,7 @@ struct Vector3
 	Vector3 operator-() const;
 	Vector3 operator*(const float& scalar) const;
 	Vector3 operator/(const float& scalar) const;
+	float operator[](const int& index) const;
 
 	Vector3& operator+=(const Vector3& rhs);
 	Vector3& operator-=(const Vector3& rhs);

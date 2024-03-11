@@ -7,7 +7,7 @@
 
 Player::Player(GameContext* gameCtx)
 	:
-	Actor(gameCtx),
+	Actor(gameCtx)
 {
 	m_pCameraComponent = new CameraComponent(static_cast<Actor*>(this));
 }
@@ -32,22 +32,23 @@ void Player::OnProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseD
 
 		if (keyState[SDL_SCANCODE_W])
 		{
-			inputMoveDir += m_pCameraComponent->GetFrontVector();
+			inputMoveDir += GetForward();
 			hasMovementInput = true;
 		}
 		if (keyState[SDL_SCANCODE_S])
 		{
-			inputMoveDir -= m_pCameraComponent->GetFrontVector();
+			inputMoveDir -= GetForward();
 			hasMovementInput = true;
 		}
 		if (keyState[SDL_SCANCODE_A])
 		{
-			inputMoveDir -= m_pCameraComponent->GetRightVector();
+			// Cross with World Up to get Right vector;
+			inputMoveDir -= GetForward().Cross(Vector3(0.0f, 1.0f, 0.0f));
 			hasMovementInput = true;
 		}
 		if (keyState[SDL_SCANCODE_D])
 		{
-			inputMoveDir += m_pCameraComponent->GetRightVector();
+			inputMoveDir += GetForward().Cross(Vector3(0.0f, 1.0f, 0.0f));
 			hasMovementInput = true;
 		}
 

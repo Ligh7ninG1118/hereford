@@ -32,7 +32,7 @@ public:
 	{
 		return Vector3(cos(DEG2RAD * mRotation.mY)* cos(DEG2RAD * mRotation.mX),
 			sin(DEG2RAD * mRotation.mX),
-			sin(DEG2RAD * mRotation.mY)* cos(DEG2RAD * mRotation.mX));
+			sin(DEG2RAD * mRotation.mY)* cos(DEG2RAD * mRotation.mX)).normalized();
 	}
 
 	ActorState GetState() const { return mState; }

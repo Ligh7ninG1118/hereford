@@ -83,7 +83,7 @@ void Renderer::Render(float deltaTime)
 		glm::mat4 view = m_pMainCamera->GetViewMatrix();
 		Shader::SetMat4(shaderID, "view", view);
 
-		glm::mat4 model = renderComponent->GetModelMatrix();
+		Mat4 model = renderComponent->GetModelMatrix();
 		Shader::SetMat4(shaderID, "model", model);
 
 		Vector3 color((double)rand() / RAND_MAX, (double)rand() / RAND_MAX, (double)rand() / RAND_MAX);

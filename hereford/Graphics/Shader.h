@@ -33,6 +33,8 @@ public:
 	static void SetMat2(const unsigned int& shaderID, const std::string& name, const glm::mat2& mat);
 	static void SetMat3(const unsigned int& shaderID, const std::string& name, const glm::mat3& mat);
 	static void SetMat4(const unsigned int& shaderID, const std::string& name, const glm::mat4& mat);
+	static void SetMat4(const unsigned int& shaderID, const std::string& name, const Matrix4x4& mat);
+
 
 private:
 	void CheckCompileError(GLuint shader, std::string type);

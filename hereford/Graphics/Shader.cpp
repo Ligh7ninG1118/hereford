@@ -120,6 +120,10 @@ void Shader::SetMat4(const unsigned int& shaderID, const std::string& name, cons
 {
 	glUniformMatrix4fv(glGetUniformLocation(shaderID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
+void Shader::SetMat4(const unsigned int& shaderID, const std::string& name, const Mat4& mat)
+{
+	glUniformMatrix4fv(glGetUniformLocation(shaderID, name.c_str()), 1, GL_FALSE, &mat.m[0][0]);
+}
 
 
 void Shader::CheckCompileError(GLuint shader, std::string type)

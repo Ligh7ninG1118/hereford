@@ -133,6 +133,21 @@ Vector3 Vector3::operator/(const float& scalar) const
 	return Vector3(mX / scalar, mY / scalar, mZ / scalar);
 }
 
+float Vector3::operator[](const int& index) const
+{
+	switch (index)
+	{
+	case 0:
+		return mX;
+	case 1:
+		return mY;
+	case 2:
+		return mZ;
+	default:
+		return -1;
+	}
+}
+
 Vector3& Vector3::operator+=(const Vector3& rhs)
 {
 	mX += rhs.mX;

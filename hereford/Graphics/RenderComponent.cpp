@@ -117,26 +117,18 @@ void RenderComponent::SetVBOID(unsigned int id)
 	m_VertexBufferObjectID = id;
 }
 
-glm::mat4 RenderComponent::GetModelMatrix() const
+Mat4 RenderComponent::GetModelMatrix() const
 {
-	glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-
-	Vector3 rawPos = mOwner->GetPosition();
-
-	glm::vec3 pos(rawPos.mX, rawPos.mY, rawPos.mZ);
-
-	model = glm::translate(model, pos);
-
 	//TODO: Quaternion rotation
 
-	Vector3 rot = mOwner->GetRotation();
+	Mat4 mat = Mat4::Identity;
 
-	model = glm::rotate(model, glm::radians(rot.mX), glm::vec3(1.0f, 0.0f, 0.0f));
-	model = glm::rotate(model, glm::radians(rot.mY), glm::vec3(0.0f, 1.0f, 0.0f));
-	model = glm::rotate(model, glm::radians(rot.mZ), glm::vec3(0.0f, 0.0f, 1.0f));
+	mat.Translate(mOwner->GetPosition());
+	mat.Scale(mOwner->GetScale());
+	Vec3 rot = mOwner->GetRotation();
+	mat.Rotate(DEG2RAD * rot.mX, Vec3(1.0f, 0.0f, 0.0f));
+	mat.Rotate(DEG2RAD * rot.mY, Vec3(0.0f, 1.0f, 0.0f));
+	mat.Rotate(DEG2RAD * rot.mZ, Vec3(0.0f, 0.0f, 1.0f));
 
-	Vector3 scale = mOwner->GetScale();
-	model = glm::scale(model, glm::vec3(scale.mX, scale.mY, scale.mZ));
-
-	return model;
+	return mat;
 }

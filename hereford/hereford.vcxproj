@@ -168,7 +168,9 @@
     <ClCompile Include="Math\Vector3.cpp" />
     <ClCompile Include="Math\Vector4.cpp" />
     <ClCompile Include="Gameplay\Player.cpp" />
+    <ClCompile Include="Math\Matrix4x4.cpp" />
     <ClCompile Include="Props\TestCube.cpp" />
+    <ClCompile Include="Math\Random.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Actor.h" />
@@ -184,7 +186,9 @@
     <ClInclude Include="Math\Vector3.h" />
     <ClInclude Include="Math\Vector4.h" />
     <ClInclude Include="Gameplay\Player.h" />
+    <ClInclude Include="Math\Matrix4x4.h" />
     <ClInclude Include="Props\TestCube.h" />
+    <ClInclude Include="Math\Random.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Graphics\Shaders\standard_frag.glsl" />
