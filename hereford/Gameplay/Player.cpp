@@ -8,8 +8,8 @@
 Player::Player(GameContext* gameCtx)
 	:
 	Actor(gameCtx),
-	lastMouseX(0),
-	lastMouseY(0)
+	lastMouseX(-1),
+	lastMouseY(-1)
 {
 	m_pCameraComponent = new CameraComponent(static_cast<Actor*>(this));
 }
@@ -25,7 +25,7 @@ void Player::OnUpdate(float deltaTime)
 
 
 
-void Player::OnProcessInput(const Uint8* keyState)
+void Player::OnProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
 {
 	// Horizontal Movement
 	{
@@ -57,19 +57,13 @@ void Player::OnProcessInput(const Uint8* keyState)
 		inputMoveDir.Normalize();
 	}
 
-
-	// Mouse Input
+	// Rotation
 	{
-
-		int currentMouseX, currentMouseY, deltaX, deltaY;
-		SDL_GetMouseState(&currentMouseX, &currentMouseY);
-		deltaX = currentMouseX - lastMouseX;
-		deltaY = currentMouseY - lastMouseY;
-
-		lastMouseX = currentMouseX;
-		lastMouseY = currentMouseY;
-
-		m_pCameraComponent->ProcessMouseInput(deltaX, -deltaY);
+		mRotation.mY += mouseDeltaX * m_pCameraComponent->GetMouseSens();
+		if (mRotation.mY > 360.0f)
+			mRotation.mY = 0.0f;
+		if (mRotation.mY < -360.0f)
+			mRotation.mY = 0.0f;
 	}
 }
 
