@@ -10,7 +10,6 @@ CameraComponent::CameraComponent(Actor* owner)
 	m_NearPlane(0.1f),
 	m_FarPlane(100.0f)
 {
-
 }
 
 CameraComponent::~CameraComponent()
@@ -21,14 +20,10 @@ void CameraComponent::Update(float deltaTime)
 {
 }
 
-void CameraComponent::ProcessInput(const Uint8* keyState)
+void CameraComponent::ProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
 {
-}
-
-void CameraComponent::ProcessMouseInput(int deltaX, int deltaY)
-{
-	m_Rotation.mY += deltaX * mouseSens;
-	m_Rotation.mX += deltaY * mouseSens;
+	m_Rotation.mY += mouseDeltaX * mouseSens;
+	m_Rotation.mX += mouseDeltaY * mouseSens;
 
 	if (m_Rotation.mY > 360.0f)
 		m_Rotation.mY = 0.0f;
@@ -39,7 +34,6 @@ void CameraComponent::ProcessMouseInput(int deltaX, int deltaY)
 		m_Rotation.mX = 89.0f;
 	if (m_Rotation.mX < -89.0f)
 		m_Rotation.mX = -89.0f;
-
 }
 
 glm::mat4 CameraComponent::GetViewMatrix() const

@@ -33,24 +33,24 @@ void Actor::Update(float deltaTime)
 	OnUpdate(deltaTime);
 }
 
-void Actor::ProcessInput(const Uint8* keyState)
+void Actor::ProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
 {
 	if (mState != ActorState::Active)
 		return;
 
 	for (Component* pCom : mComponents)
 	{
-		pCom->ProcessInput(keyState);
+		pCom->ProcessInput(keyState, mouseState, mouseDeltaX, mouseDeltaY);
 	}
 
-	OnProcessInput(keyState);
+	OnProcessInput(keyState, mouseState, mouseDeltaX, mouseDeltaY);
 }
 
 void Actor::OnUpdate(float deltaTime)
 {
 }
 
-void Actor::OnProcessInput(const Uint8* keyState)
+void Actor::OnProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
 {
 }
 

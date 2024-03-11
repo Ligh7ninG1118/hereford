@@ -12,7 +12,7 @@ public:
 	// Update this component by delta time
 	virtual void Update(float deltaTime);
 	// Process input for this component (if needed)
-	virtual void ProcessInput(const Uint8* keyState);
+	virtual void ProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY);
 
 	int GetUpdateOrder() const { return mUpdateOrder; }
 	class Actor* GetOwner() const { return mOwner; }

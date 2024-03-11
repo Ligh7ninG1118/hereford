@@ -16,14 +16,14 @@ public:
 	~CameraComponent();
 
 	void Update(float deltaTime) override;
-	void ProcessInput(const Uint8* keyState) override;
-	void ProcessMouseInput(int deltaX, int deltaY);
+	void ProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY) override;
 
 	glm::mat4 GetViewMatrix() const;
 	glm::mat4 GetPerspMatrix() const;
 	Vector3 GetFrontVector() const;
 	Vector3 GetRightVector() const;
 
+	float GetMouseSens() const { return mouseSens; }
 
 private:
 	void UpdateCameraVectors();
@@ -34,5 +34,5 @@ private:
 	float m_HorFOV;
 	float m_NearPlane;
 	float m_FarPlane;
-	float mouseSens = 0.3f;
+	float mouseSens = 0.15f;
 };

@@ -19,20 +19,21 @@ public:
 	// Update function called from Game (not overridable)
 	void Update(float deltaTime);
 	// ProcessInput function called from Game (not overridable)
-	void ProcessInput(const Uint8* keyState);
+	void ProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY);
 
 	// Getters/setters
 	Vector3 GetPosition() const { return mPosition; };
 	void SetPosition(const Vector3& pos) { mPosition = pos; }
-	//float GetScale() const { return mScale; }
-	//void SetScale(float scale) { mScale = scale; }
-	//float GetRotation() const { return mRotation; }
-	//Vector3 GetForward() const
-	//{
-	//	//return Vector3(Math::Cos(mRotation), -Math::Sin(mRotation));
-
-	//}
-	//void SetRotation(float rotation) { mRotation = rotation; }
+	Vector3 GetScale() const { return mScale; }
+	void SetScale(const Vector3& scale) { mScale = scale; }
+	Vector3 GetRotation() const { return mRotation; }
+	void SetRotation(const Vector3& rotation) { mRotation = rotation; }
+	Vector3 GetForward() const
+	{
+		return Vector3(cos(DEG2RAD * mRotation.mY)* cos(DEG2RAD * mRotation.mX),
+			sin(DEG2RAD * mRotation.mX),
+			sin(DEG2RAD * mRotation.mY)* cos(DEG2RAD * mRotation.mX));
+	}
 
 	ActorState GetState() const { return mState; }
 	void SetState(ActorState state) { mState = state; }
@@ -59,7 +60,7 @@ protected:
 	// Any actor-specific update code (overridable)
 	virtual void OnUpdate(float deltaTime);
 	// Any actor-specific update code (overridable)
-	virtual void OnProcessInput(const Uint8* keyState);
+	virtual void OnProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY);
 
 	class GameContext* mGame;
 	// Actor's state

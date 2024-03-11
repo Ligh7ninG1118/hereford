@@ -62,7 +62,7 @@ bool GameContext::Initialize()
 	}
 
 	//SDL_SetWindowGrab(pSDLWindow, SDL_TRUE);
-	//SDL_SetRelativeMouseMode(SDL_TRUE);
+	SDL_SetRelativeMouseMode(SDL_TRUE);
 
 	isRunning = true;
 	LoadData();
@@ -131,10 +131,14 @@ void GameContext::ProcessInput()
 	const Uint8* pKeyState = SDL_GetKeyboardState(nullptr);
 	if (pKeyState[SDL_SCANCODE_ESCAPE])
 		isRunning = false;
+
+	int mouseDeltaX, mouseDeltaY;
+	Uint32 pMouseState = SDL_GetRelativeMouseState(&mouseDeltaX, &mouseDeltaY);
+
 	std::vector<Actor*> actorVector = mActors;
 	for (Actor* actor : actorVector)
 	{
-		actor->ProcessInput(pKeyState);
+		actor->ProcessInput(pKeyState, pMouseState, mouseDeltaX, -mouseDeltaY);
 	}
 }
 
