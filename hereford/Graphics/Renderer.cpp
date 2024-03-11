@@ -19,6 +19,10 @@ Renderer::Renderer(SDL_Window* sdlWindow, int width, int height)
 {
 }
 
+Renderer::~Renderer()
+{
+}
+
 bool Renderer::Initialize()
 {
 	m_pGLContext = SDL_GL_CreateContext(m_pSDLWindowContext);
@@ -42,7 +46,7 @@ bool Renderer::Initialize()
 
 	SDL_GL_SetSwapInterval(1);
 	glEnable(GL_DEPTH_TEST);
-	//glDisable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 
 	glViewport(0, 0, m_ScreenWidth, m_ScreenHeight);
 	glClearColor(0.0f, 0.5f, 1.0f, 0.0f);
@@ -101,4 +105,8 @@ void Renderer::AddRenderComponent(RenderComponent* c)
 	mRenderComponents.push_back(c);
 }
 
-//TODO: RemoveRenderComponent
+void Renderer::RemoveRenderComponent(RenderComponent* c)
+{
+	mRenderComponents.erase(std::find(mRenderComponents.begin(), mRenderComponents.end(), c));
+
+}

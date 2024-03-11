@@ -17,6 +17,7 @@ RenderComponent::RenderComponent(Actor* owner, Renderer* renderer)
 
 RenderComponent::~RenderComponent()
 {
+	pRenderer->RemoveRenderComponent(this);
 }
 
 bool RenderComponent::Initialize()
@@ -79,9 +80,6 @@ bool RenderComponent::Initialize()
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-
-	// note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-	//glBindBuffer(GL_ARRAY_BUFFER, 0);
 	
 	return true;
 
@@ -128,6 +126,17 @@ glm::mat4 RenderComponent::GetModelMatrix() const
 	glm::vec3 pos(rawPos.mX, rawPos.mY, rawPos.mZ);
 
 	model = glm::translate(model, pos);
-	//model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+
+	//TODO: Quaternion rotation
+
+	Vector3 rot = mOwner->GetRotation();
+
+	model = glm::rotate(model, glm::radians(rot.mX), glm::vec3(1.0f, 0.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(rot.mY), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(rot.mZ), glm::vec3(0.0f, 0.0f, 1.0f));
+
+	Vector3 scale = mOwner->GetScale();
+	model = glm::scale(model, glm::vec3(scale.mX, scale.mY, scale.mZ));
+
 	return model;
 }

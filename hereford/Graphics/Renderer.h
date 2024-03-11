@@ -9,7 +9,7 @@ class Renderer
 {
 public:
 	Renderer(SDL_Window* sdlWindow, int width, int height);
-
+	~Renderer();
 	bool Initialize();
 	void Shutdown();
 	void Render(float deltaTime);
@@ -31,5 +31,6 @@ private:
 	// Adds component to Actor (this is automatically called
 	// in the component constructor)
 	void AddRenderComponent(class RenderComponent* c);
+	void RemoveRenderComponent(class RenderComponent* c);
 };
 
