@@ -22,7 +22,7 @@ class Math
 {
 public:
 	static float Clamp(const float& val, const float& min, const float& max);
-
+	static float Lerp(const float& a, const float& b, const float& t);
 
 };
 
