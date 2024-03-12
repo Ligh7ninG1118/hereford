@@ -52,7 +52,31 @@ Matrix4x4& Matrix4x4::Translate(const Vector3& translate)
 
 Matrix4x4& Matrix4x4::Rotate(const float& radAngle, const Vector3& axis)
 {
-	// TODO: insert return statement here
+	Vector3 axisNorm = axis.normalized();
+	float cosTheta = cos(radAngle);
+	float sinTheta = sin(radAngle);
+
+	Matrix4x4 rot = Matrix4x4::Identity;
+	Vector3 temp = axisNorm * (1 - cosTheta);
+
+	rot.m[0][0] = cosTheta + temp[0] * axisNorm[0]; 
+	rot.m[0][1] = temp[0] * axisNorm[1] + sinTheta * axisNorm[2];
+	rot.m[0][2] = temp[0];
+
+	rot.m[0][0] = cosTheta + temp[0] * axisNorm[0];
+	rot.m[0][1] = temp[0] * axisNorm[1] + sinTheta * axisNorm[2];
+	rot.m[0][2] = temp[0] * axisNorm[2] - sinTheta * axisNorm[1];
+
+	rot.m[1][0] = temp[1] * axisNorm[0] - sinTheta * axisNorm[2];
+	rot.m[1][1] = cosTheta + temp[1] * axisNorm[1];
+	rot.m[1][2] = temp[1] * axisNorm[2] + sinTheta * axisNorm[0];
+
+	rot.m[2][0] = temp[2] * axisNorm[0] + sinTheta * axisNorm[1];
+	rot.m[2][1] = temp[2] * axisNorm[1] - sinTheta * axisNorm[0];
+	rot.m[2][2] = cosTheta + temp[2] * axisNorm[2];
+
+	*this = *this * rot;
+
 	return *this;
 }
 
@@ -65,7 +89,9 @@ Matrix4x4& Matrix4x4::Scale(const Vector3& scale)
 
 Matrix4x4& Matrix4x4::Clear()
 {
-	// TODO: insert return statement here
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 4; j++)
+			m[i][j] = 0.0f;
 	return *this;
 }
 
@@ -93,5 +119,12 @@ bool Matrix4x4::operator!=(const Matrix4x4& rhs) const
 
 Matrix4x4 Matrix4x4::operator*(const Matrix4x4& rhs) const
 {
-	return Matrix4x4();
+	Matrix4x4 result = Matrix4x4::Zero;
+
+	for(int i=0;i<4;i++)
+		for (int j = 0; j < 4; j++)
+			for (int k = 0; k < 4; k++)
+				result.m[j][i] += m[k][i] * rhs.m[j][k];
+
+	return result;
 }

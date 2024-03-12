@@ -76,11 +76,11 @@ void Renderer::Render(float deltaTime)
 		glBindVertexArray(VAO);
 		glUseProgram(shaderID);
 
-		glm::mat4 projection = m_pMainCamera->GetPerspMatrix();
+		Mat4 projection = m_pMainCamera->GetPerspMatrix();
 		Shader::SetMat4(shaderID, "projection", projection);
 
 		// camera/view transformation
-		glm::mat4 view = m_pMainCamera->GetViewMatrix();
+		Mat4 view = m_pMainCamera->GetViewMatrix();
 		Shader::SetMat4(shaderID, "view", view);
 
 		Mat4 model = renderComponent->GetModelMatrix();

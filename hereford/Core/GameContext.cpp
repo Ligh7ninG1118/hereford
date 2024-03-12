@@ -109,8 +109,8 @@ void GameContext::LoadData()
 	for (int i = 0; i < 10; i++)
 	{
 		TestCube* cubeActor = new TestCube(this);
-		cubeActor->SetPosition(Vector3(Random::Range(0.0f, 10.0f), Random::Range(0.0f, 3.0f), Random::Range(-10.0f, 10.0f)));
-		cubeActor->SetScale(Vector3(0.1f, 1.0f, 0.1f));
+		cubeActor->SetPosition(cubePositions[i]);
+		cubeActor->SetRotation(Vector3(45.0f, 0.0f, 0.0f));
 	}
 }
 

@@ -29,32 +29,37 @@ void CameraComponent::ProcessInput(const Uint8* keyState, Uint32 mouseState, int
 	m_Rotation.mX = Math::Clamp(m_Rotation.mX, -89.0f, 89.0f);
 }
 
-glm::mat4 CameraComponent::GetViewMatrix() const
+Mat4 CameraComponent::GetViewMatrix() const
 {
 	Vec3 Front = GetFrontVector();
 	Vec3 Right = GetRightVector();
 	Vec3 Up = Right.Cross(Front).normalized();
-
-	glm::mat4 Mrot, Mtsl;
-
-	Mrot[0][0] = Right.mX;	Mrot[1][0] = Right.mY;	Mrot[2][0] = Right.mZ;	Mrot[3][0] = 0.0f;
-	Mrot[0][1] = Up.mX;		Mrot[1][1] = Up.mY;		Mrot[2][1] = Up.mZ;		Mrot[3][1] = 0.0f;
-	Mrot[0][2] = -Front.mX;	Mrot[1][2] = -Front.mY;	Mrot[2][2] = -Front.mZ;	Mrot[3][2] = 0.0f;
-	Mrot[0][3] = 0.0f;		Mrot[1][3] = 0.0f;		Mrot[2][3] = 0.0f;		Mrot[3][3] = 1.0f;
-
 	Vec3 pos = GetOwner()->GetPosition() + m_PositionOffset;
 
-	glm::vec3 Position = glm::vec3(pos.mX, pos.mY,pos.mZ);
+	Mat4 Mtsl2 = Mat4::Identity;
+	Mat4 Mrot2 = Mat4::Identity;
 
-	Mtsl = glm::mat4(1.0f);
-	Mtsl = glm::translate(Mtsl, -Position);
+	Mtsl2.Translate(-pos);
 
-	return Mrot * Mtsl;
+	Mrot2.m[0][0] = Right.mX;	Mrot2.m[1][0] = Right.mY;	Mrot2.m[2][0] = Right.mZ;	Mrot2.m[3][0] = 0.0f;
+	Mrot2.m[0][1] = Up.mX;		Mrot2.m[1][1] = Up.mY;		Mrot2.m[2][1] = Up.mZ;		Mrot2.m[3][1] = 0.0f;
+	Mrot2.m[0][2] = -Front.mX;	Mrot2.m[1][2] = -Front.mY;	Mrot2.m[2][2] = -Front.mZ;	Mrot2.m[3][2] = 0.0f;
+	Mrot2.m[0][3] = 0.0f;		Mrot2.m[1][3] = 0.0f;		Mrot2.m[2][3] = 0.0f;		Mrot2.m[3][3] = 1.0f;
+
+
+	return Mrot2 * Mtsl2;
 }
 
-glm::mat4 CameraComponent::GetPerspMatrix() const
+Mat4 CameraComponent::GetPerspMatrix() const
 {
-	glm::mat4 projection = glm::perspective(glm::radians(m_HorFOV), m_ScreenRatio, m_NearPlane, m_FarPlane);
+	Mat4 projection = Mat4::Zero;
+
+	float tanHalfFOVy = tan(DEG2RAD * m_HorFOV / 2.0f);
+	projection.m[0][0] = 1.0f / (m_ScreenRatio * tanHalfFOVy);
+	projection.m[1][1] = 1.0f / tanHalfFOVy;
+	projection.m[2][2] = -(m_FarPlane + m_NearPlane) / (m_FarPlane - m_NearPlane);
+	projection.m[2][3] = -1.0f;
+	projection.m[3][2] = -(2.0f * m_FarPlane * m_NearPlane) / (m_FarPlane - m_NearPlane);
 
 	return projection;
 }
