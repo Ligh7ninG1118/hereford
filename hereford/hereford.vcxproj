@@ -77,11 +77,11 @@
     <IncludePath>$(SolutionDir)include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(SolutionDir)include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(SolutionDir)include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -169,8 +169,10 @@
     <ClCompile Include="Math\Vector4.cpp" />
     <ClCompile Include="Gameplay\Player.cpp" />
     <ClCompile Include="Math\Matrix4x4.cpp" />
+    <ClCompile Include="Physics\PhysicsManager.cpp" />
+    <ClCompile Include="Physics\PhysicsComponent.cpp" />
     <ClCompile Include="Props\TestCube.cpp" />
-    <ClCompile Include="Math\Random.cpp" />
+    <ClCompile Include="Util\Random.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Actor.h" />
@@ -187,8 +189,10 @@
     <ClInclude Include="Math\Vector4.h" />
     <ClInclude Include="Gameplay\Player.h" />
     <ClInclude Include="Math\Matrix4x4.h" />
+    <ClInclude Include="Physics\PhysicsManager.h" />
+    <ClInclude Include="Physics\PhysicsComponent.h" />
     <ClInclude Include="Props\TestCube.h" />
-    <ClInclude Include="Math\Random.h" />
+    <ClInclude Include="Util\Random.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Graphics\Shaders\standard_frag.glsl" />

@@ -1,13 +1,12 @@
 #pragma once
 
-#include "../Core/Component.h"
-#include "Renderer.h"
+#include "Core/Component.h"
 
 
 class RenderComponent : public Component
 {
 public:
-	RenderComponent(class Actor* owner, Renderer* pRenderer);
+	RenderComponent(class Actor* owner, class Renderer& rendererRef);
 	~RenderComponent();
 
 	bool Initialize();
@@ -25,7 +24,7 @@ public:
 
 
 private:
-	Renderer* pRenderer;
+	class Renderer& m_Renderer;
 
 	float m_Vertices;
 

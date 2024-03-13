@@ -1,6 +1,7 @@
-#include "Player.h"
-#include "CameraComponent.h"
-#include "InputComponent.h"
+#include "Gameplay/Player.h"
+#include "Gameplay/CameraComponent.h"
+#include "Gameplay/InputComponent.h"
+#include "Core/GameContext.h"
 #include <SDL2/SDL.h>
 
 #include "stdio.h"
@@ -9,7 +10,7 @@ Player::Player(GameContext* gameCtx)
 	:
 	Actor(gameCtx)
 {
-	m_pCameraComponent = new CameraComponent(static_cast<Actor*>(this));
+	m_pCameraComponent = std::make_unique<CameraComponent>(static_cast<Actor*>(this));
 }
 
 Player::~Player()
@@ -54,6 +55,21 @@ void Player::OnProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseD
 
 		inputMoveDir.mY = 0.0f;
 		inputMoveDir.Normalize();
+	}
+
+	{
+		if (mouseState & SDL_BUTTON_LEFT && !lmbPressed )
+		{
+			Vec3 origin = GetPosition() + m_pCameraComponent->GetPositionOffset();
+			Vec3 dir = m_pCameraComponent->GetFrontVector();
+			mGame->GetPhysicsManager().Raycast(origin, dir, 1000.0f);
+
+			lmbPressed = true;
+		}
+		else
+		{
+			lmbPressed = false;
+		}
 	}
 
 	// Rotation

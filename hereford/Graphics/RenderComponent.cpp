@@ -1,23 +1,24 @@
-#include "RenderComponent.h"
-#include "../Core/Actor.h"
+#include "Core/Actor.h"
+#include "Graphics/Renderer.h"
+#include "Graphics/RenderComponent.h"
 
 #include <glad/glad.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
-RenderComponent::RenderComponent(Actor* owner, Renderer* renderer)
+RenderComponent::RenderComponent(Actor* owner, Renderer& rendererRef)
 	: 
 	Component(owner),
-	pRenderer(renderer)
+	m_Renderer(rendererRef)
 {
-	pRenderer->AddRenderComponent(this);
+	m_Renderer.AddRenderComponent(this);
 	Initialize();
 }
 
 RenderComponent::~RenderComponent()
 {
-	pRenderer->RemoveRenderComponent(this);
+	m_Renderer.RemoveRenderComponent(this);
 }
 
 bool RenderComponent::Initialize()

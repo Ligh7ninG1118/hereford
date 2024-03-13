@@ -108,5 +108,4 @@ void Renderer::AddRenderComponent(RenderComponent* c)
 void Renderer::RemoveRenderComponent(RenderComponent* c)
 {
 	mRenderComponents.erase(std::find(mRenderComponents.begin(), mRenderComponents.end(), c));
-
 }

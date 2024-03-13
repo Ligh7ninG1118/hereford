@@ -1,7 +1,8 @@
 #pragma once
 
-#include "../Graphics/Renderer.h"
-#include "Actor.h"
+#include "Graphics/Renderer.h"
+#include "Core/Actor.h"
+#include "Physics/PhysicsManager.h"
 #include <SDL2/SDL.h>
 #include <vector>
 #include <memory>
@@ -23,7 +24,9 @@ public:
 
 	void LoadData();
 
-	Renderer* GetRenderer() const { return pRenderer; }
+	Renderer& GetRenderer() const { return *pRenderer.get(); }
+	PhysicsManager& GetPhysicsManager() const { return *pPhysicsManager.get(); }
+
 
 private:
 	void ProcessInput();
@@ -31,7 +34,8 @@ private:
 	void GenerateOutput();
 
 	SDL_Window* pSDLWindow;
-	Renderer* pRenderer;
+	std::unique_ptr<Renderer> pRenderer;
+	std::unique_ptr<PhysicsManager> pPhysicsManager;
 	class Player* player;
 
 	bool isRunning;
