@@ -58,13 +58,20 @@ void Player::OnProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseD
 	}
 
 	{
-		if (mouseState & SDL_BUTTON_LEFT && !lmbPressed )
+		if ((mouseState & SDL_BUTTON_LEFT))
 		{
-			Vec3 origin = GetPosition() + m_pCameraComponent->GetPositionOffset();
-			Vec3 dir = m_pCameraComponent->GetFrontVector();
-			mGame->GetPhysicsManager().Raycast(origin, dir, 1000.0f);
-
-			lmbPressed = true;
+			if (!lmbPressed)
+			{
+				Vec3 origin = GetPosition() + m_pCameraComponent->GetPositionOffset();
+				Vec3 dir = m_pCameraComponent->GetFrontVector();
+				HitInfo hitInfo;
+				if (mGame->GetPhysicsManager().Raycast(origin, dir, 1000.0f, hitInfo))
+				{
+					if (hitInfo.hitActor != nullptr)
+						hitInfo.hitActor->SetState(ActorState::Destroy);
+				}
+				lmbPressed = true;
+			}
 		}
 		else
 		{

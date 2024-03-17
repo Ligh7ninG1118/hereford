@@ -22,5 +22,10 @@ private:
 	Vec3 m_BVPositionOffset;
 	Vec3 m_BVExtend;
 	float m_SphereExtend;
+
+	Vec3 m_currentVelocity;
+	Vec3 m_PrevPos;
+	Vec3 m_AttemptPos;
+	bool m_IsGrounded;
 };
 

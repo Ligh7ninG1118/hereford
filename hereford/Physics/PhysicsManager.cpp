@@ -26,9 +26,10 @@ void PhysicsManager::Shutdown()
 {
 }
 
-bool PhysicsManager::Raycast(const struct Vector3& origin, const struct Vector3& dir, const float& maxDistance)
+bool PhysicsManager::Raycast(const struct Vector3& origin, const struct Vector3& dir, const float& maxDistance, HitInfo& outInfo)
 {
 	printf("-------------------------------------\n");
+	bool hasHit = false;
 
 	for (auto collider : mPhysicsComponents)
 	{
@@ -43,7 +44,8 @@ bool PhysicsManager::Raycast(const struct Vector3& origin, const struct Vector3&
 			if (originToCenterLenSq < radius * radius)
 			{
 				printf("inside\n");
-				continue;
+				outInfo.hitActor = collider->GetOwner();
+				return true;
 			}
 			else
 			{
@@ -56,12 +58,21 @@ bool PhysicsManager::Raycast(const struct Vector3& origin, const struct Vector3&
 		float sideDis = sqrt(radius * radius - centerToProjectedDis * centerToProjectedDis);
 
 		if (radius * radius - originToCenterLenSq + projectedDis * projectedDis < 0.0f)
+		{
 			printf("no collision\n");
+			continue;
+		}
 		else if (originToCenterLenSq < radius * radius)
+		{
 			printf("inside\n");
+			outInfo.hitActor = collider->GetOwner();
+			return true;
+		}
 		else
 		{
 			printf("collided\n");
+			outInfo.hitActor = collider->GetOwner();
+			return true;
 		}
 
 	}
