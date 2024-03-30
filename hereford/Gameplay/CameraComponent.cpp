@@ -63,3 +63,8 @@ Mat4 CameraComponent::GetPerspMatrix() const
 
 	return projection;
 }
+
+Vec3 CameraComponent::GetCameraPosition() const
+{
+	return m_PositionOffset + mOwner->GetPosition();
+}

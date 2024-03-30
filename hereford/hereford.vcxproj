@@ -196,6 +196,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Graphics\Shaders\standard_frag.glsl" />
+    <None Include="Graphics\Shaders\phongLighting.glsl" />
     <None Include="Graphics\Shaders\standard_vert.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

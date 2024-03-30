@@ -135,5 +135,6 @@
   <ItemGroup>
     <None Include="Graphics\Shaders\standard_vert.glsl" />
     <None Include="Graphics\Shaders\standard_frag.glsl" />
+    <None Include="Graphics\Shaders\phongLighting.glsl" />
   </ItemGroup>
 </Project>

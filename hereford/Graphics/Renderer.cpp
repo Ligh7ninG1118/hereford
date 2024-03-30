@@ -76,6 +76,8 @@ void Renderer::Render(float deltaTime)
 		glBindVertexArray(VAO);
 		glUseProgram(shaderID);
 
+		Shader::SetVec3(shaderID, "viewPos", m_pMainCamera->GetCameraPosition());
+
 		Mat4 projection = m_pMainCamera->GetPerspMatrix();
 		Shader::SetMat4(shaderID, "projection", projection);
 

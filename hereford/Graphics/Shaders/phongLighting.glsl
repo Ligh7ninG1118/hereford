@@ -1,4 +1,3 @@
-#version 460 core
 
 
 struct Material
@@ -186,29 +185,3 @@ vec3 CalcSpotLightTex(SpotLight light, vec3 normal, vec3 FragPos, vec3 viewDir, 
 
 	return ambient + diffuse + specular;
 }
-
-uniform DirLight dirLight;
-uniform vec3 viewPos;
-
-in vec3 outColor;
-in vec3 FragPos;
-in vec3 Norm;
-in vec2 TexCoords;
-
-out vec4 FragColor;
-
-void main()
-{
-    vec3 norm = normalize(Norm);
-    vec3 viewDir = normalize(viewPos - FragPos);
-
-    DirLight ddLight;
-    ddLight.direction = vec3(0.5f, -0.5f, 0.5f);
-    ddLight.ambient = vec3(0.2f, 0.2f, 0.2f);
-    ddLight.diffuse = vec3(1.0f, 0.2f, 0.2f);
-    ddLight.specular = vec3(0.2f, 0.7f, 0.7f);
-    
-
-    vec3 result = CalcDirLightSimple(ddLight, norm, viewDir, outColor, 64.0f);
-    FragColor = vec4(result, 1.0f);
-} 
