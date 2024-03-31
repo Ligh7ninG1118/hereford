@@ -113,11 +113,11 @@ void GameContext::LoadData()
 
 
 
-	/*LightBulb* lightBulb = new LightBulb(this);
+	LightBulb* lightBulb = new LightBulb(this);
 	lightBulb->SetPosition(Vec3(0.0f, 5.0f, 0.0f));
 
 	LightBulb* lightBulb2 = new LightBulb(this);
-	lightBulb2->SetPosition(Vec3(0.0f, -2.0f, 0.0f));*/
+	lightBulb2->SetPosition(Vec3(0.0f, -2.0f, 0.0f));
 }
 
 Uint32 GameContext::GetShader(std::string vertexPath, std::string fragPath )

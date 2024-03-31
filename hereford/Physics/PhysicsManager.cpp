@@ -33,7 +33,8 @@ bool PhysicsManager::Raycast(const struct Vector3& origin, const struct Vector3&
 
 	for (auto collider : mPhysicsComponents)
 	{
-		float radius = collider->m_SphereExtend;
+		// Ray against sphere
+		/*float radius = collider->m_SphereExtend;
 		Vector3 originToCenter = collider->GetBVPosition() - origin;
 		float projectedDis = originToCenter.Dot(dir);
 
@@ -73,8 +74,43 @@ bool PhysicsManager::Raycast(const struct Vector3& origin, const struct Vector3&
 			printf("collided\n");
 			outInfo.hitActor = collider->GetOwner();
 			return true;
+		}*/
+
+		Vec3 aabbMin = collider->GetBVPosition() - collider->GetBVExtend();
+		Vec3 aabbMax = collider->GetBVPosition() + collider->GetBVExtend();
+
+		float t1 = (aabbMin.mX - origin.mX) / dir.mX;
+		float t2 = (aabbMax.mX - origin.mX) / dir.mX;
+		float t3 = (aabbMin.mY - origin.mY) / dir.mY;
+		float t4 = (aabbMax.mY - origin.mY) / dir.mY;
+		float t5 = (aabbMin.mZ - origin.mZ) / dir.mZ;
+		float t6 = (aabbMax.mZ - origin.mZ) / dir.mZ;
+
+		float tmin = std::max(std::max(std::min(t1, t2), std::min(t3, t4)), std::min(t5, t6));
+		float tmax = std::min(std::min(std::max(t1, t2), std::max(t3, t4)), std::max(t5, t6));
+
+		if (tmax < 0.0f)
+		{
+			printf("behind\n");
+			continue;
 		}
 
+		if (tmin > tmax)
+		{
+			printf("no collision\n");
+			continue;
+		}
+
+		if (tmin < 0.0f)
+		{
+			printf("collided\n");
+			outInfo.hitActor = collider->GetOwner();
+			return true;
+		}
+
+		printf("collided\n");
+		outInfo.hitActor = collider->GetOwner();
+		return true;
 	}
 	printf("-------------------------------------\n");
 

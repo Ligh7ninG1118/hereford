@@ -72,8 +72,8 @@ void Player::OnProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseD
 		{
 			if (!lmbPressed)
 			{
-				Vec3 origin = GetPosition() + m_pCameraComponent->GetPositionOffset();
-				Vec3 dir = m_pCameraComponent->GetFrontVector();
+				Vec3 origin = m_pCameraComponent->GetCameraPosition();
+				Vec3 dir = m_pCameraComponent->GetFrontVector().normalized();
 				HitInfo hitInfo;
 				if (mGame->GetPhysicsManager().Raycast(origin, dir, 1000.0f, hitInfo))
 				{

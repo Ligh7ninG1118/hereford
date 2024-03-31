@@ -19,7 +19,7 @@ TestCube::~TestCube()
 
 void TestCube::OnUpdate(float deltaTime)
 {
-	Vec3 pos = GetPosition();
+	/*Vec3 pos = GetPosition();
 
 	if (pos.mZ > 5.0f)
 	{
@@ -31,5 +31,5 @@ void TestCube::OnUpdate(float deltaTime)
 	}
 
 	pos.mZ += multiplier * deltaTime;
-	SetPosition(pos);
+	SetPosition(pos);*/
 }

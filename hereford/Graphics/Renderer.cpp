@@ -56,6 +56,23 @@ bool Renderer::Initialize()
 
 	debugShader = m_pGameContext->GetShader("Graphics/Shaders/debug_vert.glsl", "Graphics/Shaders/debug_frag.glsl");
 
+	float cameraCenter[] = { 0.0f, 0.0355f, 0.0f, 1.0f, 1.0f, 1.0f,
+							0.0f, -0.0355f, 0.0f, 1.0f, 1.0f, 1.0f,
+							0.02f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+							-0.02f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f };
+
+	Uint32 vboID;
+	glGenVertexArrays(1, &crosshairVAOID);
+	glGenBuffers(1, &vboID);
+	glBindVertexArray(crosshairVAOID);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vboID);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cameraCenter), cameraCenter, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
 	return true;
 }
 
@@ -121,34 +138,14 @@ void Renderer::Render(float deltaTime)
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
 
-	Vec3 camPos = m_pMainCamera->GetCameraPosition();
-	camPos.mX += 0.1f;
-	Vec3 camFwd = m_pMainCamera->GetFrontVector().normalized();
-	Vec3 endPos = camFwd * 1.0f + camPos;
+	// Draw crosshair
+	{
+		glBindVertexArray(crosshairVAOID);
+		glUseProgram(debugShader);
 
-	float cameraCenter[] = { camPos.mX, camPos.mY, camPos.mZ, 1.0f, 0.0f, 0.0f,
-							endPos.mX, endPos.mY, endPos.mZ, 1.0f, 1.0f, 0.0f};
-
-	Uint32 vaoID, vboID;
-	glGenVertexArrays(1, &vaoID);
-	glGenBuffers(1, &vboID);
-	glBindVertexArray(vaoID);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vboID);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cameraCenter), cameraCenter, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
-	glBindVertexArray(vaoID);
-	glUseProgram(debugShader);
-
-	Shader::SetMat4(debugShader, "projection", projection);
-
-	Shader::SetMat4(debugShader, "view", view);
-
-	glDrawArrays(GL_LINES, 0, 2);
+		glLineWidth(1.5f);
+		glDrawArrays(GL_LINES, 0, 4);
+	}
 
 
 	SDL_GL_SwapWindow(m_pSDLWindowContext);

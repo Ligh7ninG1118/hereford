@@ -26,6 +26,7 @@ private:
 	int m_ScreenHeight;
 
 	Uint32 debugShader;
+	Uint32 crosshairVAOID;
 
 	std::vector<class RenderComponent*> mRenderComponents;
 	std::vector<class LightComponent*> mLightComponents;

@@ -27,6 +27,8 @@ public:
 		return GetFrontVector().Cross(Vec3(0.0f, 1.0f, 0.0f)).normalized();
 	}
 
+	Vec3 GetRotation() const { return m_Rotation; }
+
 	float GetMouseSens() const { return mouseSens; }
 	Vec3 GetPositionOffset() const{ return m_PositionOffset; }
 	Vec3 GetCameraPosition() const;

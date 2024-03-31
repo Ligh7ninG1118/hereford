@@ -14,6 +14,8 @@ public:
 	bool CheckCollision(const PhysicsComponent& collider) const;
 
 	Vec3 GetBVPosition() const;
+	Vec3 GetBVExtend() const { return m_BVExtend; }
+
 
 private:
 	class PhysicsManager& m_PhysicsManager;
