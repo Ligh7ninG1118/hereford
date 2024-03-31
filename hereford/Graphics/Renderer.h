@@ -8,7 +8,7 @@
 class Renderer
 {
 public:
-	Renderer(SDL_Window* sdlWindow, int width, int height);
+	Renderer(SDL_Window* sdlWindow, class GameContext* gameContext, int width, int height);
 	~Renderer();
 	bool Initialize();
 	void Shutdown();
@@ -20,9 +20,12 @@ private:
 	SDL_Window* m_pSDLWindowContext;
 	SDL_GLContext m_pGLContext;
 	CameraComponent* m_pMainCamera;
+	class GameContext* m_pGameContext;
 
 	int m_ScreenWidth;
 	int m_ScreenHeight;
+
+	Uint32 debugShader;
 
 	std::vector<class RenderComponent*> mRenderComponents;
 	std::vector<class LightComponent*> mLightComponents;

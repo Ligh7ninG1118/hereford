@@ -151,5 +151,7 @@
     <None Include="Graphics\Shaders\standard_vert.glsl" />
     <None Include="Graphics\Shaders\standard_frag.glsl" />
     <None Include="Graphics\Shaders\phongLighting.glsl" />
+    <None Include="Graphics\Shaders\debug_vert.glsl" />
+    <None Include="Graphics\Shaders\debug_frag.glsl" />
   </ItemGroup>
 </Project>

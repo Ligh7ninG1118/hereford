@@ -30,7 +30,6 @@ public:
 	float GetMouseSens() const { return mouseSens; }
 	Vec3 GetPositionOffset() const{ return m_PositionOffset; }
 	Vec3 GetCameraPosition() const;
-
 private:
 
 	Vec3 m_PositionOffset;

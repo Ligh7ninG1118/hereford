@@ -1,6 +1,7 @@
 #include "Renderer.h"
 #include "RenderComponent.h"
 #include "LightComponent.h"
+#include "Core/GameContext.h"
 
 #include <glad/glad.h>
 
@@ -11,10 +12,11 @@
 #include <time.h>
 #include <string>
 
-Renderer::Renderer(SDL_Window* sdlWindow, int width, int height)
+Renderer::Renderer(SDL_Window* sdlWindow, class GameContext* gameContext, int width, int height)
 	:
 	m_pSDLWindowContext(sdlWindow),
 	m_pMainCamera(nullptr),
+	m_pGameContext(gameContext),
 	m_ScreenWidth(width),
 	m_ScreenHeight(height)
 {
@@ -52,6 +54,7 @@ bool Renderer::Initialize()
 	glViewport(0, 0, m_ScreenWidth, m_ScreenHeight);
 	glClearColor(0.0f, 0.5f, 1.0f, 0.0f);
 
+	debugShader = m_pGameContext->GetShader("Graphics/Shaders/debug_vert.glsl", "Graphics/Shaders/debug_frag.glsl");
 
 	return true;
 }
@@ -67,8 +70,6 @@ void Renderer::Render(float deltaTime)
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	LightComponent* light = mLightComponents[0];
-
 	Mat4 projection = m_pMainCamera->GetPerspMatrix();
 	Mat4 view = m_pMainCamera->GetViewMatrix();
 
@@ -83,10 +84,10 @@ void Renderer::Render(float deltaTime)
 
 
 		glBindVertexArray(VAO);
+		glUseProgram(shaderID);
 
 		if (shaderID != lastShaderID)
 		{
-			glUseProgram(shaderID);
 
 			int lightSize = mLightComponents.size();
 			Shader::SetInt(shaderID, "lightNum", lightSize);
@@ -115,13 +116,41 @@ void Renderer::Render(float deltaTime)
 
 		Mat4 model = renderComponent->GetModelMatrix();
 		Shader::SetMat4(shaderID, "model", model);
-
-		Vector3 color((double)rand() / RAND_MAX, (double)rand() / RAND_MAX, (double)rand() / RAND_MAX);
-
 		Shader::SetVec3(shaderID, "inColor", renderComponent->color);
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
+
+	Vec3 camPos = m_pMainCamera->GetCameraPosition();
+	camPos.mX += 0.1f;
+	Vec3 camFwd = m_pMainCamera->GetFrontVector().normalized();
+	Vec3 endPos = camFwd * 1.0f + camPos;
+
+	float cameraCenter[] = { camPos.mX, camPos.mY, camPos.mZ, 1.0f, 0.0f, 0.0f,
+							endPos.mX, endPos.mY, endPos.mZ, 1.0f, 1.0f, 0.0f};
+
+	Uint32 vaoID, vboID;
+	glGenVertexArrays(1, &vaoID);
+	glGenBuffers(1, &vboID);
+	glBindVertexArray(vaoID);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vboID);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cameraCenter), cameraCenter, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	glBindVertexArray(vaoID);
+	glUseProgram(debugShader);
+
+	Shader::SetMat4(debugShader, "projection", projection);
+
+	Shader::SetMat4(debugShader, "view", view);
+
+	glDrawArrays(GL_LINES, 0, 2);
+
+
 	SDL_GL_SwapWindow(m_pSDLWindowContext);
 }
 
