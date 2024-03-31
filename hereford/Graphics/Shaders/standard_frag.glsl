@@ -19,7 +19,6 @@ struct DirLight
 struct PointLight
 {
 	vec3 position;
-	vec3 direction;
 
 	vec3 ambient;
 	vec3 diffuse;
@@ -187,7 +186,9 @@ vec3 CalcSpotLightTex(SpotLight light, vec3 normal, vec3 FragPos, vec3 viewDir, 
 	return ambient + diffuse + specular;
 }
 
-uniform DirLight dirLight;
+uniform int lightNum;
+
+uniform PointLight pointLight[16];
 uniform vec3 viewPos;
 
 in vec3 outColor;
@@ -195,20 +196,23 @@ in vec3 FragPos;
 in vec3 Norm;
 in vec2 TexCoords;
 
+uniform vec3 inColor;
+
+
 out vec4 FragColor;
 
 void main()
 {
     vec3 norm = normalize(Norm);
     vec3 viewDir = normalize(viewPos - FragPos);
+	vec3 result = vec3(0.0f);
 
-    DirLight ddLight;
-    ddLight.direction = vec3(0.5f, -0.5f, 0.5f);
-    ddLight.ambient = vec3(0.2f, 0.2f, 0.2f);
-    ddLight.diffuse = vec3(1.0f, 0.2f, 0.2f);
-    ddLight.specular = vec3(0.2f, 0.7f, 0.7f);
-    
 
-    vec3 result = CalcDirLightSimple(ddLight, norm, viewDir, outColor, 64.0f);
+	for(int i=0;i<lightNum;i++)
+	{
+		result += CalcPointLightSimple(pointLight[i], norm, FragPos, viewDir, inColor, 64.0f);
+	}
+
+    //vec3 result = CalcDirLightSimple(ddLight, norm, viewDir, outColor, 64.0f);
     FragColor = vec4(result, 1.0f);
 } 

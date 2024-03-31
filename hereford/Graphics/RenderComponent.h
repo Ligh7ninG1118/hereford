@@ -21,6 +21,7 @@ public:
 	void SetVBOID(unsigned int id);
 
 	Mat4 GetModelMatrix() const;
+	Vec3 color;
 
 
 private:

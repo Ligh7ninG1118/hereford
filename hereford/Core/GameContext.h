@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 #include <vector>
 #include <memory>
+#include <unordered_map>
 
 
 class GameContext
@@ -27,6 +28,9 @@ public:
 	Renderer& GetRenderer() const { return *pRenderer.get(); }
 	PhysicsManager& GetPhysicsManager() const { return *pPhysicsManager.get(); }
 
+	Uint32 GetShader(std::string vertexPath, std::string fragPath);
+	Uint32 GetMesh(std::string meshPath);
+
 
 private:
 	void ProcessInput();
@@ -37,6 +41,9 @@ private:
 	std::unique_ptr<Renderer> pRenderer;
 	std::unique_ptr<PhysicsManager> pPhysicsManager;
 	class Player* player;
+
+	std::unordered_map<std::string, Uint32> m_ShaderMap;
+	std::unordered_map<std::string, Uint32> m_MeshMap;
 
 	bool isRunning;
 	bool useVerticalSync;

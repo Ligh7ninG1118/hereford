@@ -25,6 +25,8 @@ private:
 	int m_ScreenHeight;
 
 	std::vector<class RenderComponent*> mRenderComponents;
+	std::vector<class LightComponent*> mLightComponents;
+
 
 	//std::vector<class RenderComponent> m_RenderCompons;
 	friend class RenderComponent;
@@ -32,5 +34,9 @@ private:
 	// in the component constructor)
 	void AddRenderComponent(class RenderComponent* c);
 	void RemoveRenderComponent(class RenderComponent* c);
+
+	friend class LightComponent;
+	void AddLightComponent(class LightComponent* c);
+	void RemoveLightComponent(class LightComponent* c);
 };
 

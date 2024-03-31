@@ -1,5 +1,6 @@
 #include "Renderer.h"
 #include "RenderComponent.h"
+#include "LightComponent.h"
 
 #include <glad/glad.h>
 
@@ -66,31 +67,58 @@ void Renderer::Render(float deltaTime)
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	LightComponent* light = mLightComponents[0];
+
+	Mat4 projection = m_pMainCamera->GetPerspMatrix();
+	Mat4 view = m_pMainCamera->GetViewMatrix();
+
+	Uint32 lastShaderID = 0;
+	Uint32 lastVAOID = 0;
+
 	for (auto renderComponent : mRenderComponents)
 	{
 		unsigned int VAO, VBO, shaderID;
 		VAO = renderComponent->GetVAOID();
-		VBO = renderComponent->GetVBOID();
 		shaderID = renderComponent->GetShaderID();
 
+
 		glBindVertexArray(VAO);
-		glUseProgram(shaderID);
 
-		Shader::SetVec3(shaderID, "viewPos", m_pMainCamera->GetCameraPosition());
+		if (shaderID != lastShaderID)
+		{
+			glUseProgram(shaderID);
 
-		Mat4 projection = m_pMainCamera->GetPerspMatrix();
-		Shader::SetMat4(shaderID, "projection", projection);
+			int lightSize = mLightComponents.size();
+			Shader::SetInt(shaderID, "lightNum", lightSize);
 
-		// camera/view transformation
-		Mat4 view = m_pMainCamera->GetViewMatrix();
-		Shader::SetMat4(shaderID, "view", view);
+			for (int i = 0; i < lightSize; i++)
+			{
+				Shader::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].position", mLightComponents[i]->GetPosition());
+				Shader::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].ambient", mLightComponents[i]->GetPointLight().ambient);
+				Shader::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].diffuse", mLightComponents[i]->GetPointLight().diffuse);
+				Shader::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].specular", mLightComponents[i]->GetPointLight().specular);
+
+				Shader::SetFloat(shaderID, "pointLight[" + std::to_string(i) + "].constant", mLightComponents[i]->GetPointLight().constant);
+				Shader::SetFloat(shaderID, "pointLight[" + std::to_string(i) + "].linear", mLightComponents[i]->GetPointLight().linear);
+				Shader::SetFloat(shaderID, "pointLight[" + std::to_string(i) + "].quadratic", mLightComponents[i]->GetPointLight().quadratic);
+			}
+
+
+			Shader::SetVec3(shaderID, "viewPos", m_pMainCamera->GetCameraPosition());
+
+			Shader::SetMat4(shaderID, "projection", projection);
+
+			Shader::SetMat4(shaderID, "view", view);
+		}
+
+		lastShaderID = shaderID;
 
 		Mat4 model = renderComponent->GetModelMatrix();
 		Shader::SetMat4(shaderID, "model", model);
 
 		Vector3 color((double)rand() / RAND_MAX, (double)rand() / RAND_MAX, (double)rand() / RAND_MAX);
 
-		Shader::SetVec3(shaderID, "inColor", color);
+		Shader::SetVec3(shaderID, "inColor", renderComponent->color);
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
@@ -110,4 +138,14 @@ void Renderer::AddRenderComponent(RenderComponent* c)
 void Renderer::RemoveRenderComponent(RenderComponent* c)
 {
 	mRenderComponents.erase(std::find(mRenderComponents.begin(), mRenderComponents.end(), c));
+}
+
+void Renderer::AddLightComponent(LightComponent* c)
+{
+	mLightComponents.push_back(c);
+}
+
+void Renderer::RemoveLightComponent(LightComponent* c)
+{
+	mLightComponents.erase(std::find(mLightComponents.begin(), mLightComponents.end(), c));
 }

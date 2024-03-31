@@ -2,7 +2,9 @@
 #include "Core/Actor.h"
 #include "Gameplay/Player.h"
 #include "Props/TestCube.h"
+#include "Props/LightBulb.h"
 #include "Util/Random.h"
+#include "Graphics/Shader.h"
 
 #include <glad/glad.h>
 
@@ -84,9 +86,16 @@ void GameContext::RunLoop()
 {
 	while (isRunning)
 	{
+		Uint32 timestampStart = SDL_GetTicks();
 		ProcessInput();
+		Uint32 timestampAfterInput = SDL_GetTicks();
+		printf("Process Input: %d ms \n", timestampAfterInput - timestampStart);
 		UpdateGame();
+		Uint32 timestampUpdate = SDL_GetTicks();
+		printf("Update Game: %d ms \n", timestampUpdate - timestampAfterInput);
 		GenerateOutput();
+		Uint32 timestampRender = SDL_GetTicks();
+		printf("Render: %d ms \n", timestampRender - timestampUpdate);
 	}
 	Shutdown();
 }
@@ -96,27 +105,105 @@ void GameContext::LoadData()
 	player = new Player(this);
 	pRenderer->SetMainCamera(&player->GetMainCamera());
 
-	Vector3 cubePositions[] =
-	{
-		Vector3(0.0f,  0.0f,  0.0f),
-		Vector3(2.0f,  5.0f, -15.0f),
-		Vector3(-1.5f, -2.2f, -2.5f),
-		Vector3(-3.8f, -2.0f, -12.3f),
-		Vector3(2.4f, -0.4f, -3.5f),
-		Vector3(-1.7f,  3.0f, -7.5f),
-		Vector3(1.3f, -2.0f, -2.5f),
-		Vector3(1.5f,  2.0f, -2.5f),
-		Vector3(1.5f,  0.2f, -1.5f),
-		Vector3(-1.3f,  1.0f, -1.5f)
-	};
-
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 1000; i++)
 	{
 		TestCube* cubeActor = new TestCube(this);
-		//cubeActor->SetPosition(cubePositions[i]);
-		cubeActor->SetPosition(Vec3((float)i, 1.8f, 0.0f));
-		//cubeActor->SetRotation(Vector3(45.0f, 0.0f, 0.0f));
+		cubeActor->SetPosition(Vec3(Random::Range(-20.0f, 20.0f), Random::Range(-20.0f, 20.0f), Random::Range(-20.0f, 20.0f) ));
 	}
+
+
+
+	LightBulb* lightBulb = new LightBulb(this);
+	lightBulb->SetPosition(Vec3(0.0f, 5.0f, 0.0f));
+
+	LightBulb* lightBulb2 = new LightBulb(this);
+	lightBulb2->SetPosition(Vec3(0.0f, -2.0f, 0.0f));
+}
+
+Uint32 GameContext::GetShader(std::string vertexPath, std::string fragPath )
+{
+	auto itr = m_ShaderMap.find(vertexPath);
+	if (itr == m_ShaderMap.end())
+	{
+		Shader stdShader = Shader(vertexPath.c_str(), fragPath.c_str());
+
+		m_ShaderMap.insert({ vertexPath, stdShader.ID });
+		return stdShader.ID;
+	}
+	return itr->second;
+}
+
+Uint32 GameContext::GetMesh(std::string meshPath)
+{
+	auto itr = m_MeshMap.find(meshPath);
+	if (itr == m_MeshMap.end())
+	{
+		Uint32 VAOID, VBOID;
+
+		float vertices[] = {
+			// positions          // normals           // texture coords
+			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+			 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+			 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+			 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+
+			-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+			-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+
+			-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+			-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+			-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+			-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+			-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+			-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+
+			 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+			 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+			 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+			 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+
+			-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+			 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+
+			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+			 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+			-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
+		};
+
+		glGenVertexArrays(1, &VAOID);
+		glGenBuffers(1, &VBOID);
+		// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+		glBindVertexArray(VAOID);
+
+		glBindBuffer(GL_ARRAY_BUFFER, VBOID);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glEnableVertexAttribArray(2);
+
+		m_MeshMap.insert({ meshPath, VAOID });
+		return VAOID;
+	}
+	return itr->second;
 }
 
 void GameContext::ProcessInput()

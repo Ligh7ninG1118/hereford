@@ -52,8 +52,18 @@ void Player::OnProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseD
 			inputMoveDir += GetForward().Cross(Vector3(0.0f, 1.0f, 0.0f));
 			hasMovementInput = true;
 		}
+		if (keyState[SDL_SCANCODE_Q])
+		{
+			inputMoveDir -= Vector3(0.0f, 1.0f, 0.0f);
+			hasMovementInput = true;
+		}
+		if (keyState[SDL_SCANCODE_E])
+		{
+			inputMoveDir += Vector3(0.0f, 1.0f, 0.0f);
+			hasMovementInput = true;
+		}
 
-		inputMoveDir.mY = 0.0f;
+		//inputMoveDir.mY = 0.0f;
 		inputMoveDir.Normalize();
 	}
 
