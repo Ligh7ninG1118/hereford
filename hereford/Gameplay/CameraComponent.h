@@ -15,7 +15,7 @@ public:
 	void ProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY) override;
 
 	Mat4 GetViewMatrix() const;
-	Mat4 GetPerspMatrix() const;
+	Mat4 GetPerspMatrix(const float& screenRatio) const;
 	Vec3 GetFrontVector() const
 	{
 		return Vec3(cos(DEG2RAD * m_Rotation.mY) * cos(DEG2RAD * m_Rotation.mX),
@@ -36,7 +36,6 @@ private:
 
 	Vec3 m_PositionOffset;
 	Vec3 m_Rotation;
-	float m_ScreenRatio;
 	float m_HorFOV;
 	float m_NearPlane;
 	float m_FarPlane;

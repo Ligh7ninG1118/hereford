@@ -87,7 +87,7 @@ void Renderer::Render(float deltaTime)
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	Mat4 projection = m_pMainCamera->GetPerspMatrix();
+	Mat4 projection = m_pMainCamera->GetPerspMatrix((float)m_ScreenWidth/m_ScreenHeight);
 	Mat4 view = m_pMainCamera->GetViewMatrix();
 
 	Uint32 lastShaderID = 0;

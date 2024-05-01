@@ -5,7 +5,6 @@ CameraComponent::CameraComponent(Actor* owner)
 	: Component(owner),
 	m_PositionOffset(Vector3(0.0f, 1.8f, 0.0f)),
 	m_Rotation(Vector3(0.0f, 0.0f, 0.0f)),
-	m_ScreenRatio(1.7778f),
 	m_HorFOV(80.0f),
 	m_NearPlane(0.1f),
 	m_FarPlane(100.0f)
@@ -50,12 +49,12 @@ Mat4 CameraComponent::GetViewMatrix() const
 	return Mrot2 * Mtsl2;
 }
 
-Mat4 CameraComponent::GetPerspMatrix() const
+Mat4 CameraComponent::GetPerspMatrix(const float& screenRatio) const
 {
 	Mat4 projection = Mat4::Zero;
 
 	float tanHalfFOVy = tan(DEG2RAD * m_HorFOV / 2.0f);
-	projection.m[0][0] = 1.0f / (m_ScreenRatio * tanHalfFOVy);
+	projection.m[0][0] = 1.0f / (screenRatio * tanHalfFOVy);
 	projection.m[1][1] = 1.0f / tanHalfFOVy;
 	projection.m[2][2] = -(m_FarPlane + m_NearPlane) / (m_FarPlane - m_NearPlane);
 	projection.m[2][3] = -1.0f;
