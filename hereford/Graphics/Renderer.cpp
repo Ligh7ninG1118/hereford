@@ -95,6 +95,7 @@ void Renderer::Render(float deltaTime)
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glUseProgram(backpackShaderID);
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -108,7 +109,6 @@ void Renderer::Render(float deltaTime)
 	{
 		Mesh* mesh = &testBackpack->mMeshes[i];
 
-		glUseProgram(backpackShaderID);
 
 		Shader::SetMat4(backpackShaderID, "projection", projection);
 
@@ -120,6 +120,11 @@ void Renderer::Render(float deltaTime)
 		model.Rotate(1.57f, Vec3::Right);
 
 		Shader::SetMat4(backpackShaderID, "model", model);
+
+		Shader::SetVec3(backpackShaderID, "pointLight.position", Vec3(0.0f, 5.0f, 0.0f));
+		Shader::SetVec3(backpackShaderID, "pointLight.color", Vec3(150.0f, 150.0f, 150.0f));
+		Shader::SetVec3(backpackShaderID, "eyePos", m_pMainCamera->GetCameraPosition());
+
 
 		unsigned int diffuseNr = 1;
 		unsigned int specularNr = 1;
@@ -133,19 +138,25 @@ void Renderer::Render(float deltaTime)
 			switch (mesh->mTextures[i].mType)
 			{
 			case ETextureType::DIFFUSE:
-				texStr = "tex_diffuse_" + std::to_string(diffuseNr++);
+				texStr = "tex_diffuse_1" + std::to_string(diffuseNr++);
 				break;
 			case ETextureType::SPECULAR:
-				texStr = "tex_specular_" + std::to_string(specularNr++);
+				texStr = "tex_specular_1";
 				break;
 			case ETextureType::NORMALS:
-				texStr = "tex_normal_" + std::to_string(normalNr++);
+				texStr = "tex_normals_1";
 				break;
 			case ETextureType::HEIGHT:
-				texStr = "tex_height_" + std::to_string(heightNr++);
+				texStr = "tex_height_1";
 				break;
 			case ETextureType::EMISSIVE:
-				texStr = "tex_emissive_" + std::to_string(heightNr++);
+				texStr = "tex_emissive_1";
+				break;
+			case ETextureType::METALNESS:
+				texStr = "tex_metalrough_1";
+				break;
+			case ETextureType::AMBIENT:
+				texStr = "tex_ao_1";
 				break;
 			default:
 				break;
@@ -210,13 +221,13 @@ void Renderer::Render(float deltaTime)
 	}*/
 
 	// Draw crosshair
-	{
+	/*{
 		glBindVertexArray(crosshairVAOID);
 		glUseProgram(debugShaderID);
 
 		glLineWidth(1.5f);
 		glDrawArrays(GL_LINES, 0, 4);
-	}
+	}*/
 
 
 	SDL_GL_SwapWindow(m_pSDLWindowContext);

@@ -107,7 +107,7 @@ void GameContext::LoadData()
 	player = new Player(this);
 	pRenderer->SetMainCamera(&player->GetMainCamera());
 
-	for (int i = 0; i < 10; i++)
+	/*for (int i = 0; i < 10; i++)
 	{
 		TestCube* cubeActor = new TestCube(this);
 		cubeActor->SetPosition(Vec3(Random::Range(-20.0f, 20.0f), Random::Range(-20.0f, 20.0f), Random::Range(-20.0f, 20.0f) ));
@@ -118,7 +118,7 @@ void GameContext::LoadData()
 	lightBulb->SetPosition(Vec3(0.0f, 5.0f, 0.0f));
 
 	LightBulb* lightBulb2 = new LightBulb(this);
-	lightBulb2->SetPosition(Vec3(0.0f, -2.0f, 0.0f));
+	lightBulb2->SetPosition(Vec3(0.0f, -2.0f, 0.0f));*/
 
 }
 
