@@ -24,7 +24,8 @@ RenderComponent::~RenderComponent()
 
 bool RenderComponent::Initialize()
 {
-	SetShaderID(mOwner->GetGame()->GetShader("Graphics/Shaders/standard_vert.glsl", "Graphics/Shaders/standard_frag.glsl"));
+	//SetShaderID(mOwner->GetGame()->GetShader("Graphics/Shaders/standard_vert.glsl", "Graphics/Shaders/standard_frag.glsl"));
+	SetShaderID(mOwner->GetGame()->GetShader("Graphics/Shaders/model_tex_vert.glsl", "Graphics/Shaders/model_tex_frag.glsl"));
 
 	SetVAOID(mOwner->GetGame()->GetMesh("block"));
 	

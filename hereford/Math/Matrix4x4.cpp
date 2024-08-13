@@ -50,6 +50,7 @@ Matrix4x4& Matrix4x4::Translate(const Vector3& translate)
 	return *this;
 }
 
+//TODO: add degAngle version
 Matrix4x4& Matrix4x4::Rotate(const float& radAngle, const Vector3& axis)
 {
 	Vector3 axisNorm = axis.normalized();

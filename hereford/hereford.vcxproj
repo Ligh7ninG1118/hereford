@@ -124,7 +124,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;opengl32.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -153,6 +153,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Asset\Mesh.cpp" />
+    <ClCompile Include="Asset\Model.cpp" />
     <ClCompile Include="Core\Actor.cpp" />
     <ClCompile Include="Core\Component.cpp" />
     <ClCompile Include="Core\GameContext.cpp" />
@@ -177,6 +179,8 @@
     <ClCompile Include="Util\Random.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Asset\Mesh.h" />
+    <ClInclude Include="Asset\Model.h" />
     <ClInclude Include="Core\Actor.h" />
     <ClInclude Include="Core\Component.h" />
     <ClInclude Include="Core\GameContext.h" />
@@ -202,6 +206,8 @@
   <ItemGroup>
     <None Include="Graphics\Shaders\debug_frag.glsl" />
     <None Include="Graphics\Shaders\debug_vert.glsl" />
+    <None Include="Graphics\Shaders\model_tex_frag.glsl" />
+    <None Include="Graphics\Shaders\model_tex_vert.glsl" />
     <None Include="Graphics\Shaders\standard_frag.glsl" />
     <None Include="Graphics\Shaders\phongLighting.glsl" />
     <None Include="Graphics\Shaders\standard_vert.glsl" />

@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Shader.h"
-#include "../Gameplay/CameraComponent.h"
+#include "Gameplay/CameraComponent.h"
+
+#include "Asset/Model.h"
 #include <SDL2/SDL.h>
 #include <vector>
 
@@ -25,8 +27,11 @@ private:
 	int m_ScreenWidth;
 	int m_ScreenHeight;
 
-	Uint32 debugShader;
+	Uint32 debugShaderID;
+	Uint32 backpackShaderID;
 	Uint32 crosshairVAOID;
+
+	Model* testBackpack;
 
 	std::vector<class RenderComponent*> mRenderComponents;
 	std::vector<class LightComponent*> mLightComponents;

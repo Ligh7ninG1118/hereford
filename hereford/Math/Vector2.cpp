@@ -12,14 +12,17 @@ Vector2::Vector2(float x, float y)
 }
 
 Vector2::Vector2(int x, int y)
+	: mX(static_cast<float>(x)), mY(static_cast<float>(y))
 {
 }
 
 Vector2::Vector2(double x, double y)
+	: mX(static_cast<float>(x)), mY(static_cast<float>(y))
 {
 }
 
 Vector2::Vector2(const Vector2& rhs)
+	: mX(rhs.mX), mY(rhs.mY)
 {
 }
 

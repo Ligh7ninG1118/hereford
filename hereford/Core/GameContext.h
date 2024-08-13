@@ -42,6 +42,7 @@ private:
 	std::unique_ptr<PhysicsManager> pPhysicsManager;
 	class Player* player;
 
+	// separate asset manager to manage this
 	std::unordered_map<std::string, Uint32> m_ShaderMap;
 	std::unordered_map<std::string, Uint32> m_MeshMap;
 
@@ -55,8 +56,6 @@ private:
 	int m_ScreenHeight;
 
 	std::vector<Actor*> mActors;
-
-
 
 };
 

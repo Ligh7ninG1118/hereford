@@ -20,6 +20,7 @@ Renderer::Renderer(SDL_Window* sdlWindow, class GameContext* gameContext, int wi
 	m_ScreenWidth(width),
 	m_ScreenHeight(height)
 {
+	
 }
 
 Renderer::~Renderer()
@@ -54,7 +55,9 @@ bool Renderer::Initialize()
 	glViewport(0, 0, m_ScreenWidth, m_ScreenHeight);
 	glClearColor(0.0f, 0.5f, 1.0f, 0.0f);
 
-	debugShader = m_pGameContext->GetShader("Graphics/Shaders/debug_vert.glsl", "Graphics/Shaders/debug_frag.glsl");
+	debugShaderID = m_pGameContext->GetShader("Graphics/Shaders/debug_vert.glsl", "Graphics/Shaders/debug_frag.glsl");
+	backpackShaderID = m_pGameContext->GetShader("Graphics/Shaders/model_tex_vert.glsl", "Graphics/Shaders/model_tex_frag.glsl");
+
 
 	float cameraCenter[] = { 0.0f, 0.0355f, 0.0f, 1.0f, 1.0f, 1.0f,
 							0.0f, -0.0355f, 0.0f, 1.0f, 1.0f, 1.0f,
@@ -73,11 +76,17 @@ bool Renderer::Initialize()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
+	testBackpack = new Model("damagedhelmet/DamagedHelmet.gltf");
+
 	return true;
 }
 
 void Renderer::Shutdown()
 {
+	delete testBackpack;
+	//Need this?
+	SDL_GL_DeleteContext(m_pGLContext);
+
 }
 
 void Renderer::Render(float deltaTime)
@@ -87,13 +96,75 @@ void Renderer::Render(float deltaTime)
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 	Mat4 projection = m_pMainCamera->GetPerspMatrix((float)m_ScreenWidth/m_ScreenHeight);
 	Mat4 view = m_pMainCamera->GetViewMatrix();
 
 	Uint32 lastShaderID = 0;
 	Uint32 lastVAOID = 0;
 
-	for (auto renderComponent : mRenderComponents)
+	for (unsigned int i = 0; i < testBackpack->mMeshes.size(); i++)
+	{
+		Mesh* mesh = &testBackpack->mMeshes[i];
+
+		glUseProgram(backpackShaderID);
+
+		Shader::SetMat4(backpackShaderID, "projection", projection);
+
+		Shader::SetMat4(backpackShaderID, "view", view);
+
+		Mat4 model = Mat4::Identity;
+		model.Translate(Vec3(5.0f, 1.5f, 0.0f));
+		model.Rotate(-1.57f, Vec3::Up);
+		model.Rotate(1.57f, Vec3::Right);
+
+		Shader::SetMat4(backpackShaderID, "model", model);
+
+		unsigned int diffuseNr = 1;
+		unsigned int specularNr = 1;
+		unsigned int normalNr = 1;
+		unsigned int heightNr = 1;
+		for (unsigned int i = 0; i < mesh->mTextures.size(); i++)
+		{
+			glActiveTexture(GL_TEXTURE0 + i);
+
+			std::string texStr;
+			switch (mesh->mTextures[i].mType)
+			{
+			case ETextureType::DIFFUSE:
+				//TODO: Check if string cantanation is correct
+				texStr = "tex_diffuse_" + std::to_string(diffuseNr++);
+				break;
+			case ETextureType::SPECULAR:
+				texStr = "tex_specular_" + specularNr++;
+				break;
+			case ETextureType::NORMAL:
+				texStr = "tex_normal_" + normalNr++;
+				break;
+			case ETextureType::HEIGHT:
+				texStr = "tex_height_" + heightNr++;
+				break;
+			default:
+				break;
+			}
+
+			glUniform1i(glGetUniformLocation(backpackShaderID, texStr.c_str()), i);
+			glBindTexture(GL_TEXTURE_2D, mesh->mTextures[i].mID);
+		}
+
+		
+
+		glBindVertexArray(mesh->VAO);
+		glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(mesh->mIndices.size()), GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+
+		glActiveTexture(GL_TEXTURE0);
+	}
+
+
+	/*for (auto renderComponent : mRenderComponents)
 	{
 		unsigned int VAO, VBO, shaderID;
 		VAO = renderComponent->GetVAOID();
@@ -136,12 +207,13 @@ void Renderer::Render(float deltaTime)
 		Shader::SetVec3(shaderID, "inColor", renderComponent->color);
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-	}
+
+	}*/
 
 	// Draw crosshair
 	{
 		glBindVertexArray(crosshairVAOID);
-		glUseProgram(debugShader);
+		glUseProgram(debugShaderID);
 
 		glLineWidth(1.5f);
 		glDrawArrays(GL_LINES, 0, 4);

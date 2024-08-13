@@ -2,6 +2,11 @@
 
 #include "Core/Component.h"
 
+enum class ERenderMode
+{
+
+};
+
 
 class RenderComponent : public Component
 {
