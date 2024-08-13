@@ -16,7 +16,6 @@ public:
 	bool mGammaCorrection;
 
 	Model(std::string const& inPath, bool inGamma = false);
-	void Draw(unsigned int shaderID);
 private:
 	void LoadModel(std::string const& path);
 

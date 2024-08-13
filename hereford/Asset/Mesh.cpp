@@ -11,49 +11,6 @@ Mesh::Mesh(std::vector<Vertex> inVertices, std::vector<unsigned int> inIndices, 
 	SetupMesh();
 }
 
-
-//TODO: Move this logic to RenderComponent, use flags to indicate render mode
-void Mesh::Draw(unsigned int shaderID)
-{
-	unsigned int diffuseNr = 1;
-	unsigned int specularNr = 1;
-	unsigned int normalNr = 1;
-	unsigned int heightNr = 1;
-	for (unsigned int i = 0; i < mTextures.size(); i++)
-	{
-		glActiveTexture(GL_TEXTURE0 + i);
-
-		std::string texStr;
-		switch (mTextures[i].mType)
-		{
-		case ETextureType::DIFFUSE:
-			//TODO: Check if string cantanation is correct
-			texStr = "tex_diffuse_" + diffuseNr++;
-			break;
-		case ETextureType::SPECULAR:
-			texStr = "tex_specular_" + specularNr++;
-			break;
-		case ETextureType::NORMAL:
-			texStr = "tex_normal_" + normalNr++;
-			break;
-		case ETextureType::HEIGHT:
-			texStr = "tex_height_" + heightNr++;
-			break;
-		default:
-			break;
-		}
-
-		glUniform1i(glGetUniformLocation(shaderID, texStr.c_str()), i);
-		glBindTexture(GL_TEXTURE_2D, mTextures[i].mID);
-	}
-
-	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(mIndices.size()), GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-
-	glActiveTexture(GL_TEXTURE0);
-}
-
 void Mesh::SetupMesh()
 {
 	glGenVertexArrays(1, &VAO);

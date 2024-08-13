@@ -10,8 +10,14 @@ enum class ETextureType
 {
 	DIFFUSE = 0,
 	SPECULAR,
-	NORMAL,
+	NORMALS,
 	HEIGHT,
+	EMISSIVE,
+	AMBIENT,
+	METALNESS,
+	DIFFUSE_ROUGHNESS,
+	AMBIENT_OCCLUSION,
+
 };
 
 
@@ -37,6 +43,7 @@ struct Texture
 class Mesh
 {
 public:
+	//TODO: Move to private
 	std::vector<Vertex> mVertices;
 	std::vector<unsigned int> mIndices;
 	std::vector<Texture> mTextures;
@@ -46,7 +53,6 @@ public:
 	unsigned int EBO;
 
 	Mesh(std::vector<Vertex> inVertices, std::vector<unsigned int> inIndices, std::vector<Texture> inTextures);
-	void Draw(unsigned int shaderID);
 private:
 	
 	void SetupMesh();

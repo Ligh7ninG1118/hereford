@@ -22,11 +22,6 @@ Model::Model(std::string const& inPath, bool inGamma)
 	LoadModel(inPath);
 }
 
-void Model::Draw(unsigned int shaderID)
-{
-	for (unsigned int i = 0; i < mMeshes.size(); i++)
-		mMeshes[i].Draw(shaderID);
-}
 
 void Model::LoadModel(std::string const& inPath)
 {
@@ -95,17 +90,31 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
+
+
 	std::vector<Texture> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE);
 	textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 
 	std::vector<Texture> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR);
 	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 
-	std::vector<Texture> normalMaps = LoadMaterialTextures(material, aiTextureType_HEIGHT);
+	std::vector<Texture> normalMaps = LoadMaterialTextures(material, aiTextureType_NORMALS);
 	textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 
-	std::vector<Texture> heightMaps = LoadMaterialTextures(material, aiTextureType_AMBIENT);
+	std::vector<Texture> heightMaps = LoadMaterialTextures(material, aiTextureType_HEIGHT);
 	textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+
+	std::vector<Texture> emissiveMaps = LoadMaterialTextures(material, aiTextureType_EMISSIVE);
+	textures.insert(textures.end(), emissiveMaps.begin(), emissiveMaps.end());
+
+	std::vector<Texture> metalMaps = LoadMaterialTextures(material, aiTextureType_METALNESS);
+	textures.insert(textures.end(), metalMaps.begin(), metalMaps.end());
+
+	std::vector<Texture> roughnessMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE_ROUGHNESS);
+	textures.insert(textures.end(), roughnessMaps.begin(), roughnessMaps.end());
+
+	std::vector<Texture> aoMaps = LoadMaterialTextures(material, aiTextureType_LIGHTMAP);
+	textures.insert(textures.end(), aoMaps.begin(), aoMaps.end());
 
 
 	return Mesh(vertices, indices, textures);
@@ -148,7 +157,19 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType 
 				texture.mType = ETextureType::HEIGHT;
 				break;
 			case aiTextureType_NORMALS:
-				texture.mType = ETextureType::NORMAL;
+				texture.mType = ETextureType::NORMALS;
+				break;
+			case aiTextureType_EMISSIVE:
+				texture.mType = ETextureType::EMISSIVE;
+				break;
+			case aiTextureType_DIFFUSE_ROUGHNESS:
+				texture.mType = ETextureType::DIFFUSE_ROUGHNESS;
+				break;
+			case aiTextureType_METALNESS:
+				texture.mType = ETextureType::METALNESS;
+				break;
+			case aiTextureType_LIGHTMAP:
+				texture.mType = ETextureType::AMBIENT_OCCLUSION;
 				break;
 			default:
 				//TODO: logging

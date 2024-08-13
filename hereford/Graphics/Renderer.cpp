@@ -84,7 +84,6 @@ bool Renderer::Initialize()
 void Renderer::Shutdown()
 {
 	delete testBackpack;
-	//Need this?
 	SDL_GL_DeleteContext(m_pGLContext);
 
 }
@@ -134,17 +133,19 @@ void Renderer::Render(float deltaTime)
 			switch (mesh->mTextures[i].mType)
 			{
 			case ETextureType::DIFFUSE:
-				//TODO: Check if string cantanation is correct
 				texStr = "tex_diffuse_" + std::to_string(diffuseNr++);
 				break;
 			case ETextureType::SPECULAR:
-				texStr = "tex_specular_" + specularNr++;
+				texStr = "tex_specular_" + std::to_string(specularNr++);
 				break;
-			case ETextureType::NORMAL:
-				texStr = "tex_normal_" + normalNr++;
+			case ETextureType::NORMALS:
+				texStr = "tex_normal_" + std::to_string(normalNr++);
 				break;
 			case ETextureType::HEIGHT:
-				texStr = "tex_height_" + heightNr++;
+				texStr = "tex_height_" + std::to_string(heightNr++);
+				break;
+			case ETextureType::EMISSIVE:
+				texStr = "tex_emissive_" + std::to_string(heightNr++);
 				break;
 			default:
 				break;
@@ -153,8 +154,6 @@ void Renderer::Render(float deltaTime)
 			glUniform1i(glGetUniformLocation(backpackShaderID, texStr.c_str()), i);
 			glBindTexture(GL_TEXTURE_2D, mesh->mTextures[i].mID);
 		}
-
-		
 
 		glBindVertexArray(mesh->VAO);
 		glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(mesh->mIndices.size()), GL_UNSIGNED_INT, 0);
