@@ -37,5 +37,7 @@ private:
 	unsigned int m_ShaderID;
 	unsigned int m_VertexAttributeObjectID;
 	unsigned int m_VertexBufferObjectID;
+
+	//need to add custom parameters for T/R/S offset
 };
 

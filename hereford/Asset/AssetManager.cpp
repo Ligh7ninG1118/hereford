@@ -1,5 +1,4 @@
 #include "AssetManager.h"
-#include "Asset/Model.h"
 
 
 AssetManager::AssetManager()

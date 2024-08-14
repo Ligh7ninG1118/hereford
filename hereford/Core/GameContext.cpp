@@ -4,7 +4,7 @@
 #include "Props/TestCube.h"
 #include "Props/LightBulb.h"
 #include "Util/Random.h"
-#include "Graphics/Shader.h"
+#include "Asset/Shader.h"
 
 #include "Asset/Model.h"
 
@@ -122,18 +122,6 @@ void GameContext::LoadData()
 
 }
 
-Uint32 GameContext::GetShader(std::string vertexPath, std::string fragPath )
-{
-	auto itr = m_ShaderMap.find(vertexPath);
-	if (itr == m_ShaderMap.end())
-	{
-		Shader stdShader = Shader(vertexPath.c_str(), fragPath.c_str());
-
-		m_ShaderMap.insert({ vertexPath, stdShader.ID });
-		return stdShader.ID;
-	}
-	return itr->second;
-}
 
 Uint32 GameContext::GetMesh(std::string meshPath)
 {

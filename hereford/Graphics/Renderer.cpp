@@ -4,7 +4,7 @@
 #include "Core/GameContext.h"
 #include "Asset/Texture.h"
 #include "Asset/Model.h"
-
+#include "ShaderOp.h"
 #include "Asset/AssetManager.h"
 
 #include <glad/glad.h>
@@ -59,8 +59,8 @@ bool Renderer::Initialize()
 	glViewport(0, 0, m_ScreenWidth, m_ScreenHeight);
 	glClearColor(0.0f, 0.5f, 1.0f, 0.0f);
 
-	debugShaderID = m_pGameContext->GetShader("Graphics/Shaders/debug_vert.glsl", "Graphics/Shaders/debug_frag.glsl");
-	backpackShaderID = m_pGameContext->GetShader("Graphics/Shaders/model_tex_vert.glsl", "Graphics/Shaders/model_tex_frag.glsl");
+	//debugShaderID = m_pGameContext->GetShader("Graphics/Shaders/debug_vert.glsl", "Graphics/Shaders/debug_frag.glsl");
+	//backpackShaderID = m_pGameContext->GetShader("Graphics/Shaders/model_tex_vert.glsl", "Graphics/Shaders/model_tex_frag.glsl");
 
 
 	float cameraCenter[] = { 0.0f, 0.0355f, 0.0f, 1.0f, 1.0f, 1.0f,
@@ -82,7 +82,8 @@ bool Renderer::Initialize()
 
 	AssetManager* am = new AssetManager();
 	testBackpack = am->LoadAsset<Model>(std::string("damagedhelmet/DamagedHelmet.gltf"));
-
+	//testBackpack = am->LoadAsset<Model>(std::string("backpack/backpack.obj"));
+	backpackShader = am->LoadAsset<Shader>(std::string("Graphics/Shaders/model_tex_vert.glsl+Graphics/Shaders/model_tex_frag.glsl"));
 	return true;
 }
 
@@ -98,7 +99,7 @@ void Renderer::Render(float deltaTime)
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glUseProgram(backpackShaderID);
+	backpackShader->Use();
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -111,22 +112,22 @@ void Renderer::Render(float deltaTime)
 	for (unsigned int i = 0; i < testBackpack->mMeshes.size(); i++)
 	{
 		Mesh* mesh = &testBackpack->mMeshes[i];
+		Uint32 shaderID = backpackShader->GetID();
 
+		ShaderOp::SetMat4(shaderID, "projection", projection);
 
-		Shader::SetMat4(backpackShaderID, "projection", projection);
-
-		Shader::SetMat4(backpackShaderID, "view", view);
+		ShaderOp::SetMat4(shaderID, "view", view);
 
 		Mat4 model = Mat4::Identity;
 		model.Translate(Vec3(5.0f, 1.5f, 0.0f));
 		model.Rotate(-1.57f, Vec3::Up);
 		model.Rotate(1.57f, Vec3::Right);
 
-		Shader::SetMat4(backpackShaderID, "model", model);
+		ShaderOp::SetMat4(shaderID, "model", model);
 
-		Shader::SetVec3(backpackShaderID, "pointLight.position", Vec3(0.0f, 5.0f, 0.0f));
-		Shader::SetVec3(backpackShaderID, "pointLight.color", Vec3(150.0f, 150.0f, 150.0f));
-		Shader::SetVec3(backpackShaderID, "eyePos", m_pMainCamera->GetCameraPosition());
+		ShaderOp::SetVec3(shaderID, "pointLight.position", Vec3(0.0f, 5.0f, 0.0f));
+		ShaderOp::SetVec3(shaderID, "pointLight.color", Vec3(150.0f, 150.0f, 150.0f));
+		ShaderOp::SetVec3(shaderID, "eyePos", m_pMainCamera->GetCameraPosition());
 
 
 		unsigned int diffuseNr = 1;
@@ -164,8 +165,7 @@ void Renderer::Render(float deltaTime)
 			default:
 				break;
 			}
-
-			glUniform1i(glGetUniformLocation(backpackShaderID, texStr.c_str()), i);
+			ShaderOp::SetInt(shaderID, texStr.c_str(), i);
 			glBindTexture(GL_TEXTURE_2D, mesh->mTextures[i].GetID());
 		}
 
@@ -195,29 +195,29 @@ void Renderer::Render(float deltaTime)
 
 			for (int i = 0; i < lightSize; i++)
 			{
-				Shader::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].position", mLightComponents[i]->GetPosition());
-				Shader::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].ambient", mLightComponents[i]->GetPointLight().ambient);
-				Shader::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].diffuse", mLightComponents[i]->GetPointLight().diffuse);
-				Shader::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].specular", mLightComponents[i]->GetPointLight().specular);
+				ShaderOp::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].position", mLightComponents[i]->GetPosition());
+				ShaderOp::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].ambient", mLightComponents[i]->GetPointLight().ambient);
+				ShaderOp::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].diffuse", mLightComponents[i]->GetPointLight().diffuse);
+				ShaderOp::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].specular", mLightComponents[i]->GetPointLight().specular);
 
-				Shader::SetFloat(shaderID, "pointLight[" + std::to_string(i) + "].constant", mLightComponents[i]->GetPointLight().constant);
-				Shader::SetFloat(shaderID, "pointLight[" + std::to_string(i) + "].linear", mLightComponents[i]->GetPointLight().linear);
-				Shader::SetFloat(shaderID, "pointLight[" + std::to_string(i) + "].quadratic", mLightComponents[i]->GetPointLight().quadratic);
+				ShaderOp::SetFloat(shaderID, "pointLight[" + std::to_string(i) + "].constant", mLightComponents[i]->GetPointLight().constant);
+				ShaderOp::SetFloat(shaderID, "pointLight[" + std::to_string(i) + "].linear", mLightComponents[i]->GetPointLight().linear);
+				ShaderOp::SetFloat(shaderID, "pointLight[" + std::to_string(i) + "].quadratic", mLightComponents[i]->GetPointLight().quadratic);
 			}
 
 
-			Shader::SetVec3(shaderID, "viewPos", m_pMainCamera->GetCameraPosition());
+			ShaderOp::SetVec3(shaderID, "viewPos", m_pMainCamera->GetCameraPosition());
 
-			Shader::SetMat4(shaderID, "projection", projection);
+			ShaderOp::SetMat4(shaderID, "projection", projection);
 
-			Shader::SetMat4(shaderID, "view", view);
+			ShaderOp::SetMat4(shaderID, "view", view);
 		}
 
 		lastShaderID = shaderID;
 
 		Mat4 model = renderComponent->GetModelMatrix();
-		Shader::SetMat4(shaderID, "model", model);
-		Shader::SetVec3(shaderID, "inColor", renderComponent->color);
+		ShaderOp::SetMat4(shaderID, "model", model);
+		ShaderOp::SetVec3(shaderID, "inColor", renderComponent->color);
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 

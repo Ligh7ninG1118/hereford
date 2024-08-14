@@ -21,7 +21,7 @@
     <ClCompile Include="glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics\Shader.cpp">
+    <ClCompile Include="Asset\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\Actor.cpp">
@@ -93,9 +93,12 @@
     <ClCompile Include="Asset\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Graphics\ShaderOp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Graphics\Shader.h">
+    <ClInclude Include="Asset\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Gameplay\CameraComponent.h">
@@ -168,6 +171,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Asset\Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics\ShaderOp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

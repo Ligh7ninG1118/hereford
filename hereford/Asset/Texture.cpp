@@ -65,7 +65,7 @@ void Texture::GenerateGLAsset(bool gamma)
 
 		stbi_image_free(data);
 
-		mFileName = mPath.substr(mPath.find_last_of("/"));
+		mFileName = mPath.substr(mPath.find_last_of("/")+1);
 	}
 	else
 	{

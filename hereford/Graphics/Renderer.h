@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Shader.h"
 #include "Gameplay/CameraComponent.h"
 
 #include "Asset/Model.h"
+#include "Asset/Shader.h"
 #include <SDL2/SDL.h>
 #include <vector>
 #include <memory>
@@ -29,7 +29,7 @@ private:
 	int m_ScreenHeight;
 
 	Uint32 debugShaderID;
-	Uint32 backpackShaderID;
+	std::shared_ptr<Shader> backpackShader;
 	Uint32 crosshairVAOID;
 
 	std::shared_ptr<Model> testBackpack;
