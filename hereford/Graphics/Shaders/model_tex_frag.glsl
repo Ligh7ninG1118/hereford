@@ -33,7 +33,9 @@ vec3 FresnelComponent(float cosTheta, vec3 f0);
 
 void main()
 {    
-    vec3 albedo = texture(tex_diffuse_1, TexCoords).rgb;
+    //vec3 albedo = texture(tex_diffuse_1, TexCoords).rgb;
+    //sRGB
+    vec3 albedo = pow(texture(tex_diffuse_1, TexCoords).rgb, vec3(2.2f));
     float roughness = texture(tex_metalrough_1, TexCoords).g;
     float metallic = texture(tex_metalrough_1, TexCoords).b;
     float ao = texture(tex_ao_1, TexCoords).r;
