@@ -2,6 +2,7 @@
 #include <vector>
 //#include "Core/Actor.h"
 
+//TODO a common file for all enums and structs?
 struct HitInfo
 {
 	class Actor* hitActor = nullptr;

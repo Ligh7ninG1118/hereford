@@ -1,31 +1,52 @@
 #pragma once
 
-#include "Mesh.h"
-
+#include "Math/Math.h"
+#include "Asset.h"
 #include <string>
 #include <vector>
 
+const int MAX_BONE_INFLUENCE = 4;
 
+struct Vertex
+{
+	Vec3 mPosition;
+	Vec3 mNormal;
+	Vec2 mTexCoords;
+	Vec3 mTangent;
+	Vec3 mBitangent;
 
-class Model
+	int mBoneIDs[MAX_BONE_INFLUENCE];
+	float mWeights[MAX_BONE_INFLUENCE];
+};
+
+struct Mesh
+{
+	std::vector<Vertex> mVertices;
+	std::vector<unsigned int> mIndices;
+	std::vector<class Texture> mTextures;
+
+	unsigned int mVAOID;
+	unsigned int mVBOID;
+	unsigned int mEBOID;
+};
+
+class Model : public Asset
 {
 public:
-	std::vector<Texture> mLoadedTextures;
 	std::vector<Mesh> mMeshes;
-	std::string mDirectory;
-	bool mGammaCorrection;
 
-	Model(std::string const& inPath, bool inGamma = false);
+	Model(const std::string& inPath);
+
 private:
-	void LoadModel(std::string const& path);
+	std::string mDirectory;
+	std::vector<class Texture> mLoadedTextures;
+	void Initialize() override;
 
 	void ProcessNode(struct aiNode* node, const struct aiScene* scene);
 
 	Mesh ProcessMesh(struct aiMesh* mesh, const struct aiScene* scene);
 
-	std::vector<Texture> LoadMaterialTextures(struct aiMaterial* mat, enum aiTextureType type);
+	std::vector<class Texture> LoadMaterialTextures(struct aiMaterial* mat, enum aiTextureType type);
 
-	unsigned int SetupTextureFromFile(const std::string& filename, const std::string& directory, bool gamma = false);
-
+	void GenerateGLAsset(Mesh& inSubMesh);
 };
-

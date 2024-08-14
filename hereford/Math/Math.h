@@ -20,6 +20,8 @@ using Vec2 = Vector2;
 using Vec3 = Vector3;
 using Mat4 = Matrix4x4;
 
+using Uint32 = unsigned int;
+
 class Math
 {
 public:

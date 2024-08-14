@@ -1,39 +1,33 @@
-#include "Math/Math.h"
 #include "Model.h"
+#include "Texture.h"
+#include <glad/glad.h>
 
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
-
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
-#include <glad/glad.h>
 
 #include <fstream>
 #include <sstream>
 #include <iostream>
 #include <map>
 
-
-Model::Model(std::string const& inPath, bool inGamma) 
-	: mGammaCorrection(inGamma)
+Model::Model(const std::string& inPath)
+	: Asset(inPath, EAssetType::MODEL)
 {
-	LoadModel(inPath);
+	Initialize();
 }
 
-
-void Model::LoadModel(std::string const& inPath)
+void Model::Initialize()
 {
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(inPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	const aiScene* scene = importer.ReadFile(mPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
 		std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
 		return;
 	}
-	mDirectory = inPath.substr(0, inPath.find_last_of('/'));
+	mDirectory = mPath.substr(0, mPath.find_last_of('/'));
 	ProcessNode(scene->mRootNode, scene);
 }
 
@@ -53,9 +47,7 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene)
 
 Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 {
-	std::vector<Vertex> vertices;
-	std::vector<unsigned int> indices;
-	std::vector<Texture> textures;
+	Mesh finalSubMesh;
 
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 	{
@@ -77,7 +69,7 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 		else
 			vertex.mTexCoords = Vec2(0.0f, 0.0f);
 
-		vertices.push_back(vertex);
+		finalSubMesh.mVertices.push_back(vertex);
 	}
 
 
@@ -85,39 +77,28 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	{
 		aiFace face = mesh->mFaces[i];
 		for (unsigned int j = 0; j < face.mNumIndices; j++)
-			indices.push_back(face.mIndices[j]);
+			finalSubMesh.mIndices.push_back(face.mIndices[j]);
 	}
+
+	GenerateGLAsset(finalSubMesh);
 
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
+	std::vector<Texture> tempTextures;
 
+	std::vector<aiTextureType> targetTextureType{ 
+		aiTextureType_DIFFUSE, aiTextureType_SPECULAR, aiTextureType_NORMALS,
+		aiTextureType_HEIGHT, aiTextureType_EMISSIVE, aiTextureType_METALNESS,
+		aiTextureType_DIFFUSE_ROUGHNESS, aiTextureType_LIGHTMAP
+	};
 
-	std::vector<Texture> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE);
-	textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+	for (auto tType : targetTextureType)
+	{
+		tempTextures = LoadMaterialTextures(material, tType);
+		finalSubMesh.mTextures.insert(finalSubMesh.mTextures.end(), tempTextures.begin(), tempTextures.end());
+	}
 
-	std::vector<Texture> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR);
-	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-
-	std::vector<Texture> normalMaps = LoadMaterialTextures(material, aiTextureType_NORMALS);
-	textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
-
-	std::vector<Texture> heightMaps = LoadMaterialTextures(material, aiTextureType_HEIGHT);
-	textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
-
-	std::vector<Texture> emissiveMaps = LoadMaterialTextures(material, aiTextureType_EMISSIVE);
-	textures.insert(textures.end(), emissiveMaps.begin(), emissiveMaps.end());
-
-	std::vector<Texture> metalMaps = LoadMaterialTextures(material, aiTextureType_METALNESS);
-	textures.insert(textures.end(), metalMaps.begin(), metalMaps.end());
-
-	std::vector<Texture> roughnessMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE_ROUGHNESS);
-	textures.insert(textures.end(), roughnessMaps.begin(), roughnessMaps.end());
-
-	std::vector<Texture> aoMaps = LoadMaterialTextures(material, aiTextureType_LIGHTMAP);
-	textures.insert(textures.end(), aoMaps.begin(), aoMaps.end());
-
-
-	return Mesh(vertices, indices, textures);
+	return finalSubMesh;
 }
 
 std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type)
@@ -128,12 +109,12 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType 
 		aiString filename;
 		mat->GetTexture(type, i, &filename);
 		bool skip = false;
-		
+
 		// if current textures already loaded, skip
 		//TODO: use dict for better effiency?
 		for (unsigned int j = 0; j < mLoadedTextures.size(); j++)
 		{
-			if (std::strcmp(mLoadedTextures[j].mFilename.data(), filename.C_Str()) == 0)
+			if (std::strcmp(mLoadedTextures[j].GetFileName().data(), filename.C_Str()) == 0)
 			{
 				textures.push_back(mLoadedTextures[j]);
 				skip = true;
@@ -142,40 +123,40 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType 
 		}
 		if (!skip)
 		{
-			Texture texture;
-			texture.mID = SetupTextureFromFile(filename.C_Str(), this->mDirectory);
-
+			Texture texture(mDirectory + "/" + filename.C_Str());
+			ETextureType tType;
 			switch (type)
 			{
 			case aiTextureType_DIFFUSE:
-				texture.mType = ETextureType::DIFFUSE;
+				tType = ETextureType::DIFFUSE;
 				break;
 			case aiTextureType_SPECULAR:
-				texture.mType = ETextureType::SPECULAR;
+				tType = ETextureType::SPECULAR;
 				break;
 			case aiTextureType_HEIGHT:
-				texture.mType = ETextureType::HEIGHT;
+				tType = ETextureType::HEIGHT;
 				break;
 			case aiTextureType_NORMALS:
-				texture.mType = ETextureType::NORMALS;
+				tType = ETextureType::NORMALS;
 				break;
 			case aiTextureType_EMISSIVE:
-				texture.mType = ETextureType::EMISSIVE;
+				tType = ETextureType::EMISSIVE;
 				break;
 			case aiTextureType_DIFFUSE_ROUGHNESS:
-				texture.mType = ETextureType::DIFFUSE_ROUGHNESS;
+				tType = ETextureType::DIFFUSE_ROUGHNESS;
 				break;
 			case aiTextureType_METALNESS:
-				texture.mType = ETextureType::METALNESS;
+				tType = ETextureType::METALNESS;
 				break;
 			case aiTextureType_LIGHTMAP:
-				texture.mType = ETextureType::AMBIENT_OCCLUSION;
+				tType = ETextureType::AMBIENT_OCCLUSION;
 				break;
 			default:
 				//TODO: logging
 				break;
 			}
-			texture.mFilename = filename.C_Str();
+
+			texture.SetType(tType);
 			textures.push_back(texture);
 			mLoadedTextures.push_back(texture);
 		}
@@ -183,53 +164,35 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType 
 	return textures;
 }
 
-unsigned int Model::SetupTextureFromFile(const std::string& filename, const std::string& directory, bool gamma)
+
+
+void Model::GenerateGLAsset(Mesh& inMesh)
 {
+	glGenVertexArrays(1, &inMesh.mVAOID);
+	glGenBuffers(1, &inMesh.mVBOID);
+	glGenBuffers(1, &inMesh.mEBOID);
 
-	std::string path = directory + '/' + std::string(filename);
+	glBindVertexArray(inMesh.mVAOID);
+	glBindBuffer(GL_ARRAY_BUFFER, inMesh.mVBOID);
+	glBufferData(GL_ARRAY_BUFFER, inMesh.mVertices.size() * sizeof(Vertex), &inMesh.mVertices[0], GL_STATIC_DRAW);
 
-	unsigned int textureID;
-	glGenTextures(1, &textureID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, inMesh.mEBOID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, inMesh.mIndices.size() * sizeof(unsigned int), &inMesh.mIndices[0], GL_STATIC_DRAW);
 
-	int width, height, numComponents;
-	//stbi_set_flip_vertically_on_load(true);
-	unsigned char* data = stbi_load(path.c_str(), &width, &height, &numComponents, 0);
-	if (data)
-	{
-		GLenum format = 0u;
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, mNormal));
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, mTexCoords));
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, mTangent));
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, mBitangent));
+	glEnableVertexAttribArray(5);
+	glVertexAttribIPointer(5, 4, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, mBoneIDs));
+	glEnableVertexAttribArray(6);
+	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, mWeights));
 
-		switch (numComponents)
-		{
-		case 1:
-			format = GL_RED;
-			break;
-		case 3:
-			format = GL_RGB;
-			break;
-		case 4:
-			format = GL_RGBA;
-			break;
-		default:
-			//logging error
-			break;
-		}
-
-		glBindTexture(GL_TEXTURE_2D, textureID);
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		stbi_image_free(data);
-	}
-	else
-	{
-		std::cout << "Texture failed to load at path: " << filename << std::endl;
-		stbi_image_free(data);
-	}
-
-	return textureID;
+	glBindVertexArray(0);
 }

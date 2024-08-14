@@ -153,7 +153,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Asset\Mesh.cpp" />
+    <ClCompile Include="Asset\Asset.cpp" />
+    <ClCompile Include="Asset\AssetManager.cpp" />
     <ClCompile Include="Asset\Model.cpp" />
     <ClCompile Include="Core\Actor.cpp" />
     <ClCompile Include="Core\Component.cpp" />
@@ -176,10 +177,12 @@
     <ClCompile Include="Physics\PhysicsManager.cpp" />
     <ClCompile Include="Physics\PhysicsComponent.cpp" />
     <ClCompile Include="Props\TestCube.cpp" />
+    <ClCompile Include="Asset\Texture.cpp" />
     <ClCompile Include="Util\Random.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Asset\Mesh.h" />
+    <ClInclude Include="Asset\Asset.h" />
+    <ClInclude Include="Asset\AssetManager.h" />
     <ClInclude Include="Asset\Model.h" />
     <ClInclude Include="Core\Actor.h" />
     <ClInclude Include="Core\Component.h" />
@@ -201,6 +204,7 @@
     <ClInclude Include="Physics\PhysicsManager.h" />
     <ClInclude Include="Physics\PhysicsComponent.h" />
     <ClInclude Include="Props\TestCube.h" />
+    <ClInclude Include="Asset\Texture.h" />
     <ClInclude Include="Util\Random.h" />
   </ItemGroup>
   <ItemGroup>

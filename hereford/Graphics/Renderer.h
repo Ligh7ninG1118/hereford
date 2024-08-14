@@ -6,6 +6,7 @@
 #include "Asset/Model.h"
 #include <SDL2/SDL.h>
 #include <vector>
+#include <memory>
 
 class Renderer
 {
@@ -31,7 +32,7 @@ private:
 	Uint32 backpackShaderID;
 	Uint32 crosshairVAOID;
 
-	Model* testBackpack;
+	std::shared_ptr<Model> testBackpack;
 
 	std::vector<class RenderComponent*> mRenderComponents;
 	std::vector<class LightComponent*> mLightComponents;

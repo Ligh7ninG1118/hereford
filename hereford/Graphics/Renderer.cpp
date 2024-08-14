@@ -2,6 +2,10 @@
 #include "RenderComponent.h"
 #include "LightComponent.h"
 #include "Core/GameContext.h"
+#include "Asset/Texture.h"
+#include "Asset/Model.h"
+
+#include "Asset/AssetManager.h"
 
 #include <glad/glad.h>
 
@@ -76,16 +80,15 @@ bool Renderer::Initialize()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	testBackpack = new Model("damagedhelmet/DamagedHelmet.gltf");
+	AssetManager* am = new AssetManager();
+	testBackpack = am->LoadAsset<Model>(std::string("damagedhelmet/DamagedHelmet.gltf"));
 
 	return true;
 }
 
 void Renderer::Shutdown()
 {
-	delete testBackpack;
 	SDL_GL_DeleteContext(m_pGLContext);
-
 }
 
 void Renderer::Render(float deltaTime)
@@ -135,7 +138,7 @@ void Renderer::Render(float deltaTime)
 			glActiveTexture(GL_TEXTURE0 + i);
 
 			std::string texStr;
-			switch (mesh->mTextures[i].mType)
+			switch (mesh->mTextures[i].GetType())
 			{
 			case ETextureType::DIFFUSE:
 				texStr = "tex_diffuse_1" + std::to_string(diffuseNr++);
@@ -163,10 +166,10 @@ void Renderer::Render(float deltaTime)
 			}
 
 			glUniform1i(glGetUniformLocation(backpackShaderID, texStr.c_str()), i);
-			glBindTexture(GL_TEXTURE_2D, mesh->mTextures[i].mID);
+			glBindTexture(GL_TEXTURE_2D, mesh->mTextures[i].GetID());
 		}
 
-		glBindVertexArray(mesh->VAO);
+		glBindVertexArray(mesh->mVAOID);
 		glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(mesh->mIndices.size()), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
