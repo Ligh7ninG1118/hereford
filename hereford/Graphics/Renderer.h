@@ -8,6 +8,15 @@
 #include <vector>
 #include <memory>
 
+
+enum class EBGClearMode
+{
+	UNINITIALIZED = 0,
+	PURE_COLOR_ONLY,
+	SKYBOX,
+};
+
+
 class Renderer
 {
 public:
@@ -31,6 +40,11 @@ private:
 	Uint32 debugShaderID;
 	std::shared_ptr<Shader> backpackShader;
 	Uint32 crosshairVAOID;
+
+	std::shared_ptr<Shader> skyboxShader;
+
+	Uint32 skyboxVAOID;
+	Uint32 skyboxTexID;
 
 	std::shared_ptr<Model> testBackpack;
 

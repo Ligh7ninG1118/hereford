@@ -7,7 +7,11 @@
 #include "ShaderOp.h"
 #include "Asset/AssetManager.h"
 
+#include <stb_image.h>
+
 #include <glad/glad.h>
+
+#include <iostream>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
@@ -83,7 +87,96 @@ bool Renderer::Initialize()
 	AssetManager* am = new AssetManager();
 	testBackpack = am->LoadAsset<Model>(std::string("damagedhelmet/DamagedHelmet.gltf"));
 	//testBackpack = am->LoadAsset<Model>(std::string("backpack/backpack.obj"));
-	backpackShader = am->LoadAsset<Shader>(std::string("Graphics/Shaders/model_tex_vert.glsl+Graphics/Shaders/model_tex_frag.glsl"));
+	backpackShader = am->LoadAsset<Shader>(std::string("Graphics/Shaders/model_tex_vert.glsl*Graphics/Shaders/model_tex_frag.glsl"));
+	skyboxShader = am->LoadAsset<Shader>(std::string("Graphics/Shaders/skybox_vert.glsl*Graphics/Shaders/skybox_frag.glsl"));
+
+
+	glGenTextures(1, &skyboxTexID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);
+
+	std::vector<std::string> textures_faces{ "skybox/AboveDay_Right.png", "skybox/AboveDay_Left.png", 
+	"skybox/AboveDay_Up.png", "skybox/AboveDay_Down.png", "skybox/AboveDay_Back.png", 
+	"skybox/AboveDay_Front.png"};
+
+	int width, height, channelNum;
+	unsigned char* data;
+	for (Uint32 i = 0; i < textures_faces.size(); i++)
+	{
+		data = stbi_load(textures_faces[i].c_str(), &width, &height, &channelNum, 0);
+		if (data)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+			stbi_image_free(data);
+		}
+		else
+		{
+			std::cout << "Cubemap tex failed to load at path: " << textures_faces[i] << std::endl;
+			stbi_image_free(data);
+		}
+
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	float skyboxVertices[] = {
+		// positions          
+		-1.0f,  1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		-1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f
+	};
+
+	unsigned int skyboxVAO, skyboxVBO;
+	glGenVertexArrays(1, &skyboxVAO);
+	glGenBuffers(1, &skyboxVBO);
+	glBindVertexArray(skyboxVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	skyboxVAOID = skyboxVAO;
+
 	return true;
 }
 
@@ -99,9 +192,9 @@ void Renderer::Render(float deltaTime)
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	backpackShader->Use();
-
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	Uint32 cumTexChannel = 0;
 
 	Mat4 projection = m_pMainCamera->GetPerspMatrix((float)m_ScreenWidth/m_ScreenHeight);
 	Mat4 view = m_pMainCamera->GetViewMatrix();
@@ -113,7 +206,7 @@ void Renderer::Render(float deltaTime)
 	{
 		Mesh* mesh = &testBackpack->mMeshes[i];
 		Uint32 shaderID = backpackShader->GetID();
-
+		backpackShader->Use();
 		ShaderOp::SetMat4(shaderID, "projection", projection);
 
 		ShaderOp::SetMat4(shaderID, "view", view);
@@ -137,6 +230,7 @@ void Renderer::Render(float deltaTime)
 		for (unsigned int i = 0; i < mesh->mTextures.size(); i++)
 		{
 			glActiveTexture(GL_TEXTURE0 + i);
+			cumTexChannel = i;
 
 			std::string texStr;
 			switch (mesh->mTextures[i].GetType())
@@ -233,7 +327,23 @@ void Renderer::Render(float deltaTime)
 	}*/
 
 
+	glDepthFunc(GL_LEQUAL);
+	skyboxShader->Use();
+	ShaderOp::SetInt(skyboxShader->GetID(), "skybox", cumTexChannel + 1);
+	ShaderOp::SetMat4(skyboxShader->GetID(), "projection", projection);
+	Mat4 view2 = m_pMainCamera->GetViewMatrix();
+	view2.m[0][3] = view2.m[1][3] = view2.m[2][3] = view2.m[3][0] = view2.m[3][1] = view2.m[3][2] = 0;
+
+	ShaderOp::SetMat4(skyboxShader->GetID(), "view", view2);
+	glBindVertexArray(skyboxVAOID);
+	glActiveTexture(GL_TEXTURE0 + cumTexChannel + 1);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glDepthFunc(GL_LESS);
+
 	SDL_GL_SwapWindow(m_pSDLWindowContext);
+
+	//TODO: OpenGL release assets: DeleteVertexArray, DeleteBuffer
 }
 
 void Renderer::SetMainCamera(CameraComponent* pMainCam)

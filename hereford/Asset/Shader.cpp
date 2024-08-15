@@ -13,7 +13,7 @@ Shader::Shader(const std::string& inPath)
 
 void Shader::Initialize()
 {
-	auto div = mPath.find_last_of('+');
+	auto div = mPath.find_last_of('*');
 	std::string vertPath = mPath.substr(0, div);
 	std::string fragPath = mPath.substr(div + 1);
 

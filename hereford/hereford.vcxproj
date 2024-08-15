@@ -214,6 +214,8 @@
     <None Include="Graphics\Shaders\debug_vert.glsl" />
     <None Include="Graphics\Shaders\model_tex_frag.glsl" />
     <None Include="Graphics\Shaders\model_tex_vert.glsl" />
+    <None Include="Graphics\Shaders\skybox_frag.glsl" />
+    <None Include="Graphics\Shaders\skybox_vert.glsl" />
     <None Include="Graphics\Shaders\standard_frag.glsl" />
     <None Include="Graphics\Shaders\phongLighting.glsl" />
     <None Include="Graphics\Shaders\standard_vert.glsl" />
