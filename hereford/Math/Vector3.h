@@ -12,6 +12,9 @@ struct Vector3
 	explicit Vector3(float x, float y, float z);
 	explicit Vector3(int x, int y, int z);
 	explicit Vector3(double x, double y, double z);
+	explicit Vector3(float x);
+	explicit Vector3(int x);
+	explicit Vector3(double x);
 	Vector3(const Vector3& rhs);
 	//Vector3(const class Vector2& rhs);
 

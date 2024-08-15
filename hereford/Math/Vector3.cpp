@@ -31,6 +31,21 @@ Vector3::Vector3(double x, double y, double z)
 {
 }
 
+Vector3::Vector3(float x)
+	: mX(x), mY(x), mZ(x)
+{
+}
+
+Vector3::Vector3(int x)
+	: mX(static_cast<float>(x)), mY(static_cast<float>(x)), mZ(static_cast<float>(x))
+{
+}
+
+Vector3::Vector3(double x)
+	: mX(static_cast<float>(x)), mY(static_cast<float>(x)), mZ(static_cast<float>(x))
+{
+}
+
 Vector3::Vector3(const Vector3& rhs)
 	: mX(rhs.mX), mY(rhs.mY), mZ(rhs.mZ)
 {
