@@ -194,3 +194,8 @@ Vector3& Vector3::operator/=(const float& scalar)
 	mZ /= scalar;
 	return *this;
 }
+
+const Vector3& operator*(const float& scalar, const Vector3& vec3)
+{
+	return vec3 * scalar;
+}

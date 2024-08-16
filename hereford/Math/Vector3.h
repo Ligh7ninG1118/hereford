@@ -2,9 +2,9 @@
 
 struct Vector3
 {
-	float mX;
-	float mY;
-	float mZ;
+	float mX;		// Also Pitch
+	float mY;		// Also Yaw
+	float mZ;		// Also Roll
 
 
 	Vector3();
@@ -55,5 +55,8 @@ struct Vector3
 	Vector3& operator-=(const Vector3& rhs);
 	Vector3& operator*=(const float& scalar);
 	Vector3& operator/=(const float& scalar);
+
+	friend const Vector3& operator*(const float& scalar, const Vector3& vec3);
+
 };
 

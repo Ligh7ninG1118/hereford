@@ -1,6 +1,7 @@
 #pragma once
 #include "Math/Math.h"
 #include <assimp/matrix4x4.h>
+#include <assimp/quaternion.h>
 #include <assimp/vector3.h>
 #include <assimp/vector2.h>
 
@@ -16,6 +17,11 @@ public:
 		to.m[2][0] = from.c1; to.m[2][1] = from.c2; to.m[2][2] = from.c3; to.m[2][3] = from.c4;
 		to.m[3][0] = from.d1; to.m[3][1] = from.d2; to.m[3][2] = from.d3; to.m[3][3] = from.d4;
 		return to;
+	}
+
+	inline static Quat ConvertAssimpQuat(const aiQuaternion& from)
+	{
+		return Quat(from.x, from.y, from.z, from.w);
 	}
 
 	inline static Vec3 ConvertAssimpVec3(const aiVector3D& from)

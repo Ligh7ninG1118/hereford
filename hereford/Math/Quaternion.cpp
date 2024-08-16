@@ -38,6 +38,29 @@ void Quaternion::Normalize()
 	*this = normalized();
 }
 
+float Quaternion::Dot(const Quaternion& rhs) const
+{
+	return mX * rhs.mX + mY * rhs.mY + mZ * rhs.mZ + mW * rhs.mW;
+}
+
+Quaternion Quaternion::EulerToQuat(const Vector3& euler)
+{
+	float cosPitch = cos(euler.mX * 0.5f);
+	float sinPitch = sin(euler.mX * 0.5f);
+	float cosYaw = cos(euler.mY * 0.5f);
+	float sinYaw = sin(euler.mY * 0.5f);
+	float cosRoll = cos(euler.mZ * 0.5f);
+	float sinRoll = sin(euler.mZ * 0.5f);
+
+	Quaternion q;
+	q.mW = cosRoll * cosPitch * cosYaw + sinRoll * sinPitch * sinYaw;
+	q.mX = sinRoll * cosPitch * cosYaw - cosRoll * sinPitch * sinYaw;
+	q.mY = cosRoll * sinPitch * cosYaw + sinRoll * cosPitch * sinYaw;
+	q.mZ = cosRoll * cosPitch * sinYaw - sinRoll * sinPitch * cosYaw;
+
+	return q;
+}
+
 Quaternion& Quaternion::operator=(const Quaternion& rhs)
 {
 	if (this == &rhs)
@@ -64,6 +87,26 @@ bool Quaternion::operator!=(const Quaternion& rhs) const
 	return !(*this==rhs);
 }
 
+Quaternion Quaternion::operator+(const Quaternion& rhs) const
+{
+	return Quaternion(mX + rhs.mX, mY + rhs.mY, mZ + rhs.mZ, mW + rhs.mW);
+}
+
+Quaternion Quaternion::operator-(const Quaternion& rhs) const
+{
+	return Quaternion(mX - rhs.mX, mY - rhs.mY, mZ - rhs.mZ, mW - rhs.mW);
+}
+
+Quaternion Quaternion::operator*(const float& scalar) const
+{
+	return Quaternion(mX * scalar, mY * scalar, mZ * scalar, mW * scalar);
+}
+
+Quaternion Quaternion::operator/(const float& scalar) const
+{
+	return Quaternion(mX / scalar, mY / scalar, mZ / scalar, mW / scalar);
+}
+
 float Quaternion::operator[](const int& index) const
 {
 	switch (index)
@@ -79,4 +122,9 @@ float Quaternion::operator[](const int& index) const
 	default:
 		return -1;
 	}
+}
+
+const Quaternion& operator*(const float& scalar, const Quaternion& quat)
+{
+	return quat * scalar;
 }

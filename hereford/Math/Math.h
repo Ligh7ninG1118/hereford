@@ -27,8 +27,31 @@ using Uint32 = unsigned int;
 class Math
 {
 public:
-	static float Clamp(const float& val, const float& min, const float& max);
-	static float Lerp(const float& a, const float& b, const float& t);
+	template <typename T>
+	static T Clamp(const T& val, const T& min, const T& max)
+	{
+		if (val < min)
+			return min;
+		else if (val > max)
+			return max;
+		else
+			return val;
+	}
+	
+	template <typename T>
+	static T Lerp(const T& a, const T& b, const float& t)
+	{
+		return a * (1.0f - t) + b * t;
+	}
+
+	static Quat Slerp(const Quat& a, const Quat& b, const float& t)
+	{
+		float cosTheta = a.Dot(b);
+		float theta = acosf(cosTheta);
+		float sinTheta = sin(theta);
+
+		return (sin((1 - t) * theta) / sinTheta) * a + (sin(t * theta) / sinTheta) * b;
+	}
 
 };
 

@@ -16,12 +16,21 @@ struct Quaternion
 	Quaternion normalized() const;
 	void Normalize();
 
+	float Dot(const Quaternion& rhs) const;
+
+	Quaternion EulerToQuat(const struct Vector3& euler);
+
 	static const Quaternion Identity;
 
 	Quaternion& operator=(const Quaternion& rhs);
 	bool operator==(const Quaternion& rhs) const;
 	bool operator!=(const Quaternion& rhs) const;
+	Quaternion operator+(const Quaternion& rhs) const;
+	Quaternion operator-(const Quaternion& rhs) const;
+	Quaternion operator*(const float& scalar) const;
+	Quaternion operator/(const float& scalar) const;
 	float operator[](const int& index) const;
 
+	friend const Quaternion& operator*(const float& scalar, const Quaternion& vec3);
 };
 

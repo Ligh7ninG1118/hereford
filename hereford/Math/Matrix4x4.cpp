@@ -32,6 +32,15 @@ Matrix4x4::Matrix4x4(float m11, float m12, float m13, float m14,
 {
 }
 
+Matrix4x4::Matrix4x4(float x)
+	:
+	m{ x, 0.0f, 0.0f, 0.0f,
+		0.0f, x, 0.0f, 0.0f,
+		0.0f, 0.0f, x, 0.0f,
+		0.0f, 0.0f, 0.0f, x, }
+{
+}
+
 
 
 Matrix4x4::Matrix4x4(const Matrix4x4& rhs)
@@ -77,6 +86,42 @@ Matrix4x4& Matrix4x4::Rotate(const float& radAngle, const Vector3& axis)
 	rot.m[2][2] = cosTheta + temp[2] * axisNorm[2];
 
 	*this = *this * rot;
+
+	return *this;
+}
+
+Matrix4x4& Matrix4x4::Rotate(const Quaternion& quat)
+{
+	Matrix4x4 rot;
+
+	float q0sqr = quat.mX * quat.mX;
+	float q1sqr = quat.mY * quat.mY;
+	float q2sqr = quat.mZ * quat.mZ;
+	float q3sqr = quat.mW * quat.mW;
+
+	float q0 = quat.mX;
+	float q1 = quat.mY;
+	float q2 = quat.mZ;
+	float q3 = quat.mW;
+
+
+	rot.m[0][0] = 2.0f * (q0sqr + q1sqr) - 1.0f;
+	rot.m[0][1] = 2.0f * (q1 * q2 - q0 * q3);
+	rot.m[0][2] = 2.0f * (q1 * q3 + q0 * q2);
+	rot.m[0][3] = 0.0f;
+
+	rot.m[1][0] = 2.0f * (q1 * q2 + q0 * q3);
+	rot.m[1][1] = 2.0f * (q0sqr + q2sqr) - 1.0f;
+	rot.m[1][2] = 2.0f * (q2 * q3 - q0 * q1);
+	rot.m[1][3] = 0.0f;
+
+	rot.m[2][0] = 2.0f * (q1 * q3 - q0 * q2);
+	rot.m[2][1] = 2.0f * (q2 * q3 + q0 * q1);
+	rot.m[2][2] = 2.0f * (q0sqr + q3sqr) - 1.0f;
+	rot.m[2][3] = 0.0f;
+
+	rot.m[3][0] = rot.m[3][1] = rot.m[3][2] = 0.0f;
+	rot.m[3][3] = 1.0f;
 
 	return *this;
 }
