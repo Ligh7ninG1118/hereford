@@ -5,6 +5,7 @@
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Matrix4x4.h"
+#include "Quaternion.h"
 
 
 const float PI = 3.14159265358f;
@@ -19,6 +20,7 @@ const float NEG_INFINITY = std::numeric_limits<float>::infinity();
 using Vec2 = Vector2;
 using Vec3 = Vector3;
 using Mat4 = Matrix4x4;
+using Quat = Quaternion;
 
 using Uint32 = unsigned int;
 
