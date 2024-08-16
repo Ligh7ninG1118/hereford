@@ -195,6 +195,7 @@
     <ClInclude Include="Graphics\RenderComponent.h" />
     <ClInclude Include="Graphics\Renderer.h" />
     <ClInclude Include="Graphics\LightComponent.h" />
+    <ClInclude Include="Math\MathAssimpHelper.h" />
     <ClInclude Include="Props\LightBulb.h" />
     <ClInclude Include="Math\Math.h" />
     <ClInclude Include="Math\Vector2.h" />

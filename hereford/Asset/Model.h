@@ -3,7 +3,10 @@
 #include "Math/Math.h"
 #include "Asset.h"
 #include <string>
+#include <assimp/matrix4x4.h>
+
 #include <vector>
+#include <map>
 
 const int MAX_BONE_INFLUENCE = 4;
 
@@ -17,6 +20,12 @@ struct Vertex
 
 	int mBoneIDs[MAX_BONE_INFLUENCE];
 	float mWeights[MAX_BONE_INFLUENCE];
+};
+
+struct BoneInfo
+{
+	int mID;
+	Mat4 mOffset;
 };
 
 struct Mesh
@@ -40,13 +49,21 @@ public:
 private:
 	std::string mDirectory;
 	std::vector<class Texture> mLoadedTextures;
+	
 	void Initialize() override;
 
 	void ProcessNode(struct aiNode* node, const struct aiScene* scene);
-
 	Mesh ProcessMesh(struct aiMesh* mesh, const struct aiScene* scene);
-
 	std::vector<class Texture> LoadMaterialTextures(struct aiMaterial* mat, enum aiTextureType type);
-
 	void GenerateGLAsset(Mesh& inSubMesh);
+
+	std::map<std::string, BoneInfo> mBoneInfoMap;
+	int mBoneCounter = 0;
+	auto& GetBoneInfoMap() const { return mBoneInfoMap; }
+	int& GetBoneCount() { return mBoneCounter; }
+
+
+	void SetVertexBoneDataToDefault(Vertex& vertex);
+	void SetVertexBoneData(Vertex& vertex, int boneID, float weight);
+	void ExtractBoneWeightForVertices(std::vector<Vertex>& vertices, aiMesh* mesh, const aiScene* scene);
 };

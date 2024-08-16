@@ -8,7 +8,7 @@ enum class EAssetType
 	MESH,
 	TEXTURE,
 	MODEL,					// Mesh w/ Textures
-	ANIMATION,
+	ANIMATION,				// Mesh w/ Textures and Animation
 	SHADER,
 };
 
