@@ -153,9 +153,13 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animation\Animation.cpp" />
+    <ClCompile Include="Animation\Animator.cpp" />
     <ClCompile Include="Asset\Asset.cpp" />
     <ClCompile Include="Asset\AssetManager.cpp" />
     <ClCompile Include="Asset\Model.cpp" />
+    <ClCompile Include="Animation\AssimpNodeData.cpp" />
+    <ClCompile Include="Animation\Bone.cpp" />
     <ClCompile Include="Core\Actor.cpp" />
     <ClCompile Include="Core\Component.cpp" />
     <ClCompile Include="Core\GameContext.cpp" />
@@ -179,12 +183,17 @@
     <ClCompile Include="Props\TestCube.cpp" />
     <ClCompile Include="Asset\Texture.cpp" />
     <ClCompile Include="Graphics\ShaderOp.cpp" />
+    <ClCompile Include="Math\Quaternion.cpp" />
     <ClCompile Include="Util\Random.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation\Animation.h" />
+    <ClInclude Include="Animation\Animator.h" />
     <ClInclude Include="Asset\Asset.h" />
     <ClInclude Include="Asset\AssetManager.h" />
     <ClInclude Include="Asset\Model.h" />
+    <ClInclude Include="Animation\AssimpNodeData.h" />
+    <ClInclude Include="Animation\Bone.h" />
     <ClInclude Include="Core\Actor.h" />
     <ClInclude Include="Core\Component.h" />
     <ClInclude Include="Core\GameContext.h" />
@@ -208,6 +217,7 @@
     <ClInclude Include="Props\TestCube.h" />
     <ClInclude Include="Asset\Texture.h" />
     <ClInclude Include="Graphics\ShaderOp.h" />
+    <ClInclude Include="Math\Quaternion.h" />
     <ClInclude Include="Util\Random.h" />
   </ItemGroup>
   <ItemGroup>
