@@ -158,7 +158,6 @@
     <ClCompile Include="Asset\Asset.cpp" />
     <ClCompile Include="Asset\AssetManager.cpp" />
     <ClCompile Include="Asset\Model.cpp" />
-    <ClCompile Include="Animation\AssimpNodeData.cpp" />
     <ClCompile Include="Animation\Bone.cpp" />
     <ClCompile Include="Core\Actor.cpp" />
     <ClCompile Include="Core\Component.cpp" />
@@ -192,7 +191,6 @@
     <ClInclude Include="Asset\Asset.h" />
     <ClInclude Include="Asset\AssetManager.h" />
     <ClInclude Include="Asset\Model.h" />
-    <ClInclude Include="Animation\AssimpNodeData.h" />
     <ClInclude Include="Animation\Bone.h" />
     <ClInclude Include="Core\Actor.h" />
     <ClInclude Include="Core\Component.h" />
