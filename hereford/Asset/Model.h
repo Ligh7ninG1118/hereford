@@ -45,7 +45,8 @@ public:
 	std::vector<Mesh> mMeshes;
 
 	Model(const std::string& inPath);
-
+	auto& GetBoneInfoMap() const { return mBoneInfoMap; }
+	int& GetBoneCount() { return mBoneCounter; }
 private:
 	std::string mDirectory;
 	std::vector<class Texture> mLoadedTextures;
@@ -59,8 +60,7 @@ private:
 
 	std::map<std::string, BoneInfo> mBoneInfoMap;
 	int mBoneCounter = 0;
-	auto& GetBoneInfoMap() const { return mBoneInfoMap; }
-	int& GetBoneCount() { return mBoneCounter; }
+	
 
 
 	void SetVertexBoneDataToDefault(Vertex& vertex);

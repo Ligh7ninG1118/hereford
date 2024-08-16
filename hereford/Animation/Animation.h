@@ -30,7 +30,7 @@ public:
 private:
 	float mDuration;
 	float mTicksPerSec;
-	std::vector<Bone> mBones;
+	std::vector<struct Bone> mBones;
 	AssimpNodeData mRootNode;
 	std::map<std::string, struct BoneInfo> mBoneInfoMap;
 
