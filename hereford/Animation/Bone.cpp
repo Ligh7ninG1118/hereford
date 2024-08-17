@@ -49,9 +49,9 @@ void Bone::Update(float animTime)
 
 int Bone::GetPositionIndex(float animTime)
 {
-	for (int i = 1; i < mNumPosition; i++)
+	for (int i = 0; i < mNumPosition - 1; i++)
 	{
-		if (animTime < mPositions[i].mTimeStamp)
+		if (animTime < mPositions[i + 1].mTimeStamp)
 			return i;
 	}
 	assert(0);
@@ -59,9 +59,9 @@ int Bone::GetPositionIndex(float animTime)
 
 int Bone::GetRotationIndex(float animTime)
 {
-	for (int i = 1; i < mNumRotation; i++)
+	for (int i = 0; i < mNumRotation - 1; i++)
 	{
-		if (animTime < mRotations[i].mTimeStamp)
+		if (animTime < mRotations[i + 1].mTimeStamp)
 			return i;
 	}
 	assert(0);
@@ -69,9 +69,9 @@ int Bone::GetRotationIndex(float animTime)
 
 int Bone::GetScaleIndex(float animTime)
 {
-	for (int i = 1; i < mNumScale; i++)
+	for (int i = 0; i < mNumScale - 1; i++)
 	{
-		if (animTime < mScales[i].mTimeStamp)
+		if (animTime < mScales[i + 1].mTimeStamp)
 			return i;
 	}
 	assert(0);
@@ -81,7 +81,7 @@ float Bone::GetLerpFactor(float lastTimeStamp, float nextTimeStamp, float animTi
 {
 	float midwayLen = animTime - lastTimeStamp;
 	float frameDiff = nextTimeStamp - lastTimeStamp;
-	return midwayLen / frameDiff;
+	return Math::Clamp(midwayLen / frameDiff, 0.0f, 1.0f);
 }
 
 Mat4 Bone::InterpolatePosition(float animTime)
@@ -103,11 +103,11 @@ Mat4 Bone::InterpolateRotation(float animTime)
 	if (mNumRotation == 1)
 		return Mat4(1.0f).Rotate(mRotations[0].mRotation);
 
-	int p0Index = GetPositionIndex(animTime);
+	int p0Index = GetRotationIndex(animTime);
 	int p1Index = p0Index + 1;
 
 	float lerpFactor = GetLerpFactor(mRotations[p0Index].mTimeStamp, mRotations[p1Index].mTimeStamp, animTime);
-	Quat finalRot = Math::Slerp(mRotations[p0Index].mRotation, mRotations[p1Index].mRotation, lerpFactor);
+	Quat finalRot = Math::Lerp(mRotations[p0Index].mRotation, mRotations[p1Index].mRotation, lerpFactor);
 
 	return Mat4(1.0f).Rotate(finalRot);
 }

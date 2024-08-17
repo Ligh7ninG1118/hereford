@@ -6,6 +6,8 @@
 #include "Asset/Model.h"
 #include "ShaderOp.h"
 #include "Asset/AssetManager.h"
+#include "Animation/Animator.h"
+#include "Animation/Animation.h"
 
 #include <stb_image.h>
 
@@ -85,8 +87,13 @@ bool Renderer::Initialize()
 	glEnableVertexAttribArray(1);
 
 	AssetManager* am = new AssetManager();
-	testBackpack = am->LoadAsset<Model>(std::string("damagedhelmet/DamagedHelmet.gltf"));
-	//testBackpack = am->LoadAsset<Model>(std::string("backpack/backpack.obj"));
+	//testBackpack = am->LoadAsset<Model>(std::string("damagedhelmet/DamagedHelmet.gltf"));
+	/*testBackpack = am->LoadAsset<Model>(std::string("mark23v1/scene.gltf"));
+	gunAnim = new Animation("mark23v1/scene.gltf", testBackpack.get());*/
+
+	testBackpack = am->LoadAsset<Model>(std::string("testtest/Hip Hop Dancing.dae"));
+	gunAnim = new Animation("testtest/Hip Hop Dancing.dae", testBackpack.get());
+	gunAnimator = new Animator(gunAnim);
 	backpackShader = am->LoadAsset<Shader>(std::string("Graphics/Shaders/model_tex_vert.glsl*Graphics/Shaders/model_tex_frag.glsl"));
 	skyboxShader = am->LoadAsset<Shader>(std::string("Graphics/Shaders/skybox_vert.glsl*Graphics/Shaders/skybox_frag.glsl"));
 
@@ -202,27 +209,32 @@ void Renderer::Render(float deltaTime)
 	Uint32 lastShaderID = 0;
 	Uint32 lastVAOID = 0;
 
+	gunAnimator->UpdateAnimation(deltaTime);
+	backpackShader->Use();
+	Uint32 shaderID = backpackShader->GetID();
+
+	ShaderOp::SetMat4(shaderID, "projection", projection);
+
+	ShaderOp::SetMat4(shaderID, "view", view);
+
+	Mat4 model = Mat4::Identity;
+	//model.Scale(0.03f);
+	ShaderOp::SetMat4(shaderID, "model", model);
+
+	ShaderOp::SetVec3(shaderID, "pointLight.position", Vec3(0.0f, 5.0f, 0.0f));
+	ShaderOp::SetVec3(shaderID, "pointLight.color", Vec3(150.0f, 150.0f, 150.0f));
+	ShaderOp::SetVec3(shaderID, "eyePos", m_pMainCamera->GetCameraPosition());
+
+	auto transforms = gunAnimator->GetFinalBoneMatrices();
+	for (int i = 0; i < transforms.size(); i++)
+	{
+		ShaderOp::SetMat4(shaderID, "finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+	}
+
 	for (unsigned int i = 0; i < testBackpack->mMeshes.size(); i++)
 	{
 		Mesh* mesh = &testBackpack->mMeshes[i];
-		Uint32 shaderID = backpackShader->GetID();
-		backpackShader->Use();
-		ShaderOp::SetMat4(shaderID, "projection", projection);
-
-		ShaderOp::SetMat4(shaderID, "view", view);
-
-		Mat4 model = Mat4::Identity;
-		model.Translate(Vec3(5.0f, 1.5f, 0.0f));
-		model.Rotate(-1.57f, Vec3::Up);
-		model.Rotate(1.57f, Vec3::Right);
-
-		ShaderOp::SetMat4(shaderID, "model", model);
-
-		ShaderOp::SetVec3(shaderID, "pointLight.position", Vec3(0.0f, 5.0f, 0.0f));
-		ShaderOp::SetVec3(shaderID, "pointLight.color", Vec3(150.0f, 150.0f, 150.0f));
-		ShaderOp::SetVec3(shaderID, "eyePos", m_pMainCamera->GetCameraPosition());
-
-
+		
 		unsigned int diffuseNr = 1;
 		unsigned int specularNr = 1;
 		unsigned int normalNr = 1;

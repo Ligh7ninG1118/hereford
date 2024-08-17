@@ -48,9 +48,8 @@ public:
 	{
 		float cosTheta = a.Dot(b);
 		float theta = acosf(cosTheta);
-		float sinTheta = sin(theta);
 
-		return (sin((1 - t) * theta) / sinTheta) * a + (sin(t * theta) / sinTheta) * b;
+		return (sin((1.0f - t) * theta) / sin(theta)) * a + (sin(t * theta) / sin(theta)) * b;
 	}
 
 };

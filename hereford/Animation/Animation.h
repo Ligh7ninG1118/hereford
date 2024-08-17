@@ -20,7 +20,7 @@ public:
 	Animation(const std::string& animPath, class Model* model);
 	~Animation();
 
-	struct Bone* FindBone(const std::string& boneName);
+	class Bone* FindBone(const std::string& boneName);
 
 	inline float GetTicksPerSecond() const { return mTicksPerSec; }
 	inline float GetDuration() const { return mDuration; }
@@ -30,7 +30,7 @@ public:
 private:
 	float mDuration;
 	float mTicksPerSec;
-	std::vector<struct Bone> mBones;
+	std::vector<class Bone> mBones;
 	AssimpNodeData mRootNode;
 	std::map<std::string, struct BoneInfo> mBoneInfoMap;
 

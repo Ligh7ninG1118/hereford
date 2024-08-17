@@ -6,7 +6,7 @@ CameraComponent::CameraComponent(Actor* owner)
 	m_PositionOffset(Vector3(0.0f, 1.8f, 0.0f)),
 	m_Rotation(Vector3(0.0f, 0.0f, 0.0f)),
 	m_HorFOV(80.0f),
-	m_NearPlane(0.1f),
+	m_NearPlane(0.03f),
 	m_FarPlane(10000.0f)
 {
 }

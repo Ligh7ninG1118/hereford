@@ -31,8 +31,6 @@ public:
 	int GetRotationIndex(float animTime);
 	int GetScaleIndex(float animTime);
 
-	
-	
 	Mat4 GetLocalTransform() const { return mLocalTransform; }
 	std::string GetBoneName() const { return mName; }
 	int GetBoneID() const { return mID; }

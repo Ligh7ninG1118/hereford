@@ -23,7 +23,7 @@ Model::Model(const std::string& inPath)
 void Model::Initialize()
 {
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(mPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	const aiScene* scene = importer.ReadFile(mPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
@@ -63,7 +63,6 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 		if (mesh->HasNormals())
 			vertex.mNormal = MathAssimpHelper::ConvertAssimpVec3(mesh->mNormals[i]);
 
-
 		if (mesh->mTextureCoords[0])
 		{
 			// assume only use texcoord at index 0
@@ -85,7 +84,6 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 			finalMesh.mIndices.push_back(face.mIndices[j]);
 	}
 
-	GenerateGLAsset(finalMesh);
 
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
@@ -104,7 +102,7 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 	}
 
 	ExtractBoneWeightForVertices(finalMesh.mVertices, mesh, scene);
-
+	GenerateGLAsset(finalMesh);
 	return finalMesh;
 }
 

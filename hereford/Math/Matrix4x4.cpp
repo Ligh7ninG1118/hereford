@@ -54,6 +54,7 @@ Matrix4x4::Matrix4x4(const Matrix4x4& rhs)
 
 Matrix4x4& Matrix4x4::Translate(const Vector3& translate)
 {
+	// column major? switch to [i][3]
 	for (int i = 0; i < 3; i++)
 		m[3][i] += translate[i];
 	return *this;
@@ -105,23 +106,25 @@ Matrix4x4& Matrix4x4::Rotate(const Quaternion& quat)
 	float q3 = quat.mW;
 
 
-	rot.m[0][0] = 2.0f * (q0sqr + q1sqr) - 1.0f;
-	rot.m[0][1] = 2.0f * (q1 * q2 - q0 * q3);
-	rot.m[0][2] = 2.0f * (q1 * q3 + q0 * q2);
+	rot.m[0][0] = 1.0f - 2.0f * (q1sqr + q2sqr);
+	rot.m[0][1] = 2.0f * (q0 * q1 - q2 * q3);
+	rot.m[0][2] = 2.0f * (q0 * q2 + q1 * q3);
 	rot.m[0][3] = 0.0f;
 
-	rot.m[1][0] = 2.0f * (q1 * q2 + q0 * q3);
-	rot.m[1][1] = 2.0f * (q0sqr + q2sqr) - 1.0f;
-	rot.m[1][2] = 2.0f * (q2 * q3 - q0 * q1);
+	rot.m[1][0] = 2.0f * (q0 * q1 + q2 * q3);
+	rot.m[1][1] = 1.0f - 2.0f * (q0sqr + q2sqr);
+	rot.m[1][2] = 2.0f * (q1 * q2 - q0 * q3);
 	rot.m[1][3] = 0.0f;
 
-	rot.m[2][0] = 2.0f * (q1 * q3 - q0 * q2);
-	rot.m[2][1] = 2.0f * (q2 * q3 + q0 * q1);
-	rot.m[2][2] = 2.0f * (q0sqr + q3sqr) - 1.0f;
+	rot.m[2][0] = 2.0f * (q0 * q2 - q1 * q3);
+	rot.m[2][1] = 2.0f * (q1 * q2 + q0 * q3);
+	rot.m[2][2] = 1.0f - 2.0f * (q0sqr + q1sqr);
 	rot.m[2][3] = 0.0f;
 
 	rot.m[3][0] = rot.m[3][1] = rot.m[3][2] = 0.0f;
 	rot.m[3][3] = 1.0f;
+
+	*this = *this * rot;
 
 	return *this;
 }
@@ -132,6 +135,15 @@ Matrix4x4& Matrix4x4::Scale(const Vector3& scale)
 		m[i][i] *= scale[i];
 	return *this;
 }
+
+Matrix4x4& Matrix4x4::Scale(const float& scale)
+{
+	for (int i = 0; i < 3; i++)
+		m[i][i] *= scale;
+	return *this;
+}
+
+
 
 Matrix4x4& Matrix4x4::Clear()
 {

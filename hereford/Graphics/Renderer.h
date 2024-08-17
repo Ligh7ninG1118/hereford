@@ -42,7 +42,8 @@ private:
 	Uint32 crosshairVAOID;
 
 	std::shared_ptr<Shader> skyboxShader;
-
+	class Animation* gunAnim;
+	class Animator* gunAnimator;
 	Uint32 skyboxVAOID;
 	Uint32 skyboxTexID;
 

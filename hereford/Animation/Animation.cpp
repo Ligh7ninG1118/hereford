@@ -6,6 +6,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <assimp/StringUtils.h>
 
 #include <assert.h>
 
@@ -13,7 +14,7 @@
 Animation::Animation(const std::string& animPath, Model* model)
 {
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(animPath, aiProcess_Triangulate);
+	const aiScene* scene = importer.ReadFile(animPath, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
 	assert(scene && scene->mRootNode);
 	auto animation = scene->mAnimations[0];
 	mDuration = animation->mDuration;
@@ -42,7 +43,7 @@ Bone* Animation::FindBone(const std::string& boneName)
 void Animation::ReadMissingBones(const aiAnimation* animation, Model& model)
 {
 	int size = animation->mNumChannels;
-	auto& boneInfoMap = model.GetBoneInfoMap();
+	std::map<std::string, BoneInfo> boneInfoMap = model.GetBoneInfoMap();
 	int& boneCount = model.GetBoneCount();
 
 	for (int i = 0; i < size; i++)
@@ -51,10 +52,11 @@ void Animation::ReadMissingBones(const aiAnimation* animation, Model& model)
 		std::string boneName = channel->mNodeName.data;
 		if (boneInfoMap.find(boneName) == boneInfoMap.end())
 		{
-			boneInfoMap[boneName].id = boneCount;
+			boneInfoMap[boneName].mID = boneCount;
 			boneCount++;
 		}
-		mBones.push_back(Bone(channel->mNodeName.data, boneInfoMap[channel->mNodeName.data].id, channel));
+
+		mBones.push_back(Bone(channel->mNodeName.data, boneInfoMap[channel->mNodeName.data].mID, channel));
 
 	}
 	mBoneInfoMap = boneInfoMap;
