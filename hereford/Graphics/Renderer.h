@@ -38,16 +38,16 @@ private:
 	int m_ScreenHeight;
 
 	Uint32 debugShaderID;
-	std::shared_ptr<Shader> backpackShader;
+	std::shared_ptr<Shader> testShader;
 	Uint32 crosshairVAOID;
 
 	std::shared_ptr<Shader> skyboxShader;
-	class Animation* gunAnim;
-	class Animator* gunAnimator;
+	class Animation* testAnimation;
+	class Animator* testAnimator;
 	Uint32 skyboxVAOID;
 	Uint32 skyboxTexID;
 
-	std::shared_ptr<Model> testBackpack;
+	std::shared_ptr<Model> testModel;
 
 	std::vector<class RenderComponent*> mRenderComponents;
 	std::vector<class LightComponent*> mLightComponents;

@@ -65,10 +65,6 @@ bool Renderer::Initialize()
 	glViewport(0, 0, m_ScreenWidth, m_ScreenHeight);
 	glClearColor(0.0f, 0.5f, 1.0f, 0.0f);
 
-	//debugShaderID = m_pGameContext->GetShader("Graphics/Shaders/debug_vert.glsl", "Graphics/Shaders/debug_frag.glsl");
-	//backpackShaderID = m_pGameContext->GetShader("Graphics/Shaders/model_tex_vert.glsl", "Graphics/Shaders/model_tex_frag.glsl");
-
-
 	float cameraCenter[] = { 0.0f, 0.0355f, 0.0f, 1.0f, 1.0f, 1.0f,
 							0.0f, -0.0355f, 0.0f, 1.0f, 1.0f, 1.0f,
 							0.02f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
@@ -87,29 +83,21 @@ bool Renderer::Initialize()
 	glEnableVertexAttribArray(1);
 
 	AssetManager* am = new AssetManager();
-	testBackpack = am->LoadAsset<Model>(std::string("damagedhelmet/DamagedHelmet.gltf"));
-	/*if (1)
-	{
-		testBackpack = am->LoadAsset<Model>(std::string("mark23/scene.gltf"));
-		gunAnim = new Animation("mark23/scene.gltf", testBackpack.get());
-	}
-	else
-	{
-		testBackpack = am->LoadAsset<Model>(std::string("testtest/Hip Hop Dancing.dae"));
-		gunAnim = new Animation("testtest/Hip Hop Dancing.dae", testBackpack.get());
-	}*/
-	
-	//gunAnimator = new Animator(gunAnim);
-	backpackShader = am->LoadAsset<Shader>(std::string("Graphics/Shaders/model_tex_vert.glsl*Graphics/Shaders/model_tex_frag.glsl"));
-	skyboxShader = am->LoadAsset<Shader>(std::string("Graphics/Shaders/skybox_vert.glsl*Graphics/Shaders/skybox_frag.glsl"));
+
+	testModel = am->LoadAsset<Model>(std::string("LocalResources/Stepping Backward.fbx"));
+	testAnimation = new Animation("LocalResources/Stepping Backward.fbx", testModel.get());
+	testAnimator = new Animator(testAnimation);
+
+	testShader = am->LoadAsset<Shader>(std::string("Shaders/model_tex_vert.glsl*Shaders/model_tex_frag.glsl"));
+	skyboxShader = am->LoadAsset<Shader>(std::string("Shaders/skybox_vert.glsl*Shaders/skybox_frag.glsl"));
 
 
 	glGenTextures(1, &skyboxTexID);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);
 
-	std::vector<std::string> textures_faces{ "skybox/AboveDay_Right.png", "skybox/AboveDay_Left.png", 
-	"skybox/AboveDay_Up.png", "skybox/AboveDay_Down.png", "skybox/AboveDay_Back.png", 
-	"skybox/AboveDay_Front.png"};
+	std::vector<std::string> textures_faces{ "LocalResources/skybox/AboveDay_Right.png", "LocalResources/skybox/AboveDay_Left.png", 
+	"LocalResources/skybox/AboveDay_Up.png", "LocalResources/skybox/AboveDay_Down.png", "LocalResources/skybox/AboveDay_Back.png", 
+	"LocalResources/skybox/AboveDay_Front.png"};
 
 	int width, height, channelNum;
 	unsigned char* data;
@@ -215,10 +203,10 @@ void Renderer::Render(float deltaTime)
 	Uint32 lastShaderID = 0;
 	Uint32 lastVAOID = 0;
 
-	if(gunAnimator)
-		gunAnimator->UpdateAnimation(deltaTime);
-	backpackShader->Use();
-	Uint32 shaderID = backpackShader->GetID();
+	if(testAnimator)
+		testAnimator->UpdateAnimation(deltaTime);
+	testShader->Use();
+	Uint32 shaderID = testShader->GetID();
 
 	ShaderOp::SetMat4(shaderID, "projection", projection);
 
@@ -232,18 +220,18 @@ void Renderer::Render(float deltaTime)
 	ShaderOp::SetVec3(shaderID, "pointLight.color", Vec3(150.0f, 150.0f, 150.0f));
 	ShaderOp::SetVec3(shaderID, "eyePos", m_pMainCamera->GetCameraPosition());
 
-	if (gunAnimator)
+	if (testAnimator)
 	{
-		auto transforms = gunAnimator->GetFinalBoneMatrices();
+		auto transforms = testAnimator->GetFinalBoneMatrices();
 		for (int i = 0; i < transforms.size(); i++)
 		{
 			ShaderOp::SetMat4(shaderID, "finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 		}
 	}
 
-	for (unsigned int i = 0; i < testBackpack->mMeshes.size(); i++)
+	for (unsigned int i = 0; i < testModel->mMeshes.size(); i++)
 	{
-		Mesh* mesh = &testBackpack->mMeshes[i];
+		Mesh* mesh = &testModel->mMeshes[i];
 		
 		unsigned int diffuseNr = 1;
 		unsigned int specularNr = 1;
