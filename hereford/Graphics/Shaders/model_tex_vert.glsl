@@ -12,17 +12,16 @@ uniform mat4 projection;
 out vec2 TexCoords;
 out vec3 WorldPos;
 out vec3 Normal;
-out mat4 sampleMat;
 
 const int MAX_BONES = 100;
 const int MAX_BONE_INFLUENCE = 4;
 uniform mat4 finalBonesMatrices[MAX_BONES];
 
 
-
 void main()
 {
     vec4 totalPosition = vec4(0.0f);
+    bool hasBoneInfluenced = false;
     for(int i=0;i<MAX_BONE_INFLUENCE;i++)
     {
         if(inBoneIDs[i] == -1)
@@ -32,11 +31,15 @@ void main()
             totalPosition = vec4(inPos, 1.0f);
             break;
         }
+        hasBoneInfluenced = true;
         vec4 localPos = finalBonesMatrices[inBoneIDs[i]] * vec4(inPos, 1.0f);
         totalPosition += localPos * inWeights[i];
         vec3 localNormal = mat3(finalBonesMatrices[inBoneIDs[i]]) * inNormal;
      }
-    sampleMat = finalBonesMatrices[inBoneIDs[0]];
+
+     if(!hasBoneInfluenced)
+        totalPosition = vec4(inPos, 1.0f);
+
     TexCoords = inTexCoords;    
     WorldPos = vec3(model * totalPosition);
     Normal = inNormal;

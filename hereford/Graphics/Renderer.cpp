@@ -87,8 +87,8 @@ bool Renderer::Initialize()
 	glEnableVertexAttribArray(1);
 
 	AssetManager* am = new AssetManager();
-	//testBackpack = am->LoadAsset<Model>(std::string("damagedhelmet/DamagedHelmet.gltf"));
-	if (1)
+	testBackpack = am->LoadAsset<Model>(std::string("damagedhelmet/DamagedHelmet.gltf"));
+	/*if (1)
 	{
 		testBackpack = am->LoadAsset<Model>(std::string("mark23/scene.gltf"));
 		gunAnim = new Animation("mark23/scene.gltf", testBackpack.get());
@@ -97,9 +97,9 @@ bool Renderer::Initialize()
 	{
 		testBackpack = am->LoadAsset<Model>(std::string("testtest/Hip Hop Dancing.dae"));
 		gunAnim = new Animation("testtest/Hip Hop Dancing.dae", testBackpack.get());
-	}
+	}*/
 	
-	gunAnimator = new Animator(gunAnim);
+	//gunAnimator = new Animator(gunAnim);
 	backpackShader = am->LoadAsset<Shader>(std::string("Graphics/Shaders/model_tex_vert.glsl*Graphics/Shaders/model_tex_frag.glsl"));
 	skyboxShader = am->LoadAsset<Shader>(std::string("Graphics/Shaders/skybox_vert.glsl*Graphics/Shaders/skybox_frag.glsl"));
 
@@ -215,7 +215,8 @@ void Renderer::Render(float deltaTime)
 	Uint32 lastShaderID = 0;
 	Uint32 lastVAOID = 0;
 
-	gunAnimator->UpdateAnimation(deltaTime);
+	if(gunAnimator)
+		gunAnimator->UpdateAnimation(deltaTime);
 	backpackShader->Use();
 	Uint32 shaderID = backpackShader->GetID();
 
@@ -231,10 +232,13 @@ void Renderer::Render(float deltaTime)
 	ShaderOp::SetVec3(shaderID, "pointLight.color", Vec3(150.0f, 150.0f, 150.0f));
 	ShaderOp::SetVec3(shaderID, "eyePos", m_pMainCamera->GetCameraPosition());
 
-	auto transforms = gunAnimator->GetFinalBoneMatrices();
-	for (int i = 0; i < transforms.size(); i++)
+	if (gunAnimator)
 	{
-		ShaderOp::SetMat4(shaderID, "finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+		auto transforms = gunAnimator->GetFinalBoneMatrices();
+		for (int i = 0; i < transforms.size(); i++)
+		{
+			ShaderOp::SetMat4(shaderID, "finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+		}
 	}
 
 	for (unsigned int i = 0; i < testBackpack->mMeshes.size(); i++)
