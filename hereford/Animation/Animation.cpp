@@ -27,7 +27,7 @@ Animation::~Animation()
 {
 }
 
-Bone* Animation::FindBone(const std::string& boneName)
+std::shared_ptr<Bone> Animation::FindBone(const std::string& boneName)
 {
 	auto it = std::find_if(mBones.begin(), mBones.end(),
 		[&](const Bone& bone)
@@ -37,7 +37,7 @@ Bone* Animation::FindBone(const std::string& boneName)
 	if (it == mBones.end())
 		return nullptr;
 	else
-		return &(*it);
+		return std::make_shared<Bone>(*it);
 }
 
 void Animation::ReadMissingBones(const aiAnimation* animation, Model& model)

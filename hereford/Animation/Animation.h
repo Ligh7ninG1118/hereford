@@ -3,6 +3,7 @@
 #include "Math/Math.h"
 #include <string>
 #include <vector>
+#include <memory>
 #include <map>
 
 struct AssimpNodeData
@@ -20,7 +21,7 @@ public:
 	Animation(const std::string& animPath, class Model* model);
 	~Animation();
 
-	class Bone* FindBone(const std::string& boneName);
+	class std::shared_ptr<class Bone> FindBone(const std::string& boneName);
 
 	inline float GetTicksPerSecond() const { return mTicksPerSec; }
 	inline float GetDuration() const { return mDuration; }

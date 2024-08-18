@@ -2,6 +2,7 @@
 #include "Animation.h"
 #include "Bone.h"
 #include "Asset/Model.h"
+#include <memory>
 
 Animator::Animator(Animation* animation)
 	: mCurrentTime(0.0f),
@@ -18,6 +19,7 @@ void Animator::UpdateAnimation(float dt)
 	if (mCurrentAnimation)
 	{
 		mCurrentTime += mCurrentAnimation->GetTicksPerSecond() * dt;
+
 		mCurrentTime = fmod(mCurrentTime, mCurrentAnimation->GetDuration());
 		CalculateBoneTransform(&mCurrentAnimation->GetRootNode(), Mat4::Identity);
 	}
@@ -31,10 +33,10 @@ void Animator::PlayAnimation(Animation* pAnim)
 
 void Animator::CalculateBoneTransform(const AssimpNodeData* node, Mat4 parentTransform)
 {
-	std::string nodeName = node->mName;
+	const std::string& nodeName = node->mName;
 	Mat4 nodeTransform = node->mTransform;
 
-	Bone* bone = mCurrentAnimation->FindBone(nodeName);
+	std::shared_ptr<Bone> bone = mCurrentAnimation->FindBone(nodeName);
 	if (bone)
 	{
 		bone->Update(mCurrentTime);
@@ -42,11 +44,11 @@ void Animator::CalculateBoneTransform(const AssimpNodeData* node, Mat4 parentTra
 	}
 
 	Mat4 globalTransform = parentTransform * nodeTransform;
-	auto boneIDMap = mCurrentAnimation->GetBoneIDMap();
+	const auto& boneIDMap = mCurrentAnimation->GetBoneIDMap();
 	if (boneIDMap.find(nodeName) != boneIDMap.end())
 	{
-		int index = boneIDMap[nodeName].mID;
-		Mat4 offset = boneIDMap[nodeName].mOffset;
+		int index = boneIDMap.at(nodeName).mID;
+		Mat4 offset = boneIDMap.at(nodeName).mOffset;
 		mFinalBoneMatrices[index] = globalTransform * offset;
 	}
 
