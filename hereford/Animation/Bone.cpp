@@ -107,7 +107,7 @@ Mat4 Bone::InterpolateRotation(float animTime)
 	int p1Index = p0Index + 1;
 
 	float lerpFactor = GetLerpFactor(mRotations[p0Index].mTimeStamp, mRotations[p1Index].mTimeStamp, animTime);
-	Quat finalRot = Math::Lerp(mRotations[p0Index].mRotation, mRotations[p1Index].mRotation, lerpFactor);
+	Quat finalRot = Math::Slerp(mRotations[p0Index].mRotation, mRotations[p1Index].mRotation, lerpFactor);
 
 	return Mat4(1.0f).Rotate(finalRot);
 }

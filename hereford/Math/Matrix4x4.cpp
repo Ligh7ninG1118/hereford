@@ -93,7 +93,7 @@ Matrix4x4& Matrix4x4::Rotate(const float& radAngle, const Vector3& axis)
 
 Matrix4x4& Matrix4x4::Rotate(const Quaternion& quat)
 {
-	Matrix4x4 rot;
+	Matrix4x4 rot = Matrix4x4::Identity;
 
 	float q0sqr = quat.mX * quat.mX;
 	float q1sqr = quat.mY * quat.mY;
@@ -107,21 +107,21 @@ Matrix4x4& Matrix4x4::Rotate(const Quaternion& quat)
 
 
 	rot.m[0][0] = 1.0f - 2.0f * (q1sqr + q2sqr);
-	rot.m[0][1] = 2.0f * (q0 * q1 - q2 * q3);
-	rot.m[0][2] = 2.0f * (q0 * q2 + q1 * q3);
-	rot.m[0][3] = 0.0f;
+	rot.m[1][0] = 2.0f * (q0 * q1 - q2 * q3);
+	rot.m[2][0] = 2.0f * (q0 * q2 + q1 * q3);
+	rot.m[3][0] = 0.0f;
 
-	rot.m[1][0] = 2.0f * (q0 * q1 + q2 * q3);
+	rot.m[0][1] = 2.0f * (q0 * q1 + q2 * q3);
 	rot.m[1][1] = 1.0f - 2.0f * (q0sqr + q2sqr);
-	rot.m[1][2] = 2.0f * (q1 * q2 - q0 * q3);
-	rot.m[1][3] = 0.0f;
+	rot.m[2][1] = 2.0f * (q1 * q2 - q0 * q3);
+	rot.m[3][1] = 0.0f;
 
-	rot.m[2][0] = 2.0f * (q0 * q2 - q1 * q3);
-	rot.m[2][1] = 2.0f * (q1 * q2 + q0 * q3);
+	rot.m[0][2] = 2.0f * (q0 * q2 - q1 * q3);
+	rot.m[1][2] = 2.0f * (q1 * q2 + q0 * q3);
 	rot.m[2][2] = 1.0f - 2.0f * (q0sqr + q1sqr);
-	rot.m[2][3] = 0.0f;
+	rot.m[3][2] = 0.0f;
 
-	rot.m[3][0] = rot.m[3][1] = rot.m[3][2] = 0.0f;
+	rot.m[0][3] = rot.m[1][3] = rot.m[2][3] = 0.0f;
 	rot.m[3][3] = 1.0f;
 
 	*this = *this * rot;
