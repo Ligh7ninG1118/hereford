@@ -88,11 +88,17 @@ bool Renderer::Initialize()
 
 	AssetManager* am = new AssetManager();
 	//testBackpack = am->LoadAsset<Model>(std::string("damagedhelmet/DamagedHelmet.gltf"));
-	/*testBackpack = am->LoadAsset<Model>(std::string("mark23v1/scene.gltf"));
-	gunAnim = new Animation("mark23v1/scene.gltf", testBackpack.get());*/
-
-	testBackpack = am->LoadAsset<Model>(std::string("testtest/Hip Hop Dancing.dae"));
-	gunAnim = new Animation("testtest/Hip Hop Dancing.dae", testBackpack.get());
+	if (1)
+	{
+		testBackpack = am->LoadAsset<Model>(std::string("mark23/scene.gltf"));
+		gunAnim = new Animation("mark23/scene.gltf", testBackpack.get());
+	}
+	else
+	{
+		testBackpack = am->LoadAsset<Model>(std::string("testtest/Hip Hop Dancing.dae"));
+		gunAnim = new Animation("testtest/Hip Hop Dancing.dae", testBackpack.get());
+	}
+	
 	gunAnimator = new Animator(gunAnim);
 	backpackShader = am->LoadAsset<Shader>(std::string("Graphics/Shaders/model_tex_vert.glsl*Graphics/Shaders/model_tex_frag.glsl"));
 	skyboxShader = am->LoadAsset<Shader>(std::string("Graphics/Shaders/skybox_vert.glsl*Graphics/Shaders/skybox_frag.glsl"));
