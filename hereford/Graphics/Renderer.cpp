@@ -84,8 +84,9 @@ bool Renderer::Initialize()
 
 	AssetManager* am = new AssetManager();
 
-	testModel = am->LoadAsset<Model>(std::string("LocalResources/Stepping Backward.fbx"));
-	testAnimation = new Animation("LocalResources/Stepping Backward.fbx", testModel.get());
+	//TODO: having two copies of the data right now
+	testModel = am->LoadAsset<Model>(std::string("LocalResources/SillyDancing/Silly Dancing.dae"));
+	testAnimation = new Animation("LocalResources/SillyDancing/Silly Dancing.dae", testModel.get());
 	testAnimator = new Animator(testAnimation);
 
 	testShader = am->LoadAsset<Shader>(std::string("Shaders/model_tex_vert.glsl*Shaders/model_tex_frag.glsl"));
@@ -189,7 +190,6 @@ void Renderer::Shutdown()
 void Renderer::Render(float deltaTime)
 {
 	srand(time(NULL));
-
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -213,7 +213,6 @@ void Renderer::Render(float deltaTime)
 	ShaderOp::SetMat4(shaderID, "view", view);
 
 	Mat4 model = Mat4::Identity;
-	//model.Scale(0.03f);
 	ShaderOp::SetMat4(shaderID, "model", model);
 
 	ShaderOp::SetVec3(shaderID, "pointLight.position", Vec3(0.0f, 5.0f, 0.0f));

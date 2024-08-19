@@ -28,10 +28,6 @@ public:
 	Renderer& GetRenderer() const { return *pRenderer.get(); }
 	PhysicsManager& GetPhysicsManager() const { return *pPhysicsManager.get(); }
 
-	Uint32 GetShader(std::string vertexPath, std::string fragPath);
-	Uint32 GetMesh(std::string meshPath);
-
-
 private:
 	void ProcessInput();
 	void UpdateGame();
