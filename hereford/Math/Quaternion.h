@@ -31,6 +31,6 @@ struct Quaternion
 	Quaternion operator/(const float& scalar) const;
 	float operator[](const int& index) const;
 
-	friend const Quaternion& operator*(const float& scalar, const Quaternion& vec3);
+	friend Quaternion operator*(const float& scalar, const Quaternion& quat);
 };
 

@@ -70,8 +70,7 @@ public:
 			scaleB = sign * t;
 		}
 
-		Quat result = scaleA * a + scaleB * b;
-		return result.normalized();
+		return scaleA * a + scaleB * b;
 	}
 
 };

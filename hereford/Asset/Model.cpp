@@ -112,6 +112,7 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType 
 	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
 	{
 		aiString filename;
+		//TODO: add support for embedded textures
 		mat->GetTexture(type, i, &filename);
 		bool skip = false;
 

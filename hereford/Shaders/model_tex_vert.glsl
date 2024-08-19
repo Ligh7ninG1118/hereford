@@ -31,6 +31,8 @@ void main()
             totalPosition = vec4(inPos, 1.0f);
             break;
         }
+        if(inWeights[i] < 0.0001f)
+            continue;
         hasBoneInfluenced = true;
         vec4 localPos = finalBonesMatrices[inBoneIDs[i]] * vec4(inPos, 1.0f);
         totalPosition += localPos * inWeights[i];
