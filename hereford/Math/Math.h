@@ -47,18 +47,30 @@ public:
 	static Quat Slerp(const Quat& a, const Quat& b, const float& t)
 	{
 		float cosTheta = a.Dot(b);
-		float theta = acosf(cosTheta);
-		float sinTheta = sin(theta);
+		float sign = 1.0f;
+		if (cosTheta < 0.0f)
+		{
+			cosTheta = -cosTheta;
+			sign = -1.0f;
+		}
 
-		Quat result;
+		float scaleA, scaleB;
 
-		if (sinTheta < 0.0f)
-			result = (sin((1.0f - t) * theta) / sinTheta) * a - (sin(t * theta) / sinTheta) * b;
-		else if (theta == 0.0f)
-			result = a;
+		if (1.0f - cosTheta > EPSILON)
+		{
+			float theta = acosf(cosTheta);
+			float sinTheta = sin(theta);
+			scaleA = sin((1.0f - t) * theta) / sinTheta;
+			scaleB = sign * sin(t * theta) / sinTheta;
+		}
+		// If two quat are almost identical, do a LERP instead (THANK YOU JOLT)
 		else
-			result = (sin((1.0f - t) * theta) / sinTheta) * a + (sin(t * theta) / sinTheta) * b;
+		{
+			scaleA = 1.0f - t;
+			scaleB = sign * t;
+		}
 
+		Quat result = scaleA * a + scaleB * b;
 		return result.normalized();
 	}
 
