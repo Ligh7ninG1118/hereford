@@ -84,12 +84,20 @@ bool Renderer::Initialize()
 
 	AssetManager* am = new AssetManager();
 
+	std::vector<Animation> animClips;
+
 	//TODO: having two copies of the data right now
-	testModel = am->LoadAsset<Model>(std::string("LocalResources/SillyDancing/Silly Dancing.dae"));
-	testAnimation = new Animation("LocalResources/SillyDancing/Silly Dancing.dae", testModel.get());
-	/*testModel = am->LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v1.fbx"));
-	testAnimation = new Animation("LocalResources/mark23/source/Mark23v1.fbx", testModel.get());*/
-	testAnimator = new Animator(testAnimation);
+	if (0)
+	{
+		testModel = am->LoadAsset<Model>(std::string("LocalResources/SillyDancing/Silly Dancing.dae"));
+		animClips = Animation::LoadAnimations("LocalResources/SillyDancing/Silly Dancing.dae", testModel.get());
+	}
+	else
+	{
+		testModel = am->LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v1.fbx"));
+		animClips = Animation::LoadAnimations("LocalResources/mark23/source/Mark23v1.fbx", testModel.get());
+	}
+	testAnimator = new Animator(animClips);
 
 	testShader = am->LoadAsset<Shader>(std::string("Shaders/model_tex_vert.glsl*Shaders/model_tex_frag.glsl"));
 	skyboxShader = am->LoadAsset<Shader>(std::string("Shaders/skybox_vert.glsl*Shaders/skybox_frag.glsl"));

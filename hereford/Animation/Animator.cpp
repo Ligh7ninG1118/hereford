@@ -2,11 +2,13 @@
 #include "Animation.h"
 #include "Bone.h"
 #include "Asset/Model.h"
+#include <assert.h>
 #include <memory>
 
-Animator::Animator(Animation* animation)
+Animator::Animator(std::vector<class Animation> animations)
 	: mCurrentTime(0.0f),
-	mCurrentAnimation(animation)
+	mDeltaTime(0.0f),
+	mAnimationList(animations)
 {
 	mFinalBoneMatrices.reserve(100);
 	for (int i = 0; i < 100; i++)
@@ -16,17 +18,17 @@ Animator::Animator(Animation* animation)
 void Animator::UpdateAnimation(float dt)
 {
 	mDeltaTime = dt;
-	if (mCurrentAnimation)
-	{
-		mCurrentTime += mCurrentAnimation->GetTicksPerSecond() * dt;
-		mCurrentTime = fmod(mCurrentTime, mCurrentAnimation->GetDuration());
-		CalculateBoneTransform(&mCurrentAnimation->GetRootNode(), Mat4::Identity);
-	}
+	
+	mCurrentTime += mAnimationList[mCurrentIndex].GetTicksPerSecond() * dt;
+	mCurrentTime = fmod(mCurrentTime, mAnimationList[mCurrentIndex].GetDuration());
+	CalculateBoneTransform(&mAnimationList[mCurrentIndex].GetRootNode(), Mat4::Identity);
 }
 
-void Animator::PlayAnimation(Animation* pAnim)
+void Animator::PlayAnimation(Uint32 index)
 {
-	mCurrentAnimation = pAnim;
+	assert(index >= mAnimationList.size());
+
+	mCurrentIndex = index;
 	mCurrentTime = 0.0f;
 }
 
@@ -35,7 +37,7 @@ void Animator::CalculateBoneTransform(const AssimpNodeData* node, Mat4 parentTra
 	const std::string& nodeName = node->mName;
 	Mat4 nodeTransform = node->mTransform;
 
-	std::shared_ptr<Bone> bone = mCurrentAnimation->FindBone(nodeName);
+	std::shared_ptr<Bone> bone = mAnimationList[mCurrentIndex].FindBone(nodeName);
 	if (bone)
 	{
 		bone->Update(mCurrentTime);
@@ -43,7 +45,7 @@ void Animator::CalculateBoneTransform(const AssimpNodeData* node, Mat4 parentTra
 	}
 
 	Mat4 globalTransform = parentTransform * nodeTransform;
-	const auto& boneIDMap = mCurrentAnimation->GetBoneIDMap();
+	const auto& boneIDMap = mAnimationList[mCurrentIndex].GetBoneIDMap();
 	if (boneIDMap.find(nodeName) != boneIDMap.end())
 	{
 		int index = boneIDMap.at(nodeName).mID;

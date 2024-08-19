@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Math/Math.h"
+#include "Bone.h"
 #include <string>
 #include <vector>
 #include <memory>
@@ -18,8 +19,11 @@ class Animation
 {
 public:
 	Animation() = default;
+	Animation(struct aiAnimation* aiAnim, const struct aiScene* aiScene, class Model* model);
 	Animation(const std::string& animPath, class Model* model);
 	~Animation();
+
+	static std::vector<Animation> LoadAnimations(const std::string& animPath, class Model* model);
 
 	class std::shared_ptr<class Bone> FindBone(const std::string& boneName);
 
@@ -31,7 +35,7 @@ public:
 private:
 	float mDuration;
 	float mTicksPerSec;
-	std::vector<class Bone> mBones;
+	std::vector<Bone> mBones;
 	AssimpNodeData mRootNode;
 	std::map<std::string, struct BoneInfo> mBoneInfoMap;
 

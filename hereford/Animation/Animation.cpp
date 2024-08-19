@@ -7,10 +7,19 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <assimp/StringUtils.h>
-
 #include <assert.h>
 
 
+
+Animation::Animation(aiAnimation* aiAnim, const aiScene* aiScene, Model* model)
+{
+	mDuration = aiAnim->mDuration;
+	mTicksPerSec = aiAnim->mTicksPerSecond;
+	ReadHierarchyData(mRootNode, aiScene->mRootNode);
+	ReadMissingBones(aiAnim, *model);
+}
+
+[[deprecated("Use static func LoadAnimations")]]
 Animation::Animation(const std::string& animPath, Model* model)
 {
 	Assimp::Importer importer;
@@ -27,6 +36,25 @@ Animation::~Animation()
 {
 }
 
+std::vector<Animation> Animation::LoadAnimations(const std::string& animPath, Model* model)
+{
+	std::vector<Animation> animClips;
+
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile(animPath, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
+	assert(scene && scene->mRootNode);
+
+	int num = scene->mNumAnimations;
+
+	for (int i = 0; i < num; i++)
+	{
+		auto aiAnim = scene->mAnimations[i];
+		animClips.push_back(Animation(aiAnim, scene, model));
+	}
+
+	return animClips;
+}
+
 std::shared_ptr<Bone> Animation::FindBone(const std::string& boneName)
 {
 	auto it = std::find_if(mBones.begin(), mBones.end(),
@@ -39,6 +67,8 @@ std::shared_ptr<Bone> Animation::FindBone(const std::string& boneName)
 	else
 		return std::make_shared<Bone>(*it);
 }
+
+
 
 void Animation::ReadMissingBones(const aiAnimation* animation, Model& model)
 {
