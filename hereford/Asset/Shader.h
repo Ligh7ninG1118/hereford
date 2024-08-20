@@ -16,7 +16,7 @@ public:
 	inline Uint32 GetID() const { return mID; }
 
 private:
-	void Initialize() override;
+	void Initialize();
 	Uint32 GenerateGLAsset(const std::string& inPath, GLenum shaderType);
 	void CheckCompileError(GLuint shader, std::string type);
 

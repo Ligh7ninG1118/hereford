@@ -18,7 +18,7 @@ public:
 	Asset(const std::string& inPath, EAssetType inType = EAssetType::RESERVED_DEFAULT);
 	virtual ~Asset();
 
-	virtual void Initialize() = 0;
+	//virtual void Initialize() = 0;
 	std::string GetPath() const { return mPath; }
 	EAssetType GetType() const { return mType; }
 

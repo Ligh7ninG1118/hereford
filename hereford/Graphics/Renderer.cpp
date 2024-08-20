@@ -223,7 +223,7 @@ void Renderer::Render(float deltaTime)
 	ShaderOp::SetMat4(shaderID, "view", view);
 
 	Mat4 model = Mat4::Identity;
-	//model.Scale(0.03f);
+	model.Scale(0.03f);
 	ShaderOp::SetMat4(shaderID, "model", model);
 
 	ShaderOp::SetVec3(shaderID, "pointLight.position", Vec3(0.0f, 5.0f, 0.0f));

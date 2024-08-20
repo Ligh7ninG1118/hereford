@@ -97,16 +97,17 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 
 	for (auto tType : targetTextureType)
 	{
-		tempTextures = LoadMaterialTextures(material, tType);
+		tempTextures = LoadMaterialTextures(material, tType, scene);
 		finalMesh.mTextures.insert(finalMesh.mTextures.end(), tempTextures.begin(), tempTextures.end());
 	}
 
 	ExtractBoneWeightForVertices(finalMesh.mVertices, mesh, scene);
 	GenerateGLAsset(finalMesh);
+
 	return finalMesh;
 }
 
-std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type)
+std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, const aiScene* scene)
 {
 	std::vector<Texture> textures;
 	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
@@ -115,6 +116,8 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType 
 		//TODO: add support for embedded textures
 		mat->GetTexture(type, i, &filename);
 		bool skip = false;
+
+		std::string path = mDirectory + "/" + filename.C_Str();
 
 		// if current textures already loaded, skip
 		//TODO: use dict for better effiency?
@@ -129,7 +132,11 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType 
 		}
 		if (!skip)
 		{
-			Texture texture(mDirectory + "/" + filename.C_Str());
+			const aiTexture* embbedTex = scene->GetEmbeddedTexture(filename.C_Str());
+
+			std::string actualFilename = aiScene::GetShortFilename(filename.C_Str());
+			std::string path = mDirectory + "/" + actualFilename;
+			Texture texture(path.c_str(), embbedTex);
 			ETextureType tType;
 			switch (type)
 			{

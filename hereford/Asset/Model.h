@@ -51,17 +51,15 @@ private:
 	std::string mDirectory;
 	std::vector<class Texture> mLoadedTextures;
 	
-	void Initialize() override;
+	void Initialize();
 
 	void ProcessNode(struct aiNode* node, const struct aiScene* scene);
 	Mesh ProcessMesh(struct aiMesh* mesh, const struct aiScene* scene);
-	std::vector<class Texture> LoadMaterialTextures(struct aiMaterial* mat, enum aiTextureType type);
+	std::vector<class Texture> LoadMaterialTextures(struct aiMaterial* mat, enum aiTextureType type, const struct aiScene* scene);
 	void GenerateGLAsset(Mesh& inSubMesh);
 
 	std::map<std::string, BoneInfo> mBoneInfoMap;
 	int mBoneCounter = 0;
-	
-
 
 	void SetVertexBoneDataToDefault(Vertex& vertex);
 	void SetVertexBoneData(Vertex& vertex, int boneID, float weight);

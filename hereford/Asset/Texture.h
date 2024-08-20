@@ -19,7 +19,7 @@ enum class ETextureType
 class Texture : public Asset
 {
 public:
-	Texture(const std::string& inPath);
+	Texture(const std::string& inPath, const struct aiTexture* embededdTex = nullptr);
 	~Texture();
 
 	inline unsigned int GetID() const { return mID; }
@@ -28,8 +28,8 @@ public:
 	inline std::string GetFileName() const { return mFileName; }
 
 private:
-	void Initialize() override;
-	void GenerateGLAsset(bool gamma = false);
+	void Initialize(const std::string& inPath, const struct aiTexture* embededdTex = nullptr);
+	void GenerateGLAsset(unsigned char* inData, int width, int height, int numComponents, bool gamma = false);
 
 	unsigned int mID;
 	ETextureType mType;
