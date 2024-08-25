@@ -125,7 +125,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;opengl32.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;opengl32.lib;assimp-vc143-mt.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -229,6 +229,15 @@
     <None Include="Graphics\Shaders\standard_frag.glsl" />
     <None Include="Graphics\Shaders\phongLighting.glsl" />
     <None Include="Graphics\Shaders\standard_vert.glsl" />
+    <None Include="Shaders\debug_frag.glsl" />
+    <None Include="Shaders\debug_vert.glsl" />
+    <None Include="Shaders\model_tex_frag.glsl" />
+    <None Include="Shaders\model_tex_vert.glsl" />
+    <None Include="Shaders\phongLighting.glsl" />
+    <None Include="Shaders\skybox_frag.glsl" />
+    <None Include="Shaders\skybox_vert.glsl" />
+    <None Include="Shaders\standard_frag.glsl" />
+    <None Include="Shaders\standard_vert.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

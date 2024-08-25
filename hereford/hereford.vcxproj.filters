@@ -214,5 +214,14 @@
     <None Include="Graphics\Shaders\model_tex_frag.glsl" />
     <None Include="Graphics\Shaders\skybox_vert.glsl" />
     <None Include="Graphics\Shaders\skybox_frag.glsl" />
+    <None Include="Shaders\debug_frag.glsl" />
+    <None Include="Shaders\debug_vert.glsl" />
+    <None Include="Shaders\model_tex_frag.glsl" />
+    <None Include="Shaders\model_tex_vert.glsl" />
+    <None Include="Shaders\phongLighting.glsl" />
+    <None Include="Shaders\skybox_frag.glsl" />
+    <None Include="Shaders\skybox_vert.glsl" />
+    <None Include="Shaders\standard_frag.glsl" />
+    <None Include="Shaders\standard_vert.glsl" />
   </ItemGroup>
 </Project>
