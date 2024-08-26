@@ -15,12 +15,28 @@
 
 #include <iostream>
 
+#include "ft2build.h"
+#include FT_FREETYPE_H
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <string>
+
+struct Character
+{
+	Uint32 mTextureID;
+	Vec2 mSize;
+	Vec2 mBearing;
+	Uint32 mAdvance;
+};
+
+std::map<char, Character> Characters;
+std::shared_ptr<Shader> textShader;
+Uint32 textVAO, textVBO;
+
 
 Renderer::Renderer(SDL_Window* sdlWindow, class GameContext* gameContext, int width, int height)
 	:
@@ -101,7 +117,7 @@ bool Renderer::Initialize()
 
 	testShader = am->LoadAsset<Shader>(std::string("Shaders/model_tex_vert.glsl*Shaders/model_tex_frag.glsl"));
 	skyboxShader = am->LoadAsset<Shader>(std::string("Shaders/skybox_vert.glsl*Shaders/skybox_frag.glsl"));
-
+	textShader = am->LoadAsset<Shader>(std::string("Shaders/ui_text_vert.glsl*Shaders/ui_text_frag.glsl"));
 
 	glGenTextures(1, &skyboxTexID);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);
@@ -188,6 +204,72 @@ bool Renderer::Initialize()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
 	skyboxVAOID = skyboxVAO;
+
+	FT_Library ft;
+	if (FT_Init_FreeType(&ft))
+	{
+		printf("ERROR::FREETYPE: Could not init Freetype Libaray\n");
+	}
+
+	FT_Face face;
+	if (FT_New_Face(ft, "LocalResources/Fonts/ChakraPetch-Regular.ttf", 0, &face))
+	{
+		printf("ERROR::FREETYPE: Failed to load font\n");
+	}
+
+	FT_Set_Pixel_Sizes(face, 0, 48);
+	if (FT_Load_Char(face, 'X', FT_LOAD_RENDER))
+	{
+	}
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	for (unsigned char c = 0; c < 128; c++)
+	{
+		if (FT_Load_Char(face, c, FT_LOAD_RENDER))
+		{
+			printf("ERROR::FREETYPE: Failed to load Glyph\n");
+			continue;
+		}
+
+		Uint32 texture;
+		glGenTextures(1, &texture);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_RED,
+			face->glyph->bitmap.width,
+			face->glyph->bitmap.rows,
+			0,
+			GL_RED,
+			GL_UNSIGNED_BYTE,
+			face->glyph->bitmap.buffer
+		);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		Character character = {
+			texture,
+			Vec2((int)face->glyph->bitmap.width, (int)face->glyph->bitmap.rows),
+			Vec2((int)face->glyph->bitmap_left, (int)face->glyph->bitmap_top),
+			face->glyph->advance.x
+		};
+		Characters.insert(std::pair<char, Character>(c, character));
+	}
+	FT_Done_Face(face);
+	FT_Done_FreeType(ft);
+
+	glGenVertexArrays(1, &textVAO);
+	glGenBuffers(1, &textVBO);
+	glBindVertexArray(textVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, textVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 
 	return true;
 }
@@ -346,20 +428,71 @@ void Renderer::Render(float deltaTime)
 		glDrawArrays(GL_LINES, 0, 4);
 	}*/
 
-
 	glDepthFunc(GL_LEQUAL);
 	skyboxShader->Use();
-	ShaderOp::SetInt(skyboxShader->GetID(), "skybox", cumTexChannel + 1);
+	ShaderOp::SetInt(skyboxShader->GetID(), "skybox", cumTexChannel + 2);
 	ShaderOp::SetMat4(skyboxShader->GetID(), "projection", projection);
 	Mat4 view2 = m_pMainCamera->GetViewMatrix();
 	view2.m[0][3] = view2.m[1][3] = view2.m[2][3] = view2.m[3][0] = view2.m[3][1] = view2.m[3][2] = 0;
 
 	ShaderOp::SetMat4(skyboxShader->GetID(), "view", view2);
 	glBindVertexArray(skyboxVAOID);
-	glActiveTexture(GL_TEXTURE0 + cumTexChannel + 1);
+	glActiveTexture(GL_TEXTURE0 + cumTexChannel + 2);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glDepthFunc(GL_LESS);
+
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	textShader->Use();
+	// TODO: use cast
+	Mat4 uiProj = m_pMainCamera->GetOrthoMatrix(0.0f, (float)m_ScreenWidth, 0.0f, (float)m_ScreenHeight);
+
+	ShaderOp::SetVec3(textShader->GetID(), "textColor", Vec3(0.7f, 0.7f, 0.0f));
+	ShaderOp::SetMat4(textShader->GetID(), "projection", uiProj);
+	ShaderOp::SetInt(textShader->GetID(), "text", cumTexChannel + 1);
+	glActiveTexture(GL_TEXTURE0 + cumTexChannel + 1);
+
+	glBindVertexArray(textVAO);
+	std::string::const_iterator c;
+	std::string text = "Hereford";
+	float x = 300.0f;
+	float y = 200.0f;
+	float scale = 1.0f;
+	for (c = text.begin(); c != text.end(); c++)
+	{
+		Character ch = Characters[*c];
+		float xpos = x + ch.mBearing.mX * scale;
+		float ypos = y - (ch.mSize.mY - ch.mBearing.mY) * scale;
+
+		float w = ch.mSize.mX * scale;
+		float h = ch.mSize.mY * scale;
+
+		float vertices[6][4] =
+		{
+			{ xpos,		ypos + h,	0.0f, 0.0f},
+			{ xpos,     ypos,       0.0f, 1.0f },
+			{ xpos + w, ypos,       1.0f, 1.0f },
+
+			{ xpos,     ypos + h,   0.0f, 0.0f },
+			{ xpos + w, ypos,       1.0f, 1.0f },
+			{ xpos + w, ypos + h,   1.0f, 0.0f }
+		};
+
+		glBindTexture(GL_TEXTURE_2D, ch.mTextureID);
+		glBindBuffer(GL_ARRAY_BUFFER, textVBO);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		x += (ch.mAdvance >> 6) * scale;
+	}
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+
+	
 
 	SDL_GL_SwapWindow(m_pSDLWindowContext);
 

@@ -29,6 +29,7 @@ public:
 	void SetMainCamera(CameraComponent* pMainCam);
 
 private:
+	// TODO: remove underscore
 	SDL_Window* m_pSDLWindowContext;
 	SDL_GLContext m_pGLContext;
 	CameraComponent* m_pMainCamera;

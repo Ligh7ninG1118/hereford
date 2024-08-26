@@ -16,6 +16,7 @@ public:
 
 	Mat4 GetViewMatrix() const;
 	Mat4 GetPerspMatrix(const float& screenRatio) const;
+	Mat4 GetOrthoMatrix(float left, float right, float bottom, float top) const;
 	Vec3 GetFrontVector() const
 	{
 		return Vec3(cos(DEG2RAD * m_Rotation.mY) * cos(DEG2RAD * m_Rotation.mX),

@@ -63,6 +63,20 @@ Mat4 CameraComponent::GetPerspMatrix(const float& screenRatio) const
 	return projection;
 }
 
+Mat4 CameraComponent::GetOrthoMatrix(float left, float right, float bottom, float top) const
+{
+	Mat4 projection = Mat4::Identity;
+	projection.m[0][0] = 2.0f / (right - left);
+	projection.m[1][1] = 2.0f / (top - bottom);
+	projection.m[2][2] = -1.0f;
+
+	projection.m[3][0] = -(right + left) / (right - left);
+	projection.m[3][1] = -(top + bottom) / (top - bottom);
+	projection.m[3][2] = 0.0f;
+
+	return projection;
+}
+
 Vec3 CameraComponent::GetCameraPosition() const
 {
 	return m_PositionOffset + mOwner->GetPosition();

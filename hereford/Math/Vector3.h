@@ -1,5 +1,6 @@
 #pragma once
 
+// TODO: Use Template for all math classes
 struct Vector3
 {
 	float mX;		// Also Pitch
