@@ -14,6 +14,7 @@
 #include <glad/glad.h>
 
 #include <iostream>
+#include <format>
 
 #include "ft2build.h"
 #include FT_FREETYPE_H
@@ -450,14 +451,16 @@ void Renderer::Render(float deltaTime)
 	// TODO: use cast
 	Mat4 uiProj = m_pMainCamera->GetOrthoMatrix(0.0f, (float)m_ScreenWidth, 0.0f, (float)m_ScreenHeight);
 
-	ShaderOp::SetVec3(textShader->GetID(), "textColor", Vec3(0.7f, 0.7f, 0.0f));
+	ShaderOp::SetVec3(textShader->GetID(), "textColor", Vec3(0.1f, 0.1f, 0.1f));
 	ShaderOp::SetMat4(textShader->GetID(), "projection", uiProj);
 	ShaderOp::SetInt(textShader->GetID(), "text", cumTexChannel + 1);
 	glActiveTexture(GL_TEXTURE0 + cumTexChannel + 1);
 
 	glBindVertexArray(textVAO);
 	std::string::const_iterator c;
-	std::string text = "Hereford";
+	// TODO: toString for my math classes?
+	const Vec3 pos = m_pMainCamera->GetCameraPosition();
+	std::string text = std::format("Pos: ({:.2f}, {:.2f}, {:.2f})", pos.mX, pos.mY, pos.mZ);
 	float x = 300.0f;
 	float y = 200.0f;
 	float scale = 1.0f;
