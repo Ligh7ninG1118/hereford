@@ -108,6 +108,9 @@
     <ClCompile Include="Math\Quaternion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UI\UIElement.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asset\Shader.h">
@@ -203,6 +206,9 @@
     <ClInclude Include="Math\Quaternion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UI\UIElement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Graphics\Shaders\standard_vert.glsl" />
@@ -225,5 +231,7 @@
     <None Include="Shaders\standard_vert.glsl" />
     <None Include="Shaders\ui_text_vert.glsl" />
     <None Include="Shaders\ui_text_frag.glsl" />
+    <None Include="Shaders\ui_image_frag.glsl" />
+    <None Include="Shaders\ui_image_vert.glsl" />
   </ItemGroup>
 </Project>

@@ -184,6 +184,7 @@
     <ClCompile Include="Asset\Texture.cpp" />
     <ClCompile Include="Graphics\ShaderOp.cpp" />
     <ClCompile Include="Math\Quaternion.cpp" />
+    <ClCompile Include="UI\UIElement.cpp" />
     <ClCompile Include="Util\Random.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -217,6 +218,7 @@
     <ClInclude Include="Asset\Texture.h" />
     <ClInclude Include="Graphics\ShaderOp.h" />
     <ClInclude Include="Math\Quaternion.h" />
+    <ClInclude Include="UI\UIElement.h" />
     <ClInclude Include="Util\Random.h" />
   </ItemGroup>
   <ItemGroup>
@@ -238,6 +240,8 @@
     <None Include="Shaders\skybox_vert.glsl" />
     <None Include="Shaders\standard_frag.glsl" />
     <None Include="Shaders\standard_vert.glsl" />
+    <None Include="Shaders\ui_image_frag.glsl" />
+    <None Include="Shaders\ui_image_vert.glsl" />
     <None Include="Shaders\ui_text_frag.glsl" />
     <None Include="Shaders\ui_text_vert.glsl" />
   </ItemGroup>

@@ -34,5 +34,7 @@ struct Vector2
 	Vector2& operator-=(const Vector2& rhs);
 	Vector2& operator*=(const float& scalar);
 	Vector2& operator/=(const float& scalar);
+
+	// TODO: Add compare operator overloading? (for clamping)
 };
 

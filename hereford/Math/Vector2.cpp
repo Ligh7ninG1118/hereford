@@ -11,6 +11,7 @@ Vector2::Vector2(float x, float y)
 {
 }
 
+// cstr for single in element
 Vector2::Vector2(int x, int y)
 	: mX(static_cast<float>(x)), mY(static_cast<float>(y))
 {

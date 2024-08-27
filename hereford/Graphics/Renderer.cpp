@@ -38,6 +38,10 @@ std::map<char, Character> Characters;
 std::shared_ptr<Shader> textShader;
 Uint32 textVAO, textVBO;
 
+std::shared_ptr<Texture> testUI;
+std::shared_ptr<Shader> uiShader;
+Uint32 uiVAO, uiVBO;
+float threshold = 700.0f;
 
 Renderer::Renderer(SDL_Window* sdlWindow, class GameContext* gameContext, int width, int height)
 	:
@@ -119,6 +123,36 @@ bool Renderer::Initialize()
 	testShader = am->LoadAsset<Shader>(std::string("Shaders/model_tex_vert.glsl*Shaders/model_tex_frag.glsl"));
 	skyboxShader = am->LoadAsset<Shader>(std::string("Shaders/skybox_vert.glsl*Shaders/skybox_frag.glsl"));
 	textShader = am->LoadAsset<Shader>(std::string("Shaders/ui_text_vert.glsl*Shaders/ui_text_frag.glsl"));
+
+	testUI = am->LoadAsset<Texture>(std::string("LocalResources/test-bar.png"));
+	uiShader = am->LoadAsset<Shader>(std::string("Shaders/ui_image_vert.glsl*Shaders/ui_image_frag.glsl"));
+
+	float xpos = 700.0f;
+	float ypos = 500.0f;
+	float w = 400.0f;
+	float h = 60.0f;
+
+	float uiVertices[6][4] =
+	{
+		{ xpos,		ypos + h,	0.0f, 0.0f},
+		{ xpos,     ypos,       0.0f, 1.0f },
+		{ xpos + w, ypos,       1.0f, 1.0f },
+
+		{ xpos,     ypos + h,   0.0f, 0.0f },
+		{ xpos + w, ypos,       1.0f, 1.0f },
+		{ xpos + w, ypos + h,   1.0f, 0.0f }
+	};
+
+	glGenVertexArrays(1, &uiVAO);
+	glGenBuffers(1, &uiVBO);
+	glBindVertexArray(uiVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, uiVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(uiVertices), &uiVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
 
 	glGenTextures(1, &skyboxTexID);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);
@@ -219,9 +253,6 @@ bool Renderer::Initialize()
 	}
 
 	FT_Set_Pixel_Sizes(face, 0, 48);
-	if (FT_Load_Char(face, 'X', FT_LOAD_RENDER))
-	{
-	}
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	for (unsigned char c = 0; c < 128; c++)
@@ -282,6 +313,8 @@ void Renderer::Shutdown()
 
 void Renderer::Render(float deltaTime)
 {
+	threshold += deltaTime * 75.0f;
+
 	srand(time(NULL));
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -437,8 +470,9 @@ void Renderer::Render(float deltaTime)
 	view2.m[0][3] = view2.m[1][3] = view2.m[2][3] = view2.m[3][0] = view2.m[3][1] = view2.m[3][2] = 0;
 
 	ShaderOp::SetMat4(skyboxShader->GetID(), "view", view2);
+	ShaderOp::SetInt(skyboxShader->GetID(), "skybox", 0);
 	glBindVertexArray(skyboxVAOID);
-	glActiveTexture(GL_TEXTURE0 + cumTexChannel + 2);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glDepthFunc(GL_LESS);
@@ -449,20 +483,20 @@ void Renderer::Render(float deltaTime)
 
 	textShader->Use();
 	// TODO: use cast
-	Mat4 uiProj = m_pMainCamera->GetOrthoMatrix(0.0f, (float)m_ScreenWidth, 0.0f, (float)m_ScreenHeight);
+	Mat4 uiProj = m_pMainCamera->GetOrthoMatrix(0.0f, static_cast<float>(m_ScreenWidth), 0.0f, static_cast<float>(m_ScreenHeight));
 
 	ShaderOp::SetVec3(textShader->GetID(), "textColor", Vec3(0.1f, 0.1f, 0.1f));
 	ShaderOp::SetMat4(textShader->GetID(), "projection", uiProj);
-	ShaderOp::SetInt(textShader->GetID(), "text", cumTexChannel + 1);
-	glActiveTexture(GL_TEXTURE0 + cumTexChannel + 1);
+	ShaderOp::SetInt(textShader->GetID(), "text", 0);
+	glActiveTexture(GL_TEXTURE0);
 
 	glBindVertexArray(textVAO);
 	std::string::const_iterator c;
 	// TODO: toString for my math classes?
-	const Vec3 pos = m_pMainCamera->GetCameraPosition();
+	const Vec3 pos = m_pMainCamera->GetOwner()->GetPosition();
 	std::string text = std::format("Pos: ({:.2f}, {:.2f}, {:.2f})", pos.mX, pos.mY, pos.mZ);
-	float x = 300.0f;
-	float y = 200.0f;
+	float x = 100.0f;
+	float y = 100.0f;
 	float scale = 1.0f;
 	for (c = text.begin(); c != text.end(); c++)
 	{
@@ -492,11 +526,20 @@ void Renderer::Render(float deltaTime)
 		x += (ch.mAdvance >> 6) * scale;
 	}
 	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0); 
+	uiShader->Use();
+	ShaderOp::SetVec3(uiShader->GetID(), "textColor", Vec3(0.7f, 0.2f, 0.4f));
+	ShaderOp::SetMat4(uiShader->GetID(), "projection", uiProj);
+	ShaderOp::SetInt(uiShader->GetID(), "uiTex", 0);
+	ShaderOp::SetFloat(uiShader->GetID(), "threshold", threshold);
+	glBindVertexArray(uiVAO);
+
+	glBindTexture(GL_TEXTURE_2D, testUI->GetID());
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+
+	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
-
-
-	
-
 	SDL_GL_SwapWindow(m_pSDLWindowContext);
 
 	//TODO: OpenGL release assets: DeleteVertexArray, DeleteBuffer
