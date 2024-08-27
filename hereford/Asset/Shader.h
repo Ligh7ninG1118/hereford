@@ -20,5 +20,6 @@ private:
 	Uint32 GenerateGLAsset(const std::string& inPath, GLenum shaderType);
 	void CheckCompileError(GLuint shader, std::string type);
 
+	// TODO: A Uniform map of (name, value) for shader instance?
 	Uint32 mID;
 };

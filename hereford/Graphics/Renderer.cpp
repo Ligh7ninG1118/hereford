@@ -8,6 +8,7 @@
 #include "Asset/AssetManager.h"
 #include "Animation/Animator.h"
 #include "Animation/Animation.h"
+#include "UI/UIElement.h"
 
 #include <stb_image.h>
 
@@ -45,11 +46,11 @@ float currentAmmo = 30.0f;
 
 Renderer::Renderer(SDL_Window* sdlWindow, class GameContext* gameContext, int width, int height)
 	:
-	m_pSDLWindowContext(sdlWindow),
-	m_pMainCamera(nullptr),
-	m_pGameContext(gameContext),
-	m_ScreenWidth(width),
-	m_ScreenHeight(height)
+	mPtrSDLWindowContext(sdlWindow),
+	mPtrMainCamera(nullptr),
+	mPtrGameContext(gameContext),
+	mScreenWidth(width),
+	mScreenHeight(height)
 {
 	
 }
@@ -60,8 +61,8 @@ Renderer::~Renderer()
 
 bool Renderer::Initialize()
 {
-	m_pGLContext = SDL_GL_CreateContext(m_pSDLWindowContext);
-	if (m_pGLContext == nullptr)
+	mPtrGLContext = SDL_GL_CreateContext(mPtrSDLWindowContext);
+	if (mPtrGLContext == nullptr)
 	{
 		printf("Renderer::Initialize(): Main Context could not be created! SDL_Error: %s\n", SDL_GetError());
 		return false;
@@ -83,7 +84,7 @@ bool Renderer::Initialize()
 	glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_CULL_FACE);
 
-	glViewport(0, 0, m_ScreenWidth, m_ScreenHeight);
+	glViewport(0, 0, mScreenWidth, mScreenHeight);
 	glClearColor(0.0f, 0.5f, 1.0f, 0.0f);
 
 	float cameraCenter[] = { 0.0f, 0.0355f, 0.0f, 1.0f, 1.0f, 1.0f,
@@ -308,7 +309,7 @@ bool Renderer::Initialize()
 
 void Renderer::Shutdown()
 {
-	SDL_GL_DeleteContext(m_pGLContext);
+	SDL_GL_DeleteContext(mPtrGLContext);
 }
 
 void Renderer::Render(float deltaTime)
@@ -322,8 +323,8 @@ void Renderer::Render(float deltaTime)
 
 	Uint32 cumTexChannel = 0;
 
-	Mat4 projection = m_pMainCamera->GetPerspMatrix((float)m_ScreenWidth/m_ScreenHeight);
-	Mat4 view = m_pMainCamera->GetViewMatrix();
+	Mat4 projection = mPtrMainCamera->GetPerspMatrix((float)mScreenWidth/mScreenHeight);
+	Mat4 view = mPtrMainCamera->GetViewMatrix();
 
 	Uint32 lastShaderID = 0;
 	Uint32 lastVAOID = 0;
@@ -343,7 +344,7 @@ void Renderer::Render(float deltaTime)
 
 	ShaderOp::SetVec3(shaderID, "pointLight.position", Vec3(0.0f, 5.0f, 0.0f));
 	ShaderOp::SetVec3(shaderID, "pointLight.color", Vec3(150.0f, 150.0f, 150.0f));
-	ShaderOp::SetVec3(shaderID, "eyePos", m_pMainCamera->GetCameraPosition());
+	ShaderOp::SetVec3(shaderID, "eyePos", mPtrMainCamera->GetCameraPosition());
 
 	if (testAnimator)
 	{
@@ -465,7 +466,7 @@ void Renderer::Render(float deltaTime)
 	skyboxShader->Use();
 	ShaderOp::SetInt(skyboxShader->GetID(), "skybox", cumTexChannel + 2);
 	ShaderOp::SetMat4(skyboxShader->GetID(), "projection", projection);
-	Mat4 view2 = m_pMainCamera->GetViewMatrix();
+	Mat4 view2 = mPtrMainCamera->GetViewMatrix();
 	view2.m[0][3] = view2.m[1][3] = view2.m[2][3] = view2.m[3][0] = view2.m[3][1] = view2.m[3][2] = 0;
 
 	ShaderOp::SetMat4(skyboxShader->GetID(), "view", view2);
@@ -482,7 +483,7 @@ void Renderer::Render(float deltaTime)
 
 	textShader->Use();
 	// TODO: use cast
-	Mat4 uiProj = m_pMainCamera->GetOrthoMatrix(0.0f, static_cast<float>(m_ScreenWidth), 0.0f, static_cast<float>(m_ScreenHeight));
+	Mat4 uiProj = mPtrMainCamera->GetOrthoMatrix(0.0f, static_cast<float>(mScreenWidth), 0.0f, static_cast<float>(mScreenHeight));
 
 	ShaderOp::SetVec3(textShader->GetID(), "textColor", Vec3(0.1f, 0.1f, 0.1f));
 	ShaderOp::SetMat4(textShader->GetID(), "projection", uiProj);
@@ -492,7 +493,7 @@ void Renderer::Render(float deltaTime)
 	glBindVertexArray(textVAO);
 	std::string::const_iterator c;
 	// TODO: toString for my math classes?
-	const Vec3 pos = m_pMainCamera->GetOwner()->GetPosition();
+	const Vec3 pos = mPtrMainCamera->GetOwner()->GetPosition();
 	std::string text = std::format("Pos: ({:.2f}, {:.2f}, {:.2f})", pos.mX, pos.mY, pos.mZ);
 	float x = 100.0f;
 	float y = 100.0f;
@@ -544,14 +545,14 @@ void Renderer::Render(float deltaTime)
 
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	SDL_GL_SwapWindow(m_pSDLWindowContext);
+	SDL_GL_SwapWindow(mPtrSDLWindowContext);
 
 	//TODO: OpenGL release assets: DeleteVertexArray, DeleteBuffer
 }
 
 void Renderer::SetMainCamera(CameraComponent* pMainCam)
 {
-	m_pMainCamera = pMainCam;
+	mPtrMainCamera = pMainCam;
 }
 
 void Renderer::AddRenderComponent(RenderComponent* c)
@@ -572,4 +573,14 @@ void Renderer::AddLightComponent(LightComponent* c)
 void Renderer::RemoveLightComponent(LightComponent* c)
 {
 	mLightComponents.erase(std::find(mLightComponents.begin(), mLightComponents.end(), c));
+}
+
+void Renderer::AddUIElement(std::shared_ptr<UIElement> ui)
+{
+	mUIElements.push_back(ui);
+}
+
+void Renderer::RemoveUIElement(std::shared_ptr<UIElement> ui)
+{
+	mUIElements.erase(std::find(mUIElements.begin(), mUIElements.end(), ui));
 }

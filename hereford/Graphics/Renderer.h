@@ -30,13 +30,13 @@ public:
 
 private:
 	// TODO: remove underscore
-	SDL_Window* m_pSDLWindowContext;
-	SDL_GLContext m_pGLContext;
-	CameraComponent* m_pMainCamera;
-	class GameContext* m_pGameContext;
+	SDL_Window* mPtrSDLWindowContext;
+	SDL_GLContext mPtrGLContext;
+	CameraComponent* mPtrMainCamera;
+	class GameContext* mPtrGameContext;
 
-	int m_ScreenWidth;
-	int m_ScreenHeight;
+	int mScreenWidth;
+	int mScreenHeight;
 
 	Uint32 debugShaderID;
 	std::shared_ptr<Shader> testShader;
@@ -53,6 +53,7 @@ private:
 	std::vector<class RenderComponent*> mRenderComponents;
 	std::vector<class LightComponent*> mLightComponents;
 
+	std::vector<std::shared_ptr<class UIElement>> mUIElements;
 
 	//std::vector<class RenderComponent> m_RenderCompons;
 	friend class RenderComponent;
@@ -64,5 +65,9 @@ private:
 	friend class LightComponent;
 	void AddLightComponent(class LightComponent* c);
 	void RemoveLightComponent(class LightComponent* c);
+
+	friend class UIElement;
+	void AddUIElement(std::shared_ptr<class UIElement> ui);
+	void RemoveUIElement(std::shared_ptr<class UIElement> ui);
 };
 
