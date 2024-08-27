@@ -184,6 +184,7 @@
     <ClCompile Include="Asset\Texture.cpp" />
     <ClCompile Include="Graphics\ShaderOp.cpp" />
     <ClCompile Include="Math\Quaternion.cpp" />
+    <ClCompile Include="UI\UIImage.cpp" />
     <ClCompile Include="UI\UIElement.cpp" />
     <ClCompile Include="Util\Random.cpp" />
   </ItemGroup>
@@ -218,6 +219,7 @@
     <ClInclude Include="Asset\Texture.h" />
     <ClInclude Include="Graphics\ShaderOp.h" />
     <ClInclude Include="Math\Quaternion.h" />
+    <ClInclude Include="UI\UIImage.h" />
     <ClInclude Include="UI\UIElement.h" />
     <ClInclude Include="Util\Random.h" />
   </ItemGroup>
