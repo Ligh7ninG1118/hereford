@@ -44,6 +44,8 @@ void Texture::Initialize(const std::string& inPath, const aiTexture* embededdTex
 
 	if(data)
 	{
+		mDimension.mX = width;
+		mDimension.mY = height;
 		GenerateGLAsset(data, width, height, numComponents);
 	}
 	else

@@ -73,5 +73,7 @@ public:
 		return scaleA * a + scaleB * b;
 	}
 
+	// TODO: to lower/to floor ?
+
 };
 

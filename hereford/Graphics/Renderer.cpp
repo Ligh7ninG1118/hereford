@@ -41,7 +41,7 @@ Uint32 textVAO, textVBO;
 std::shared_ptr<Texture> testUI;
 std::shared_ptr<Shader> uiShader;
 Uint32 uiVAO, uiVBO;
-float threshold = 700.0f;
+float currentAmmo = 30.0f;
 
 Renderer::Renderer(SDL_Window* sdlWindow, class GameContext* gameContext, int width, int height)
 	:
@@ -124,23 +124,23 @@ bool Renderer::Initialize()
 	skyboxShader = am->LoadAsset<Shader>(std::string("Shaders/skybox_vert.glsl*Shaders/skybox_frag.glsl"));
 	textShader = am->LoadAsset<Shader>(std::string("Shaders/ui_text_vert.glsl*Shaders/ui_text_frag.glsl"));
 
-	testUI = am->LoadAsset<Texture>(std::string("LocalResources/test-bar.png"));
+	testUI = am->LoadAsset<Texture>(std::string("LocalResources/rifle-round-silhouette.png"));
 	uiShader = am->LoadAsset<Shader>(std::string("Shaders/ui_image_vert.glsl*Shaders/ui_image_frag.glsl"));
 
-	float xpos = 700.0f;
-	float ypos = 500.0f;
-	float w = 400.0f;
-	float h = 60.0f;
+	float xpos = 1300.0f;
+	float ypos = 100.0f;
+	float w = 480.0f;
+	float h = 92.0f;
 
 	float uiVertices[6][4] =
 	{
 		{ xpos,		ypos + h,	0.0f, 0.0f},
 		{ xpos,     ypos,       0.0f, 1.0f },
-		{ xpos + w, ypos,       1.0f, 1.0f },
+		{ xpos + w, ypos,       30.0f, 1.0f },
 
 		{ xpos,     ypos + h,   0.0f, 0.0f },
-		{ xpos + w, ypos,       1.0f, 1.0f },
-		{ xpos + w, ypos + h,   1.0f, 0.0f }
+		{ xpos + w, ypos,       30.0f, 1.0f },
+		{ xpos + w, ypos + h,   30.0f, 0.0f }
 	};
 
 	glGenVertexArrays(1, &uiVAO);
@@ -313,8 +313,7 @@ void Renderer::Shutdown()
 
 void Renderer::Render(float deltaTime)
 {
-	threshold += deltaTime * 75.0f;
-
+	currentAmmo -= deltaTime;
 	srand(time(NULL));
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -528,10 +527,15 @@ void Renderer::Render(float deltaTime)
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); 
 	uiShader->Use();
-	ShaderOp::SetVec3(uiShader->GetID(), "textColor", Vec3(0.7f, 0.2f, 0.4f));
+	ShaderOp::SetVec3(uiShader->GetID(), "uiColor2", Vec3(1.0f, 1.0f, 1.0f));
+	ShaderOp::SetVec3(uiShader->GetID(), "uiColor1", Vec3(0.1f, 0.1f, 0.1f));
 	ShaderOp::SetMat4(uiShader->GetID(), "projection", uiProj);
-	ShaderOp::SetInt(uiShader->GetID(), "uiTex", 0);
+
+	int actualAmmo = static_cast<int>(currentAmmo);
+	float threshold = 1300.0f + (30 - actualAmmo) * 16.0f;
+
 	ShaderOp::SetFloat(uiShader->GetID(), "threshold", threshold);
+	ShaderOp::SetInt(uiShader->GetID(), "uiTex", 0);
 	glBindVertexArray(uiVAO);
 
 	glBindTexture(GL_TEXTURE_2D, testUI->GetID());

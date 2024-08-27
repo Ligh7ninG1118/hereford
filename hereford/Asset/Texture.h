@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Asset.h"
+#include "Math/Math.h"
 
 enum class ETextureType
 {
@@ -26,6 +27,7 @@ public:
 	inline ETextureType GetType() const { return mType; }
 	inline void SetType(ETextureType inType) { mType = inType; }
 	inline std::string GetFileName() const { return mFileName; }
+	inline Vec2 GetDimension() const { return mDimension; }
 
 private:
 	void Initialize(const std::string& inPath, const struct aiTexture* embededdTex = nullptr);
@@ -34,5 +36,7 @@ private:
 	unsigned int mID;
 	ETextureType mType;
 	std::string mFileName;
+
+	Vec2 mDimension;
 };
 
