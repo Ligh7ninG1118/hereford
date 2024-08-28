@@ -8,7 +8,7 @@ class Animator
 public:
 	Animator(std::vector<class Animation> animations);
 	void UpdateAnimation(float dt);
-	void PlayAnimation(Uint32 index);
+	void PlayAnimation(Uint32 index, bool shouldLoop = true);
 	void CalculateBoneTransform(const struct AssimpNodeData* node, Mat4 parentTransform);
 	std::vector<Mat4> GetFinalBoneMatrices() const { return mFinalBoneMatrices; }
 
@@ -18,5 +18,9 @@ private:
 	int mCurrentIndex;
 	float mCurrentTime;
 	float mDeltaTime;
+
+	//TODO: place this inside Animation class?
+	bool mShouldLoop;
+	bool mHasFinished;
 };
 

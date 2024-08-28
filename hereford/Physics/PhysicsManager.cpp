@@ -26,7 +26,7 @@ void PhysicsManager::Shutdown()
 {
 }
 
-bool PhysicsManager::Raycast(const struct Vector3& origin, const struct Vector3& dir, const float& maxDistance, HitInfo& outInfo)
+bool PhysicsManager::RaycastQuery(const struct Vector3& origin, const struct Vector3& dir, const float& maxDistance, HitInfo& outInfo)
 {
 	printf("-------------------------------------\n");
 	bool hasHit = false;

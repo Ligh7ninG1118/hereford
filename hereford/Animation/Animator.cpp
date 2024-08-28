@@ -8,7 +8,10 @@
 Animator::Animator(std::vector<class Animation> animations)
 	: mCurrentTime(0.0f),
 	mDeltaTime(0.0f),
-	mAnimationList(animations)
+	mCurrentIndex(0),
+	mAnimationList(animations),
+	mShouldLoop(false),
+	mHasFinished(false)
 {
 	mFinalBoneMatrices.reserve(100);
 	for (int i = 0; i < 100; i++)
@@ -17,19 +20,36 @@ Animator::Animator(std::vector<class Animation> animations)
 
 void Animator::UpdateAnimation(float dt)
 {
+	// Early return for finished one-shot animation
+	if (!mShouldLoop && mHasFinished)
+		return;
+
 	mDeltaTime = dt;
-	
+
 	mCurrentTime += mAnimationList[mCurrentIndex].GetTicksPerSecond() * dt;
-	mCurrentTime = fmod(mCurrentTime, mAnimationList[mCurrentIndex].GetDuration());
+
+	// For one-shot animation, set time to duration and update bone transform one last time
+	if (!mShouldLoop && mCurrentTime >= mAnimationList[mCurrentIndex].GetDuration())
+	{
+		mHasFinished = true;
+		mCurrentTime = mAnimationList[mCurrentIndex].GetDuration();
+	}
+	else
+	{
+		mCurrentTime = fmod(mCurrentTime, mAnimationList[mCurrentIndex].GetDuration());
+	}
+
 	CalculateBoneTransform(&mAnimationList[mCurrentIndex].GetRootNode(), Mat4::Identity);
 }
 
-void Animator::PlayAnimation(Uint32 index)
+void Animator::PlayAnimation(Uint32 index, bool shouldLoop)
 {
 	assert(index >= mAnimationList.size());
 
 	mCurrentIndex = index;
 	mCurrentTime = 0.0f;
+	mHasFinished = false;
+	mShouldLoop = shouldLoop;
 }
 
 void Animator::CalculateBoneTransform(const AssimpNodeData* node, Mat4 parentTransform)

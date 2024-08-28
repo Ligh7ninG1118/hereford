@@ -128,6 +128,15 @@ bool Renderer::Initialize()
 	testUI = am->LoadAsset<Texture>(std::string("LocalResources/rifle-round-silhouette.png"));
 	uiShader = am->LoadAsset<Shader>(std::string("Shaders/ui_image_vert.glsl*Shaders/ui_image_frag.glsl"));
 
+	//TODO: Unchanged shader values dont need to update every frame
+	uiShader->Use();
+	Mat4 uiProj = mPtrMainCamera->GetOrthoMatrix(0.0f, static_cast<float>(mScreenWidth), 0.0f, static_cast<float>(mScreenHeight));
+	ShaderOp::SetVec3(uiShader->GetID(), "uiColor2", Vec3(1.0f, 1.0f, 1.0f));
+	ShaderOp::SetVec3(uiShader->GetID(), "uiColor1", Vec3(0.1f, 0.1f, 0.1f));
+	ShaderOp::SetMat4(uiShader->GetID(), "projection", uiProj);
+	ShaderOp::SetInt(uiShader->GetID(), "uiTex", 0);
+
+
 	float xpos = 1300.0f;
 	float ypos = 100.0f;
 	float w = 480.0f;
@@ -454,17 +463,16 @@ void Renderer::Render(float deltaTime)
 	}*/
 
 	// Draw crosshair
-	/*{
+	{
 		glBindVertexArray(crosshairVAOID);
 		glUseProgram(debugShaderID);
 
 		glLineWidth(1.5f);
 		glDrawArrays(GL_LINES, 0, 4);
-	}*/
+	}
 
 	glDepthFunc(GL_LEQUAL);
 	skyboxShader->Use();
-	ShaderOp::SetInt(skyboxShader->GetID(), "skybox", cumTexChannel + 2);
 	ShaderOp::SetMat4(skyboxShader->GetID(), "projection", projection);
 	Mat4 view2 = mPtrMainCamera->GetViewMatrix();
 	view2.m[0][3] = view2.m[1][3] = view2.m[2][3] = view2.m[3][0] = view2.m[3][1] = view2.m[3][2] = 0;
@@ -528,15 +536,12 @@ void Renderer::Render(float deltaTime)
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); 
 	uiShader->Use();
-	ShaderOp::SetVec3(uiShader->GetID(), "uiColor2", Vec3(1.0f, 1.0f, 1.0f));
-	ShaderOp::SetVec3(uiShader->GetID(), "uiColor1", Vec3(0.1f, 0.1f, 0.1f));
-	ShaderOp::SetMat4(uiShader->GetID(), "projection", uiProj);
+	
 
 	int actualAmmo = static_cast<int>(currentAmmo);
 	float threshold = 1300.0f + (30 - actualAmmo) * 16.0f;
 
 	ShaderOp::SetFloat(uiShader->GetID(), "threshold", threshold);
-	ShaderOp::SetInt(uiShader->GetID(), "uiTex", 0);
 	glBindVertexArray(uiVAO);
 
 	glBindTexture(GL_TEXTURE_2D, testUI->GetID());

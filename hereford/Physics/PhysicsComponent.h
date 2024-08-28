@@ -20,7 +20,13 @@ public:
 private:
 	class PhysicsManager& m_PhysicsManager;
 
+	bool mIsTrigger;
+	bool mUseGravity;
+
+	float mMass;
+
 	friend PhysicsManager;
+	//TODO: Have a separate physics primitive construct
 	Vec3 m_BVPositionOffset;
 	Vec3 m_BVExtend;
 	float m_SphereExtend;

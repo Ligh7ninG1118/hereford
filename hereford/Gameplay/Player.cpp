@@ -75,7 +75,7 @@ void Player::OnProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseD
 				Vec3 origin = m_pCameraComponent->GetCameraPosition();
 				Vec3 dir = m_pCameraComponent->GetFrontVector().normalized();
 				HitInfo hitInfo;
-				if (mGame->GetPhysicsManager().Raycast(origin, dir, 1000.0f, hitInfo))
+				if (mGame->GetPhysicsManager().RaycastQuery(origin, dir, 1000.0f, hitInfo))
 				{
 					if (hitInfo.hitActor != nullptr)
 						hitInfo.hitActor->SetState(ActorState::Destroy);
@@ -117,9 +117,9 @@ void Player::ProcessMovement(const float& deltaTime)
 	}
 
 	// Cap velocity at top speed
-	if (currentVelocity.SqrMagnitude() > topMovementSpeed * topMovementSpeed)
+	if (currentVelocity.SqrMagnitude() > topWalkingSpeed * topWalkingSpeed)
 	{
-		currentVelocity = currentVelocity.normalized() * topMovementSpeed;
+		currentVelocity = currentVelocity.normalized() * topWalkingSpeed;
 	}
 
 	// Prevent drifting

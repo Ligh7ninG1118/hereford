@@ -17,7 +17,7 @@ public:
 	bool Initialize();
 	void Shutdown();
 
-	static bool Raycast(const struct Vector3& origin, const struct Vector3& dir, 
+	static bool RaycastQuery(const struct Vector3& origin, const struct Vector3& dir, 
 		const float& maxDistance, HitInfo& outInfo);
 
 private:

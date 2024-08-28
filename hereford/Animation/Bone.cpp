@@ -51,7 +51,7 @@ int Bone::GetPositionIndex(float animTime)
 {
 	for (int i = 0; i < mNumPosition - 1; i++)
 	{
-		if (animTime < mPositions[i + 1].mTimeStamp)
+		if (animTime <= mPositions[i + 1].mTimeStamp)
 			return i;
 	}
 	assert(0);
@@ -61,7 +61,7 @@ int Bone::GetRotationIndex(float animTime)
 {
 	for (int i = 0; i < mNumRotation - 1; i++)
 	{
-		if (animTime < mRotations[i + 1].mTimeStamp)
+		if (animTime <= mRotations[i + 1].mTimeStamp)
 			return i;
 	}
 	assert(0);
@@ -71,7 +71,7 @@ int Bone::GetScaleIndex(float animTime)
 {
 	for (int i = 0; i < mNumScale - 1; i++)
 	{
-		if (animTime < mScales[i + 1].mTimeStamp)
+		if (animTime <= mScales[i + 1].mTimeStamp)
 			return i;
 	}
 	assert(0);
