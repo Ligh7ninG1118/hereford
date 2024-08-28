@@ -52,6 +52,7 @@ Matrix4x4::Matrix4x4(const Matrix4x4& rhs)
 {
 }
 
+// TODO: overload w/ 3 floats version
 Matrix4x4& Matrix4x4::Translate(const Vector3& translate)
 {
 	// column major? switch to [i][3]

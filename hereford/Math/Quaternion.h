@@ -18,7 +18,7 @@ struct Quaternion
 
 	float Dot(const Quaternion& rhs) const;
 
-	Quaternion EulerToQuat(const struct Vector3& euler);
+	static Quaternion EulerToQuat(const struct Vector3& euler);
 
 	static const Quaternion Identity;
 

@@ -8,9 +8,9 @@
 Animator::Animator(std::vector<class Animation> animations)
 	: mCurrentTime(0.0f),
 	mDeltaTime(0.0f),
-	mCurrentIndex(0),
+	mCurrentIndex(2),
 	mAnimationList(animations),
-	mShouldLoop(false),
+	mShouldLoop(true),
 	mHasFinished(false)
 {
 	mFinalBoneMatrices.reserve(100);

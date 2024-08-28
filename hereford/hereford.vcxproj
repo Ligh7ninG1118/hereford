@@ -154,6 +154,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animation\AnimationStateMachine.cpp" />
     <ClCompile Include="Animation\Animation.cpp" />
     <ClCompile Include="Animation\Animator.cpp" />
     <ClCompile Include="Asset\Asset.cpp" />
@@ -189,6 +190,7 @@
     <ClCompile Include="Util\Random.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation\AnimationStateMachine.h" />
     <ClInclude Include="Animation\Animation.h" />
     <ClInclude Include="Animation\Animator.h" />
     <ClInclude Include="Asset\Asset.h" />

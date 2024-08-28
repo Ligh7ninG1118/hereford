@@ -10,6 +10,8 @@ const Vector3 Vector3::Right(1.0f, 0.0f, 0.0f);
 const Vector3 Vector3::Forward(0.0f, 0.0f, -1.0f);
 const Vector3 Vector3::Back(0.0f, 0.0f, 1.0f);
 
+//TODO: XAxis, YAxis, ZAxis (same to forward, up, right)
+
 
 Vector3::Vector3()
 	: mX(0.0f), mY(0.0f), mZ(0.0f)

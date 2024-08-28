@@ -116,8 +116,8 @@ bool Renderer::Initialize()
 	}
 	else
 	{
-		testModel = am->LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v1.fbx"));
-		animClips = Animation::LoadAnimations("LocalResources/mark23/source/Mark23v1.fbx", testModel.get());
+		testModel = am->LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v3.fbx"));
+		animClips = Animation::LoadAnimations("LocalResources/mark23/source/Mark23v3.fbx", testModel.get());
 	}
 	testAnimator = new Animator(animClips);
 
@@ -349,10 +349,30 @@ void Renderer::Render(float deltaTime)
 
 	Mat4 model = Mat4::Identity;
 	model.Scale(0.03f);
+	model.Rotate(DEG2RAD * 90.0f, Vec3::Up);
+	//TODO: I messed up axis again? big time
+	Vec3 playerRot = mPtrMainCamera->GetRotation();
+	//playerRot *= DEG2RAD;
+	//Vec3 actualRot = Vec3(-playerRot.mY, playerRot.mX, 0.0f);
+	//TODO: Prone to gimbal lock, cant switch order
+	//		Use quaternion!
+	model.Rotate(DEG2RAD * playerRot.mY, Vector3::Down);
+	model.Rotate(DEG2RAD * playerRot.mX, Vector3::Left);
+	//model.Rotate(Quaternion::EulerToQuat(actualRot));
+	//model.Translate(Vec3(-0.25f, 1.32f, -0.05f));
+	model.Translate(Vec3(0.0f, 1.32f, 0.0f));
+
+	model.Translate(mPtrMainCamera->GetOwner()->GetPosition());
+
+	
+	//model.Rotate(DEG2RAD * playerRot.mZ, Vector3::Up);
+
+
+
 	ShaderOp::SetMat4(shaderID, "model", model);
 
 	ShaderOp::SetVec3(shaderID, "pointLight.position", Vec3(0.0f, 5.0f, 0.0f));
-	ShaderOp::SetVec3(shaderID, "pointLight.color", Vec3(150.0f, 150.0f, 150.0f));
+	ShaderOp::SetVec3(shaderID, "pointLight.color", Vec3(10.0f, 10.0f, 10.0f));
 	ShaderOp::SetVec3(shaderID, "eyePos", mPtrMainCamera->GetCameraPosition());
 
 	if (testAnimator)
@@ -502,7 +522,8 @@ void Renderer::Render(float deltaTime)
 	std::string::const_iterator c;
 	// TODO: toString for my math classes?
 	const Vec3 pos = mPtrMainCamera->GetOwner()->GetPosition();
-	std::string text = std::format("Pos: ({:.2f}, {:.2f}, {:.2f})", pos.mX, pos.mY, pos.mZ);
+	const Vec3 rot = mPtrMainCamera->GetRotation();
+	std::string text = std::format("Pos: ({:.2f}, {:.2f}, {:.2f}) Rot:  ({:.2f}, {:.2f}, {:.2f})", pos.mX, pos.mY, pos.mZ, rot.mX, rot.mY, rot.mZ);
 	float x = 100.0f;
 	float y = 100.0f;
 	float scale = 1.0f;
