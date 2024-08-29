@@ -11,36 +11,39 @@
 class GameEvent
 {
 public:
+	template <typename TEvent>
 	struct Subscription
 	{
-		std::function<void(EventTest)> mCallback;
+		std::function<void(TEvent)> mCallback;
 
-		Subscription(std::function<void(EventTest)> inCallback) : mCallback(inCallback) {}
+		Subscription(std::function<void(TEvent)> inCallback) : mCallback(inCallback) {}
 		~Subscription()
 		{
 			GameEvent::Unsubscribe(this);
 		}
 	};
 
-
-	static void Publish(EventTest inEvent)
+	template <typename TEvent>
+	static void Publish(TEvent inEvent)
 	{
 		for (auto& baseSub : mListenerMap)
 		{
-			//Subscription* sub = std::static_pointer_cast<Subscription<T>>(baseSub);
-			baseSub->mCallback(inEvent);
+			Subscription<TEvent>* sub = (Subscription<TEvent>*)baseSub;
+			sub->mCallback(inEvent);
 		}
 	}
 
-	static Subscription* Subscribe(std::function<void(EventTest)> inCallback)
+	template <typename TEvent>
+	static Subscription<TEvent>* Subscribe(std::function<void(TEvent)> inCallback)
 	{
-		auto newSub = new Subscription(inCallback);
-		mListenerMap.push_back(newSub);
+		auto newSub = new Subscription<TEvent>(inCallback);
+		Subscription<void>* subVoid = (Subscription<void>*)newSub;
+		mListenerMap.push_back(subVoid);
 		return newSub;
 	}
 
-
-	static void Unsubscribe(Subscription* inSubscription)
+	template <typename TEvent>
+	static void Unsubscribe(Subscription<TEvent>* inSubscription)
 	{
 		auto it = std::find(mListenerMap.begin(), mListenerMap.end(), inSubscription);
 		if (it != mListenerMap.end())
@@ -50,7 +53,7 @@ public:
 
 private:
 	//std::unordered_map<std::type_index, std::vector<Subscription*>> mListenerMap;
-	static std::vector<Subscription*> mListenerMap;
+	static std::vector<Subscription<void>*> mListenerMap;
 
 };
 

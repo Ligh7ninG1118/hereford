@@ -30,9 +30,9 @@ public:
 	Renderer& GetRenderer() const { return *pRenderer.get(); }
 	PhysicsManager& GetPhysicsManager() const { return *pPhysicsManager.get(); }
 
-	GameEvent::Subscription* testEventSub;
+	GameEvent::Subscription<EventTestA>* testEventSub;
 
-	void EventListner(EventTest inEvent);
+	void EventListner(EventTestA inEvent);
 
 private:
 	void ProcessInput();

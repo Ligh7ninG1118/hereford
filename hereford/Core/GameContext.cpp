@@ -121,12 +121,12 @@ void GameContext::LoadData()
 	lightBulb2->SetPosition(Vec3(0.0f, -2.0f, 0.0f));*/
 
 
-	testEventSub = GameEvent::Subscribe(std::bind(&GameContext::EventListner, this, std::placeholders::_1));
+	testEventSub = GameEvent::Subscribe<EventTestA>(std::bind(&GameContext::EventListner, this, std::placeholders::_1));
 
 }
 
 
-void GameContext::EventListner(EventTest inEvent)
+void GameContext::EventListner(EventTestA inEvent)
 {
 	printf("Event received. Value: %d\n", inEvent.mX);
 }

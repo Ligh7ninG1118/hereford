@@ -1,12 +1,18 @@
 #pragma once
 
-class EventTest
+struct EventTest
 {
-public:
+	int mX;
+
 	EventTest(int inX)
 		: mX(inX)
-	{
-	}
+	{}
+};
 
-	int mX;
+struct EventTestA
+{
+	bool mX;
+	EventTestA(bool inX)
+		: mX(inX)
+	{}
 };
