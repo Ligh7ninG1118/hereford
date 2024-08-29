@@ -187,7 +187,7 @@
     <ClCompile Include="Math\Quaternion.cpp" />
     <ClCompile Include="UI\UIImage.cpp" />
     <ClCompile Include="UI\UIElement.cpp" />
-    <ClCompile Include="Util\Random.cpp" />
+    <ClCompile Include="Util\GameEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation\AnimationStateMachine.h" />
@@ -223,6 +223,8 @@
     <ClInclude Include="Math\Quaternion.h" />
     <ClInclude Include="UI\UIImage.h" />
     <ClInclude Include="UI\UIElement.h" />
+    <ClInclude Include="Util\Events.h" />
+    <ClInclude Include="Util\GameEvent.h" />
     <ClInclude Include="Util\Random.h" />
   </ItemGroup>
   <ItemGroup>

@@ -72,14 +72,17 @@ void Player::OnProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseD
 		{
 			if (!lmbPressed)
 			{
-				Vec3 origin = m_pCameraComponent->GetCameraPosition();
+				GameEvent::Publish(EventTest(42));
+				printf("Event fired.\n");
+
+				/*Vec3 origin = m_pCameraComponent->GetCameraPosition();
 				Vec3 dir = m_pCameraComponent->GetFrontVector().normalized();
 				HitInfo hitInfo;
 				if (mGame->GetPhysicsManager().RaycastQuery(origin, dir, 1000.0f, hitInfo))
 				{
 					if (hitInfo.hitActor != nullptr)
 						hitInfo.hitActor->SetState(ActorState::Destroy);
-				}
+				}*/
 				lmbPressed = true;
 			}
 		}

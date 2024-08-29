@@ -5,6 +5,8 @@
 #include <assert.h>
 #include <memory>
 
+#include "Util/GameEvent.h"
+
 Animator::Animator(std::vector<class Animation> animations)
 	: mCurrentTime(0.0f),
 	mDeltaTime(0.0f),
@@ -22,7 +24,9 @@ void Animator::UpdateAnimation(float dt)
 {
 	// Early return for finished one-shot animation
 	if (!mShouldLoop && mHasFinished)
+	{
 		return;
+	}
 
 	mDeltaTime = dt;
 

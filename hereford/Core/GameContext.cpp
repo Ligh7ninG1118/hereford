@@ -91,13 +91,13 @@ void GameContext::RunLoop()
 		Uint32 timestampStart = SDL_GetTicks();
 		ProcessInput();
 		Uint32 timestampAfterInput = SDL_GetTicks();
-		printf("Process Input: %d ms \n", timestampAfterInput - timestampStart);
+		//printf("Process Input: %d ms \n", timestampAfterInput - timestampStart);
 		UpdateGame();
 		Uint32 timestampUpdate = SDL_GetTicks();
-		printf("Update Game: %d ms \n", timestampUpdate - timestampAfterInput);
+		//printf("Update Game: %d ms \n", timestampUpdate - timestampAfterInput);
 		GenerateOutput();
 		Uint32 timestampRender = SDL_GetTicks();
-		printf("Render: %d ms \n", timestampRender - timestampUpdate);
+		//printf("Render: %d ms \n", timestampRender - timestampUpdate);
 	}
 	Shutdown();
 }
@@ -120,8 +120,16 @@ void GameContext::LoadData()
 	LightBulb* lightBulb2 = new LightBulb(this);
 	lightBulb2->SetPosition(Vec3(0.0f, -2.0f, 0.0f));*/
 
+
+	testEventSub = GameEvent::Subscribe(std::bind(&GameContext::EventListner, this, std::placeholders::_1));
+
 }
 
+
+void GameContext::EventListner(EventTest inEvent)
+{
+	printf("Event received. Value: %d\n", inEvent.mX);
+}
 
 void GameContext::ProcessInput()
 {

@@ -8,6 +8,8 @@
 #include <memory>
 #include <unordered_map>
 
+#include "Util/GameEvent.h"
+
 
 class GameContext
 {
@@ -27,6 +29,10 @@ public:
 
 	Renderer& GetRenderer() const { return *pRenderer.get(); }
 	PhysicsManager& GetPhysicsManager() const { return *pPhysicsManager.get(); }
+
+	GameEvent::Subscription* testEventSub;
+
+	void EventListner(EventTest inEvent);
 
 private:
 	void ProcessInput();
