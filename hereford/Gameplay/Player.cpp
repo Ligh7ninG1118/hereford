@@ -35,6 +35,9 @@ void Player::OnProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseD
 		{
 			inputMoveDir += GetForward();
 			hasMovementInput = true;
+
+			printf("Event fired.\n");
+			GameEvent::Publish<EventTest>(EventTest(42));
 		}
 		if (keyState[SDL_SCANCODE_S])
 		{
@@ -72,9 +75,9 @@ void Player::OnProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseD
 		{
 			if (!lmbPressed)
 			{
-				printf("Event fired.\n");
+				printf("EventA fired.\n");
 				GameEvent::Publish<EventTestA>(EventTestA(false));
-
+				
 				/*Vec3 origin = m_pCameraComponent->GetCameraPosition();
 				Vec3 dir = m_pCameraComponent->GetFrontVector().normalized();
 				HitInfo hitInfo;
