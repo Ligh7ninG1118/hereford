@@ -36,8 +36,8 @@ void Player::OnProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseD
 			inputMoveDir += GetForward();
 			hasMovementInput = true;
 
-			printf("Event fired.\n");
-			GameEvent::Publish<EventTest>(EventTest(42));
+			/*printf("Event fired.\n");
+			GameEvent::Publish<EventTest>(EventTest(42));*/
 		}
 		if (keyState[SDL_SCANCODE_S])
 		{
@@ -77,7 +77,8 @@ void Player::OnProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseD
 			{
 				printf("EventA fired.\n");
 				GameEvent::Publish<EventTestA>(EventTestA(false));
-				
+
+				DelayedActionManager::AddAction(testHandle, std::bind(&Player::TestCallback, this), 2.0f, false);
 				/*Vec3 origin = m_pCameraComponent->GetCameraPosition();
 				Vec3 dir = m_pCameraComponent->GetFrontVector().normalized();
 				HitInfo hitInfo;
@@ -133,4 +134,10 @@ void Player::ProcessMovement(const float& deltaTime)
 	{
 		currentVelocity = Vector3::Zero;
 	}
+}
+
+void Player::TestCallback()
+{
+	printf("Delayed Callback Triggered\n");
+	//DelayedActionManager::RemoveAction(testHandle);
 }

@@ -4,6 +4,7 @@
 #include "Props/TestCube.h"
 #include "Props/LightBulb.h"
 #include "Util/Random.h"
+#include "Util/DelayedAction.h"
 #include "Asset/Shader.h"
 
 #include "Asset/Model.h"
@@ -93,11 +94,13 @@ void GameContext::RunLoop()
 		Uint32 timestampAfterInput = SDL_GetTicks();
 		//printf("Process Input: %d ms \n", timestampAfterInput - timestampStart);
 		UpdateGame();
+		DelayedActionManager::UpdateTimers(deltaTime);
 		Uint32 timestampUpdate = SDL_GetTicks();
 		//printf("Update Game: %d ms \n", timestampUpdate - timestampAfterInput);
 		GenerateOutput();
 		Uint32 timestampRender = SDL_GetTicks();
 		//printf("Render: %d ms \n", timestampRender - timestampUpdate);
+		
 	}
 	Shutdown();
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "../Core/Actor.h"
+#include "Util/DelayedAction.h"
 #include <memory>
 
 
@@ -17,6 +18,8 @@ public:
 private:
 	void ProcessMovement(const float& deltaTime);
 
+	void TestCallback();
+
 	std::unique_ptr<class CameraComponent> m_pCameraComponent;
 
 	bool hasMovementInput = false;
@@ -31,5 +34,7 @@ private:
 	const float accelerationSpeed = 15.0f;
 	const float decelerationSpeed = 20.0f;
 	const float minVelocityOffset = 0.01f;
+
+	DAHandle testHandle;
 };
 

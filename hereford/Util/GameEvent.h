@@ -8,6 +8,7 @@
 #include <functional>
 #include <typeindex>
 
+//TODO: Switch to use smart pointers
 class GameEvent
 {
 public:
