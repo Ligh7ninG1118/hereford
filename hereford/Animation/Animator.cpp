@@ -10,9 +10,9 @@
 Animator::Animator(std::vector<class Animation> animations)
 	: mCurrentTime(0.0f),
 	mDeltaTime(0.0f),
-	mCurrentIndex(2),
+	mCurrentIndex(0),
 	mAnimationList(animations),
-	mShouldLoop(true),
+	mShouldLoop(false),
 	mHasFinished(false)
 {
 	mFinalBoneMatrices.reserve(100);
@@ -37,6 +37,7 @@ void Animator::UpdateAnimation(float dt)
 	{
 		mHasFinished = true;
 		mCurrentTime = mAnimationList[mCurrentIndex].GetDuration();
+		GameEvent::Publish<EventAnimFinished>(EventAnimFinished(mCurrentIndex));
 	}
 	else
 	{
@@ -48,7 +49,7 @@ void Animator::UpdateAnimation(float dt)
 
 void Animator::PlayAnimation(Uint32 index, bool shouldLoop)
 {
-	assert(index >= mAnimationList.size());
+	assert(index < mAnimationList.size());
 
 	mCurrentIndex = index;
 	mCurrentTime = 0.0f;

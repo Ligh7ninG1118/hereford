@@ -75,18 +75,18 @@ void Player::OnProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseD
 		{
 			if (!lmbPressed)
 			{
-				printf("EventA fired.\n");
+				/*printf("EventA fired.\n");
 				GameEvent::Publish<EventTestA>(EventTestA(false));
 
-				DelayedActionManager::AddAction(testHandle, std::bind(&Player::TestCallback, this), 2.0f, false);
-				/*Vec3 origin = m_pCameraComponent->GetCameraPosition();
+				DelayedActionManager::AddAction(testHandle, std::bind(&Player::TestCallback, this), 2.0f, false);*/
+				Vec3 origin = m_pCameraComponent->GetCameraPosition();
 				Vec3 dir = m_pCameraComponent->GetFrontVector().normalized();
 				HitInfo hitInfo;
 				if (mGame->GetPhysicsManager().RaycastQuery(origin, dir, 1000.0f, hitInfo))
 				{
 					if (hitInfo.hitActor != nullptr)
 						hitInfo.hitActor->SetState(ActorState::Destroy);
-				}*/
+				}
 				lmbPressed = true;
 			}
 		}

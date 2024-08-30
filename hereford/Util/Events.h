@@ -1,18 +1,10 @@
 #pragma once
 
-struct EventTest
+struct EventAnimFinished
 {
-	int mX;
+	int mAnimIndex;
 
-	EventTest(int inX)
-		: mX(inX)
-	{}
-};
-
-struct EventTestA
-{
-	bool mX;
-	EventTestA(bool inX)
-		: mX(inX)
+	EventAnimFinished(int animIndex)
+		: mAnimIndex(animIndex)
 	{}
 };

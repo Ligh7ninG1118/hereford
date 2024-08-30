@@ -8,6 +8,7 @@
 #include "Asset/AssetManager.h"
 #include "Animation/Animator.h"
 #include "Animation/Animation.h"
+#include "Animation/AnimationStateMachine.h"
 #include "UI/UIElement.h"
 
 #include <stb_image.h>
@@ -120,6 +121,7 @@ bool Renderer::Initialize()
 		animClips = Animation::LoadAnimations("LocalResources/mark23/source/Mark23v3.fbx", testModel.get());
 	}
 	testAnimator = new Animator(animClips);
+	testASM = new AnimationStateMachine(testAnimator);
 
 	testShader = am->LoadAsset<Shader>(std::string("Shaders/model_tex_vert.glsl*Shaders/model_tex_frag.glsl"));
 	skyboxShader = am->LoadAsset<Shader>(std::string("Shaders/skybox_vert.glsl*Shaders/skybox_frag.glsl"));

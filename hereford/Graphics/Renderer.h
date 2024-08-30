@@ -45,6 +45,7 @@ private:
 	std::shared_ptr<Shader> skyboxShader;
 	class Animation* testAnimation;
 	class Animator* testAnimator;
+	class AnimationStateMachine* testASM;
 	Uint32 skyboxVAOID;
 	Uint32 skyboxTexID;
 

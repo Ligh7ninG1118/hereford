@@ -11,14 +11,14 @@
 //TODO: Switch to use smart pointers
 class GameEvent
 {
-public:
+private:
 	class SubscriptionBase
 	{
 	public:
 		virtual ~SubscriptionBase() = default;
 	};
 
-
+public:
 	template <typename TEvent>
 	class Subscription : public SubscriptionBase
 	{
