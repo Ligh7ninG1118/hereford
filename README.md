@@ -3,7 +3,7 @@ Hereford is a FPS demo planned to recreate the CQB test from the F.N.G. level of
 The demo would be developed using a simple game engine coded from scratch, with **SDL2** and **OpenGL**. 
 
 The project's main purpose is for me to learn more about game engine, modern C++ and features from Cpp20/17/14/11
-(Also, pay homeage to the great game that inspired to become a game developer)
+(Also, pay homeage to the great game that inspired me to become a game developer)
 
 >Note: Due to different license requirements, assets used aren't included in this repo
 
