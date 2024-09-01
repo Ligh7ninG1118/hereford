@@ -189,6 +189,8 @@
     <ClCompile Include="UI\UIImage.cpp" />
     <ClCompile Include="UI\UIElement.cpp" />
     <ClCompile Include="Util\GameEvent.cpp" />
+    <ClCompile Include="Gameplay\Weapon.cpp" />
+    <ClCompile Include="Gameplay\WeaponComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation\AnimationStateMachine.h" />
@@ -228,6 +230,8 @@
     <ClInclude Include="Util\Events.h" />
     <ClInclude Include="Util\GameEvent.h" />
     <ClInclude Include="Util\Random.h" />
+    <ClInclude Include="Gameplay\Weapon.h" />
+    <ClInclude Include="Gameplay\WeaponComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Graphics\Shaders\debug_frag.glsl" />

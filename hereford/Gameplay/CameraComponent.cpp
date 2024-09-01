@@ -1,5 +1,7 @@
 #include "CameraComponent.h"
-#include "../Core/Actor.h"
+#include "Core/Actor.h"
+#include <SDL2/SDL.h>
+
 
 CameraComponent::CameraComponent(Actor* owner)
 	: Component(owner),
@@ -26,6 +28,15 @@ void CameraComponent::ProcessInput(const Uint8* keyState, Uint32 mouseState, int
 
 	m_Rotation.mY = (m_Rotation.mY > 360.0f || m_Rotation.mY < -360.0f) ? 0.0f : m_Rotation.mY;
 	m_Rotation.mX = Math::Clamp(m_Rotation.mX, -89.0f, 89.0f);
+}
+
+void CameraComponent::RotateCamera(Vec2 dir)
+{
+	m_Rotation.mY += dir.mX;
+	m_Rotation.mX += dir.mY;
+
+	m_Rotation.mX = Math::Clamp(m_Rotation.mX, -89.0f, 89.0f);
+	m_Rotation.mY = (m_Rotation.mY > 360.0f || m_Rotation.mY < -360.0f) ? 0.0f : m_Rotation.mY;
 }
 
 Mat4 CameraComponent::GetViewMatrix() const

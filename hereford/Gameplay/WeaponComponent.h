@@ -24,11 +24,13 @@ public:
 	
 private:
 	// Fire Rate Parameters
+	bool mIsSemiAuto;
 	float mFireRatePerMin;
 	float mFireRateCooldown;
 
 	// Fire Rate Runtime Variables
 	float mFireRateTimer;
+	bool mIsLMBPressed;
 
 	// Recoil and Heat Parameters
 	ERecoilType mRecoilType;

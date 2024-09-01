@@ -1,8 +1,10 @@
 #include "WeaponComponent.h"
-
 #include "Util/Random.h"
 
+#include <SDL2/SDL.h>
+
 WeaponComponent::WeaponComponent(Actor* owner)
+	: Component(owner)
 {
 }
 
@@ -23,6 +25,17 @@ void WeaponComponent::Update(float deltaTime)
 
 void WeaponComponent::ProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
 {
+	if ((mouseState & SDL_BUTTON_LEFT))
+	{
+		if (!mIsLMBPressed)
+		{
+			Fire();
+		}
+	}
+	else
+	{
+		mIsLMBPressed = false;
+	}
 }
 
 void WeaponComponent::Fire()
@@ -38,22 +51,17 @@ void WeaponComponent::Fire()
 	
 	Vector2 recoilSpread;
 
-	switch (mRecoilType)
+	if (mRecoilType == ERecoilType::ACCURACY_SPREAD)
 	{
-	case ERecoilType::ACCURACY_SPREAD:
 		float accSpreadVal = mAccuracySpreadFactor * mCurrentHeat;
 		recoilSpread = Vector2(Random::Range(-accSpreadVal, accSpreadVal), Random::Range(-accSpreadVal, accSpreadVal));
-		break;
-	case ERecoilType::RECOIL_DIAMOND:
+	}
+	else if (mRecoilType == ERecoilType::RECOIL_DIAMOND)
+	{
 		float recoilOnY = Random::Range(0.0f, mRecoilDiamond.mY);
 		float ratio = 1.0f - (recoilOnY / mRecoilDiamond.mY);
 		float recoilOnX = Random::Range(-mRecoilDiamond.mX, mRecoilDiamond.mX) * ratio;
 		recoilSpread = Vector2(recoilOnX, recoilOnY);
-		break;
-	case ERecoilType::RECOIL_RIG:
-		break;
-	default:
-		break;
 	}
 	
 	

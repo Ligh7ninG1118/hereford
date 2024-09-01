@@ -14,6 +14,8 @@ public:
 	void Update(float deltaTime) override;
 	void ProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY) override;
 
+	void RotateCamera(Vec2 dir);
+
 	Mat4 GetViewMatrix() const;
 	Mat4 GetPerspMatrix(const float& screenRatio) const;
 	Mat4 GetOrthoMatrix(float left, float right, float bottom, float top) const;
