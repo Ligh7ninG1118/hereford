@@ -169,7 +169,6 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="Asset\Shader.cpp" />
     <ClCompile Include="hereford.cpp" />
-    <ClCompile Include="Gameplay\InputComponent.cpp" />
     <ClCompile Include="Graphics\RenderComponent.cpp" />
     <ClCompile Include="Graphics\Renderer.cpp" />
     <ClCompile Include="Graphics\LightComponent.cpp" />
@@ -207,7 +206,6 @@
     <ClInclude Include="Gameplay\CameraComponent.h" />
     <ClInclude Include="Graphics\LightStructs.h" />
     <ClInclude Include="Asset\Shader.h" />
-    <ClInclude Include="Gameplay\InputComponent.h" />
     <ClInclude Include="Graphics\RenderComponent.h" />
     <ClInclude Include="Graphics\Renderer.h" />
     <ClInclude Include="Graphics\LightComponent.h" />

@@ -1,4 +1,6 @@
+#include "Weapon.h"
 #include "WeaponComponent.h"
+
 #include "Util/Random.h"
 
 #include <SDL2/SDL.h>
@@ -6,6 +8,31 @@
 WeaponComponent::WeaponComponent(Actor* owner)
 	: Component(owner)
 {
+	mWeapon = (Weapon*)owner;
+
+	mIsSemiAuto = true;
+	mFireRatePerMin = 300.0f;
+	mFireRateCooldown = 60.0f / mFireRatePerMin;
+
+	mFireRateTimer = -0.1f;
+	mIsLMBPressed = false;
+
+	mRecoilType = ERecoilType::RECOIL_DIAMOND;
+	mRecoilDiamond = Vec2(0.1f, 0.2f);
+	mAccuracySpreadFactor = 0.05f;
+
+	mHeatReduceDelayCooldown = 0.2f;
+	mHeatReduceRatePerSec = 5.0f;
+
+	mHeatReduceDelayTimer = -0.1f;
+	mCurrentHeat = 0.0f;
+	
+	mMaxMagazineCapacity = 12;
+	mMaxReserveCapacity = 5 * mMaxMagazineCapacity;
+	mIsOpenBolt = false;
+
+	mCurrentMagazineAmmo = mMaxMagazineCapacity;
+	mCurrentReserveAmmo = mMaxReserveCapacity;
 }
 
 WeaponComponent::~WeaponComponent()
@@ -36,6 +63,11 @@ void WeaponComponent::ProcessInput(const Uint8* keyState, Uint32 mouseState, int
 	{
 		mIsLMBPressed = false;
 	}
+
+	if (keyState[SDL_SCANCODE_R])
+	{
+		Reload();
+	}
 }
 
 void WeaponComponent::Fire()
@@ -64,7 +96,7 @@ void WeaponComponent::Fire()
 		recoilSpread = Vector2(recoilOnX, recoilOnY);
 	}
 	
-	
+	mWeapon->FireWeapon();
 
 
 
@@ -94,5 +126,6 @@ void WeaponComponent::Reload()
 	mCurrentMagazineAmmo += reducedAmmo;
 	mCurrentReserveAmmo -= reducedAmmo;
 
+	mWeapon->ReloadWeapon();
 	//TODO: Animation
 }

@@ -23,6 +23,8 @@ public:
 	void Reload();
 	
 private:
+	class Weapon* mWeapon;
+
 	// Fire Rate Parameters
 	bool mIsSemiAuto;
 	float mFireRatePerMin;

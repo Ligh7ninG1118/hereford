@@ -5,9 +5,12 @@ AnimationStateMachine::AnimationStateMachine(Animator* inAnimator)
 	:
 	mAnimator(inAnimator)
 {
-	mTransitionMap[0] = AnimState(1, false);
-	mTransitionMap[1] = AnimState(3, false);
-	mTransitionMap[3] = AnimState(4, true);
+	// Temp reference for pistol animation
+	// 0: Draw, 1: Hide, 2: Static, 3: Reload, 4: Fire
+
+	mTransitionMap[0] = AnimState(2, false);
+	mTransitionMap[3] = AnimState(2, false);
+	mTransitionMap[4] = AnimState(2, false);
 	//TODO: problem! this is essentially broadcast. How do i make it more "direct"?
 	mPtrAnimEvent = GameEvent::Subscribe<EventAnimFinished>(std::bind(&AnimationStateMachine::AnimFinishedListener, this, std::placeholders::_1));
 }

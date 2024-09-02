@@ -1,6 +1,5 @@
 #include "CameraComponent.h"
 #include "Core/Actor.h"
-#include <SDL2/SDL.h>
 
 
 CameraComponent::CameraComponent(Actor* owner)

@@ -10,6 +10,7 @@
 #include "Animation/Animation.h"
 #include "Animation/AnimationStateMachine.h"
 #include "UI/UIElement.h"
+#include "Gameplay/Weapon.h"
 
 #include <stb_image.h>
 
@@ -122,6 +123,8 @@ bool Renderer::Initialize()
 	}
 	testAnimator = new Animator(animClips);
 	testASM = new AnimationStateMachine(testAnimator);
+
+	Weapon* weapon = new Weapon(mPtrGameContext, testAnimator);
 
 	testShader = am->LoadAsset<Shader>(std::string("Shaders/model_tex_vert.glsl*Shaders/model_tex_frag.glsl"));
 	skyboxShader = am->LoadAsset<Shader>(std::string("Shaders/skybox_vert.glsl*Shaders/skybox_frag.glsl"));

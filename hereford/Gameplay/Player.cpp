@@ -1,6 +1,5 @@
 #include "Gameplay/Player.h"
 #include "Gameplay/CameraComponent.h"
-#include "Gameplay/InputComponent.h"
 #include "Core/GameContext.h"
 #include <SDL2/SDL.h>
 
