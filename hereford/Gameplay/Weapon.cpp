@@ -19,10 +19,10 @@ void Weapon::OnUpdate(float deltaTime)
 
 void Weapon::FireWeapon()
 {
-	mAnimator->PlayAnimation(4, false);
+	mAnimator->PlayAnimation(4, false, 0.2f);
 }
 
 void Weapon::ReloadWeapon()
 {
-	mAnimator->PlayAnimation(3, false);
+	mAnimator->PlayAnimation(3, false, 2.0f);
 }

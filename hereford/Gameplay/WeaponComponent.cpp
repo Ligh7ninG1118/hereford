@@ -98,15 +98,9 @@ void WeaponComponent::Fire()
 	
 	mWeapon->FireWeapon();
 
-
-
-	//TODO: Hitscan detection
-
 	mCurrentMagazineAmmo -= 1;
 	mFireRateTimer = mFireRateCooldown;
-
-	//TODO: Animation, sound, vfx...
-
+	printf("Current Ammo: %d/%d\n", mCurrentMagazineAmmo, mCurrentReserveAmmo);
 }
 
 void WeaponComponent::Reload()
@@ -126,6 +120,7 @@ void WeaponComponent::Reload()
 	mCurrentMagazineAmmo += reducedAmmo;
 	mCurrentReserveAmmo -= reducedAmmo;
 
+	printf("Current Ammo: %d/%d\n", mCurrentMagazineAmmo, mCurrentReserveAmmo);
+
 	mWeapon->ReloadWeapon();
-	//TODO: Animation
 }

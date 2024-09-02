@@ -69,6 +69,7 @@ void Player::OnProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseD
 		inputMoveDir.Normalize();
 	}
 
+	if(false)
 	{
 		if ((mouseState & SDL_BUTTON_LEFT))
 		{
