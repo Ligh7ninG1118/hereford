@@ -1,6 +1,7 @@
 #pragma once
 #include "../Core/Actor.h"
 #include "Util/DelayedAction.h"
+#include "Util/GameEvent.h"
 #include <memory>
 
 
@@ -18,9 +19,11 @@ public:
 private:
 	void ProcessMovement(const float& deltaTime);
 
-	void TestCallback();
+	void WeaponFiredEventListener(EventOnPlayerWeaponFired inEvent);
 
 	std::unique_ptr<class CameraComponent> m_pCameraComponent;
+
+
 
 	bool hasMovementInput = false;
 	Vector3 inputMoveDir;
@@ -35,6 +38,6 @@ private:
 	const float decelerationSpeed = 20.0f;
 	const float minVelocityOffset = 0.01f;
 
-	DAHandle testHandle;
+	GameEvent::Subscription<EventOnPlayerWeaponFired>* mPtrWeaponFiredEvent;
 };
 

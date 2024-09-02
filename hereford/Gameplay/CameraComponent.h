@@ -3,8 +3,6 @@
 #include "../Core/Component.h"
 #include "../Math/Math.h"
 
-
-
 class CameraComponent : public Component
 {
 public:
@@ -36,7 +34,6 @@ public:
 	Vec3 GetPositionOffset() const{ return m_PositionOffset; }
 	Vec3 GetCameraPosition() const;
 private:
-
 	Vec3 m_PositionOffset;
 	Vec3 m_Rotation;
 	float m_HorFOV;

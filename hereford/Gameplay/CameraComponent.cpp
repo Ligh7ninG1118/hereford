@@ -1,7 +1,6 @@
 #include "CameraComponent.h"
 #include "Core/Actor.h"
 
-
 CameraComponent::CameraComponent(Actor* owner)
 	: Component(owner),
 	m_PositionOffset(Vector3(0.0f, 1.8f, 0.0f)),

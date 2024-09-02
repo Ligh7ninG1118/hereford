@@ -10,6 +10,8 @@ Player::Player(GameContext* gameCtx)
 	Actor(gameCtx)
 {
 	m_pCameraComponent = std::make_unique<CameraComponent>(static_cast<Actor*>(this));
+
+	mPtrWeaponFiredEvent = GameEvent::Subscribe<EventOnPlayerWeaponFired>(std::bind(&Player::WeaponFiredEventListener, this, std::placeholders::_1));
 }
 
 Player::~Player()
@@ -136,8 +138,7 @@ void Player::ProcessMovement(const float& deltaTime)
 	}
 }
 
-void Player::TestCallback()
+void Player::WeaponFiredEventListener(EventOnPlayerWeaponFired inEvent)
 {
-	printf("Delayed Callback Triggered\n");
-	//DelayedActionManager::RemoveAction(testHandle);
+	m_pCameraComponent->RotateCamera(inEvent.mRecoilDeviation);
 }
