@@ -13,13 +13,13 @@ public:
 	Shader(const std::string& inPath);
 
 	inline void Use() { glUseProgram(mID); };
-	inline Uint32 GetID() const { return mID; }
+	inline uint32 GetID() const { return mID; }
 
 private:
 	void Initialize();
-	Uint32 GenerateGLAsset(const std::string& inPath, GLenum shaderType);
+	uint32 GenerateGLAsset(const std::string& inPath, GLenum shaderType);
 	void CheckCompileError(GLuint shader, std::string type);
 
 	// TODO: A Uniform map of (name, value) for shader instance?
-	Uint32 mID;
+	uint32 mID;
 };

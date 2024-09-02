@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <stdint.h>
 #include <limits>
 #include "Vector2.h"
 #include "Vector3.h"
@@ -22,7 +23,14 @@ using Vec3 = Vector3;
 using Mat4 = Matrix4x4;
 using Quat = Quaternion;
 
-using Uint32 = unsigned int;
+using int8 = int8_t;
+using int16 = int16_t;
+using int32 = int32_t;
+using int64 = int64_t;
+using uint8 = uint8_t;
+using uint16 = uint16_t;
+using uint32 = uint32_t;
+using uint64 = uint64_t;
 
 class Math
 {

@@ -17,9 +17,9 @@ void Shader::Initialize()
 	std::string vertPath = mPath.substr(0, div);
 	std::string fragPath = mPath.substr(div + 1);
 
-	Uint32 vertShaderID = GenerateGLAsset(vertPath, GL_VERTEX_SHADER);
+	uint32 vertShaderID = GenerateGLAsset(vertPath, GL_VERTEX_SHADER);
 	CheckCompileError(vertShaderID, "VERTEX");
-	Uint32 fragShaderID = GenerateGLAsset(fragPath, GL_FRAGMENT_SHADER);
+	uint32 fragShaderID = GenerateGLAsset(fragPath, GL_FRAGMENT_SHADER);
 	CheckCompileError(fragShaderID, "FRAGMENT");
 
 	mID = glCreateProgram();
@@ -33,9 +33,9 @@ void Shader::Initialize()
 
 }
 
-Uint32 Shader::GenerateGLAsset(const std::string& inPath, GLenum shaderType)
+uint32 Shader::GenerateGLAsset(const std::string& inPath, GLenum shaderType)
 {
-	Uint32 shaderID;
+	uint32 shaderID;
 	std::string shaderCodeStr;
 	std::ifstream shaderFile;
 
