@@ -1,10 +1,20 @@
 #pragma once
+#include "Math/Math.h"
 
-struct EventAnimFinished
+struct EventOnAnimFinished
 {
 	int mAnimIndex;
 
-	EventAnimFinished(int animIndex)
+	EventOnAnimFinished(int animIndex)
 		: mAnimIndex(animIndex)
+	{}
+};
+
+struct EventOnPlayerWeaponFired
+{
+	Vec2 mRecoilDeviation;
+
+	EventOnPlayerWeaponFired(Vec2 recoilDev)
+		: mRecoilDeviation(recoilDev)
 	{}
 };

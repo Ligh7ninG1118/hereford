@@ -12,18 +12,24 @@ enum class ERecoilType
 
 class WeaponComponent : public Component
 {
+	friend class Weapon;
+
 public:
 	WeaponComponent(class Actor* owner);
 	~WeaponComponent();
 
 	void Update(float deltaTime) override;
-	void ProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY) override;
 
-	void Fire();
-	void Reload();
+	bool TryFire(bool checkOnly = false);
+	bool TryReload();
+	void ApplyReload();
+
+	Vec2 CalculateRecoilDeviation() const;
 	
 private:
 	class Weapon* mWeapon;
+	// General
+	float mReloadAnimDuration;
 
 	// Fire Rate Parameters
 	bool mIsSemiAuto;
@@ -47,14 +53,13 @@ private:
 	float mCurrentHeat;
 
 	// Ammo Parameters
-	//TODO: switch to use short/uint16
-	int mMaxMagazineCapacity;
-	int mMaxReserveCapacity;
+	uint16 mMaxMagazineCapacity;
+	uint16 mMaxReserveCapacity;
 	bool mIsOpenBolt;
 
 	// Ammo Runtime Variables
-	int mCurrentMagazineAmmo;
-	int mCurrentReserveAmmo;
+	uint16 mCurrentMagazineAmmo;
+	uint16 mCurrentReserveAmmo;
 
 };
 
