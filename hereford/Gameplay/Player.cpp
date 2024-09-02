@@ -25,14 +25,14 @@ void Player::OnUpdate(float deltaTime)
 
 
 
-void Player::OnProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
+void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
 {
 	// Horizontal Movement
 	{
 		inputMoveDir = Vector3::Zero;
 		hasMovementInput = false;
 
-		if (keyState[SDL_SCANCODE_W])
+		if (keyState[SDL_SCANCODE_W] == EInputState::KEY_HOLD)
 		{
 			inputMoveDir += GetForward();
 			hasMovementInput = true;
@@ -40,28 +40,28 @@ void Player::OnProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseD
 			/*printf("Event fired.\n");
 			GameEvent::Publish<EventTest>(EventTest(42));*/
 		}
-		if (keyState[SDL_SCANCODE_S])
+		if (keyState[SDL_SCANCODE_S] == EInputState::KEY_HOLD)
 		{
 			inputMoveDir -= GetForward();
 			hasMovementInput = true;
 		}
-		if (keyState[SDL_SCANCODE_A])
+		if (keyState[SDL_SCANCODE_A] == EInputState::KEY_HOLD)
 		{
 			// Cross with World Up to get Right vector;
 			inputMoveDir -= GetForward().Cross(Vector3(0.0f, 1.0f, 0.0f));
 			hasMovementInput = true;
 		}
-		if (keyState[SDL_SCANCODE_D])
+		if (keyState[SDL_SCANCODE_D] == EInputState::KEY_HOLD)
 		{
 			inputMoveDir += GetForward().Cross(Vector3(0.0f, 1.0f, 0.0f));
 			hasMovementInput = true;
 		}
-		if (keyState[SDL_SCANCODE_Q])
+		if (keyState[SDL_SCANCODE_Q] == EInputState::KEY_HOLD)
 		{
 			inputMoveDir -= Vector3(0.0f, 1.0f, 0.0f);
 			hasMovementInput = true;
 		}
-		if (keyState[SDL_SCANCODE_E])
+		if (keyState[SDL_SCANCODE_E] == EInputState::KEY_HOLD)
 		{
 			inputMoveDir += Vector3(0.0f, 1.0f, 0.0f);
 			hasMovementInput = true;
@@ -71,9 +71,9 @@ void Player::OnProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseD
 		inputMoveDir.Normalize();
 	}
 
-	if(false)
+	if(true)
 	{
-		if ((mouseState & SDL_BUTTON_LEFT))
+		if ((mouseState & SDL_BUTTON_RMASK))
 		{
 			if (!lmbPressed)
 			{

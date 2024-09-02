@@ -19,7 +19,7 @@ void CameraComponent::Update(float deltaTime)
 {
 }
 
-void CameraComponent::ProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
+void CameraComponent::ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
 {
 	m_Rotation.mY += mouseDeltaX * mouseSens;
 	m_Rotation.mX += mouseDeltaY * mouseSens;

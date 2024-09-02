@@ -10,7 +10,7 @@ public:
 	~CameraComponent();
 
 	void Update(float deltaTime) override;
-	void ProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY) override;
+	void ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY) override;
 
 	void RotateCamera(Vec2 dir);
 

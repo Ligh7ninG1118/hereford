@@ -7,8 +7,7 @@
 
 Weapon::Weapon(GameContext* gameCtx, Animator* animator)
 	:Actor(gameCtx),
-	mAnimator(animator),
-	mHasPressedLMB(false)
+	mAnimator(animator)
 {
 	mWeaponComponent = new WeaponComponent(this);
 }
@@ -21,23 +20,14 @@ void Weapon::OnUpdate(float deltaTime)
 {
 }
 
-void Weapon::OnProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
+void Weapon::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
 {
-	if ((mouseState & SDL_BUTTON_LEFT))
-	{
-		// For semi auto, fire once until LMB up
-		if (!mHasPressedLMB || !mWeaponComponent->mIsSemiAuto)
-		{
-			mHasPressedLMB = true;
-			Fire();
-		}
-	}
-	else
-	{
-		mHasPressedLMB = false;
-	}
+	EMouseState targetFlag = mWeaponComponent->mIsSemiAuto ? LMB_DOWN : LMB_HOLD;
+	if (mouseState & targetFlag)
+		Fire();
 
-	if (keyState[SDL_SCANCODE_R])
+
+	if (keyState[SDL_SCANCODE_R] == EInputState::KEY_DOWN)
 	{
 		Reload();
 	}

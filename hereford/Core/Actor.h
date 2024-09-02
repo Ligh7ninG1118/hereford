@@ -1,7 +1,8 @@
 #pragma once
 #include <vector>
 #include <SDL2/SDL_stdinc.h>
-#include "../Math/Math.h"
+#include "Math/Math.h"
+#include "Util/Enums.h"
 
 enum class ActorState
 {
@@ -19,7 +20,7 @@ public:
 	// Update function called from Game (not overridable)
 	void Update(float deltaTime);
 	// ProcessInput function called from Game (not overridable)
-	void ProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY);
+	void ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY);
 
 	// Getters/setters
 	Vector3 GetPosition() const { return mPosition; };
@@ -60,7 +61,7 @@ protected:
 	// Any actor-specific update code (overridable)
 	virtual void OnUpdate(float deltaTime);
 	// Any actor-specific update code (overridable)
-	virtual void OnProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY);
+	virtual void OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY);
 
 	class GameContext* mGame;
 	// Actor's state

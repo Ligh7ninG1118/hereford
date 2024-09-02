@@ -10,7 +10,6 @@
 
 #include "Util/GameEvent.h"
 
-
 class GameContext
 {
 public:
@@ -43,6 +42,10 @@ private:
 	// separate asset manager to manage this
 	std::unordered_map<std::string, Uint32> m_ShaderMap;
 	std::unordered_map<std::string, Uint32> m_MeshMap;
+
+	std::vector<EInputState> mPrevKeyStates;
+
+	Uint32 mPrevMouseStates;
 
 	bool isRunning;
 	bool useVerticalSync;

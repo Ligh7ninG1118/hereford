@@ -15,7 +15,7 @@ void Component::Update(float deltaTime)
 {
 }
 
-void Component::ProcessInput(const Uint8* keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
+void Component::ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
 {
 }
 

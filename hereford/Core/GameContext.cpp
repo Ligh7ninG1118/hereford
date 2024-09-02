@@ -21,6 +21,9 @@
 GameContext::GameContext()
 	: m_ScreenWidth(1920), m_ScreenHeight(1080)
 {
+	// Enough for most input key usage
+	mPrevKeyStates.resize(70);
+	mPrevMouseStates = EMouseState::LMB_NOT_PRESSED | EMouseState::MMB_NOT_PRESSED | EMouseState::RMB_NOT_PRESSED;
 }
 
 GameContext::GameContext(int width, int height)
@@ -141,18 +144,45 @@ void GameContext::ProcessInput()
 		}
 	}
 
-	const Uint8* pKeyState = SDL_GetKeyboardState(nullptr);
-	if (pKeyState[SDL_SCANCODE_ESCAPE])
+	const Uint8* rawKeyState = SDL_GetKeyboardState(nullptr);
+	if (rawKeyState[SDL_SCANCODE_ESCAPE])
 		isRunning = false;
 
+	for (int i = 0; i < mPrevKeyStates.size(); i++)
+	{
+		if (mPrevKeyStates[i] == EInputState::KEY_HOLD || mPrevKeyStates[i] == EInputState::KEY_DOWN)
+			mPrevKeyStates[i] = rawKeyState[i] ? EInputState::KEY_HOLD : EInputState::KEY_UP;
+		else
+			mPrevKeyStates[i] = rawKeyState[i] ? EInputState::KEY_DOWN : EInputState::NOT_PRESSED;
+	}
+
 	int mouseDeltaX, mouseDeltaY;
-	Uint32 pMouseState = SDL_GetRelativeMouseState(&mouseDeltaX, &mouseDeltaY);
+	Uint32 rawMouseState = SDL_GetRelativeMouseState(&mouseDeltaX, &mouseDeltaY);
+	Uint32 newMouseState = 0;
+
+	if ((mPrevMouseStates & EMouseState::LMB_HOLD) || (mPrevMouseStates & EMouseState::LMB_DOWN))
+		newMouseState |= (rawMouseState & SDL_BUTTON_LMASK) ? EMouseState::LMB_HOLD : EMouseState::LMB_UP;
+	else if ((mPrevMouseStates & EMouseState::LMB_NOT_PRESSED) || (mPrevMouseStates & EMouseState::LMB_UP))
+		newMouseState |= (rawMouseState & SDL_BUTTON_LMASK) ? EMouseState::LMB_DOWN : EMouseState::LMB_NOT_PRESSED;
+
+	if ((mPrevMouseStates & EMouseState::RMB_HOLD) || (mPrevMouseStates & EMouseState::RMB_DOWN))
+		newMouseState |= (rawMouseState & SDL_BUTTON_RMASK) ? EMouseState::RMB_HOLD : EMouseState::RMB_UP;
+	else if ((mPrevMouseStates & EMouseState::RMB_NOT_PRESSED) || (mPrevMouseStates & EMouseState::RMB_UP))
+		newMouseState |= (rawMouseState & SDL_BUTTON_RMASK) ? EMouseState::RMB_DOWN : EMouseState::RMB_NOT_PRESSED;
+
+	if ((mPrevMouseStates & EMouseState::MMB_HOLD) || (mPrevMouseStates & EMouseState::MMB_DOWN))
+		newMouseState |= (rawMouseState & SDL_BUTTON_MMASK) ? EMouseState::MMB_HOLD : EMouseState::MMB_UP;
+	else if ((mPrevMouseStates & EMouseState::MMB_NOT_PRESSED) || (mPrevMouseStates & EMouseState::MMB_UP))
+		newMouseState |= (rawMouseState & SDL_BUTTON_MMASK) ? EMouseState::MMB_DOWN : EMouseState::MMB_NOT_PRESSED;
+
+	mPrevMouseStates = newMouseState;
 
 	std::vector<Actor*> actorVector = mActors;
 	for (Actor* actor : actorVector)
 	{
-		actor->ProcessInput(pKeyState, pMouseState, mouseDeltaX, -mouseDeltaY);
+		actor->ProcessInput(mPrevKeyStates, mPrevMouseStates, mouseDeltaX, -mouseDeltaY);
 	}
+
 }
 
 void GameContext::UpdateGame()

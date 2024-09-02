@@ -123,6 +123,9 @@
     <ClCompile Include="Gameplay\WeaponComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UI\UIAmmoIndicator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asset\Shader.h">
@@ -237,6 +240,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Gameplay\WeaponComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UIAmmoIndicator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Enums.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
