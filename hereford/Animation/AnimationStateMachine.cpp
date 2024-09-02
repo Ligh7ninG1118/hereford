@@ -12,7 +12,7 @@ AnimationStateMachine::AnimationStateMachine(Animator* inAnimator)
 	mTransitionMap[3] = AnimState(2, false);
 	mTransitionMap[4] = AnimState(2, false);
 	//TODO: problem! this is essentially broadcast. How do i make it more "direct"?
-	mPtrAnimEvent = GameEvent::Subscribe<EventAnimFinished>(std::bind(&AnimationStateMachine::AnimFinishedListener, this, std::placeholders::_1));
+	mPtrAnimEvent = GameEvent::Subscribe<EventOnAnimFinished>(std::bind(&AnimationStateMachine::AnimFinishedListener, this, std::placeholders::_1));
 }
 
 void AnimationStateMachine::AddTransitionRule(unsigned int fromAnimIndex, const AnimState& toState)
@@ -20,7 +20,7 @@ void AnimationStateMachine::AddTransitionRule(unsigned int fromAnimIndex, const 
 	mTransitionMap[fromAnimIndex] = toState;
 }
 
-void AnimationStateMachine::AnimFinishedListener(EventAnimFinished inEvent)
+void AnimationStateMachine::AnimFinishedListener(EventOnAnimFinished inEvent)
 {
 	if (mTransitionMap.find(inEvent.mAnimIndex) != mTransitionMap.end())
 	{

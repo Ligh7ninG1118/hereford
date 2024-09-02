@@ -35,7 +35,7 @@ void Animator::UpdateAnimation(float dt)
 	{
 		mHasFinished = true;
 		mCurrentTime = mAnimationList[mCurrentIndex].GetDuration();
-		GameEvent::Publish<EventAnimFinished>(EventAnimFinished(mCurrentIndex));
+		GameEvent::Publish<EventOnAnimFinished>(EventOnAnimFinished(mCurrentIndex));
 	}
 	else
 	{

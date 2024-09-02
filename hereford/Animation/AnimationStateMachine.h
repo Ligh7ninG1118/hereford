@@ -18,12 +18,12 @@ public:
 
 	void AddTransitionRule(unsigned int fromAnimIndex, const AnimState& toState);
 
-	void AnimFinishedListener(EventAnimFinished inEvent);
+	void AnimFinishedListener(EventOnAnimFinished inEvent);
 
 private:
 	class Animator* mAnimator;
 
-	GameEvent::Subscription<EventAnimFinished>* mPtrAnimEvent;
+	GameEvent::Subscription<EventOnAnimFinished>* mPtrAnimEvent;
 
 	std::unordered_map<unsigned int, AnimState> mTransitionMap;
 };
