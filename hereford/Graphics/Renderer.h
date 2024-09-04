@@ -17,7 +17,7 @@ enum class EBGClearMode
 };
 
 
-class Renderer
+class Renderer : public std::enable_shared_from_this<Renderer>
 {
 public:
 	Renderer(SDL_Window* sdlWindow, class GameContext* gameContext, int width, int height);
@@ -27,6 +27,8 @@ public:
 	void Render(float deltaTime);
 
 	void SetMainCamera(CameraComponent* pMainCam);
+
+	Vec2 GetScreenDimension() const { return Vec2(mScreenWidth, mScreenHeight); }
 
 private:
 	// TODO: remove underscore
@@ -54,7 +56,9 @@ private:
 	std::vector<class RenderComponent*> mRenderComponents;
 	std::vector<class LightComponent*> mLightComponents;
 
-	std::vector<std::shared_ptr<class UIElement>> mUIElements;
+	std::vector<class UIElement*> mUIElements;
+
+	class UIAmmoIndicator* uiAmmo;
 
 	//std::vector<class RenderComponent> m_RenderCompons;
 	friend class RenderComponent;
@@ -68,7 +72,7 @@ private:
 	void RemoveLightComponent(class LightComponent* c);
 
 	friend class UIElement;
-	void AddUIElement(std::shared_ptr<class UIElement> ui);
-	void RemoveUIElement(std::shared_ptr<class UIElement> ui);
+	void AddUIElement(class UIElement* ui);
+	void RemoveUIElement(class UIElement* ui);
 };
 

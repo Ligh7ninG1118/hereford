@@ -9,6 +9,7 @@
 #include "Animation/Animation.h"
 #include "Animation/AnimationStateMachine.h"
 #include "UI/UIElement.h"
+#include "UI/UIAmmoIndicator.h"
 #include "Gameplay/Weapon.h"
 
 #include <stb_image.h>
@@ -39,11 +40,6 @@ struct Character
 std::map<char, Character> Characters;
 std::shared_ptr<Shader> textShader;
 Uint32 textVAO, textVBO;
-
-std::shared_ptr<Texture> testUI;
-std::shared_ptr<Shader> uiShader;
-Uint32 uiVAO, uiVBO;
-float currentAmmo = 30.0f;
 
 Renderer::Renderer(SDL_Window* sdlWindow, class GameContext* gameContext, int width, int height)
 	:
@@ -129,44 +125,16 @@ bool Renderer::Initialize()
 	skyboxShader = am->LoadAsset<Shader>(std::string("Shaders/skybox_vert.glsl*Shaders/skybox_frag.glsl"));
 	textShader = am->LoadAsset<Shader>(std::string("Shaders/ui_text_vert.glsl*Shaders/ui_text_frag.glsl"));
 
-	testUI = am->LoadAsset<Texture>(std::string("LocalResources/rifle-round-silhouette.png"));
-	uiShader = am->LoadAsset<Shader>(std::string("Shaders/ui_image_vert.glsl*Shaders/ui_image_frag.glsl"));
+
+	std::shared_ptr<Texture> testUI = am->LoadAsset<Texture>(std::string("LocalResources/rifle-round-silhouette.png"));
+	std::shared_ptr<Shader> uiShader = am->LoadAsset<Shader>(std::string("Shaders/ui_image_vert.glsl*Shaders/ui_image_frag.glsl"));
 
 	//TODO: Unchanged shader values dont need to update every frame
-	uiShader->Use();
 	Mat4 uiProj = mPtrMainCamera->GetOrthoMatrix(0.0f, static_cast<float>(mScreenWidth), 0.0f, static_cast<float>(mScreenHeight));
 
-	uiShader->SetVec3("uiColor2", Vec3(1.0f, 1.0f, 1.0f));
-	uiShader->SetVec3("uiColor1", Vec3(0.1f, 0.1f, 0.1f));
-	uiShader->SetMat4("projection", uiProj);
-	uiShader->SetInt("uiTex", 0);
-
-
-	float xpos = 1300.0f;
-	float ypos = 100.0f;
-	float w = 66.0f;
-	float h = 32.0f;
-
-	float uiVertices[6][4] =
-	{
-		{ xpos,		ypos + h,	0.0f, 0.0f},
-		{ xpos,     ypos,       0.0f, 1.0f },
-		{ xpos + w, ypos,       12.0f, 1.0f },
-
-		{ xpos,     ypos + h,   0.0f, 0.0f },
-		{ xpos + w, ypos,       12.0f, 1.0f },
-		{ xpos + w, ypos + h,   12.0f, 0.0f }
-	};
-
-	glGenVertexArrays(1, &uiVAO);
-	glGenBuffers(1, &uiVBO);
-	glBindVertexArray(uiVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, uiVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(uiVertices), &uiVertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	uiAmmo = new UIAmmoIndicator(this, uiShader.get(), testUI, weapon);
+	uiAmmo->Initialize();
+	uiAmmo->SetUIProjection(uiProj);
 
 
 	glGenTextures(1, &skyboxTexID);
@@ -552,16 +520,10 @@ void Renderer::Render(float deltaTime)
 	}
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); 
-	uiShader->Use();
 	
-
-	int actualAmmo = static_cast<int>(currentAmmo);
-	float threshold = 1300.0f + (30 - actualAmmo) * 16.0f;
-
-	uiShader->SetFloat("threshold", threshold);
-	glBindVertexArray(uiVAO);
-
-	glBindTexture(GL_TEXTURE_2D, testUI->GetID());
+	uiAmmo->UpdateContent();
+	glBindVertexArray(uiAmmo->GetVAO());
+	glBindTexture(GL_TEXTURE_2D, uiAmmo->GetTexture()->GetID());
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 
@@ -597,12 +559,12 @@ void Renderer::RemoveLightComponent(LightComponent* c)
 	mLightComponents.erase(std::find(mLightComponents.begin(), mLightComponents.end(), c));
 }
 
-void Renderer::AddUIElement(std::shared_ptr<UIElement> ui)
+void Renderer::AddUIElement(UIElement* ui)
 {
 	mUIElements.push_back(ui);
 }
 
-void Renderer::RemoveUIElement(std::shared_ptr<UIElement> ui)
+void Renderer::RemoveUIElement(UIElement* ui)
 {
 	mUIElements.erase(std::find(mUIElements.begin(), mUIElements.end(), ui));
 }

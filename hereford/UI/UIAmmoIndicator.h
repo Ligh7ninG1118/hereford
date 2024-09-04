@@ -3,15 +3,16 @@
 class UIAmmoIndicator : public UIImage
 {
 public:
-	UIAmmoIndicator(std::weak_ptr<class Renderer> inPtrRenderer, std::weak_ptr<class Weapon> inPtrWeapon);
+	UIAmmoIndicator(class Renderer* inPtrRenderer, class Shader* inPtrShader, std::shared_ptr<class Texture> inPtrUITex, class Weapon* inPtrWeapon);
 	~UIAmmoIndicator();
 
+	void Initialize() override;
 	void UpdateContent() override;
 
 protected:
 	uint16 mCurrentMax;
 	
-	std::weak_ptr<class Weapon> mPtrWeapon;
+	class Weapon* mPtrWeapon;
 
 };
 

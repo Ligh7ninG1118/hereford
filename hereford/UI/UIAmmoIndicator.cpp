@@ -1,10 +1,12 @@
 #include "UIAmmoIndicator.h"
 #include "Asset/Shader.h"
+#include "Asset/Texture.h"
+#include "Graphics/Renderer.h"
 #include "Gameplay/Weapon.h"
 #include "Gameplay/WeaponComponent.h"
 
-UIAmmoIndicator::UIAmmoIndicator(std::weak_ptr<Renderer> inPtrRenderer, std::weak_ptr<Weapon> inPtrWeapon)
-	: UIImage(inPtrRenderer),
+UIAmmoIndicator::UIAmmoIndicator(Renderer* inPtrRenderer, Shader* inPtrShader, std::shared_ptr<Texture> inPtrUITex, Weapon* inPtrWeapon)
+	: UIImage(inPtrRenderer, inPtrShader, inPtrUITex),
 	mPtrWeapon(inPtrWeapon),
 	mCurrentMax(0)
 {
@@ -14,33 +16,67 @@ UIAmmoIndicator::~UIAmmoIndicator()
 {
 }
 
+void UIAmmoIndicator::Initialize()
+{
+	mCurrentMax = mPtrWeapon->GetWeaponComponent()->GetMaxMagazineCapacity();
+
+	SetAnchor(EUIAnchorPreset::BOTTOM_RIGHT);
+	SetPosition(Vec2(-300.0f, 100.0f));
+	SetAlignment(Vec2(1.0f, 0.5f));
+	SetDimension(Vec2(66.0f, 32.0f));
+	SetTiling(Vec2(static_cast<float>(mCurrentMax), 1.0f));
+
+	mPtrShader->Use();
+	mPtrShader->SetVec3("uiColor2", Vec3(1.0f, 1.0f, 1.0f));
+	mPtrShader->SetVec3("uiColor1", Vec3(0.1f, 0.1f, 0.1f));
+	mPtrShader->SetInt("uiTex", 0);
+
+	UIImage::Initialize();
+}
+
 void UIAmmoIndicator::UpdateContent()
 {
-	auto lock = mPtrWeapon.lock();
+	/*auto lock = mPtrWeapon.lock();
 	if (!lock)
 	{
 		printf("UIAmmoIndicator::UpdateContent(): Referenced Weapon obj destroyed\n");
 		return;
-	}
+	}*/
 
-
-	uint16 maxMag = lock->GetWeaponComponent()->GetMaxMagazineCapacity();
-		
+	
 	//TODO: Wrong! Since we r holding ptr to a single weapon instance, its magazine capacity wont change
 	//		If it indeed was changed, then it means a diff weapon instance, should do this in SetPtrWeapon or somewhere
-	if (maxMag != mCurrentMax)
+	
+	uint16 currentMag = mPtrWeapon->GetWeaponComponent()->GetCurrentMagazineAmmo();
+
+	Vec2 screenDimension;
+	Vec2 actualPos = mPosition;
+	screenDimension = mPtrRenderer->GetScreenDimension();
+
+	switch (mAnchor)
 	{
-		mCurrentMax = maxMag;
-		UpdateGLAsset();
+	case EUIAnchorPreset::BOTTOM_MID:
+	case EUIAnchorPreset::CENTER_MID:
+	case EUIAnchorPreset::TOP_MID:
+		actualPos.mX += screenDimension.mX / 2.0f;
+		break;
+	case EUIAnchorPreset::BOTTOM_RIGHT:
+	case EUIAnchorPreset::CENTER_RIGHT:
+	case EUIAnchorPreset::TOP_RIGHT:
+		actualPos.mX += screenDimension.mX;
+		break;
+	default:
+		break;
 	}
 
-	uint16 currentMag = lock->GetWeaponComponent()->GetCurrentMagazineAmmo();
+	//anchor
+	float leftX = actualPos.mX - mDimension.mX * mAlignment.mX * mScale.mX;
+
+	//Okay...But how do we deal with one in the chamber sceneario?
+	float threshold = leftX + (mCurrentMax - currentMag) * GetDimension().mX / static_cast<float>(mCurrentMax);	
 
 	mPtrShader->Use();
-	float leftX = mPosition.mX - mDimension.mX * mAlignment.mX * mScale.mX;
-
-	//TODO: Calculate width
-	float threshold = leftX + (mCurrentMax - currentMag) * 16.0f;	
-
 	mPtrShader->SetFloat("threshold", threshold);
+
+	UIElement::UpdateContent();
 }
