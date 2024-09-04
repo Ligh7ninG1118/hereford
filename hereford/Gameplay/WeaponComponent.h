@@ -25,6 +25,12 @@ public:
 	void ApplyReload();
 
 	Vec2 CalculateRecoilDeviation() const;
+
+	inline uint16 GetCurrentMagazineAmmo() const { return mCurrentMagazineAmmo; }
+	inline uint16 GetCurrentReserveAmmo() const { return mCurrentReserveAmmo; }
+
+	inline uint16 GetMaxMagazineCapacity() const { return mMaxMagazineCapacity; }
+	inline uint16 GetMaxReserveCapacity() const { return mMaxReserveCapacity; }
 	
 private:
 	class Weapon* mWeapon;

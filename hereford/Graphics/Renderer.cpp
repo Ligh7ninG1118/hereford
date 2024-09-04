@@ -113,18 +113,18 @@ bool Renderer::Initialize()
 	//TODO: having two copies of the data right now
 	if (0)
 	{
-		testModel = am->LoadAsset<Model>(std::string("LocalResources/SillyDancing/Silly Dancing.dae"));
-		animClips = Animation::LoadAnimations("LocalResources/SillyDancing/Silly Dancing.dae", testModel.get());
+		gunModel = am->LoadAsset<Model>(std::string("LocalResources/SillyDancing/Silly Dancing.dae"));
+		animClips = Animation::LoadAnimations("LocalResources/SillyDancing/Silly Dancing.dae", gunModel.get());
 	}
 	else
 	{
-		testModel = am->LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v3.fbx"));
-		animClips = Animation::LoadAnimations("LocalResources/mark23/source/Mark23v3.fbx", testModel.get());
+		gunModel = am->LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v3.fbx"));
+		animClips = Animation::LoadAnimations("LocalResources/mark23/source/Mark23v3.fbx", gunModel.get());
 	}
-	testAnimator = new Animator(animClips);
-	testASM = new AnimationStateMachine(testAnimator);
+	gunAnimator = new Animator(animClips);
+	gunASM = new AnimationStateMachine(gunAnimator);
 
-	Weapon* weapon = new Weapon(mPtrGameContext, testAnimator);
+	Weapon* weapon = new Weapon(mPtrGameContext, gunAnimator);
 
 	testShader = am->LoadAsset<Shader>(std::string("Shaders/model_tex_vert.glsl*Shaders/model_tex_frag.glsl"));
 	skyboxShader = am->LoadAsset<Shader>(std::string("Shaders/skybox_vert.glsl*Shaders/skybox_frag.glsl"));
@@ -144,18 +144,18 @@ bool Renderer::Initialize()
 
 	float xpos = 1300.0f;
 	float ypos = 100.0f;
-	float w = 480.0f;
-	float h = 92.0f;
+	float w = 66.0f;
+	float h = 32.0f;
 
 	float uiVertices[6][4] =
 	{
 		{ xpos,		ypos + h,	0.0f, 0.0f},
 		{ xpos,     ypos,       0.0f, 1.0f },
-		{ xpos + w, ypos,       30.0f, 1.0f },
+		{ xpos + w, ypos,       12.0f, 1.0f },
 
 		{ xpos,     ypos + h,   0.0f, 0.0f },
-		{ xpos + w, ypos,       30.0f, 1.0f },
-		{ xpos + w, ypos + h,   30.0f, 0.0f }
+		{ xpos + w, ypos,       12.0f, 1.0f },
+		{ xpos + w, ypos + h,   12.0f, 0.0f }
 	};
 
 	glGenVertexArrays(1, &uiVAO);
@@ -334,16 +334,14 @@ void Renderer::Render(float deltaTime)
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	Uint32 cumTexChannel = 0;
-
 	Mat4 projection = mPtrMainCamera->GetPerspMatrix((float)mScreenWidth/mScreenHeight);
 	Mat4 view = mPtrMainCamera->GetViewMatrix();
 
 	Uint32 lastShaderID = 0;
 	Uint32 lastVAOID = 0;
 
-	if(testAnimator)
-		testAnimator->UpdateAnimation(deltaTime);
+	if(gunAnimator)
+		gunAnimator->UpdateAnimation(deltaTime);
 	testShader->Use();
 	Uint32 shaderID = testShader->GetID();
 
@@ -379,18 +377,18 @@ void Renderer::Render(float deltaTime)
 	ShaderOp::SetVec3(shaderID, "pointLight.color", Vec3(10.0f, 10.0f, 10.0f));
 	ShaderOp::SetVec3(shaderID, "eyePos", mPtrMainCamera->GetCameraPosition());
 
-	if (testAnimator)
+	if (gunAnimator)
 	{
-		auto transforms = testAnimator->GetFinalBoneMatrices();
+		auto transforms = gunAnimator->GetFinalBoneMatrices();
 		for (int i = 0; i < transforms.size(); i++)
 		{
 			ShaderOp::SetMat4(shaderID, "finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 		}
 	}
 
-	for (unsigned int i = 0; i < testModel->mMeshes.size(); i++)
+	for (unsigned int i = 0; i < gunModel->mMeshes.size(); i++)
 	{
-		Mesh* mesh = &testModel->mMeshes[i];
+		Mesh* mesh = &gunModel->mMeshes[i];
 		
 		unsigned int diffuseNr = 1;
 		unsigned int specularNr = 1;
@@ -399,7 +397,6 @@ void Renderer::Render(float deltaTime)
 		for (unsigned int i = 0; i < mesh->mTextures.size(); i++)
 		{
 			glActiveTexture(GL_TEXTURE0 + i);
-			cumTexChannel = i;
 
 			std::string texStr;
 			switch (mesh->mTextures[i].GetType())

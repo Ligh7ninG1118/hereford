@@ -44,12 +44,12 @@ private:
 
 	std::shared_ptr<Shader> skyboxShader;
 	class Animation* testAnimation;
-	class Animator* testAnimator;
-	class AnimationStateMachine* testASM;
+	class Animator* gunAnimator;
+	class AnimationStateMachine* gunASM;
 	Uint32 skyboxVAOID;
 	Uint32 skyboxTexID;
 
-	std::shared_ptr<Model> testModel;
+	std::shared_ptr<Model> gunModel;
 
 	std::vector<class RenderComponent*> mRenderComponents;
 	std::vector<class LightComponent*> mLightComponents;

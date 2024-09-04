@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 #include <Math/Math.h>
 
+//TODO: Move back to shader class
 class ShaderOp
 {
 public:
