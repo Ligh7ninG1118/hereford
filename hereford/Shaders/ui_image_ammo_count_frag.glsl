@@ -16,5 +16,5 @@ void main()
 		color = uiColor1;
 	else
 		color = uiColor2;
-	FragColor = vec4(color, 1.0f) * sampled;
+	FragColor = vec4(color, 0.8f) * sampled;
 }

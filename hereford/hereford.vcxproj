@@ -251,8 +251,8 @@
     <None Include="Shaders\skybox_vert.glsl" />
     <None Include="Shaders\standard_frag.glsl" />
     <None Include="Shaders\standard_vert.glsl" />
-    <None Include="Shaders\ui_image_frag.glsl" />
-    <None Include="Shaders\ui_image_vert.glsl" />
+    <None Include="Shaders\ui_image_ammo_count_frag.glsl" />
+    <None Include="Shaders\ui_image_ammo_count_vert.glsl" />
     <None Include="Shaders\ui_text_frag.glsl" />
     <None Include="Shaders\ui_text_vert.glsl" />
   </ItemGroup>

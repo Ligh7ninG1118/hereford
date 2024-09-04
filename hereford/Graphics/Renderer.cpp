@@ -127,7 +127,7 @@ bool Renderer::Initialize()
 
 
 	std::shared_ptr<Texture> testUI = am->LoadAsset<Texture>(std::string("LocalResources/rifle-round-silhouette.png"));
-	std::shared_ptr<Shader> uiShader = am->LoadAsset<Shader>(std::string("Shaders/ui_image_vert.glsl*Shaders/ui_image_frag.glsl"));
+	std::shared_ptr<Shader> uiShader = am->LoadAsset<Shader>(std::string("Shaders/ui_image_ammo_count_vert.glsl*Shaders/ui_image_ammo_count_frag.glsl"));
 
 	//TODO: Unchanged shader values dont need to update every frame
 	Mat4 uiProj = mPtrMainCamera->GetOrthoMatrix(0.0f, static_cast<float>(mScreenWidth), 0.0f, static_cast<float>(mScreenHeight));
