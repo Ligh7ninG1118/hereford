@@ -4,7 +4,6 @@
 #include "Core/GameContext.h"
 #include "Asset/Texture.h"
 #include "Asset/Model.h"
-#include "ShaderOp.h"
 #include "Asset/AssetManager.h"
 #include "Animation/Animator.h"
 #include "Animation/Animation.h"
@@ -136,10 +135,11 @@ bool Renderer::Initialize()
 	//TODO: Unchanged shader values dont need to update every frame
 	uiShader->Use();
 	Mat4 uiProj = mPtrMainCamera->GetOrthoMatrix(0.0f, static_cast<float>(mScreenWidth), 0.0f, static_cast<float>(mScreenHeight));
-	ShaderOp::SetVec3(uiShader->GetID(), "uiColor2", Vec3(1.0f, 1.0f, 1.0f));
-	ShaderOp::SetVec3(uiShader->GetID(), "uiColor1", Vec3(0.1f, 0.1f, 0.1f));
-	ShaderOp::SetMat4(uiShader->GetID(), "projection", uiProj);
-	ShaderOp::SetInt(uiShader->GetID(), "uiTex", 0);
+
+	uiShader->SetVec3("uiColor2", Vec3(1.0f, 1.0f, 1.0f));
+	uiShader->SetVec3("uiColor1", Vec3(0.1f, 0.1f, 0.1f));
+	uiShader->SetMat4("projection", uiProj);
+	uiShader->SetInt("uiTex", 0);
 
 
 	float xpos = 1300.0f;
@@ -343,11 +343,9 @@ void Renderer::Render(float deltaTime)
 	if(gunAnimator)
 		gunAnimator->UpdateAnimation(deltaTime);
 	testShader->Use();
-	Uint32 shaderID = testShader->GetID();
+	testShader->SetMat4("projection", projection);
 
-	ShaderOp::SetMat4(shaderID, "projection", projection);
-
-	ShaderOp::SetMat4(shaderID, "view", view);
+	testShader->SetMat4("view", view);
 
 	Mat4 model = Mat4::Identity;
 	model.Scale(0.03f);
@@ -369,20 +367,17 @@ void Renderer::Render(float deltaTime)
 	
 	//model.Rotate(DEG2RAD * playerRot.mZ, Vector3::Up);
 
-
-
-	ShaderOp::SetMat4(shaderID, "model", model);
-
-	ShaderOp::SetVec3(shaderID, "pointLight.position", Vec3(0.0f, 5.0f, 0.0f));
-	ShaderOp::SetVec3(shaderID, "pointLight.color", Vec3(10.0f, 10.0f, 10.0f));
-	ShaderOp::SetVec3(shaderID, "eyePos", mPtrMainCamera->GetCameraPosition());
+	testShader->SetMat4("model", model);
+	testShader->SetVec3("pointLight.position", Vec3(0.0f, 5.0f, 0.0f));
+	testShader->SetVec3("pointLight.color", Vec3(10.0f, 10.0f, 10.0f));
+	testShader->SetVec3("eyePos", mPtrMainCamera->GetCameraPosition());
 
 	if (gunAnimator)
 	{
 		auto transforms = gunAnimator->GetFinalBoneMatrices();
 		for (int i = 0; i < transforms.size(); i++)
 		{
-			ShaderOp::SetMat4(shaderID, "finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+			testShader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 		}
 	}
 
@@ -425,7 +420,7 @@ void Renderer::Render(float deltaTime)
 			default:
 				break;
 			}
-			ShaderOp::SetInt(shaderID, texStr.c_str(), i);
+			testShader->SetInt(texStr.c_str(), i);
 			glBindTexture(GL_TEXTURE_2D, mesh->mTextures[i].GetID());
 		}
 
@@ -494,12 +489,12 @@ void Renderer::Render(float deltaTime)
 
 	glDepthFunc(GL_LEQUAL);
 	skyboxShader->Use();
-	ShaderOp::SetMat4(skyboxShader->GetID(), "projection", projection);
+	skyboxShader->SetMat4("projection", projection);
 	Mat4 view2 = mPtrMainCamera->GetViewMatrix();
 	view2.m[0][3] = view2.m[1][3] = view2.m[2][3] = view2.m[3][0] = view2.m[3][1] = view2.m[3][2] = 0;
 
-	ShaderOp::SetMat4(skyboxShader->GetID(), "view", view2);
-	ShaderOp::SetInt(skyboxShader->GetID(), "skybox", 0);
+	skyboxShader->SetMat4("view", view2);
+	skyboxShader->SetInt("skybox", 0);
 	glBindVertexArray(skyboxVAOID);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);
@@ -514,9 +509,9 @@ void Renderer::Render(float deltaTime)
 	// TODO: use cast
 	Mat4 uiProj = mPtrMainCamera->GetOrthoMatrix(0.0f, static_cast<float>(mScreenWidth), 0.0f, static_cast<float>(mScreenHeight));
 
-	ShaderOp::SetVec3(textShader->GetID(), "textColor", Vec3(0.1f, 0.1f, 0.1f));
-	ShaderOp::SetMat4(textShader->GetID(), "projection", uiProj);
-	ShaderOp::SetInt(textShader->GetID(), "text", 0);
+	textShader->SetVec3("textColor", Vec3(0.1f, 0.1f, 0.1f));
+	textShader->SetMat4("projection", uiProj);
+	textShader->SetInt("text", 0);
 	glActiveTexture(GL_TEXTURE0);
 
 	glBindVertexArray(textVAO);
@@ -563,7 +558,7 @@ void Renderer::Render(float deltaTime)
 	int actualAmmo = static_cast<int>(currentAmmo);
 	float threshold = 1300.0f + (30 - actualAmmo) * 16.0f;
 
-	ShaderOp::SetFloat(uiShader->GetID(), "threshold", threshold);
+	uiShader->SetFloat("threshold", threshold);
 	glBindVertexArray(uiVAO);
 
 	glBindTexture(GL_TEXTURE_2D, testUI->GetID());

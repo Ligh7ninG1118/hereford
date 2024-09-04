@@ -1,6 +1,5 @@
 #include "UIElement.h"
 #include "Asset/Shader.h"
-#include "Graphics/ShaderOp.h"
 #include "Graphics/Renderer.h"
 
 
@@ -92,6 +91,6 @@ float* UIElement::GenerateQuad()
 
 void UIElement::SetUIProjection(const Mat4& uiProj)
 {
-	ShaderOp::SetMat4(mPtrShader->GetID(), "projection", uiProj);
+	mPtrShader->SetMat4("projection", uiProj);
 }
 

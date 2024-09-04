@@ -1,6 +1,5 @@
 #include "UIAmmoIndicator.h"
 #include "Asset/Shader.h"
-#include "Graphics/ShaderOp.h"
 #include "Gameplay/Weapon.h"
 #include "Gameplay/WeaponComponent.h"
 
@@ -43,5 +42,5 @@ void UIAmmoIndicator::UpdateContent()
 	//TODO: Calculate width
 	float threshold = leftX + (mCurrentMax - currentMag) * 16.0f;	
 
-	ShaderOp::SetFloat(mPtrShader->GetID(), "threshold", threshold);
+	mPtrShader->SetFloat("threshold", threshold);
 }

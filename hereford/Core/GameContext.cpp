@@ -54,7 +54,7 @@ bool GameContext::Initialize()
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-	pSDLWindow = SDL_CreateWindow("SDL Tutorial", 
+	pSDLWindow = SDL_CreateWindow("Hereford", 
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_ScreenWidth, m_ScreenHeight, 
 		SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 	if (pSDLWindow == nullptr)

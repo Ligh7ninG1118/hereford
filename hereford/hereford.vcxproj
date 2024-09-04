@@ -184,7 +184,6 @@
     <ClCompile Include="Physics\PhysicsComponent.cpp" />
     <ClCompile Include="Props\TestCube.cpp" />
     <ClCompile Include="Asset\Texture.cpp" />
-    <ClCompile Include="Graphics\ShaderOp.cpp" />
     <ClCompile Include="Math\Quaternion.cpp" />
     <ClCompile Include="UI\UIImage.cpp" />
     <ClCompile Include="UI\UIElement.cpp" />
@@ -223,7 +222,6 @@
     <ClInclude Include="Physics\PhysicsComponent.h" />
     <ClInclude Include="Props\TestCube.h" />
     <ClInclude Include="Asset\Texture.h" />
-    <ClInclude Include="Graphics\ShaderOp.h" />
     <ClInclude Include="Math\Quaternion.h" />
     <ClInclude Include="UI\UIImage.h" />
     <ClInclude Include="UI\UIElement.h" />
