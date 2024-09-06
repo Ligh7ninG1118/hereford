@@ -7,7 +7,8 @@ The project's main purpose is for me to learn more about game engine development
 
 >Note: Due to different license requirements, assets used aren't included in this repo
 
-## Progress Showcase (Updated mm/dd/2024)
+## Progress Showcase (Updated 09/06/2024)
+[![Hereford Progress Showcase](http://img.youtube.com/vi/VHlY_zjUnFU/0.jpg)](https://youtu.be/VHlY_zjUnFU)
 
 ## Features Developed
 or at least, "it's working!"
