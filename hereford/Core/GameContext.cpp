@@ -99,9 +99,11 @@ void GameContext::RunLoop()
 		UpdateGame();
 		DelayedActionManager::UpdateTimers(deltaTime);
 		Uint32 timestampUpdate = SDL_GetTicks();
+		cpuTime = timestampUpdate - timestampStart;
 		//printf("Update Game: %d ms \n", timestampUpdate - timestampAfterInput);
 		GenerateOutput();
 		Uint32 timestampRender = SDL_GetTicks();
+		gpuTime = timestampRender - timestampUpdate;
 		//printf("Render: %d ms \n", timestampRender - timestampUpdate);
 		
 	}
@@ -113,14 +115,14 @@ void GameContext::LoadData()
 	player = new Player(this);
 	pRenderer->SetMainCamera(&player->GetMainCamera());
 
-	/*for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 20; i++)
 	{
 		TestCube* cubeActor = new TestCube(this);
-		cubeActor->SetPosition(Vec3(Random::Range(-20.0f, 20.0f), Random::Range(-20.0f, 20.0f), Random::Range(-20.0f, 20.0f) ));
+		cubeActor->SetPosition(Vec3(Random::Range(5.0f, 15.0f), Random::Range(-10.0f, 10.0f), Random::Range(-10.0f, 10.0f) ));
 	}
 
 
-	LightBulb* lightBulb = new LightBulb(this);
+	/*LightBulb* lightBulb = new LightBulb(this);
 	lightBulb->SetPosition(Vec3(0.0f, 5.0f, 0.0f));
 
 	LightBulb* lightBulb2 = new LightBulb(this);

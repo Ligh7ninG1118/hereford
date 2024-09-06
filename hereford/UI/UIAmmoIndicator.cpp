@@ -69,7 +69,7 @@ void UIAmmoIndicator::UpdateContent()
 		break;
 	}
 
-	//anchor
+
 	float leftX = actualPos.mX - mDimension.mX * mAlignment.mX * mScale.mX;
 
 	//Okay...But how do we deal with one in the chamber sceneario?

@@ -29,6 +29,10 @@ public:
 	Renderer& GetRenderer() const { return *pRenderer.get(); }
 	PhysicsManager& GetPhysicsManager() const { return *pPhysicsManager.get(); }
 
+	//TODO: Move to Telemetry Class
+	uint32 cpuTime;
+	uint32 gpuTime;
+
 private:
 	void ProcessInput();
 	void UpdateGame();

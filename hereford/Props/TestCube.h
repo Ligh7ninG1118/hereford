@@ -13,6 +13,7 @@ public:
 
 private:
 	float multiplier = 1.0f;
+	Vec3 mColor;
 	class RenderComponent* m_pRenderComponent;
 	class PhysicsComponent* m_pPhysicsComponent;
 };

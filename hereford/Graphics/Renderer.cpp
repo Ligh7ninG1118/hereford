@@ -398,51 +398,51 @@ void Renderer::Render(float deltaTime)
 	}
 
 
-	/*for (auto renderComponent : mRenderComponents)
+	for (auto renderComponent : mRenderComponents)
 	{
-		unsigned int VAO, VBO, shaderID;
+		unsigned int VAO, VBO;
+		Shader* shader;
 		VAO = renderComponent->GetVAOID();
-		shaderID = renderComponent->GetShaderID();
-
+		shader = renderComponent->GetShader().get();
 
 		glBindVertexArray(VAO);
-		glUseProgram(shaderID);
+		glUseProgram(shader->GetID());
 
-		if (shaderID != lastShaderID)
+		shader->SetInt("lightNum", 1);
+
+		/*for (int i = 0; i < lightSize; i++)
 		{
+			ShaderOp::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].position", mLightComponents[i]->GetPosition());
+			ShaderOp::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].ambient", mLightComponents[i]->GetPointLight().ambient);
+			ShaderOp::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].diffuse", mLightComponents[i]->GetPointLight().diffuse);
+			ShaderOp::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].specular", mLightComponents[i]->GetPointLight().specular);
 
-			int lightSize = mLightComponents.size();
-			Shader::SetInt(shaderID, "lightNum", lightSize);
+			ShaderOp::SetFloat(shaderID, "pointLight[" + std::to_string(i) + "].constant", mLightComponents[i]->GetPointLight().constant);
+			ShaderOp::SetFloat(shaderID, "pointLight[" + std::to_string(i) + "].linear", mLightComponents[i]->GetPointLight().linear);
+			ShaderOp::SetFloat(shaderID, "pointLight[" + std::to_string(i) + "].quadratic", mLightComponents[i]->GetPointLight().quadratic);
+		}*/
 
-			for (int i = 0; i < lightSize; i++)
-			{
-				ShaderOp::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].position", mLightComponents[i]->GetPosition());
-				ShaderOp::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].ambient", mLightComponents[i]->GetPointLight().ambient);
-				ShaderOp::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].diffuse", mLightComponents[i]->GetPointLight().diffuse);
-				ShaderOp::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].specular", mLightComponents[i]->GetPointLight().specular);
+		shader->SetVec3("pointLight[0].position", Vec3(0.0f, 5.0f, 0.0f));
 
-				ShaderOp::SetFloat(shaderID, "pointLight[" + std::to_string(i) + "].constant", mLightComponents[i]->GetPointLight().constant);
-				ShaderOp::SetFloat(shaderID, "pointLight[" + std::to_string(i) + "].linear", mLightComponents[i]->GetPointLight().linear);
-				ShaderOp::SetFloat(shaderID, "pointLight[" + std::to_string(i) + "].quadratic", mLightComponents[i]->GetPointLight().quadratic);
-			}
+		shader->SetVec3("pointLight[0].ambient", Vec3(0.1f, 0.1f, 0.1f));
+		shader->SetVec3("pointLight[0].diffuse", Vec3(0.6f, 0.6f, 0.6f));
+		shader->SetVec3("pointLight[0].specular", Vec3(1.0f, 1.0f, 1.0f));
 
+		shader->SetFloat("pointLight[0].constant", 1.0f);
+		shader->SetFloat("pointLight[0].linear", 0.007f);
+		shader->SetFloat("pointLight[0].quadratic", 0.0002f);
 
-			ShaderOp::SetVec3(shaderID, "viewPos", m_pMainCamera->GetCameraPosition());
-
-			ShaderOp::SetMat4(shaderID, "projection", projection);
-
-			ShaderOp::SetMat4(shaderID, "view", view);
-		}
-
-		lastShaderID = shaderID;
+		shader->SetVec3("viewPos", mPtrMainCamera->GetCameraPosition());
 
 		Mat4 model = renderComponent->GetModelMatrix();
-		ShaderOp::SetMat4(shaderID, "model", model);
-		ShaderOp::SetVec3(shaderID, "inColor", renderComponent->color);
+		shader->SetMat4("model", model);
+		shader->SetMat4("projection", projection);
+		shader->SetMat4("view", view);
+
+		shader->SetVec3("inColor", renderComponent->GetColor());
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-	}*/
+	}
 
 	// Draw crosshair
 	{
@@ -485,10 +485,14 @@ void Renderer::Render(float deltaTime)
 	// TODO: toString for my math classes?
 	const Vec3 pos = mPtrMainCamera->GetOwner()->GetPosition();
 	const Vec3 rot = mPtrMainCamera->GetRotation();
-	std::string text = std::format("Pos: ({:.2f}, {:.2f}, {:.2f}) Rot:  ({:.2f}, {:.2f}, {:.2f})", pos.mX, pos.mY, pos.mZ, rot.mX, rot.mY, rot.mZ);
+	const uint32 cpuTime = mPtrGameContext->cpuTime;
+	const uint32 gpuTime = mPtrGameContext->gpuTime;
+
+	std::string text = std::format("Pos: ({:.2f}, {:.2f}, {:.2f}) Rot:  ({:.2f}, {:.2f}, {:.2f}) CPU Frame Time: {:d} GPU Frame Time: {:d}"
+		, pos.mX, pos.mY, pos.mZ, rot.mX, rot.mY, rot.mZ, cpuTime, gpuTime);
 	float x = 100.0f;
 	float y = 100.0f;
-	float scale = 1.0f;
+	float scale = 0.5f;
 	for (c = text.begin(); c != text.end(); c++)
 	{
 		Character ch = Characters[*c];

@@ -14,29 +14,28 @@ public:
 	RenderComponent(class Actor* owner, class Renderer& rendererRef);
 	~RenderComponent();
 
-	bool Initialize();
+	inline std::shared_ptr<class Shader> GetShader() const { return mPtrShader; }
+	inline void SetShader(std::shared_ptr<class Shader> inPtrShader) { mPtrShader = inPtrShader; }
 
-	unsigned int GetShaderID();
-	void SetShaderID(unsigned int id);
+	inline uint32 GetVAOID() const { return mVAO; }
+	inline void SetVAOID(uint32 id) { mVAO = id; }
 
-	unsigned int GetVAOID();
-	void SetVAOID(unsigned int id);
+	inline uint32 GetVBOID() const { return mVBO; }
+	inline void SetVBOID(uint32 id) { mVBO = id; }
 
-	unsigned int GetVBOID();
-	void SetVBOID(unsigned int id);
+	inline Vec3 GetColor() const { return mAlbedoColor; }
+	inline void SetColor(Vec3 inColor) { mAlbedoColor = inColor; }
 
 	Mat4 GetModelMatrix() const;
-	Vec3 color;
-
 
 private:
 	class Renderer& m_Renderer;
 
-	float m_Vertices;
+	std::shared_ptr<class Shader> mPtrShader;
+	uint32 mVAO;
+	uint32 mVBO;
 
-	unsigned int m_ShaderID;
-	unsigned int m_VertexAttributeObjectID;
-	unsigned int m_VertexBufferObjectID;
+	Vec3 mAlbedoColor;
 
 	//need to add custom parameters for T/R/S offset
 };

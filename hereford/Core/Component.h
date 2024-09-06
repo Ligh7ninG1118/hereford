@@ -3,6 +3,7 @@
 #include "Util/Enums.h"
 #include <SDL2/SDL_stdinc.h>
 #include <vector>
+#include <memory>
 
 class Component
 {

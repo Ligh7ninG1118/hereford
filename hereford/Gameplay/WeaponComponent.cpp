@@ -31,7 +31,7 @@ WeaponComponent::WeaponComponent(Actor* owner)
 	
 	mMaxMagazineCapacity = 12;
 	mMaxReserveCapacity = 5 * mMaxMagazineCapacity;
-	mIsOpenBolt = false;
+	mIsOpenBolt = true;
 
 	mCurrentMagazineAmmo = mMaxMagazineCapacity;
 	mCurrentReserveAmmo = mMaxReserveCapacity;

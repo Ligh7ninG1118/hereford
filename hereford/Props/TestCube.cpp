@@ -2,7 +2,9 @@
 #include "Graphics/RenderComponent.h"
 #include "Core/GameContext.h"
 #include "Physics/PhysicsComponent.h"
+#include "Asset/Primitive.h"
 #include "Util/Random.h"
+#include "Asset/AssetManager.h"
 
 TestCube::TestCube(GameContext* gameCtx)
 	:
@@ -10,7 +12,16 @@ TestCube::TestCube(GameContext* gameCtx)
 {
 	m_pRenderComponent = new RenderComponent(static_cast<Actor*>(this), gameCtx->GetRenderer());
 	m_pPhysicsComponent = new PhysicsComponent(static_cast<Actor*>(this), gameCtx->GetPhysicsManager());
-	m_pRenderComponent->color = Vec3(Random::Range(0.0f, 1.0f), Random::Range(0.0f, 1.0f), Random::Range(0.0f, 1.0f));
+
+	PrimitiveInfo cubeInfo;
+	Primitive::GenerateCube(cubeInfo);
+	m_pRenderComponent->SetVAOID(cubeInfo.mVAO);
+	m_pRenderComponent->SetVBOID(cubeInfo.mVBO);
+
+	std::shared_ptr<Shader> shader = AssetManager::LoadAsset<Shader>(std::string("Shaders/standard_vert.glsl*Shaders/standard_frag.glsl"));
+	m_pRenderComponent->SetShader(shader);
+
+	m_pRenderComponent->SetColor(Vec3(Random::Range(0.1f, 0.9f), Random::Range(0.1f, 0.9f), Random::Range(0.1f, 0.9f)));
 }
 
 TestCube::~TestCube()
