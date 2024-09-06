@@ -101,19 +101,17 @@ bool Renderer::Initialize()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	AssetManager* am = new AssetManager();
-
 	std::vector<Animation> animClips;
 
 	//TODO: having two copies of the data right now
 	if (0)
 	{
-		gunModel = am->LoadAsset<Model>(std::string("LocalResources/SillyDancing/Silly Dancing.dae"));
+		gunModel = AssetManager::LoadAsset<Model>(std::string("LocalResources/SillyDancing/Silly Dancing.dae"));
 		animClips = Animation::LoadAnimations("LocalResources/SillyDancing/Silly Dancing.dae", gunModel.get());
 	}
 	else
 	{
-		gunModel = am->LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v3.fbx"));
+		gunModel = AssetManager::LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v3.fbx"));
 		animClips = Animation::LoadAnimations("LocalResources/mark23/source/Mark23v3.fbx", gunModel.get());
 	}
 	gunAnimator = new Animator(animClips);
@@ -121,13 +119,13 @@ bool Renderer::Initialize()
 
 	Weapon* weapon = new Weapon(mPtrGameContext, gunAnimator);
 
-	testShader = am->LoadAsset<Shader>(std::string("Shaders/model_tex_vert.glsl*Shaders/model_tex_frag.glsl"));
-	skyboxShader = am->LoadAsset<Shader>(std::string("Shaders/skybox_vert.glsl*Shaders/skybox_frag.glsl"));
-	textShader = am->LoadAsset<Shader>(std::string("Shaders/ui_text_vert.glsl*Shaders/ui_text_frag.glsl"));
+	testShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_vert.glsl*Shaders/model_tex_frag.glsl"));
+	skyboxShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/skybox_vert.glsl*Shaders/skybox_frag.glsl"));
+	textShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_text_vert.glsl*Shaders/ui_text_frag.glsl"));
 
 
-	std::shared_ptr<Texture> testUI = am->LoadAsset<Texture>(std::string("LocalResources/rifle-round-silhouette.png"));
-	std::shared_ptr<Shader> uiShader = am->LoadAsset<Shader>(std::string("Shaders/ui_image_ammo_count_vert.glsl*Shaders/ui_image_ammo_count_frag.glsl"));
+	std::shared_ptr<Texture> testUI = AssetManager::LoadAsset<Texture>(std::string("LocalResources/rifle-round-silhouette.png"));
+	std::shared_ptr<Shader> uiShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_image_ammo_count_vert.glsl*Shaders/ui_image_ammo_count_frag.glsl"));
 
 	//TODO: Unchanged shader values dont need to update every frame
 	Mat4 uiProj = mPtrMainCamera->GetOrthoMatrix(0.0f, static_cast<float>(mScreenWidth), 0.0f, static_cast<float>(mScreenHeight));

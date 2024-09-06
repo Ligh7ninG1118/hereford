@@ -10,7 +10,7 @@ public:
 	~AssetManager();
 
 	template <typename T>
-	std::shared_ptr<T> LoadAsset(const std::string& inPath)
+	static std::shared_ptr<T> LoadAsset(const std::string& inPath)
 	{
 		auto it = mAssetsMap.find(inPath);
 		if (it != mAssetsMap.end())
@@ -23,7 +23,7 @@ public:
 	}
 
 private:
-	std::unordered_map<std::string, std::shared_ptr<Asset>> mAssetsMap;
+	static std::unordered_map<std::string, std::shared_ptr<Asset>> mAssetsMap;
 
 };
 
