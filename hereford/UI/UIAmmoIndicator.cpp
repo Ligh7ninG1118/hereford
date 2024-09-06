@@ -27,8 +27,8 @@ void UIAmmoIndicator::Initialize()
 	SetTiling(Vec2(static_cast<float>(mCurrentMax), 1.0f));
 
 	mPtrShader->Use();
-	mPtrShader->SetVec3("uiColor2", Vec3(1.0f, 1.0f, 1.0f));
-	mPtrShader->SetVec3("uiColor1", Vec3(0.1f, 0.1f, 0.1f));
+	mPtrShader->SetVec4("uiColor2", 1.0f, 1.0f, 1.0f, 0.9f);
+	mPtrShader->SetVec4("uiColor1", 0.2f, 0.2f, 0.2f, 0.4f);
 	mPtrShader->SetInt("uiTex", 0);
 
 	UIImage::Initialize();
