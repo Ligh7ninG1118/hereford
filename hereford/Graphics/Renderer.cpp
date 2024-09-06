@@ -102,20 +102,21 @@ bool Renderer::Initialize()
 	glEnableVertexAttribArray(1);
 
 	std::vector<Animation> animClips;
+	std::vector<Animation> dancingAnimClips;
 
 	//TODO: having two copies of the data right now
-	if (0)
-	{
-		gunModel = AssetManager::LoadAsset<Model>(std::string("LocalResources/SillyDancing/Silly Dancing.dae"));
-		animClips = Animation::LoadAnimations("LocalResources/SillyDancing/Silly Dancing.dae", gunModel.get());
-	}
-	else
-	{
-		gunModel = AssetManager::LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v3.fbx"));
-		animClips = Animation::LoadAnimations("LocalResources/mark23/source/Mark23v3.fbx", gunModel.get());
-	}
+	
+	dancingModel = AssetManager::LoadAsset<Model>(std::string("LocalResources/SillyDancing/Silly Dancing.dae"));
+	dancingAnimClips = Animation::LoadAnimations("LocalResources/SillyDancing/Silly Dancing.dae", dancingModel.get());
+	
+	gunModel = AssetManager::LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v3.fbx"));
+	animClips = Animation::LoadAnimations("LocalResources/mark23/source/Mark23v3.fbx", gunModel.get());
+	
 	gunAnimator = new Animator(animClips);
 	gunASM = new AnimationStateMachine(gunAnimator);
+
+	dancingAnimator = new Animator(dancingAnimClips);
+	dancingAnimator->SetShouldLoop(true);
 
 	Weapon* weapon = new Weapon(mPtrGameContext, gunAnimator);
 
@@ -308,6 +309,10 @@ void Renderer::Render(float deltaTime)
 
 	if(gunAnimator)
 		gunAnimator->UpdateAnimation(deltaTime);
+
+	if (dancingAnimator)
+		dancingAnimator->UpdateAnimation(deltaTime);
+
 	testShader->Use();
 	testShader->SetMat4("projection", projection);
 
@@ -347,6 +352,8 @@ void Renderer::Render(float deltaTime)
 		}
 	}
 
+	int cum = 0;
+
 	for (unsigned int i = 0; i < gunModel->mMeshes.size(); i++)
 	{
 		Mesh* mesh = &gunModel->mMeshes[i];
@@ -355,15 +362,15 @@ void Renderer::Render(float deltaTime)
 		unsigned int specularNr = 1;
 		unsigned int normalNr = 1;
 		unsigned int heightNr = 1;
-		for (unsigned int i = 0; i < mesh->mTextures.size(); i++)
+		for (unsigned int j = 0; j < mesh->mTextures.size(); j++)
 		{
-			glActiveTexture(GL_TEXTURE0 + i);
+			glActiveTexture(GL_TEXTURE0 + j);
 
 			std::string texStr;
-			switch (mesh->mTextures[i].GetType())
+			switch (mesh->mTextures[j].GetType())
 			{
 			case ETextureType::DIFFUSE:
-				texStr = "tex_diffuse_1" + std::to_string(diffuseNr++);
+				texStr = "tex_diffuse_1";// +std::to_string(diffuseNr++);
 				break;
 			case ETextureType::SPECULAR:
 				texStr = "tex_specular_1";
@@ -386,8 +393,74 @@ void Renderer::Render(float deltaTime)
 			default:
 				break;
 			}
-			testShader->SetInt(texStr.c_str(), i);
-			glBindTexture(GL_TEXTURE_2D, mesh->mTextures[i].GetID());
+			testShader->SetInt(texStr.c_str(), j);
+			glBindTexture(GL_TEXTURE_2D, mesh->mTextures[j].GetID());
+			cum = j;
+		}
+
+		glBindVertexArray(mesh->mVAOID);
+		glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(mesh->mIndices.size()), GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+
+		glActiveTexture(GL_TEXTURE0);
+	}
+
+	Mat4 dModel = Mat4::Identity;
+	dModel.Translate(Vec3(0.0f, 0.4f, -2.0f));
+
+	testShader->SetMat4("model", dModel);
+
+
+	if (dancingAnimator)
+	{
+		auto transforms = dancingAnimator->GetFinalBoneMatrices();
+		for (int i = 0; i < transforms.size(); i++)
+		{
+			testShader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+		}
+	}
+
+	for (unsigned int i = 0; i < dancingModel->mMeshes.size(); i++)
+	{
+		Mesh* mesh = &dancingModel->mMeshes[i];
+
+		unsigned int diffuseNr = 1;
+		unsigned int specularNr = 1;
+		unsigned int normalNr = 1;
+		unsigned int heightNr = 1;
+		for (unsigned int j = 0; j < mesh->mTextures.size(); j++)
+		{
+			glActiveTexture(GL_TEXTURE0 + j + cum);
+
+			std::string texStr;
+			switch (mesh->mTextures[j].GetType())
+			{
+			case ETextureType::DIFFUSE:
+				texStr = "tex_diffuse_1";
+				break;
+			case ETextureType::SPECULAR:
+				texStr = "tex_specular_1";
+				break;
+			case ETextureType::NORMALS:
+				texStr = "tex_normals_1";
+				break;
+			case ETextureType::HEIGHT:
+				texStr = "tex_height_1";
+				break;
+			case ETextureType::EMISSIVE:
+				texStr = "tex_emissive_1";
+				break;
+			case ETextureType::METALNESS:
+				texStr = "tex_metalrough_1";
+				break;
+			case ETextureType::AMBIENT:
+				texStr = "tex_ao_1";
+				break;
+			default:
+				break;
+			}
+			testShader->SetInt(texStr.c_str(), j + cum);
+			glBindTexture(GL_TEXTURE_2D, mesh->mTextures[j].GetID());
 		}
 
 		glBindVertexArray(mesh->mVAOID);
@@ -491,7 +564,7 @@ void Renderer::Render(float deltaTime)
 	std::string text = std::format("Pos: ({:.2f}, {:.2f}, {:.2f}) Rot:  ({:.2f}, {:.2f}, {:.2f}) CPU Frame Time: {:d} GPU Frame Time: {:d}"
 		, pos.mX, pos.mY, pos.mZ, rot.mX, rot.mY, rot.mZ, cpuTime, gpuTime);
 	float x = 100.0f;
-	float y = 100.0f;
+	float y = mScreenHeight - 100.0f;
 	float scale = 0.5f;
 	for (c = text.begin(); c != text.end(); c++)
 	{

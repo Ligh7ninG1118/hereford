@@ -12,6 +12,8 @@ public:
 	void CalculateBoneTransform(const struct AssimpNodeData* node, Mat4 parentTransform);
 	std::vector<Mat4> GetFinalBoneMatrices() const { return mFinalBoneMatrices; }
 
+	inline void SetShouldLoop(bool in) { mShouldLoop = in; }
+
 private:
 	std::vector<Mat4> mFinalBoneMatrices;
 	std::vector<class Animation> mAnimationList;
