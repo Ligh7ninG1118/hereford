@@ -19,11 +19,11 @@ class Animation
 {
 public:
 	Animation() = default;
-	Animation(struct aiAnimation* aiAnim, const struct aiScene* aiScene, class Model* model);
+	Animation(struct aiAnimation* aiAnim, const struct aiScene* aiScene, std::weak_ptr<class Model> model);
 	Animation(const std::string& animPath, class Model* model);
 	~Animation();
 
-	static std::vector<Animation> LoadAnimations(const std::string& animPath, class Model* model);
+	static std::vector<Animation> LoadAnimations(const std::string& animPath, std::weak_ptr<class Model> model);
 
 	class std::shared_ptr<class Bone> FindBone(const std::string& boneName);
 

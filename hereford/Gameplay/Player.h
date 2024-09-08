@@ -22,8 +22,13 @@ private:
 	void WeaponFiredEventListener(EventOnPlayerWeaponFired inEvent);
 
 	std::unique_ptr<class CameraComponent> m_pCameraComponent;
+	std::unique_ptr<class AnimatedRenderComponent> mPtrAnimRenderComp;
+	std::shared_ptr<class AnimationStateMachine> mPtrAnimStateMachine;
+	class WeaponComponent* mPtrActiveWeaponComp;
 
-
+	std::shared_ptr<Model> gunModel;
+	class Animator* gunAnimator;
+	class AnimationStateMachine* gunASM;
 
 	bool hasMovementInput = false;
 	Vector3 inputMoveDir;

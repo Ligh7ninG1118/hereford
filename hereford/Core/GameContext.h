@@ -29,6 +29,8 @@ public:
 	Renderer& GetRenderer() const { return *pRenderer.get(); }
 	PhysicsManager& GetPhysicsManager() const { return *pPhysicsManager.get(); }
 
+	class Player* GetPlayer() const { return mPtrPlayer; }
+
 	//TODO: Move to Telemetry Class
 	uint32 cpuTime;
 	uint32 gpuTime;
@@ -41,7 +43,7 @@ private:
 	SDL_Window* pSDLWindow;
 	std::unique_ptr<Renderer> pRenderer;
 	std::unique_ptr<PhysicsManager> pPhysicsManager;
-	class Player* player;
+	class Player* mPtrPlayer;
 
 	// separate asset manager to manage this
 	std::unordered_map<std::string, Uint32> m_ShaderMap;

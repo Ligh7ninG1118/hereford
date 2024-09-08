@@ -112,8 +112,8 @@ void GameContext::RunLoop()
 
 void GameContext::LoadData()
 {
-	player = new Player(this);
-	pRenderer->SetMainCamera(&player->GetMainCamera());
+	mPtrPlayer = new Player(this);
+	pRenderer->SetMainCamera(&mPtrPlayer->GetMainCamera());
 
 	for (int i = 0; i < 20; i++)
 	{

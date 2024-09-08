@@ -1,7 +1,15 @@
 #include "Gameplay/Player.h"
 #include "Gameplay/CameraComponent.h"
+#include "Gameplay/WeaponComponent.h"
 #include "Core/GameContext.h"
 #include <SDL2/SDL.h>
+
+#include "Asset/AssetManager.h"
+#include "Animation/Animation.h"
+#include "Animation/Animator.h"
+#include "Animation/AnimationStateMachine.h"
+
+#include "Graphics/AnimatedRenderComponent.h"
 
 #include "stdio.h"
 
@@ -11,6 +19,21 @@ Player::Player(GameContext* gameCtx)
 {
 	m_pCameraComponent = std::make_unique<CameraComponent>(static_cast<Actor*>(this));
 
+	
+	mPtrAnimRenderComp = std::make_unique<AnimatedRenderComponent>(AnimatedRenderComponent(this, mGame->GetRenderer()));
+	mPtrAnimRenderComp->SetModel(AssetManager::LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v3.fbx")));
+	mPtrAnimRenderComp->SetShader(AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_vert.glsl*Shaders/model_tex_frag.glsl")));
+
+	std::unique_ptr<Animator> animator = std::make_unique<Animator>(
+		Animator(Animation::LoadAnimations("LocalResources/mark23/source/Mark23v3.fbx", mPtrAnimRenderComp->GetModel())));
+
+	// 0: Draw, 1: Hide, 2: Static, 3: Reload, 4: Fire
+	mPtrAnimStateMachine = std::make_shared<AnimationStateMachine>(AnimationStateMachine(this, std::move(animator)));
+	mPtrAnimStateMachine->AddTransitionRule(0, AnimState(2, false));
+	mPtrAnimStateMachine->AddTransitionRule(3, AnimState(2, false));
+	mPtrAnimStateMachine->AddTransitionRule(4, AnimState(2, false));
+
+	mPtrActiveWeaponComp = new WeaponComponent(static_cast<Actor*>(this), mPtrAnimStateMachine);
 	mPtrWeaponFiredEvent = GameEvent::Subscribe<EventOnPlayerWeaponFired>(std::bind(&Player::WeaponFiredEventListener, this, std::placeholders::_1));
 }
 
@@ -22,8 +45,6 @@ void Player::OnUpdate(float deltaTime)
 {
 	ProcessMovement(deltaTime);
 }
-
-
 
 void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
 {
@@ -69,33 +90,6 @@ void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 
 		//inputMoveDir.mY = 0.0f;
 		inputMoveDir.Normalize();
-	}
-
-	if(true)
-	{
-		if ((mouseState & SDL_BUTTON_RMASK))
-		{
-			if (!lmbPressed)
-			{
-				/*printf("EventA fired.\n");
-				GameEvent::Publish<EventTestA>(EventTestA(false));
-
-				DelayedActionManager::AddAction(testHandle, std::bind(&Player::TestCallback, this), 2.0f, false);*/
-				Vec3 origin = m_pCameraComponent->GetCameraPosition();
-				Vec3 dir = m_pCameraComponent->GetFrontVector().normalized();
-				HitInfo hitInfo;
-				if (mGame->GetPhysicsManager().RaycastQuery(origin, dir, 1000.0f, hitInfo))
-				{
-					if (hitInfo.hitActor != nullptr)
-						hitInfo.hitActor->SetState(ActorState::Destroy);
-				}
-				lmbPressed = true;
-			}
-		}
-		else
-		{
-			lmbPressed = false;
-		}
 	}
 
 	// Rotation

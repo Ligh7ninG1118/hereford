@@ -11,12 +11,12 @@
 
 
 
-Animation::Animation(aiAnimation* aiAnim, const aiScene* aiScene, Model* model)
+Animation::Animation(aiAnimation* aiAnim, const aiScene* aiScene, std::weak_ptr<Model> model)
 {
 	mDuration = aiAnim->mDuration;
 	mTicksPerSec = aiAnim->mTicksPerSecond;
 	ReadHierarchyData(mRootNode, aiScene->mRootNode);
-	ReadMissingBones(aiAnim, *model);
+	ReadMissingBones(aiAnim, *model.lock().get());
 }
 
 [[deprecated("Use static func LoadAnimations")]]
@@ -36,7 +36,7 @@ Animation::~Animation()
 {
 }
 
-std::vector<Animation> Animation::LoadAnimations(const std::string& animPath, Model* model)
+std::vector<Animation> Animation::LoadAnimations(const std::string& animPath, std::weak_ptr<Model> model)
 {
 	std::vector<Animation> animClips;
 
