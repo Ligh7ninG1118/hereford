@@ -1,6 +1,15 @@
 #pragma once
 #include "Core/Component.h"
 #include "Math/Math.h"
+#include "Util/DelayedAction.h"
+
+
+enum class EWeaponState
+{
+	READY = 0,
+	RELOADING,
+	SWAPPING
+};
 
 enum class ERecoilType
 {
@@ -15,16 +24,14 @@ class WeaponComponent : public Component
 	friend class Weapon;
 
 public:
-	WeaponComponent(class Actor* owner);
+	WeaponComponent(class Actor* owner, std::weak_ptr<class AnimationStateMachine> inASM);
 	~WeaponComponent();
 
 	void Update(float deltaTime) override;
+	void ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY) override;
 
-	bool TryFire(bool checkOnly = false);
-	bool TryReload();
-	void ApplyReload();
-
-	Vec2 CalculateRecoilDeviation() const;
+	void Fire();
+	void Reload();
 
 	inline uint16 GetCurrentMagazineAmmo() const { return mCurrentMagazineAmmo; }
 	inline uint16 GetCurrentReserveAmmo() const { return mCurrentReserveAmmo; }
@@ -33,7 +40,18 @@ public:
 	inline uint16 GetMaxReserveCapacity() const { return mMaxReserveCapacity; }
 	
 private:
-	class Weapon* mWeapon;
+	void FinishedReload();
+
+	bool TryFire(bool checkOnly = false);
+	bool TryReload();
+
+	Vec2 CalculateRecoilDeviation() const;
+
+	std::weak_ptr<class AnimationStateMachine> mAnimStateMachine;
+
+	EWeaponState mCurrentState;
+	DAHandle mReloadAction;
+
 	// General
 	float mReloadAnimDuration;
 

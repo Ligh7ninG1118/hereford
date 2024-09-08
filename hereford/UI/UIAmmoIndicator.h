@@ -3,7 +3,7 @@
 class UIAmmoIndicator : public UIImage
 {
 public:
-	UIAmmoIndicator(class Renderer* inPtrRenderer, class Shader* inPtrShader, std::shared_ptr<class Texture> inPtrUITex, class Weapon* inPtrWeapon);
+	UIAmmoIndicator(class Renderer* inPtrRenderer, class Shader* inPtrShader, std::shared_ptr<class Texture> inPtrUITex, class WeaponComponent* inPtrWeaponComp);
 	~UIAmmoIndicator();
 
 	void Initialize() override;
@@ -12,7 +12,7 @@ public:
 protected:
 	uint16 mCurrentMax;
 	
-	class Weapon* mPtrWeapon;
+	class WeaponComponent* mPtrWeaponComp;
 
 };
 

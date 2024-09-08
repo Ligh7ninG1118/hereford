@@ -2,12 +2,11 @@
 #include "Asset/Shader.h"
 #include "Asset/Texture.h"
 #include "Graphics/Renderer.h"
-#include "Gameplay/Weapon.h"
 #include "Gameplay/WeaponComponent.h"
 
-UIAmmoIndicator::UIAmmoIndicator(Renderer* inPtrRenderer, Shader* inPtrShader, std::shared_ptr<Texture> inPtrUITex, Weapon* inPtrWeapon)
+UIAmmoIndicator::UIAmmoIndicator(Renderer* inPtrRenderer, Shader* inPtrShader, std::shared_ptr<Texture> inPtrUITex, WeaponComponent* inPtrWeaponComp)
 	: UIImage(inPtrRenderer, inPtrShader, inPtrUITex),
-	mPtrWeapon(inPtrWeapon),
+	mPtrWeaponComp(inPtrWeaponComp),
 	mCurrentMax(0)
 {
 }
@@ -18,7 +17,7 @@ UIAmmoIndicator::~UIAmmoIndicator()
 
 void UIAmmoIndicator::Initialize()
 {
-	mCurrentMax = mPtrWeapon->GetWeaponComponent()->GetMaxMagazineCapacity();
+	mCurrentMax = mPtrWeaponComp->GetMaxMagazineCapacity();
 
 	SetAnchor(EUIAnchorPreset::BOTTOM_RIGHT);
 	SetPosition(Vec2(-300.0f, 100.0f));
@@ -47,7 +46,7 @@ void UIAmmoIndicator::UpdateContent()
 	//TODO: Wrong! Since we r holding ptr to a single weapon instance, its magazine capacity wont change
 	//		If it indeed was changed, then it means a diff weapon instance, should do this in SetPtrWeapon or somewhere
 	
-	uint16 currentMag = mPtrWeapon->GetWeaponComponent()->GetCurrentMagazineAmmo();
+	uint16 currentMag = mPtrWeaponComp->GetCurrentMagazineAmmo();
 
 	Vec2 screenDimension;
 	Vec2 actualPos = mPosition;

@@ -1,14 +1,20 @@
-#include "Weapon.h"
 #include "WeaponComponent.h"
-
+#include "Animation/AnimationStateMachine.h"
+#include "Core/Actor.h"
+#include "Core/GameContext.h"
+#include "Gameplay/Player.h"
+#include "Gameplay/CameraComponent.h"
+#include "Physics/PhysicsManager.h"
 #include "Util/Random.h"
+#include "Util/GameEvent.h"
 
 #include <SDL2/SDL.h>
 
-WeaponComponent::WeaponComponent(Actor* owner)
-	: Component(owner)
+WeaponComponent::WeaponComponent(Actor* owner, std::weak_ptr<AnimationStateMachine> inASM)
+	: Component(owner),
+	mAnimStateMachine(inASM)
 {
-	mWeapon = (Weapon*)owner;
+	mCurrentState = EWeaponState::READY;
 
 	mReloadAnimDuration = 2.0f;
 
@@ -52,6 +58,70 @@ void WeaponComponent::Update(float deltaTime)
 		mCurrentHeat -= mHeatReduceRatePerSec * deltaTime;
 }
 
+void WeaponComponent::ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
+{
+	EMouseState targetFlag = mIsSemiAuto ? LMB_DOWN : LMB_HOLD;
+	if (mouseState & targetFlag)
+		Fire();
+
+	if (keyState[SDL_SCANCODE_R] == EInputState::KEY_DOWN)
+	{
+		Reload();
+	}
+}
+
+void WeaponComponent::Fire()
+{
+	if (TryFire() && mCurrentState == EWeaponState::READY)
+	{
+		auto lock = mAnimStateMachine.lock();
+		if(lock)
+			lock->PlayAnimation(4, false, 0.2f);
+
+		Player* player = static_cast<Player*>(GetOwner());
+		const CameraComponent& cam = player->GetMainCamera();
+
+		Vec3 origin = cam.GetCameraPosition();
+		Vec3 dir = cam.GetFrontVector().normalized();
+		HitInfo hitInfo;
+		if (player->GetGame()->GetPhysicsManager().RaycastQuery(origin, dir, 1000.0f, hitInfo))
+		{
+			if (hitInfo.hitActor != nullptr)
+				hitInfo.hitActor->SetState(ActorState::Destroy);
+		}
+
+		GameEvent::Publish<EventOnPlayerWeaponFired>(EventOnPlayerWeaponFired(CalculateRecoilDeviation()));
+	}
+}
+
+void WeaponComponent::Reload()
+{
+	if (TryReload() && mCurrentState == EWeaponState::READY)
+	{
+		mCurrentState = EWeaponState::RELOADING;
+		auto lock = mAnimStateMachine.lock();
+		if (lock)
+			lock->PlayAnimation(3, false, mReloadAnimDuration);
+		DelayedActionManager::AddAction(mReloadAction, std::bind(&WeaponComponent::FinishedReload, this), mReloadAnimDuration, false);
+	}
+}
+
+void WeaponComponent::FinishedReload()
+{
+	uint16 neededAmmo = mMaxMagazineCapacity - mCurrentMagazineAmmo;
+	if (mCurrentMagazineAmmo > 0 && !mIsOpenBolt)
+		neededAmmo += 1;
+
+	uint16 reducedAmmo = neededAmmo <= mCurrentReserveAmmo ? neededAmmo : mCurrentReserveAmmo;
+
+	mCurrentMagazineAmmo += reducedAmmo;
+	mCurrentReserveAmmo -= reducedAmmo;
+
+	printf("Current Ammo: %d/%d\n", mCurrentMagazineAmmo, mCurrentReserveAmmo);
+
+	mCurrentState = EWeaponState::READY;
+}
+
 
 bool WeaponComponent::TryFire(bool checkOnly)
 {
@@ -82,20 +152,6 @@ bool WeaponComponent::TryReload()
 		return false;
 
 	return true;
-}
-
-void WeaponComponent::ApplyReload()
-{
-	uint16 neededAmmo = mMaxMagazineCapacity - mCurrentMagazineAmmo;
-	if (mCurrentMagazineAmmo > 0 && !mIsOpenBolt)
-		neededAmmo += 1;
-
-	uint16 reducedAmmo = neededAmmo <= mCurrentReserveAmmo ? neededAmmo : mCurrentReserveAmmo;
-
-	mCurrentMagazineAmmo += reducedAmmo;
-	mCurrentReserveAmmo -= reducedAmmo;
-
-	printf("Current Ammo: %d/%d\n", mCurrentMagazineAmmo, mCurrentReserveAmmo);
 }
 
 Vec2 WeaponComponent::CalculateRecoilDeviation() const
