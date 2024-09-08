@@ -10,7 +10,7 @@
 #include "Animation/AnimationStateMachine.h"
 #include "UI/UIElement.h"
 #include "UI/UIAmmoIndicator.h"
-#include "Gameplay/Weapon.h"
+#include "Gameplay/WeaponComponent.h"
 
 #include <stb_image.h>
 
@@ -101,24 +101,15 @@ bool Renderer::Initialize()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
-	std::vector<Animation> animClips;
 	std::vector<Animation> dancingAnimClips;
 
 	//TODO: having two copies of the data right now
 	
 	dancingModel = AssetManager::LoadAsset<Model>(std::string("LocalResources/SillyDancing/Silly Dancing.dae"));
 	dancingAnimClips = Animation::LoadAnimations("LocalResources/SillyDancing/Silly Dancing.dae", dancingModel.get());
-	
-	gunModel = AssetManager::LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v3.fbx"));
-	animClips = Animation::LoadAnimations("LocalResources/mark23/source/Mark23v3.fbx", gunModel.get());
-	
-	gunAnimator = new Animator(animClips);
-	gunASM = new AnimationStateMachine(gunAnimator);
 
 	dancingAnimator = new Animator(dancingAnimClips);
 	dancingAnimator->SetShouldLoop(true);
-
-	Weapon* weapon = new Weapon(mPtrGameContext, gunAnimator);
 
 	testShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_vert.glsl*Shaders/model_tex_frag.glsl"));
 	skyboxShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/skybox_vert.glsl*Shaders/skybox_frag.glsl"));
@@ -306,9 +297,6 @@ void Renderer::Render(float deltaTime)
 
 	Uint32 lastShaderID = 0;
 	Uint32 lastVAOID = 0;
-
-	if(gunAnimator)
-		gunAnimator->UpdateAnimation(deltaTime);
 
 	if (dancingAnimator)
 		dancingAnimator->UpdateAnimation(deltaTime);

@@ -154,6 +154,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Graphics\AnimatedRenderComponent.cpp" />
     <ClCompile Include="Animation\AnimationStateMachine.cpp" />
     <ClCompile Include="Animation\Animation.cpp" />
     <ClCompile Include="Animation\Animator.cpp" />
@@ -189,10 +190,10 @@
     <ClCompile Include="UI\UIImage.cpp" />
     <ClCompile Include="UI\UIElement.cpp" />
     <ClCompile Include="Util\GameEvent.cpp" />
-    <ClCompile Include="Gameplay\Weapon.cpp" />
     <ClCompile Include="Gameplay\WeaponComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Graphics\AnimatedRenderComponent.h" />
     <ClInclude Include="Animation\AnimationStateMachine.h" />
     <ClInclude Include="Animation\Animation.h" />
     <ClInclude Include="Animation\Animator.h" />
@@ -231,7 +232,6 @@
     <ClInclude Include="Util\Events.h" />
     <ClInclude Include="Util\GameEvent.h" />
     <ClInclude Include="Util\Random.h" />
-    <ClInclude Include="Gameplay\Weapon.h" />
     <ClInclude Include="Gameplay\WeaponComponent.h" />
   </ItemGroup>
   <ItemGroup>
