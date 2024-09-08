@@ -29,9 +29,14 @@ Mat4 RenderComponent::GetModelMatrix() const
 	Vec3 rot = mOwner->GetRotation();
 
 	mat.Translate(mOwner->GetPosition());
+	mat.Translate(mTranslateOffset);
 	mat.Scale(mOwner->GetScale());
-	mat.Rotate(DEG2RAD * rot.mX, Vec3(1.0f, 0.0f, 0.0f));
+	mat.Scale(mScaleOffset);
+	mat.Rotate(rot);
+	mat.Rotate(mRotateOffset);
+
+	/*mat.Rotate(DEG2RAD * rot.mX, Vec3(1.0f, 0.0f, 0.0f));
 	mat.Rotate(DEG2RAD * rot.mY, Vec3(0.0f, 1.0f, 0.0f));
-	mat.Rotate(DEG2RAD * rot.mZ, Vec3(0.0f, 0.0f, 1.0f));
+	mat.Rotate(DEG2RAD * rot.mZ, Vec3(0.0f, 0.0f, 1.0f));*/
 	return mat;
 }

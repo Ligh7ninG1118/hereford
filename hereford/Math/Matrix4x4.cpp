@@ -105,6 +105,12 @@ Matrix4x4& Matrix4x4::Rotate(float x, float y, float z)
 	return Rotate(quat);
 }
 
+Matrix4x4& Matrix4x4::Rotate(const Vector3& eulerRot)
+{
+	Quat quat = Quaternion::EulerToQuat(eulerRot);
+	return Rotate(quat);
+}
+
 Matrix4x4& Matrix4x4::Rotate(const Quaternion& quat)
 {
 	Matrix4x4 rot = Matrix4x4::Identity;

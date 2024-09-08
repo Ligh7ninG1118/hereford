@@ -23,6 +23,7 @@ struct Matrix4x4
 	Matrix4x4& Translate(float x, float y, float z);
 	Matrix4x4& Rotate(const float& radAngle, const Vector3& axis);
 	Matrix4x4& Rotate(float x, float y, float z);
+	Matrix4x4& Rotate(const Vector3& eulerRot);
 	Matrix4x4& Rotate(const struct Quaternion& quat);
 	Matrix4x4& Scale(const Vector3& scale);
 	Matrix4x4& Scale(const float& scale);

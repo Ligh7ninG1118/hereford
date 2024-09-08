@@ -26,6 +26,15 @@ public:
 	inline Vec3 GetColor() const { return mAlbedoColor; }
 	inline void SetColor(Vec3 inColor) { mAlbedoColor = inColor; }
 
+	inline Vec3 GetTranslateOffset() const { return mTranslateOffset; }
+	inline void SetTranslateOffset(Vec3 inOffset) { mTranslateOffset = inOffset; }
+
+	inline Vec3 GetRotateOffset() const { return mRotateOffset; }
+	inline void SetRotateOffset(Vec3 inOffset) { mRotateOffset = inOffset; }
+
+	inline Vec3 GetScaleOffset() const { return mScaleOffset; }
+	inline void SetScaleOffset(Vec3 inOffset) { mScaleOffset = inOffset; }
+
 	Mat4 GetModelMatrix() const;
 
 private:
@@ -36,6 +45,10 @@ private:
 	uint32 mVBO;
 
 	Vec3 mAlbedoColor;
+
+	Vec3 mTranslateOffset;
+	Vec3 mRotateOffset;
+	Vec3 mScaleOffset;
 
 	//need to add custom parameters for T/R/S offset
 };
