@@ -13,8 +13,8 @@ AnimationStateMachine::AnimationStateMachine(Actor* owner, std::unique_ptr<Anima
 
 void AnimationStateMachine::Update(float deltaTime)
 {
-	if (mAnimator != nullptr)
-		mAnimator->UpdateAnimation(deltaTime);
+	if (mPtrAnimator != nullptr)
+		mPtrAnimator->UpdateAnimation(deltaTime);
 }
 
 void AnimationStateMachine::AddTransitionRule(unsigned int fromAnimIndex, const AnimState& toState)
@@ -24,7 +24,12 @@ void AnimationStateMachine::AddTransitionRule(unsigned int fromAnimIndex, const 
 
 void AnimationStateMachine::PlayAnimation(uint32 index, bool shouldLoop, float duration)
 {
-	mAnimator->PlayAnimation(index, shouldLoop, duration);
+	mPtrAnimator->PlayAnimation(index, shouldLoop, duration);
+}
+
+std::vector<Mat4> AnimationStateMachine::GetFinalBoneMatrices() const
+{
+	return mPtrAnimator->GetFinalBoneMatrices();
 }
 
 void AnimationStateMachine::AnimFinishedListener(EventOnAnimFinished inEvent)
@@ -32,6 +37,6 @@ void AnimationStateMachine::AnimFinishedListener(EventOnAnimFinished inEvent)
 	if (mTransitionMap.find(inEvent.mAnimIndex) != mTransitionMap.end())
 	{
 		auto nextAnimState = mTransitionMap[inEvent.mAnimIndex];
-		mAnimator->PlayAnimation(nextAnimState.mAnimIndex, nextAnimState.mShouldLoop);
+		mPtrAnimator->PlayAnimation(nextAnimState.mAnimIndex, nextAnimState.mShouldLoop);
 	}
 }

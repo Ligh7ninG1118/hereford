@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Component.h"
+#include "Math/Math.h"
 
 enum class ERenderMode
 {

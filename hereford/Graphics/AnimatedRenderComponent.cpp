@@ -9,3 +9,4 @@ AnimatedRenderComponent::AnimatedRenderComponent(Actor* owner, Renderer& rendere
 AnimatedRenderComponent::~AnimatedRenderComponent()
 {
 }
+

@@ -26,10 +26,6 @@ private:
 	std::shared_ptr<class AnimationStateMachine> mPtrAnimStateMachine;
 	class WeaponComponent* mPtrActiveWeaponComp;
 
-	std::shared_ptr<Model> gunModel;
-	class Animator* gunAnimator;
-	class AnimationStateMachine* gunASM;
-
 	bool hasMovementInput = false;
 	Vector3 inputMoveDir;
 

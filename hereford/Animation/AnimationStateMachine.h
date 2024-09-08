@@ -23,11 +23,12 @@ public:
 
 	void PlayAnimation(uint32 index, bool shouldLoop = true, float duration = -1.0f);
 
+	std::vector<Mat4> GetFinalBoneMatrices() const;
+
 
 private:
 	void AnimFinishedListener(EventOnAnimFinished inEvent);
 
-	class Animator* mAnimator;
 	std::unique_ptr<class Animator> mPtrAnimator;
 
 	GameEvent::Subscription<EventOnAnimFinished>* mPtrAnimEvent;

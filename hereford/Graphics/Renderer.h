@@ -40,16 +40,16 @@ private:
 	int mScreenHeight;
 
 	Uint32 debugShaderID;
-	std::shared_ptr<Shader> testShader;
+	//std::shared_ptr<Shader> testShader;
 	Uint32 crosshairVAOID;
 
 	std::shared_ptr<Shader> skyboxShader;
-	class Animation* testAnimation;
+	//class Animation* testAnimation;
 	Uint32 skyboxVAOID;
 	Uint32 skyboxTexID;
 
-	std::shared_ptr<Model> dancingModel;
-	class Animator* dancingAnimator;
+	//std::shared_ptr<Model> dancingModel;
+	//class Animator* dancingAnimator;
 
 
 	std::vector<class RenderComponent*> mRenderComponents;

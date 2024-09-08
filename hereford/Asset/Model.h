@@ -2,6 +2,7 @@
 
 #include "Math/Math.h"
 #include "Asset.h"
+#include "Texture.h"
 #include <string>
 #include <assimp/matrix4x4.h>
 
@@ -32,7 +33,7 @@ struct Mesh
 {
 	std::vector<Vertex> mVertices;
 	std::vector<unsigned int> mIndices;
-	std::vector<class Texture> mTextures;
+	std::vector<Texture> mTextures;
 
 	unsigned int mVAOID;
 	unsigned int mVBOID;
