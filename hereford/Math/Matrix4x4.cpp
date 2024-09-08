@@ -52,7 +52,6 @@ Matrix4x4::Matrix4x4(const Matrix4x4& rhs)
 {
 }
 
-// TODO: overload w/ 3 floats version
 Matrix4x4& Matrix4x4::Translate(const Vector3& translate)
 {
 	// column major? switch to [i][3]
@@ -61,7 +60,15 @@ Matrix4x4& Matrix4x4::Translate(const Vector3& translate)
 	return *this;
 }
 
-//TODO: add degAngle version
+Matrix4x4& Matrix4x4::Translate(float x, float y, float z)
+{
+	m[3][0] += x;
+	m[3][1] += y;
+	m[3][2] += z;
+	return *this;
+}
+
+
 Matrix4x4& Matrix4x4::Rotate(const float& radAngle, const Vector3& axis)
 {
 	Vector3 axisNorm = axis.normalized();
@@ -90,6 +97,12 @@ Matrix4x4& Matrix4x4::Rotate(const float& radAngle, const Vector3& axis)
 	*this = *this * rot;
 
 	return *this;
+}
+
+Matrix4x4& Matrix4x4::Rotate(float x, float y, float z)
+{
+	Quat quat = Quaternion::EulerToQuat(Vec3(x, y, z));
+	return Rotate(quat);
 }
 
 Matrix4x4& Matrix4x4::Rotate(const Quaternion& quat)

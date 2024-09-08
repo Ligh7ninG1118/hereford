@@ -20,7 +20,9 @@ struct Matrix4x4
 	static const Matrix4x4 Identity;
 
 	Matrix4x4& Translate(const Vector3& translate);
+	Matrix4x4& Translate(float x, float y, float z);
 	Matrix4x4& Rotate(const float& radAngle, const Vector3& axis);
+	Matrix4x4& Rotate(float x, float y, float z);
 	Matrix4x4& Rotate(const struct Quaternion& quat);
 	Matrix4x4& Scale(const Vector3& scale);
 	Matrix4x4& Scale(const float& scale);

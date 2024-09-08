@@ -21,7 +21,6 @@ private:
 	float mCurrentTime;
 	float mPlaybackSpeed;
 
-	//TODO: place this inside Animation class?
 	bool mShouldLoop;
 	bool mHasFinished;
 };

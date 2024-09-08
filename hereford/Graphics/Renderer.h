@@ -31,7 +31,6 @@ public:
 	Vec2 GetScreenDimension() const { return Vec2(mScreenWidth, mScreenHeight); }
 
 private:
-	// TODO: remove underscore
 	SDL_Window* mPtrSDLWindowContext;
 	SDL_GLContext mPtrGLContext;
 	CameraComponent* mPtrMainCamera;
