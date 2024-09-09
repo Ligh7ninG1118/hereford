@@ -16,36 +16,30 @@ out vec4 FragColor;
 void main()
 {
 	vec2 pixelCoords = TexCoords * screenDimension;
+	float absX = abs(pixelCoords.x),
+		  absY = abs(pixelCoords.y);
 
-	bool isHorizontalLine = abs(pixelCoords.y) < crosshairThickness &&
-							abs(pixelCoords.x) > crosshairGap &&
-							abs(pixelCoords.x) < crosshairSize.x + crosshairGap;
+	bool isHorizontalLine = absY < crosshairThickness &&
+							absX > crosshairGap &&
+							absX < crosshairSize.x + crosshairGap;
 
-	bool isHorizontalOutline = abs(pixelCoords.y) < crosshairThickness + outlineThickness &&
-							abs(pixelCoords.x) > crosshairGap &&
-							abs(pixelCoords.x) < crosshairSize.x + crosshairGap;
+	bool isHorizontalOutline = absY < crosshairThickness + outlineThickness &&
+							absX > crosshairGap &&
+							absX < crosshairSize.x + crosshairGap + outlineThickness;
 
-	bool isHorizontalOutline2 = abs(pixelCoords.y) < crosshairThickness + outlineThickness &&
-							abs(pixelCoords.x) > crosshairSize.x + crosshairGap &&
-							abs(pixelCoords.x) < crosshairSize.x + crosshairGap + outlineThickness;
+	bool isVerticalLine = absX < crosshairThickness &&
+							absY > crosshairGap &&
+							absY < crosshairSize.y + crosshairGap;
 
-	bool isVerticalLine = abs(pixelCoords.x) < crosshairThickness &&
-							abs(pixelCoords.y) > crosshairGap &&
-							abs(pixelCoords.y) < crosshairSize.y + crosshairGap;
-
-	bool isVerticalOutline = abs(pixelCoords.x) < crosshairThickness + outlineThickness &&
-							abs(pixelCoords.y) > crosshairGap &&
-							abs(pixelCoords.y) < crosshairSize.y + crosshairGap;
-
-	bool isVerticalOutline2 = abs(pixelCoords.x) < crosshairThickness + outlineThickness &&
-							abs(pixelCoords.y) > crosshairSize.y + crosshairGap &&
-							abs(pixelCoords.y) < crosshairSize.y + crosshairGap + outlineThickness;
+	bool isVerticalOutline = absX < crosshairThickness + outlineThickness &&
+							absY > crosshairGap &&
+							absY < crosshairSize.y + crosshairGap + outlineThickness;
 
 	if(isHorizontalLine || isVerticalLine)
 	{
 		FragColor = crosshairColor;
 	}
-	else if(isHorizontalOutline || isVerticalOutline || isHorizontalOutline2 || isVerticalOutline2)
+	else if(isHorizontalOutline || isVerticalOutline)
 	{
 		FragColor = outlineColor;
 	}
