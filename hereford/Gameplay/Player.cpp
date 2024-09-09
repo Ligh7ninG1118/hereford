@@ -12,6 +12,7 @@
 #include "Graphics/AnimatedRenderComponent.h"
 
 #include "UI/UIAmmoIndicator.h"
+#include "UI/UICrosshair.h"
 
 #include "stdio.h"
 
@@ -56,6 +57,11 @@ Player::Player(GameContext* gameCtx)
 	Mat4 uiProj = mPtrCameraComp->GetOrthoMatrix(0.0f, screenDimension.mX, 0.0f, screenDimension.mY);
 	mPtrUIAmmo->Initialize();
 	mPtrUIAmmo->SetUIProjection(uiProj);
+
+	std::shared_ptr<Shader> crosshairShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_crosshair_vert.glsl*Shaders/ui_crosshair_frag.glsl"));
+
+	mPtrUICrosshair = new UICrosshair(renderer, crosshairShader.get(), mPtrActiveWeaponComp);
+	mPtrUICrosshair->Initialize();
 }
 
 Player::~Player()

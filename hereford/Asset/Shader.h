@@ -41,6 +41,10 @@ public:
 	{
 		glUniform2f(glGetUniformLocation(mID, name.c_str()), x, y);
 	}
+	inline void SetVec2(const std::string& name, const Vector2& value)
+	{
+		glUniform2f(glGetUniformLocation(mID, name.c_str()), value.mX, value.mY);
+	}
 	inline void SetVec3(const std::string& name, const Vector3& value)
 	{
 		glUniform3f(glGetUniformLocation(mID, name.c_str()), value.mX, value.mY, value.mZ);

@@ -39,9 +39,6 @@ private:
 	int mScreenWidth;
 	int mScreenHeight;
 
-	std::shared_ptr<Shader> debugShader;
-	Uint32 crosshairVAOID;
-
 	std::shared_ptr<Shader> skyboxShader;
 	//class Animation* testAnimation;
 	Uint32 skyboxVAOID;

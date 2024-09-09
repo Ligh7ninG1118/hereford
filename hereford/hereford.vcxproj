@@ -166,6 +166,7 @@
     <ClCompile Include="Core\Component.cpp" />
     <ClCompile Include="Core\GameContext.cpp" />
     <ClCompile Include="Asset\Primitive.cpp" />
+    <ClCompile Include="UI\UICrosshair.cpp" />
     <ClCompile Include="UI\UIAmmoIndicator.cpp" />
     <ClCompile Include="Util\DelayedAction.cpp" />
     <ClCompile Include="Gameplay\CameraComponent.cpp" />
@@ -205,6 +206,7 @@
     <ClInclude Include="Core\Component.h" />
     <ClInclude Include="Core\GameContext.h" />
     <ClInclude Include="Asset\Primitive.h" />
+    <ClInclude Include="UI\UICrosshair.h" />
     <ClInclude Include="UI\UIAmmoIndicator.h" />
     <ClInclude Include="Util\DelayedAction.h" />
     <ClInclude Include="Gameplay\CameraComponent.h" />
@@ -244,8 +246,6 @@
     <None Include="Graphics\Shaders\standard_frag.glsl" />
     <None Include="Graphics\Shaders\phongLighting.glsl" />
     <None Include="Graphics\Shaders\standard_vert.glsl" />
-    <None Include="Shaders\debug_frag.glsl" />
-    <None Include="Shaders\debug_vert.glsl" />
     <None Include="Shaders\model_tex_frag.glsl" />
     <None Include="Shaders\model_tex_vert.glsl" />
     <None Include="Shaders\phongLighting.glsl" />
@@ -253,6 +253,8 @@
     <None Include="Shaders\skybox_vert.glsl" />
     <None Include="Shaders\standard_frag.glsl" />
     <None Include="Shaders\standard_vert.glsl" />
+    <None Include="Shaders\ui_crosshair_frag.glsl" />
+    <None Include="Shaders\ui_crosshair_vert.glsl" />
     <None Include="Shaders\ui_image_ammo_count_frag.glsl" />
     <None Include="Shaders\ui_image_ammo_count_vert.glsl" />
     <None Include="Shaders\ui_text_frag.glsl" />

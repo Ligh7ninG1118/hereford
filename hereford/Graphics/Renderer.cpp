@@ -85,22 +85,6 @@ bool Renderer::Initialize()
 	glViewport(0, 0, mScreenWidth, mScreenHeight);
 	glClearColor(0.0f, 0.5f, 1.0f, 0.0f);
 
-	float cameraCenter[] = { 0.0f,	0.0355f,	0.0f, 1.0f, 1.0f, 1.0f,
-							0.0f,	-0.0355f,	0.0f, 1.0f, 1.0f, 1.0f,
-							0.02f,	0.0f,		0.0f, 1.0f, 1.0f, 1.0f,
-							-0.02f, 0.0f,		0.0f, 1.0f, 1.0f, 1.0f };
-
-	Uint32 vboID;
-	glGenVertexArrays(1, &crosshairVAOID);
-	glGenBuffers(1, &vboID);
-	glBindVertexArray(crosshairVAOID);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vboID);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cameraCenter), cameraCenter, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
 
 	//std::vector<Animation> dancingAnimClips;
 
@@ -114,7 +98,6 @@ bool Renderer::Initialize()
 
 	testShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_vert.glsl*Shaders/model_tex_frag.glsl"));*/
 
-	debugShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/debug_vert.glsl*Shaders/debug_frag.glsl"));
 	skyboxShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/skybox_vert.glsl*Shaders/skybox_frag.glsl"));
 	textShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_text_vert.glsl*Shaders/ui_text_frag.glsl"));
 
@@ -463,15 +446,6 @@ void Renderer::Render(float deltaTime)
 		}
 	}
 
-	// Draw crosshair
-	
-	glBindVertexArray(crosshairVAOID);
-	debugShader->Use();
-
-	glLineWidth(1.5f);
-	glDrawArrays(GL_LINES, 0, 4);
-	
-
 	glDepthFunc(GL_LEQUAL);
 	skyboxShader->Use();
 	skyboxShader->SetMat4("projection", projection);
@@ -548,8 +522,9 @@ void Renderer::Render(float deltaTime)
 		//TODO: Costly! Update UI content using event
 		uiElement->UpdateContent();
 		glBindVertexArray(uiElement->GetVAO());
-		auto uiImage = dynamic_cast<UIImage*>(uiElement);
-		glBindTexture(GL_TEXTURE_2D, uiImage->GetTexture()->GetID());
+		uiElement->GetShader()->Use();
+		if(auto uiImage = dynamic_cast<UIImage*>(uiElement);uiImage != nullptr)
+			glBindTexture(GL_TEXTURE_2D, uiImage->GetTexture()->GetID());
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 	}
 

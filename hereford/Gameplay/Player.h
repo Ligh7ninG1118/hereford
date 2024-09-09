@@ -26,6 +26,8 @@ private:
 	std::shared_ptr<class AnimationStateMachine> mPtrAnimStateMachine;
 	class WeaponComponent* mPtrActiveWeaponComp;
 	class UIAmmoIndicator* mPtrUIAmmo;
+	class UICrosshair* mPtrUICrosshair;
+
 
 	bool hasMovementInput = false;
 	Vector3 inputMoveDir;

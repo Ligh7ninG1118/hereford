@@ -126,6 +126,9 @@
     <ClCompile Include="Graphics\AnimatedRenderComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UI\UICrosshair.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asset\Shader.h">
@@ -248,6 +251,9 @@
     <ClInclude Include="Graphics\AnimatedRenderComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UI\UICrosshair.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Graphics\Shaders\standard_vert.glsl" />
@@ -259,8 +265,6 @@
     <None Include="Graphics\Shaders\model_tex_frag.glsl" />
     <None Include="Graphics\Shaders\skybox_vert.glsl" />
     <None Include="Graphics\Shaders\skybox_frag.glsl" />
-    <None Include="Shaders\debug_frag.glsl" />
-    <None Include="Shaders\debug_vert.glsl" />
     <None Include="Shaders\model_tex_frag.glsl" />
     <None Include="Shaders\model_tex_vert.glsl" />
     <None Include="Shaders\phongLighting.glsl" />
@@ -272,5 +276,7 @@
     <None Include="Shaders\ui_text_frag.glsl" />
     <None Include="Shaders\ui_image_ammo_count_frag.glsl" />
     <None Include="Shaders\ui_image_ammo_count_vert.glsl" />
+    <None Include="Shaders\ui_crosshair_vert.glsl" />
+    <None Include="Shaders\ui_crosshair_frag.glsl" />
   </ItemGroup>
 </Project>
