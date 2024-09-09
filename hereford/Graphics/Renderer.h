@@ -40,7 +40,6 @@ private:
 	int mScreenHeight;
 
 	std::shared_ptr<Shader> debugShader;
-	//std::shared_ptr<Shader> testShader;
 	Uint32 crosshairVAOID;
 
 	std::shared_ptr<Shader> skyboxShader;

@@ -34,15 +34,7 @@ void UIAmmoIndicator::Initialize()
 }
 
 void UIAmmoIndicator::UpdateContent()
-{
-	/*auto lock = mPtrWeapon.lock();
-	if (!lock)
-	{
-		printf("UIAmmoIndicator::UpdateContent(): Referenced Weapon obj destroyed\n");
-		return;
-	}*/
-
-	
+{	
 	//TODO: Wrong! Since we r holding ptr to a single weapon instance, its magazine capacity wont change
 	//		If it indeed was changed, then it means a diff weapon instance, should do this in SetPtrWeapon or somewhere
 	

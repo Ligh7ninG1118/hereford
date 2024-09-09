@@ -25,6 +25,7 @@ private:
 	std::unique_ptr<class AnimatedRenderComponent> mPtrAnimRenderComp;
 	std::shared_ptr<class AnimationStateMachine> mPtrAnimStateMachine;
 	class WeaponComponent* mPtrActiveWeaponComp;
+	class UIAmmoIndicator* mPtrUIAmmo;
 
 	bool hasMovementInput = false;
 	Vector3 inputMoveDir;

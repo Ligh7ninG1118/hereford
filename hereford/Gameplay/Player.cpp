@@ -11,6 +11,8 @@
 
 #include "Graphics/AnimatedRenderComponent.h"
 
+#include "UI/UIAmmoIndicator.h"
+
 #include "stdio.h"
 
 Player::Player(GameContext* gameCtx)
@@ -44,6 +46,16 @@ Player::Player(GameContext* gameCtx)
 
 	mPtrActiveWeaponComp = new WeaponComponent(static_cast<Actor*>(this), mPtrAnimStateMachine);
 	mPtrWeaponFiredEvent = GameEvent::Subscribe<EventOnPlayerWeaponFired>(std::bind(&Player::WeaponFiredEventListener, this, std::placeholders::_1));
+
+	std::shared_ptr<Texture> ammoTex = AssetManager::LoadAsset<Texture>(std::string("LocalResources/rifle-round-silhouette.png"));
+	std::shared_ptr<Shader> ammoShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_image_ammo_count_vert.glsl*Shaders/ui_image_ammo_count_frag.glsl"));
+
+	Renderer* renderer = &mGame->GetRenderer();
+	Vec2 screenDimension = renderer->GetScreenDimension();
+	mPtrUIAmmo = new UIAmmoIndicator(renderer, ammoShader.get(), ammoTex, mPtrActiveWeaponComp);
+	Mat4 uiProj = mPtrCameraComp->GetOrthoMatrix(0.0f, screenDimension.mX, 0.0f, screenDimension.mY);
+	mPtrUIAmmo->Initialize();
+	mPtrUIAmmo->SetUIProjection(uiProj);
 }
 
 Player::~Player()

@@ -118,16 +118,6 @@ bool Renderer::Initialize()
 	skyboxShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/skybox_vert.glsl*Shaders/skybox_frag.glsl"));
 	textShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_text_vert.glsl*Shaders/ui_text_frag.glsl"));
 
-	std::shared_ptr<Texture> testUI = AssetManager::LoadAsset<Texture>(std::string("LocalResources/rifle-round-silhouette.png"));
-	std::shared_ptr<Shader> uiShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_image_ammo_count_vert.glsl*Shaders/ui_image_ammo_count_frag.glsl"));
-
-	//TODO: Unchanged shader values dont need to update every frame
-	Mat4 uiProj = mPtrMainCamera->GetOrthoMatrix(0.0f, static_cast<float>(mScreenWidth), 0.0f, static_cast<float>(mScreenHeight));
-
-	/*uiAmmo = new UIAmmoIndicator(this, uiShader.get(), testUI, weapon);
-	uiAmmo->Initialize();
-	uiAmmo->SetUIProjection(uiProj);*/
-
 
 	glGenTextures(1, &skyboxTexID);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);
@@ -552,10 +542,16 @@ void Renderer::Render(float deltaTime)
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); 
 	
-	/*uiAmmo->UpdateContent();
-	glBindVertexArray(uiAmmo->GetVAO());
-	glBindTexture(GL_TEXTURE_2D, uiAmmo->GetTexture()->GetID());
-	glDrawArrays(GL_TRIANGLES, 0, 6);*/
+
+	for (auto uiElement : mUIElements)
+	{
+		//TODO: Costly! Update UI content using event
+		uiElement->UpdateContent();
+		glBindVertexArray(uiElement->GetVAO());
+		auto uiImage = dynamic_cast<UIImage*>(uiElement);
+		glBindTexture(GL_TEXTURE_2D, uiImage->GetTexture()->GetID());
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+	}
 
 
 	glBindVertexArray(0);
