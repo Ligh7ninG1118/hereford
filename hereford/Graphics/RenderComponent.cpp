@@ -11,7 +11,10 @@
 RenderComponent::RenderComponent(Actor* owner, Renderer& rendererRef)
 	: 
 	Component(owner),
-	m_Renderer(rendererRef)
+	m_Renderer(rendererRef),
+	mTranslateOffset(Vec3::Zero),
+	mRotateOffset(Vec3::Zero),
+	mScaleOffset(Vec3::One)
 {
 	m_Renderer.AddRenderComponent(this);
 }
@@ -23,17 +26,17 @@ RenderComponent::~RenderComponent()
 
 Mat4 RenderComponent::GetModelMatrix() const
 {
-	//TODO: Quaternion rotation
-
 	Mat4 mat = Mat4::Identity;
 	Vec3 rot = mOwner->GetRotation();
 
-	mat.Translate(mOwner->GetPosition());
-	mat.Translate(mTranslateOffset);
 	mat.Scale(mOwner->GetScale());
 	mat.Scale(mScaleOffset);
 	mat.Rotate(rot);
 	mat.Rotate(mRotateOffset);
+	mat.Translate(mOwner->GetPosition());
+	mat.Translate(mTranslateOffset);
+	
+	
 
 	/*mat.Rotate(DEG2RAD * rot.mX, Vec3(1.0f, 0.0f, 0.0f));
 	mat.Rotate(DEG2RAD * rot.mY, Vec3(0.0f, 1.0f, 0.0f));

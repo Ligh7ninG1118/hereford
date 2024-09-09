@@ -36,9 +36,9 @@ public:
 	inline Vec3 GetScaleOffset() const { return mScaleOffset; }
 	inline void SetScaleOffset(Vec3 inOffset) { mScaleOffset = inOffset; }
 
-	Mat4 GetModelMatrix() const;
+	virtual Mat4 GetModelMatrix() const;
 
-private:
+protected:
 	class Renderer& m_Renderer;
 
 	std::shared_ptr<class Shader> mPtrShader;

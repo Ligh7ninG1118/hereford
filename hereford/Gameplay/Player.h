@@ -14,14 +14,14 @@ public:
 	void OnUpdate(float deltaTime) override;
 	void OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY) override;
 
-	class CameraComponent& GetMainCamera() const { return *m_pCameraComponent.get(); }
+	class CameraComponent& GetMainCamera() const { return *mPtrCameraComp.get(); }
 
 private:
 	void ProcessMovement(const float& deltaTime);
 
 	void WeaponFiredEventListener(EventOnPlayerWeaponFired inEvent);
 
-	std::unique_ptr<class CameraComponent> m_pCameraComponent;
+	std::unique_ptr<class CameraComponent> mPtrCameraComp;
 	std::unique_ptr<class AnimatedRenderComponent> mPtrAnimRenderComp;
 	std::shared_ptr<class AnimationStateMachine> mPtrAnimStateMachine;
 	class WeaponComponent* mPtrActiveWeaponComp;

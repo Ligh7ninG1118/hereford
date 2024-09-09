@@ -99,12 +99,14 @@ Matrix4x4& Matrix4x4::Rotate(const float& radAngle, const Vector3& axis)
 	return *this;
 }
 
+//In degree angles
 Matrix4x4& Matrix4x4::Rotate(float x, float y, float z)
 {
 	Quat quat = Quaternion::EulerToQuat(Vec3(x, y, z));
 	return Rotate(quat);
 }
 
+//In degree angles
 Matrix4x4& Matrix4x4::Rotate(const Vector3& eulerRot)
 {
 	Quat quat = Quaternion::EulerToQuat(eulerRot);

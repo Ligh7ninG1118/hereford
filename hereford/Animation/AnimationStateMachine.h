@@ -25,6 +25,7 @@ public:
 
 	std::vector<Mat4> GetFinalBoneMatrices() const;
 
+	class Animator* GetAnimator() const { return mPtrAnimator.get(); }
 
 private:
 	void AnimFinishedListener(EventOnAnimFinished inEvent);

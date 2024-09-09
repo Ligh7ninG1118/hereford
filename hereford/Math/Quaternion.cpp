@@ -47,12 +47,14 @@ float Quaternion::Dot(const Quaternion& rhs) const
 
 Quaternion Quaternion::EulerToQuat(const Vector3& euler)
 {
-	float cosPitch = cos(euler.mX * 0.5f);
-	float sinPitch = sin(euler.mX * 0.5f);
-	float cosYaw = cos(euler.mY * 0.5f);
-	float sinYaw = sin(euler.mY * 0.5f);
-	float cosRoll = cos(euler.mZ * 0.5f);
-	float sinRoll = sin(euler.mZ * 0.5f);
+	Vector3 radEuler = euler * DEG2RAD;
+
+	float cosPitch = cos(radEuler.mX * 0.5f);
+	float sinPitch = sin(radEuler.mX * 0.5f);
+	float cosYaw = cos(radEuler.mY * 0.5f);
+	float sinYaw = sin(radEuler.mY * 0.5f);
+	float cosRoll = cos(radEuler.mZ * 0.5f);
+	float sinRoll = sin(radEuler.mZ * 0.5f);
 
 	Quaternion q;
 	q.mW = cosRoll * cosPitch * cosYaw + sinRoll * sinPitch * sinYaw;

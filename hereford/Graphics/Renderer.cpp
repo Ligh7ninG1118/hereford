@@ -1,5 +1,6 @@
 #include "Renderer.h"
 #include "RenderComponent.h"
+#include "AnimatedRenderComponent.h"
 #include "LightComponent.h"
 #include "Core/GameContext.h"
 #include "Asset/Texture.h"
@@ -84,10 +85,10 @@ bool Renderer::Initialize()
 	glViewport(0, 0, mScreenWidth, mScreenHeight);
 	glClearColor(0.0f, 0.5f, 1.0f, 0.0f);
 
-	float cameraCenter[] = { 0.0f, 0.0355f, 0.0f, 1.0f, 1.0f, 1.0f,
-							0.0f, -0.0355f, 0.0f, 1.0f, 1.0f, 1.0f,
-							0.02f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-							-0.02f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f };
+	float cameraCenter[] = { 0.0f,	0.0355f,	0.0f, 1.0f, 1.0f, 1.0f,
+							0.0f,	-0.0355f,	0.0f, 1.0f, 1.0f, 1.0f,
+							0.02f,	0.0f,		0.0f, 1.0f, 1.0f, 1.0f,
+							-0.02f, 0.0f,		0.0f, 1.0f, 1.0f, 1.0f };
 
 	Uint32 vboID;
 	glGenVertexArrays(1, &crosshairVAOID);
@@ -112,9 +113,10 @@ bool Renderer::Initialize()
 	dancingAnimator->SetShouldLoop(true);
 
 	testShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_vert.glsl*Shaders/model_tex_frag.glsl"));*/
+
+	debugShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/debug_vert.glsl*Shaders/debug_frag.glsl"));
 	skyboxShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/skybox_vert.glsl*Shaders/skybox_frag.glsl"));
 	textShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_text_vert.glsl*Shaders/ui_text_frag.glsl"));
-
 
 	std::shared_ptr<Texture> testUI = AssetManager::LoadAsset<Texture>(std::string("LocalResources/rifle-round-silhouette.png"));
 	std::shared_ptr<Shader> uiShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_image_ammo_count_vert.glsl*Shaders/ui_image_ammo_count_frag.glsl"));
@@ -301,97 +303,7 @@ void Renderer::Render(float deltaTime)
 	//if (dancingAnimator)
 	//	dancingAnimator->UpdateAnimation(deltaTime);
 
-	//testShader->Use();
-	//testShader->SetMat4("projection", projection);
-
-	//testShader->SetMat4("view", view);
-
-	//Mat4 model = Mat4::Identity;
-	//model.Scale(0.03f);
-	//model.Rotate(DEG2RAD * 90.0f, Vec3::Up);
-	////TODO: I messed up axis again? big time
-	//Vec3 playerRot = mPtrMainCamera->GetRotation();
-	////playerRot *= DEG2RAD;
-	////Vec3 actualRot = Vec3(-playerRot.mY, playerRot.mX, 0.0f);
-	////TODO: Prone to gimbal lock, cant switch order
-	////		Use quaternion!
-	//model.Rotate(DEG2RAD * playerRot.mY, Vector3::Down);
-	//model.Rotate(DEG2RAD * playerRot.mX, Vector3::Left);
-	////model.Rotate(Quaternion::EulerToQuat(actualRot));
-	////model.Translate(Vec3(-0.25f, 1.32f, -0.05f));
-	//model.Translate(Vec3(0.0f, 1.32f, 0.0f));
-
-	//model.Translate(mPtrMainCamera->GetOwner()->GetPosition());
-
-	//
-	////model.Rotate(DEG2RAD * playerRot.mZ, Vector3::Up);
-
-	//testShader->SetMat4("model", model);
-	//testShader->SetVec3("pointLight.position", Vec3(0.0f, 5.0f, 0.0f));
-	//testShader->SetVec3("pointLight.color", Vec3(10.0f, 10.0f, 10.0f));
-	//testShader->SetVec3("eyePos", mPtrMainCamera->GetCameraPosition());
-
-	//if (gunAnimator)
-	//{
-	//	auto transforms = gunAnimator->GetFinalBoneMatrices();
-	//	for (int i = 0; i < transforms.size(); i++)
-	//	{
-	//		testShader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
-	//	}
-	//}
-
-	//int cum = 0;
-
-	//for (unsigned int i = 0; i < gunModel->mMeshes.size(); i++)
-	//{
-	//	Mesh* mesh = &gunModel->mMeshes[i];
-	//	
-	//	unsigned int diffuseNr = 1;
-	//	unsigned int specularNr = 1;
-	//	unsigned int normalNr = 1;
-	//	unsigned int heightNr = 1;
-	//	for (unsigned int j = 0; j < mesh->mTextures.size(); j++)
-	//	{
-	//		glActiveTexture(GL_TEXTURE0 + j);
-
-	//		std::string texStr;
-	//		switch (mesh->mTextures[j].GetType())
-	//		{
-	//		case ETextureType::DIFFUSE:
-	//			texStr = "tex_diffuse_1";// +std::to_string(diffuseNr++);
-	//			break;
-	//		case ETextureType::SPECULAR:
-	//			texStr = "tex_specular_1";
-	//			break;
-	//		case ETextureType::NORMALS:
-	//			texStr = "tex_normals_1";
-	//			break;
-	//		case ETextureType::HEIGHT:
-	//			texStr = "tex_height_1";
-	//			break;
-	//		case ETextureType::EMISSIVE:
-	//			texStr = "tex_emissive_1";
-	//			break;
-	//		case ETextureType::METALNESS:
-	//			texStr = "tex_metalrough_1";
-	//			break;
-	//		case ETextureType::AMBIENT:
-	//			texStr = "tex_ao_1";
-	//			break;
-	//		default:
-	//			break;
-	//		}
-	//		testShader->SetInt(texStr.c_str(), j);
-	//		glBindTexture(GL_TEXTURE_2D, mesh->mTextures[j].GetID());
-	//		cum = j;
-	//	}
-
-	//	glBindVertexArray(mesh->mVAOID);
-	//	glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(mesh->mIndices.size()), GL_UNSIGNED_INT, 0);
-	//	glBindVertexArray(0);
-
-	//	glActiveTexture(GL_TEXTURE0);
-	//}
+	
 
 	//Mat4 dModel = Mat4::Identity;
 	//dModel.Translate(Vec3(0.0f, 0.4f, -2.0f));
@@ -462,57 +374,113 @@ void Renderer::Render(float deltaTime)
 	for (auto renderComponent : mRenderComponents)
 	{
 		unsigned int VAO, VBO;
-		Shader* shader;
 		VAO = renderComponent->GetVAOID();
-		shader = renderComponent->GetShader().get();
-
 		glBindVertexArray(VAO);
-		glUseProgram(shader->GetID());
+
+		auto shader = renderComponent->GetShader().get();
+		shader->Use();
 
 		shader->SetInt("lightNum", 1);
 
-		/*for (int i = 0; i < lightSize; i++)
-		{
-			ShaderOp::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].position", mLightComponents[i]->GetPosition());
-			ShaderOp::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].ambient", mLightComponents[i]->GetPointLight().ambient);
-			ShaderOp::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].diffuse", mLightComponents[i]->GetPointLight().diffuse);
-			ShaderOp::SetVec3(shaderID, "pointLight[" + std::to_string(i) + "].specular", mLightComponents[i]->GetPointLight().specular);
+		shader->SetVec3("pointLights[0].position", Vec3(0.0f, 5.0f, 0.0f));
 
-			ShaderOp::SetFloat(shaderID, "pointLight[" + std::to_string(i) + "].constant", mLightComponents[i]->GetPointLight().constant);
-			ShaderOp::SetFloat(shaderID, "pointLight[" + std::to_string(i) + "].linear", mLightComponents[i]->GetPointLight().linear);
-			ShaderOp::SetFloat(shaderID, "pointLight[" + std::to_string(i) + "].quadratic", mLightComponents[i]->GetPointLight().quadratic);
-		}*/
+		shader->SetVec3("pointLights[0].ambient", Vec3(0.1f, 0.1f, 0.1f));
+		shader->SetVec3("pointLights[0].diffuse", Vec3(0.6f, 0.6f, 0.6f));
+		shader->SetVec3("pointLights[0].specular", Vec3(1.0f, 1.0f, 1.0f));
+		shader->SetVec3("pointLights[0].color", Vec3(10.0f, 10.0f, 10.0f));
 
-		shader->SetVec3("pointLight[0].position", Vec3(0.0f, 5.0f, 0.0f));
+		shader->SetFloat("pointLights[0].constant", 1.0f);
+		shader->SetFloat("pointLights[0].linear", 0.007f);
+		shader->SetFloat("pointLights[0].quadratic", 0.0002f);
 
-		shader->SetVec3("pointLight[0].ambient", Vec3(0.1f, 0.1f, 0.1f));
-		shader->SetVec3("pointLight[0].diffuse", Vec3(0.6f, 0.6f, 0.6f));
-		shader->SetVec3("pointLight[0].specular", Vec3(1.0f, 1.0f, 1.0f));
 
-		shader->SetFloat("pointLight[0].constant", 1.0f);
-		shader->SetFloat("pointLight[0].linear", 0.007f);
-		shader->SetFloat("pointLight[0].quadratic", 0.0002f);
-
-		shader->SetVec3("viewPos", mPtrMainCamera->GetCameraPosition());
-
+		shader->SetVec3("eyePos", mPtrMainCamera->GetCameraPosition());
+		
 		Mat4 model = renderComponent->GetModelMatrix();
 		shader->SetMat4("model", model);
 		shader->SetMat4("projection", projection);
 		shader->SetMat4("view", view);
 
-		shader->SetVec3("inColor", renderComponent->GetColor());
 
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		if (auto animRenderComp = dynamic_cast<AnimatedRenderComponent*>(renderComponent); animRenderComp != nullptr)
+		{
+			Mat4 model = animRenderComp->GetModelMatrix();
+
+			shader->SetMat4("model", model);
+		
+			auto transforms = animRenderComp->GetAnimator()->GetFinalBoneMatrices();
+			for (int i = 0; i < transforms.size(); i++)
+			{
+				shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+			}
+			
+			auto meshes = animRenderComp->GetMeshes();
+			for (unsigned int i = 0; i < meshes.size(); i++)
+			{
+				Mesh* mesh = &meshes[i];
+
+				unsigned int diffuseNr = 1;
+				unsigned int specularNr = 1;
+				unsigned int normalNr = 1;
+				unsigned int heightNr = 1;
+				for (unsigned int j = 0; j < mesh->mTextures.size(); j++)
+				{
+					glActiveTexture(GL_TEXTURE0 + j);
+
+					std::string texStr;
+					switch (mesh->mTextures[j].GetType())
+					{
+					case ETextureType::DIFFUSE:
+						texStr = "tex_diffuse_1";
+						break;
+					case ETextureType::SPECULAR:
+						texStr = "tex_specular_1";
+						break;
+					case ETextureType::NORMALS:
+						texStr = "tex_normals_1";
+						break;
+					case ETextureType::HEIGHT:
+						texStr = "tex_height_1";
+						break;
+					case ETextureType::EMISSIVE:
+						texStr = "tex_emissive_1";
+						break;
+					case ETextureType::METALNESS:
+						texStr = "tex_metalrough_1";
+						break;
+					case ETextureType::AMBIENT:
+						texStr = "tex_ao_1";
+						break;
+					default:
+						break;
+					}
+					shader->SetInt(texStr.c_str(), j);
+					glBindTexture(GL_TEXTURE_2D, mesh->mTextures[j].GetID());
+				}
+
+				glBindVertexArray(mesh->mVAOID);
+				glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(mesh->mIndices.size()), GL_UNSIGNED_INT, 0);
+				
+				glBindVertexArray(0);
+				glActiveTexture(GL_TEXTURE0);
+			}
+		}
+		else
+		{
+			shader->SetVec3("inColor", renderComponent->GetColor());
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 	}
 
 	// Draw crosshair
-	{
-		glBindVertexArray(crosshairVAOID);
-		glUseProgram(debugShaderID);
+	
+	glBindVertexArray(crosshairVAOID);
+	debugShader->Use();
 
-		glLineWidth(1.5f);
-		glDrawArrays(GL_LINES, 0, 4);
-	}
+	glLineWidth(1.5f);
+	glDrawArrays(GL_LINES, 0, 4);
+	
 
 	glDepthFunc(GL_LEQUAL);
 	skyboxShader->Use();
@@ -584,10 +552,10 @@ void Renderer::Render(float deltaTime)
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0); 
 	
-	uiAmmo->UpdateContent();
+	/*uiAmmo->UpdateContent();
 	glBindVertexArray(uiAmmo->GetVAO());
 	glBindTexture(GL_TEXTURE_2D, uiAmmo->GetTexture()->GetID());
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDrawArrays(GL_TRIANGLES, 0, 6);*/
 
 
 	glBindVertexArray(0);

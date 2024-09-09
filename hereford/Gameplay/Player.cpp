@@ -17,21 +17,30 @@ Player::Player(GameContext* gameCtx)
 	:
 	Actor(gameCtx)
 {
-	m_pCameraComponent = std::make_unique<CameraComponent>(static_cast<Actor*>(this));
+	mPtrCameraComp = std::make_unique<CameraComponent>(static_cast<Actor*>(this));
 
 	
-	mPtrAnimRenderComp = std::make_unique<AnimatedRenderComponent>(AnimatedRenderComponent(this, mGame->GetRenderer()));
+	mPtrAnimRenderComp = std::make_unique<AnimatedRenderComponent>(this, mGame->GetRenderer());
 	mPtrAnimRenderComp->SetModel(AssetManager::LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v3.fbx")));
 	mPtrAnimRenderComp->SetShader(AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_vert.glsl*Shaders/model_tex_frag.glsl")));
+
+	mPtrAnimRenderComp->SetTranslateOffset(Vec3(0.0f, 1.32f, 0.0f));
+	mPtrAnimRenderComp->SetScaleOffset(Vec3(0.03f));
+	mPtrAnimRenderComp->SetRotateOffset(Vec3(90.0f, 0.0f, 0.0f));
+
+	mPtrAnimRenderComp->SetCamera(mPtrCameraComp.get());
 
 	std::unique_ptr<Animator> animator = std::make_unique<Animator>(
 		Animator(Animation::LoadAnimations("LocalResources/mark23/source/Mark23v3.fbx", mPtrAnimRenderComp->GetModel())));
 
 	// 0: Draw, 1: Hide, 2: Static, 3: Reload, 4: Fire
-	mPtrAnimStateMachine = std::make_shared<AnimationStateMachine>(AnimationStateMachine(this, std::move(animator)));
+	// Construct shared ptr in place to avoid copying unique ptr inside ASM class
+	mPtrAnimStateMachine = std::shared_ptr<AnimationStateMachine>(new AnimationStateMachine(this, std::move(animator)));
 	mPtrAnimStateMachine->AddTransitionRule(0, AnimState(2, false));
 	mPtrAnimStateMachine->AddTransitionRule(3, AnimState(2, false));
 	mPtrAnimStateMachine->AddTransitionRule(4, AnimState(2, false));
+
+	mPtrAnimRenderComp->SetAnimator(mPtrAnimStateMachine->GetAnimator());
 
 	mPtrActiveWeaponComp = new WeaponComponent(static_cast<Actor*>(this), mPtrAnimStateMachine);
 	mPtrWeaponFiredEvent = GameEvent::Subscribe<EventOnPlayerWeaponFired>(std::bind(&Player::WeaponFiredEventListener, this, std::placeholders::_1));
@@ -94,7 +103,7 @@ void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 
 	// Rotation
 	{
-		mRotation.mY += mouseDeltaX * m_pCameraComponent->GetMouseSens();
+		mRotation.mY += mouseDeltaX * mPtrCameraComp->GetMouseSens();
 		if (mRotation.mY > 360.0f)
 			mRotation.mY = 0.0f;
 		if (mRotation.mY < -360.0f)
@@ -134,5 +143,5 @@ void Player::ProcessMovement(const float& deltaTime)
 
 void Player::WeaponFiredEventListener(EventOnPlayerWeaponFired inEvent)
 {
-	m_pCameraComponent->RotateCamera(inEvent.mRecoilDeviation);
+	mPtrCameraComp->RotateCamera(inEvent.mRecoilDeviation);
 }
