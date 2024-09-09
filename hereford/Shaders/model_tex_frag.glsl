@@ -17,7 +17,7 @@ uniform sampler2D tex_metalrough_1;
 uniform sampler2D tex_ao_1;
 
 uniform int lightNum;
-uniform PointLight pointLight;
+uniform PointLight pointLights[16];
 
 uniform vec3 eyePos;
 
@@ -49,13 +49,13 @@ void main()
     vec3 V = normalize(eyePos - WorldPos);
 
     vec3 Lo = vec3(0.0f);
-    for(int i=0;i<1;i++)
+    for(int i=0;i<lightNum;i++)
     {
-        vec3 L = normalize(pointLight.position - WorldPos);
+        vec3 L = normalize(pointLights[i].position - WorldPos);
         vec3 H = normalize(V+L);
-        float distance = length(pointLight.position - WorldPos);
+        float distance = length(pointLights[i].position - WorldPos);
         float attenuation = 1.0 / (distance * distance);
-        vec3 radiance = pointLight.color * attenuation;
+        vec3 radiance = pointLights[i].color * attenuation;
 
         float NDF = DistributionComponent(N, H, roughness);
         float G = GeometryComponent(N, V, L, roughness);
