@@ -1,7 +1,7 @@
 #pragma once
 #include "Core/Component.h"
 #include "Math/Math.h"
-
+#include "PhysicsPrimitive.h"
 
 
 class PhysicsComponent : public Component
@@ -13,23 +13,20 @@ public:
 	bool Initialize();
 	bool CheckCollision(const PhysicsComponent& collider) const;
 
-	Vec3 GetBVPosition() const;
-	Vec3 GetBVExtend() const { return m_BVExtend; }
-
+	Vec3 GetOwnerPosition() const;
 
 private:
 	class PhysicsManager& m_PhysicsManager;
 
+	
+
+	friend PhysicsManager;
 	bool mIsTrigger;
 	bool mUseGravity;
 
 	float mMass;
-
-	friend PhysicsManager;
-	//TODO: Have a separate physics primitive construct
-	Vec3 m_BVPositionOffset;
-	Vec3 m_BVExtend;
-	float m_SphereExtend;
+	
+	PhysicsPrimitive mPrimitive;
 
 	Vec3 m_currentVelocity;
 	Vec3 m_PrevPos;

@@ -1,6 +1,7 @@
 #include "Math/Math.h"
-#include "Physics/PhysicsManager.h"
-#include "Physics/PhysicsComponent.h"
+#include "PhysicsManager.h"
+#include "PhysicsComponent.h"
+#include "PhysicsPrimitive.h"
 #include <vector>
 #include <stdio.h>
 
@@ -26,6 +27,9 @@ void PhysicsManager::Shutdown()
 {
 }
 
+#include <variant>
+
+
 bool PhysicsManager::RaycastQuery(const struct Vector3& origin, const struct Vector3& dir, const float& maxDistance, HitInfo& outInfo)
 {
 	//printf("-------------------------------------\n");
@@ -34,81 +38,118 @@ bool PhysicsManager::RaycastQuery(const struct Vector3& origin, const struct Vec
 
 	for (auto collider : mPhysicsComponents)
 	{
-		// Ray against sphere
-		/*float radius = collider->m_SphereExtend;
-		Vector3 originToCenter = collider->GetBVPosition() - origin;
-		float projectedDis = originToCenter.Dot(dir);
+		PhysicsPrimitive primitive = collider->mPrimitive;
+		HitInfo tempInfo;
 
-		float originToCenterLenSq = originToCenter.SqrMagnitude();
-
-		if (projectedDis < 0.0f)
-		{
-			if (originToCenterLenSq < radius * radius)
+		if (std::holds_alternative<SpherePrimitive>(primitive.mPrimitive))
+		{ 
+			bool result = RayAgainstSphere(origin, dir, maxDistance, primitive, collider->GetOwnerPosition(), tempInfo);
+			if (result && tempInfo.distance < nearestDis)
 			{
-				printf("inside\n");
+				hasHit = true;
+				nearestDis = tempInfo.distance;
 				outInfo.hitActor = collider->GetOwner();
-				return true;
+				outInfo.impactPoint = tempInfo.impactPoint;
 			}
-			else
+		}
+		else if (std::holds_alternative<AABBPrimitive>(primitive.mPrimitive))
+		{
+			bool result = RayAgainstAABB(origin, dir, maxDistance, primitive, collider->GetOwnerPosition(), tempInfo);
+			if (result && tempInfo.distance < nearestDis)
 			{
-				printf("no collision\n");
-				continue;
+				hasHit = true;
+				nearestDis = tempInfo.distance;
+				outInfo.hitActor = collider->GetOwner();
+				outInfo.impactPoint = tempInfo.impactPoint;
 			}
 		}
+	}
+	outInfo.distance = nearestDis;
+	return hasHit;
+}
 
-		float centerToProjectedDis = sqrt(originToCenterLenSq - projectedDis * projectedDis);
-		float sideDis = sqrt(radius * radius - centerToProjectedDis * centerToProjectedDis);
+bool PhysicsManager::RayAgainstSphere(const Vector3& origin, const Vector3& dir, const float& maxDistance, 
+	const PhysicsPrimitive& primitive, const struct Vector3& colliderPos, HitInfo& outInfo)
+{
+	Vec3 adjustedPos = colliderPos + primitive.mPosOffset;
+	SpherePrimitive sphere = std::get<SpherePrimitive>(primitive.mPrimitive);
+	float radius = sphere.mRadius;
+	Vector3 originToCenter = adjustedPos - origin;
+	float projectedDis = originToCenter.Dot(dir);
 
-		if (radius * radius - originToCenterLenSq + projectedDis * projectedDis < 0.0f)
+	float originToCenterLenSq = originToCenter.SqrMagnitude();
+
+	if (projectedDis < 0.0f)
+	{
+		if (originToCenterLenSq < radius * radius)
 		{
-			printf("no collision\n");
-			continue;
-		}
-		else if (originToCenterLenSq < radius * radius)
-		{
-			printf("inside\n");
-			outInfo.hitActor = collider->GetOwner();
+			//printf("inside\n");
+			outInfo.impactPoint = origin;
+			outInfo.distance = 0.0f;
 			return true;
 		}
 		else
 		{
-			printf("collided\n");
-			outInfo.hitActor = collider->GetOwner();
-			return true;
-		}*/
-
-		Vec3 aabbMin = collider->GetBVPosition() - collider->GetBVExtend();
-		Vec3 aabbMax = collider->GetBVPosition() + collider->GetBVExtend();
-
-		float t1 = (aabbMin.mX - origin.mX) / dir.mX;
-		float t2 = (aabbMax.mX - origin.mX) / dir.mX;
-		float t3 = (aabbMin.mY - origin.mY) / dir.mY;
-		float t4 = (aabbMax.mY - origin.mY) / dir.mY;
-		float t5 = (aabbMin.mZ - origin.mZ) / dir.mZ;
-		float t6 = (aabbMax.mZ - origin.mZ) / dir.mZ;
-
-		float tmin = std::max(std::max(std::min(t1, t2), std::min(t3, t4)), std::min(t5, t6));
-		float tmax = std::min(std::min(std::max(t1, t2), std::max(t3, t4)), std::max(t5, t6));
-
-		if (tmax < 0.0f || tmin > tmax)
-		{
 			//printf("no collision\n");
-			continue;
-		}
-
-		if (tmin < nearestDis)
-		{
-			//printf("collided. Dis: %f\n", tmin);
-			outInfo.hitActor = collider->GetOwner();
-			nearestDis = tmin;
-			hasHit = true;
+			return false;
 		}
 	}
-	//printf("-------------------------------------\n");
-	outInfo.impactPoint = origin + dir * nearestDis;
-	outInfo.distance = nearestDis;
 
-	return hasHit;
+	float centerToProjectedDis = sqrt(originToCenterLenSq - projectedDis * projectedDis);
+	float sideDis = sqrt(radius * radius - centerToProjectedDis * centerToProjectedDis);
+
+	if (radius * radius - originToCenterLenSq + projectedDis * projectedDis < 0.0f)
+	{
+		//printf("no collision\n");
+		return false;
+
+	}
+	else if (originToCenterLenSq < radius * radius)
+	{
+		//printf("inside\n");
+		outInfo.impactPoint = origin;
+		outInfo.distance = 0.0f;
+		return true;
+	}
+	else
+	{
+		//printf("collided\n");
+		outInfo.distance = sqrtf(originToCenterLenSq - radius * radius);
+		Vector3 originToCenterDir = originToCenter.normalized();
+		outInfo.impactPoint = origin + originToCenterDir * outInfo.distance;
+		return true;
+	}
+}
+
+bool PhysicsManager::RayAgainstAABB(const Vector3& origin, const Vector3& dir, const float& maxDistance, 
+	const PhysicsPrimitive& primitive, const struct Vector3& colliderPos, HitInfo& outInfo)
+{
+	Vec3 adjustedPos = colliderPos + primitive.mPosOffset;
+	AABBPrimitive aabb = std::get<AABBPrimitive>(primitive.mPrimitive);
+
+	Vec3 aabbMin = adjustedPos - aabb.mExtend;
+	Vec3 aabbMax = adjustedPos + aabb.mExtend;
+
+	float t1 = (aabbMin.mX - origin.mX) / dir.mX;
+	float t2 = (aabbMax.mX - origin.mX) / dir.mX;
+	float t3 = (aabbMin.mY - origin.mY) / dir.mY;
+	float t4 = (aabbMax.mY - origin.mY) / dir.mY;
+	float t5 = (aabbMin.mZ - origin.mZ) / dir.mZ;
+	float t6 = (aabbMax.mZ - origin.mZ) / dir.mZ;
+
+	float tmin = std::max(std::max(std::min(t1, t2), std::min(t3, t4)), std::min(t5, t6));
+	float tmax = std::min(std::min(std::max(t1, t2), std::max(t3, t4)), std::max(t5, t6));
+
+	if (tmax < 0.0f || tmin > tmax)
+	{
+		return false;
+	}
+	else
+	{
+		outInfo.impactPoint = origin + dir * tmin;
+		outInfo.distance = tmin;
+		return true;
+	}
 }
 
 void PhysicsManager::AddPhysicsComponent(PhysicsComponent* c)

@@ -196,6 +196,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Gameplay\IHittable.h" />
+    <ClInclude Include="Gameplay\IInteractable.h" />
     <ClInclude Include="Graphics\AnimatedRenderComponent.h" />
     <ClInclude Include="Animation\AnimationStateMachine.h" />
     <ClInclude Include="Animation\Animation.h" />
@@ -208,6 +209,7 @@
     <ClInclude Include="Core\Component.h" />
     <ClInclude Include="Core\GameContext.h" />
     <ClInclude Include="Asset\Primitive.h" />
+    <ClInclude Include="Physics\PhysicsPrimitive.h" />
     <ClInclude Include="Props\NPC.h" />
     <ClInclude Include="UI\UICrosshair.h" />
     <ClInclude Include="UI\UIAmmoIndicator.h" />
