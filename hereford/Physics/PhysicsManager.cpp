@@ -28,9 +28,10 @@ void PhysicsManager::Shutdown()
 
 bool PhysicsManager::RaycastQuery(const struct Vector3& origin, const struct Vector3& dir, const float& maxDistance, HitInfo& outInfo)
 {
-	printf("-------------------------------------\n");
+	//printf("-------------------------------------\n");
 	bool hasHit = false;
 	float nearestDis = maxDistance;
+
 	for (auto collider : mPhysicsComponents)
 	{
 		// Ray against sphere
@@ -104,6 +105,8 @@ bool PhysicsManager::RaycastQuery(const struct Vector3& origin, const struct Vec
 		}
 	}
 	//printf("-------------------------------------\n");
+	outInfo.impactPoint = origin + dir * nearestDis;
+	outInfo.distance = nearestDis;
 
 	return hasHit;
 }

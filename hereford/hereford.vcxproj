@@ -195,6 +195,7 @@
     <ClCompile Include="Gameplay\WeaponComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Gameplay\IHittable.h" />
     <ClInclude Include="Graphics\AnimatedRenderComponent.h" />
     <ClInclude Include="Animation\AnimationStateMachine.h" />
     <ClInclude Include="Animation\Animation.h" />

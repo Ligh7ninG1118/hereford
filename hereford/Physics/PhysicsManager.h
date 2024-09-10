@@ -6,7 +6,8 @@
 struct HitInfo
 {
 	class Actor* hitActor = nullptr;
-	struct Vector3 hitPoint = Vector3::Zero;
+	struct Vector3 impactPoint = Vector3::Zero;
+	float distance = 0.0f;
 };
 
 class PhysicsManager

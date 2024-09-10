@@ -5,6 +5,7 @@
 #include "Graphics/Renderer.h"
 #include "Gameplay/Player.h"
 #include "Gameplay/CameraComponent.h"
+#include "Gameplay/IHittable.h"
 #include "Physics/PhysicsManager.h"
 #include "Util/Random.h"
 #include "Util/GameEvent.h"
@@ -85,11 +86,12 @@ void WeaponComponent::Fire()
 		Vec3 origin = cam.GetCameraPosition();
 		Vec3 dir = cam.GetFrontVector().normalized();
 		HitInfo hitInfo;
-		if (player->GetGame()->GetPhysicsManager().RaycastQuery(origin, dir, 1000.0f, hitInfo))
-		{
-			if (hitInfo.hitActor != nullptr)
-				hitInfo.hitActor->SetState(ActorState::Destroy);
-		}
+		player->GetGame()->GetPhysicsManager().RaycastQuery(origin, dir, 1000.0f, hitInfo);
+		
+		if (hitInfo.hitActor != nullptr)
+			if (auto hittable = dynamic_cast<IHittable*>(hitInfo.hitActor); hittable != nullptr)
+				hittable->Hit(hitInfo);
+		
 
 		//GetOwner()->GetGame()->GetRenderer().AddDebugLines(origin, origin + dir * 50.0f);
 

@@ -1,12 +1,15 @@
 #pragma once
 #include "Core/Actor.h"
+#include "Gameplay/IHittable.h"
 
-class TestCube : public Actor
+class TestCube : public Actor, public IHittable
 {
 public:
 	TestCube(class GameContext* gameCtx);
 	~TestCube();
 	void OnUpdate(float deltaTime) override;
+
+	void Hit(const struct HitInfo& info) override;
 
 	class RenderComponent* GetRenderComponent() const { return m_pRenderComponent; }
 	class PhysicsComponent* GetPhysicsComponent() const { return m_pPhysicsComponent; }

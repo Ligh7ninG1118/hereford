@@ -44,3 +44,8 @@ void TestCube::OnUpdate(float deltaTime)
 	pos.mZ += multiplier * deltaTime;
 	SetPosition(pos);*/
 }
+
+void TestCube::Hit(const HitInfo& info)
+{
+	SetState(ActorState::Destroy);
+}
