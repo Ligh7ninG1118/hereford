@@ -53,6 +53,8 @@ Player::Player(GameContext* gameCtx)
 
 	Renderer* renderer = &mGame->GetRenderer();
 	Vec2 screenDimension = renderer->GetScreenDimension();
+
+	//TODO: Separate HUD Actor class to handle all HUD elements?
 	mPtrUIAmmo = new UIAmmoIndicator(renderer, ammoShader.get(), ammoTex, mPtrActiveWeaponComp);
 	Mat4 uiProj = mPtrCameraComp->GetOrthoMatrix(0.0f, screenDimension.mX, 0.0f, screenDimension.mY);
 	mPtrUIAmmo->Initialize();

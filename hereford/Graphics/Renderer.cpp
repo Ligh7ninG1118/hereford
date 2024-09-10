@@ -85,22 +85,8 @@ bool Renderer::Initialize()
 	glViewport(0, 0, mScreenWidth, mScreenHeight);
 	glClearColor(0.0f, 0.5f, 1.0f, 0.0f);
 
-
-	//std::vector<Animation> dancingAnimClips;
-
-	//TODO: having two copies of the data right now
-	
-	/*dancingModel = AssetManager::LoadAsset<Model>(std::string("LocalResources/SillyDancing/Silly Dancing.dae"));
-	dancingAnimClips = Animation::LoadAnimations("LocalResources/SillyDancing/Silly Dancing.dae", dancingModel.get());
-
-	dancingAnimator = new Animator(dancingAnimClips);
-	dancingAnimator->SetShouldLoop(true);
-
-	testShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_vert.glsl*Shaders/model_tex_frag.glsl"));*/
-
 	skyboxShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/skybox_vert.glsl*Shaders/skybox_frag.glsl"));
 	textShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_text_vert.glsl*Shaders/ui_text_frag.glsl"));
-
 
 	glGenTextures(1, &skyboxTexID);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);
@@ -272,77 +258,6 @@ void Renderer::Render(float deltaTime)
 
 	Uint32 lastShaderID = 0;
 	Uint32 lastVAOID = 0;
-
-	//if (dancingAnimator)
-	//	dancingAnimator->UpdateAnimation(deltaTime);
-
-	
-
-	//Mat4 dModel = Mat4::Identity;
-	//dModel.Translate(Vec3(0.0f, 0.4f, -2.0f));
-
-	//testShader->SetMat4("model", dModel);
-
-
-	//if (dancingAnimator)
-	//{
-	//	auto transforms = dancingAnimator->GetFinalBoneMatrices();
-	//	for (int i = 0; i < transforms.size(); i++)
-	//	{
-	//		testShader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
-	//	}
-	//}
-
-	//for (unsigned int i = 0; i < dancingModel->mMeshes.size(); i++)
-	//{
-	//	Mesh* mesh = &dancingModel->mMeshes[i];
-
-	//	unsigned int diffuseNr = 1;
-	//	unsigned int specularNr = 1;
-	//	unsigned int normalNr = 1;
-	//	unsigned int heightNr = 1;
-	//	for (unsigned int j = 0; j < mesh->mTextures.size(); j++)
-	//	{
-	//		glActiveTexture(GL_TEXTURE0 + j + cum);
-
-	//		std::string texStr;
-	//		switch (mesh->mTextures[j].GetType())
-	//		{
-	//		case ETextureType::DIFFUSE:
-	//			texStr = "tex_diffuse_1";
-	//			break;
-	//		case ETextureType::SPECULAR:
-	//			texStr = "tex_specular_1";
-	//			break;
-	//		case ETextureType::NORMALS:
-	//			texStr = "tex_normals_1";
-	//			break;
-	//		case ETextureType::HEIGHT:
-	//			texStr = "tex_height_1";
-	//			break;
-	//		case ETextureType::EMISSIVE:
-	//			texStr = "tex_emissive_1";
-	//			break;
-	//		case ETextureType::METALNESS:
-	//			texStr = "tex_metalrough_1";
-	//			break;
-	//		case ETextureType::AMBIENT:
-	//			texStr = "tex_ao_1";
-	//			break;
-	//		default:
-	//			break;
-	//		}
-	//		testShader->SetInt(texStr.c_str(), j + cum);
-	//		glBindTexture(GL_TEXTURE_2D, mesh->mTextures[j].GetID());
-	//	}
-
-	//	glBindVertexArray(mesh->mVAOID);
-	//	glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(mesh->mIndices.size()), GL_UNSIGNED_INT, 0);
-	//	glBindVertexArray(0);
-
-	//	glActiveTexture(GL_TEXTURE0);
-	//}
-
 
 	for (auto renderComponent : mRenderComponents)
 	{

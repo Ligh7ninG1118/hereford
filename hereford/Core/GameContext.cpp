@@ -3,6 +3,7 @@
 #include "Gameplay/Player.h"
 #include "Props/TestCube.h"
 #include "Props/LightBulb.h"
+#include "Props/NPC.h"
 #include "Util/Random.h"
 #include "Util/DelayedAction.h"
 #include "Asset/Shader.h"
@@ -120,6 +121,10 @@ void GameContext::LoadData()
 		TestCube* cubeActor = new TestCube(this);
 		cubeActor->SetPosition(Vec3(Random::Range(5.0f, 15.0f), Random::Range(-7.0f, 7.0f), Random::Range(-10.0f, 10.0f) ));
 	}
+
+	NPC* npc = new NPC(this);
+	npc->SetPosition(Vec3(0.0f, 0.0f, -2.0f));
+	npc->SetRotation(Vec3(-90.0f, 0.0f, 0.0f));
 
 
 	/*LightBulb* lightBulb = new LightBulb(this);
