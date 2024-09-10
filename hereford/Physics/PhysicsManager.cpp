@@ -30,7 +30,7 @@ bool PhysicsManager::RaycastQuery(const struct Vector3& origin, const struct Vec
 {
 	printf("-------------------------------------\n");
 	bool hasHit = false;
-
+	float nearestDis = maxDistance;
 	for (auto collider : mPhysicsComponents)
 	{
 		// Ray against sphere
@@ -89,32 +89,23 @@ bool PhysicsManager::RaycastQuery(const struct Vector3& origin, const struct Vec
 		float tmin = std::max(std::max(std::min(t1, t2), std::min(t3, t4)), std::min(t5, t6));
 		float tmax = std::min(std::min(std::max(t1, t2), std::max(t3, t4)), std::max(t5, t6));
 
-		if (tmax < 0.0f)
+		if (tmax < 0.0f || tmin > tmax)
 		{
-			printf("behind\n");
+			//printf("no collision\n");
 			continue;
 		}
 
-		if (tmin > tmax)
+		if (tmin < nearestDis)
 		{
-			printf("no collision\n");
-			continue;
-		}
-
-		if (tmin < 0.0f)
-		{
-			printf("collided\n");
+			//printf("collided. Dis: %f\n", tmin);
 			outInfo.hitActor = collider->GetOwner();
-			return true;
+			nearestDis = tmin;
+			hasHit = true;
 		}
-
-		printf("collided\n");
-		outInfo.hitActor = collider->GetOwner();
-		return true;
 	}
-	printf("-------------------------------------\n");
+	//printf("-------------------------------------\n");
 
-	return false;
+	return hasHit;
 }
 
 void PhysicsManager::AddPhysicsComponent(PhysicsComponent* c)

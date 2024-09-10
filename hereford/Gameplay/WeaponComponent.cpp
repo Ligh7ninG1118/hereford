@@ -91,7 +91,7 @@ void WeaponComponent::Fire()
 				hitInfo.hitActor->SetState(ActorState::Destroy);
 		}
 
-		GetOwner()->GetGame()->GetRenderer().AddDebugLines(origin, origin + dir * 50.0f);
+		//GetOwner()->GetGame()->GetRenderer().AddDebugLines(origin, origin + dir * 50.0f);
 
 		GameEvent::Publish<EventOnPlayerWeaponFired>(EventOnPlayerWeaponFired(CalculateRecoilDeviation()));
 	}
