@@ -248,6 +248,8 @@
     <None Include="Graphics\Shaders\standard_frag.glsl" />
     <None Include="Graphics\Shaders\phongLighting.glsl" />
     <None Include="Graphics\Shaders\standard_vert.glsl" />
+    <None Include="Shaders\debug_line_frag.glsl" />
+    <None Include="Shaders\debug_line_vert.glsl" />
     <None Include="Shaders\model_tex_frag.glsl" />
     <None Include="Shaders\model_tex_vert.glsl" />
     <None Include="Shaders\phongLighting.glsl" />

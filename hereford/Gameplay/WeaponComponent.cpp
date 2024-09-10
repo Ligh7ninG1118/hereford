@@ -2,6 +2,7 @@
 #include "Animation/AnimationStateMachine.h"
 #include "Core/Actor.h"
 #include "Core/GameContext.h"
+#include "Graphics/Renderer.h"
 #include "Gameplay/Player.h"
 #include "Gameplay/CameraComponent.h"
 #include "Physics/PhysicsManager.h"
@@ -89,6 +90,8 @@ void WeaponComponent::Fire()
 			if (hitInfo.hitActor != nullptr)
 				hitInfo.hitActor->SetState(ActorState::Destroy);
 		}
+
+		GetOwner()->GetGame()->GetRenderer().AddDebugLines(origin, origin + dir * 50.0f);
 
 		GameEvent::Publish<EventOnPlayerWeaponFired>(EventOnPlayerWeaponFired(CalculateRecoilDeviation()));
 	}

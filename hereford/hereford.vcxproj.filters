@@ -284,5 +284,7 @@
     <None Include="Shaders\ui_image_ammo_count_vert.glsl" />
     <None Include="Shaders\ui_crosshair_vert.glsl" />
     <None Include="Shaders\ui_crosshair_frag.glsl" />
+    <None Include="Shaders\debug_line_vert.glsl" />
+    <None Include="Shaders\debug_line_frag.glsl" />
   </ItemGroup>
 </Project>

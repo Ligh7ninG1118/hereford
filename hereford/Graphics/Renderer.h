@@ -30,6 +30,8 @@ public:
 
 	Vec2 GetScreenDimension() const { return Vec2(mScreenWidth, mScreenHeight); }
 
+	void AddDebugLines(Vec3 startPos, Vec3 endPos);
+
 private:
 	SDL_Window* mPtrSDLWindowContext;
 	SDL_GLContext mPtrGLContext;
@@ -38,6 +40,7 @@ private:
 
 	int mScreenWidth;
 	int mScreenHeight;
+	std::shared_ptr<Shader> debugLineShader;
 
 	std::shared_ptr<Shader> skyboxShader;
 	Uint32 skyboxVAOID;
@@ -47,6 +50,8 @@ private:
 	std::vector<class LightComponent*> mLightComponents;
 
 	std::vector<class UIElement*> mUIElements;
+
+	std::vector<uint32> mDebugLines;
 
 	class UIAmmoIndicator* uiAmmo;
 

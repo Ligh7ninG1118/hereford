@@ -119,12 +119,12 @@ void GameContext::LoadData()
 	for (int i = 0; i < 20; i++)
 	{
 		TestCube* cubeActor = new TestCube(this);
-		cubeActor->SetPosition(Vec3(Random::Range(5.0f, 15.0f), Random::Range(-7.0f, 7.0f), Random::Range(-10.0f, 10.0f) ));
+		cubeActor->SetPosition(Vec3(Random::Range(5.0f, 15.0f), Random::Range(-2.0f, 2.0f), Random::Range(-5.0f, 5.0f) ));
 	}
 
-	NPC* npc = new NPC(this);
+	/*NPC* npc = new NPC(this);
 	npc->SetPosition(Vec3(0.0f, 0.0f, -2.0f));
-	npc->SetRotation(Vec3(-90.0f, 0.0f, 0.0f));
+	npc->SetRotation(Vec3(-90.0f, 0.0f, 0.0f));*/
 
 
 	/*LightBulb* lightBulb = new LightBulb(this);

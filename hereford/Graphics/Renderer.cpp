@@ -85,6 +85,11 @@ bool Renderer::Initialize()
 	glViewport(0, 0, mScreenWidth, mScreenHeight);
 	glClearColor(0.0f, 0.5f, 1.0f, 0.0f);
 
+	debugLineShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/debug_line_vert.glsl*Shaders/debug_line_frag.glsl"));
+	debugLineShader->Use();
+	debugLineShader->SetVec4("startColor", 0.0f, 1.0f, 0.0f, 1.0f);
+	debugLineShader->SetVec4("endColor", 1.0f, 0.0f, 0.0f, 1.0f);
+
 	skyboxShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/skybox_vert.glsl*Shaders/skybox_frag.glsl"));
 	textShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_text_vert.glsl*Shaders/ui_text_frag.glsl"));
 
@@ -361,6 +366,18 @@ void Renderer::Render(float deltaTime)
 		}
 	}
 
+	for (auto line : mDebugLines)
+	{
+		glBindVertexArray(line);
+		debugLineShader->Use();
+		debugLineShader->SetMat4("model", Mat4::Identity);
+		debugLineShader->SetMat4("projection", projection);
+		debugLineShader->SetMat4("view", view);
+		glLineWidth(1.5f);
+		glDrawArrays(GL_LINES, 0, 2);
+	}
+
+
 	glDepthFunc(GL_LEQUAL);
 	skyboxShader->Use();
 	skyboxShader->SetMat4("projection", projection);
@@ -454,6 +471,27 @@ void Renderer::Render(float deltaTime)
 void Renderer::SetMainCamera(CameraComponent* pMainCam)
 {
 	mPtrMainCamera = pMainCam;
+}
+
+void Renderer::AddDebugLines(Vec3 startPos, Vec3 endPos)
+{
+	float vertices[] =
+	{
+		startPos.mX, startPos.mY, startPos.mZ, 0.0f,
+		endPos.mX, endPos.mY, endPos.mZ, 1.0f
+	};
+	uint32 vaoID, vboID;
+	glGenVertexArrays(1, &vaoID);
+	glGenBuffers(1, &vboID);
+	glBindVertexArray(vaoID);
+	glBindBuffer(GL_ARRAY_BUFFER, vboID);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(3*sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	mDebugLines.push_back(vaoID);
 }
 
 void Renderer::AddRenderComponent(RenderComponent* c)
