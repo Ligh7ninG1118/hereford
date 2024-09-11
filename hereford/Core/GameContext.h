@@ -38,6 +38,7 @@ public:
 private:
 	void ProcessInput();
 	void UpdateGame();
+	void CalculatePhysics();
 	void GenerateOutput();
 
 	SDL_Window* pSDLWindow;

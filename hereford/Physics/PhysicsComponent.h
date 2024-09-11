@@ -18,19 +18,16 @@ public:
 private:
 	class PhysicsManager& m_PhysicsManager;
 
-	
-
 	friend PhysicsManager;
 	bool mIsTrigger;
 	bool mUseGravity;
-
 	float mMass;
 	
 	PhysicsPrimitive mPrimitive;
 
-	Vec3 m_currentVelocity;
-	Vec3 m_PrevPos;
-	Vec3 m_AttemptPos;
-	bool m_IsGrounded;
+	Vec3 mVelocity;
+	Vec3 mPrevPos;
+	Vec3 mAttemptPos;
+	bool mIsGrounded;
 };
 

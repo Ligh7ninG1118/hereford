@@ -2,8 +2,11 @@
 #include "PhysicsManager.h"
 #include "PhysicsComponent.h"
 #include "PhysicsPrimitive.h"
+#include "Core/Actor.h"
 #include <vector>
 #include <stdio.h>
+#include <variant>
+
 
 std::vector<PhysicsComponent*> PhysicsManager::mPhysicsComponents;
 
@@ -27,7 +30,21 @@ void PhysicsManager::Shutdown()
 {
 }
 
-#include <variant>
+void PhysicsManager::UpdatePhysics(float deltaTime)
+{
+	for (auto collider : mPhysicsComponents)
+	{
+		if (collider->mUseGravity)
+		{
+			//TODO: Max speed
+			collider->mVelocity.mY += GRAVITY_CONSTANT * deltaTime;
+			Vector3 posChange = collider->mVelocity * deltaTime;
+			Vector3 currentPos = collider->GetOwner()->GetPosition();
+			collider->GetOwner()->SetPosition(currentPos + posChange);
+		}
+	}
+}
+
 
 
 bool PhysicsManager::RaycastQuery(const struct Vector3& origin, const struct Vector3& dir, const float& maxDistance, HitInfo& outInfo)

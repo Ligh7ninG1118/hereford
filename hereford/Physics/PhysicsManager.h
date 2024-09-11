@@ -17,6 +17,7 @@ public:
 	~PhysicsManager();
 	bool Initialize();
 	void Shutdown();
+	void UpdatePhysics(float deltaTime);
 
 	//TODO: Add parameter penetration power/return all hit result
 	static bool RaycastQuery(const struct Vector3& origin, const struct Vector3& dir, 
@@ -42,6 +43,6 @@ private:
 	void AddPhysicsComponent(class PhysicsComponent* c);
 	void RemovePhysicsComponent(class PhysicsComponent* c);
 
-	const float GRAVITY = -9.8f;
+	const float GRAVITY_CONSTANT = -9.8f;
 };
 

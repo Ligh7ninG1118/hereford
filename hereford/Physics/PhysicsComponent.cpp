@@ -5,7 +5,8 @@
 
 PhysicsComponent::PhysicsComponent(Actor* owner, class PhysicsManager& phyMgrRef)
 	: Component(owner),
-	m_PhysicsManager(phyMgrRef)
+	m_PhysicsManager(phyMgrRef),
+	mUseGravity(false)
 {
 	m_PhysicsManager.AddPhysicsComponent(this);
 

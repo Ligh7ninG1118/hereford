@@ -102,6 +102,7 @@ void GameContext::RunLoop()
 		Uint32 timestampUpdate = SDL_GetTicks();
 		cpuTime = timestampUpdate - timestampStart;
 		//printf("Update Game: %d ms \n", timestampUpdate - timestampAfterInput);
+		CalculatePhysics();
 		GenerateOutput();
 		Uint32 timestampRender = SDL_GetTicks();
 		gpuTime = timestampRender - timestampUpdate;
@@ -214,10 +215,18 @@ void GameContext::UpdateGame()
 	}
 }
 
+void GameContext::CalculatePhysics()
+{
+	pPhysicsManager->UpdatePhysics(deltaTime);
+
+}
+
 void GameContext::GenerateOutput()
 {
 	pRenderer->Render(deltaTime);
 }
+
+
 
 void GameContext::AddActor(Actor* actor)
 {
