@@ -186,6 +186,45 @@ bool PhysicsManager::RayAgainstPlane(const Vector3& origin, const Vector3& dir, 
 	return true;
 }
 
+bool PhysicsManager::RayAgainstCapsule(const Vector3& origin, const Vector3& dir, const float& maxDistance, const PhysicsPrimitive& primitive, const Vector3& colliderPos, HitInfo& outInfo)
+{
+	Vec3 adjustedPos = colliderPos + primitive.mPosOffset;
+	CapsulePrimitive capsule = std::get<CapsulePrimitive>(primitive.mPrimitive);
+	Vec3 capsuleTop = adjustedPos,
+		capsuleBottom = adjustedPos;
+	capsuleTop.mY += capsule.mHalfHeight;
+	capsuleBottom.mY -= capsule.mHalfHeight;
+
+	Vec3 capsuleAxis = capsuleTop - capsuleBottom;
+	float capsuleLen = capsuleAxis.Magnitude();
+	capsuleAxis.Normalize();
+
+	Vec3 originToCapsuleBottom = capsuleBottom - origin;
+
+	float t = originToCapsuleBottom.Dot(capsuleAxis);
+	float d = dir.Dot(capsuleAxis);
+
+	Vec3 closestPointOnAxis = capsuleBottom + capsuleAxis * t;
+	Vec3 closestPointToOrigin = closestPointOnAxis - origin;
+
+	float sqrDis = closestPointToOrigin.SqrMagnitude();
+
+	if (sqrDis <= capsule.mRadius * capsule.mRadius)
+	{
+		float intersectionDis = sqrt(capsule.mRadius * capsule.mRadius - sqrDis);
+		float rayDis = t - intersectionDis;
+
+		if (rayDis >= 0.0f && rayDis <= maxDistance)
+		{
+			outInfo.impactPoint = origin + dir * rayDis;
+			outInfo.distance = rayDis;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void PhysicsManager::AddPhysicsComponent(PhysicsComponent* c)
 {
 	mPhysicsComponents.push_back(c);

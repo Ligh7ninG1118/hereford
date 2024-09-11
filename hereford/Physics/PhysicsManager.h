@@ -32,7 +32,8 @@ private:
 	static bool RayAgainstPlane(const struct Vector3& origin, const struct Vector3& dir,
 		const float& maxDistance, const struct PhysicsPrimitive& primitive, const struct Vector3& colliderPos, HitInfo& outInfo);
 
-
+	static bool RayAgainstCapsule(const struct Vector3& origin, const struct Vector3& dir,
+		const float& maxDistance, const struct PhysicsPrimitive& primitive, const struct Vector3& colliderPos, HitInfo& outInfo);
 
 
 	static std::vector<class PhysicsComponent*> mPhysicsComponents;

@@ -21,7 +21,7 @@ struct PlanePrimitive
 struct CapsulePrimitive
 {
 	float mRadius;
-	float mHeight;
+	float mHalfHeight;
 };
 
 struct PhysicsPrimitive
