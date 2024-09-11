@@ -63,6 +63,17 @@ bool PhysicsManager::RaycastQuery(const struct Vector3& origin, const struct Vec
 				outInfo.impactPoint = tempInfo.impactPoint;
 			}
 		}
+		else if (std::holds_alternative<PlanePrimitive>(primitive.mPrimitive))
+		{
+			bool result = RayAgainstPlane(origin, dir, maxDistance, primitive, collider->GetOwnerPosition(), tempInfo);
+			if (result && tempInfo.distance < nearestDis)
+			{
+				hasHit = true;
+				nearestDis = tempInfo.distance;
+				outInfo.hitActor = collider->GetOwner();
+				outInfo.impactPoint = tempInfo.impactPoint;
+			}
+		}
 	}
 	outInfo.distance = nearestDis;
 	return hasHit;
@@ -150,6 +161,29 @@ bool PhysicsManager::RayAgainstAABB(const Vector3& origin, const Vector3& dir, c
 		outInfo.distance = tmin;
 		return true;
 	}
+}
+
+bool PhysicsManager::RayAgainstPlane(const Vector3& origin, const Vector3& dir, const float& maxDistance, const PhysicsPrimitive& primitive, const Vector3& colliderPos, HitInfo& outInfo)
+{
+	Vec3 adjustedPos = colliderPos + primitive.mPosOffset;
+	PlanePrimitive plane = std::get<PlanePrimitive>(primitive.mPrimitive);
+
+	float dirDotN = dir.Dot(plane.mNormal);
+
+	// Parallel
+	if (dirDotN == 0.0f)
+		return false;
+
+	float originDotN = origin.Dot(plane.mNormal);
+
+	float t = (plane.mDistance - originDotN) / dirDotN;
+
+	if(t < 0.0f)
+		return false;
+
+	outInfo.impactPoint = origin + dir * t;
+	outInfo.distance = dir.Magnitude() * t;
+	return true;
 }
 
 void PhysicsManager::AddPhysicsComponent(PhysicsComponent* c)
