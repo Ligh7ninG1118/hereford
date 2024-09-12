@@ -32,20 +32,30 @@ void PhysicsManager::Shutdown()
 
 void PhysicsManager::UpdatePhysics(float deltaTime)
 {
+	UpdatePosition(deltaTime);
+}
+
+void PhysicsManager::UpdatePosition(float deltaTime)
+{
 	for (auto collider : mPhysicsComponents)
 	{
 		if (collider->mUseGravity)
 		{
-			//TODO: Max speed
 			collider->mVelocity.mY += GRAVITY_CONSTANT * deltaTime;
 			Vector3 posChange = collider->mVelocity * deltaTime;
 			Vector3 currentPos = collider->GetOwner()->GetPosition();
-			collider->GetOwner()->SetPosition(currentPos + posChange);
+			collider->mAttemptPos = currentPos + posChange;
 		}
 	}
 }
 
-
+void PhysicsManager::ResolveCollision()
+{
+	for (auto collider : mPhysicsComponents)
+	{
+		
+	}
+}
 
 bool PhysicsManager::RaycastQuery(const struct Vector3& origin, const struct Vector3& dir, const float& maxDistance, HitInfo& outInfo)
 {
@@ -95,6 +105,8 @@ bool PhysicsManager::RaycastQuery(const struct Vector3& origin, const struct Vec
 	outInfo.distance = nearestDis;
 	return hasHit;
 }
+
+
 
 bool PhysicsManager::RayAgainstSphere(const Vector3& origin, const Vector3& dir, const float& maxDistance, 
 	const PhysicsPrimitive& primitive, const struct Vector3& colliderPos, HitInfo& outInfo)

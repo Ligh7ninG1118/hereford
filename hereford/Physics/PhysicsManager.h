@@ -24,6 +24,10 @@ public:
 		const float& maxDistance, HitInfo& outInfo);
 
 private:
+	void UpdatePosition(float deltaTime);
+	void ResolveCollision();
+
+
 	static bool RayAgainstSphere(const struct Vector3& origin, const struct Vector3& dir,
 		const float& maxDistance, const struct PhysicsPrimitive& primitive, const struct Vector3& colliderPos, HitInfo& outInfo);
 

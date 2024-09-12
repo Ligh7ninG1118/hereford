@@ -26,7 +26,6 @@ private:
 	PhysicsPrimitive mPrimitive;
 
 	Vec3 mVelocity;
-	Vec3 mPrevPos;
 	Vec3 mAttemptPos;
 	bool mIsGrounded;
 };
