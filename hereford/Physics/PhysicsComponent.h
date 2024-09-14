@@ -23,7 +23,7 @@ private:
 	bool mUseGravity;
 	float mMass;
 	
-	PhysicsPrimitive mPrimitive;
+	PhysicsPrimitive mPhyPrimitive;
 
 	Vec3 mVelocity;
 	Vec3 mAttemptPos;

@@ -33,6 +33,7 @@ void PhysicsManager::Shutdown()
 void PhysicsManager::UpdatePhysics(float deltaTime)
 {
 	UpdatePosition(deltaTime);
+	ResolveCollision(deltaTime);
 }
 
 void PhysicsManager::UpdatePosition(float deltaTime)
@@ -49,11 +50,39 @@ void PhysicsManager::UpdatePosition(float deltaTime)
 	}
 }
 
-void PhysicsManager::ResolveCollision()
+void PhysicsManager::ResolveCollision(float deltaTime)
 {
 	for (auto collider : mPhysicsComponents)
 	{
-		
+		AABBPrimitive aabb = std::get<AABBPrimitive>(collider->mPhyPrimitive.mPrimitive);
+		Vec3 lowestPoint = collider->GetOwnerPosition();
+		lowestPoint += collider->mPhyPrimitive.mPosOffset;
+		lowestPoint.mY -= aabb.mExtend.mY;
+
+		if (lowestPoint.mY < 0.0f)
+		{
+			Vec3 normal = Vector3::Up;
+			Vec3 relativeVelocity = collider->mVelocity - Vec3::Zero;
+			float velocityAlongNormal = relativeVelocity.Dot(normal);
+			if (velocityAlongNormal > 0.0f)
+				continue;
+
+			float restitution = 0.5f;
+			float impulseScalar = -(1.0f + restitution) * velocityAlongNormal;
+			//impulseScalar /= (1 / collider->mMass + 1.0f / collider->mMass);
+			Vector3 impulse = impulseScalar * normal;
+			collider->mVelocity += (1.0f / collider->mMass) * impulse;
+
+			float penetrationDepth = 0.01f;
+			Vector3 correction = penetrationDepth * normal;
+			collider->mAttemptPos += correction * (1.0f / collider->mMass);
+		}
+		Vector3 posChange = collider->mVelocity * deltaTime;
+		Vector3 currentPos = collider->GetOwner()->GetPosition();
+		collider->mAttemptPos = currentPos + posChange;
+
+		collider->GetOwner()->SetPosition(collider->mAttemptPos);
+
 	}
 }
 
@@ -65,7 +94,7 @@ bool PhysicsManager::RaycastQuery(const struct Vector3& origin, const struct Vec
 
 	for (auto collider : mPhysicsComponents)
 	{
-		PhysicsPrimitive primitive = collider->mPrimitive;
+		PhysicsPrimitive primitive = collider->mPhyPrimitive;
 		HitInfo tempInfo;
 
 		if (std::holds_alternative<SpherePrimitive>(primitive.mPrimitive))

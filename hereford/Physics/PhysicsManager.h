@@ -25,7 +25,7 @@ public:
 
 private:
 	void UpdatePosition(float deltaTime);
-	void ResolveCollision();
+	void ResolveCollision(float deltaTime);
 
 
 	static bool RayAgainstSphere(const struct Vector3& origin, const struct Vector3& dir,

@@ -6,11 +6,12 @@
 PhysicsComponent::PhysicsComponent(Actor* owner, class PhysicsManager& phyMgrRef)
 	: Component(owner),
 	m_PhysicsManager(phyMgrRef),
-	mUseGravity(false)
+	mUseGravity(true),
+	mMass(1.0f)
 {
 	m_PhysicsManager.AddPhysicsComponent(this);
 
-	mPrimitive = PhysicsPrimitive{ AABBPrimitive{Vec3(0.5f)}, Vec3::Zero};
+	mPhyPrimitive = PhysicsPrimitive{ AABBPrimitive{Vec3(0.5f)}, Vec3::Zero};
 }
 
 PhysicsComponent::~PhysicsComponent()
