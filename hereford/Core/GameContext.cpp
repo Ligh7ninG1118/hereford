@@ -121,7 +121,7 @@ void GameContext::LoadData()
 	{
 		TestCube* cubeActor = new TestCube(this);
 		//cubeActor->SetPosition(Vec3(Random::Range(5.0f, 15.0f), Random::Range(-2.0f, 2.0f), Random::Range(-5.0f, 5.0f) ));
-		cubeActor->SetPosition(Vec3(5.0f, 5.0f, 0.0f));
+		cubeActor->SetPosition(Vec3(5.0f, 15.0f, 0.0f));
 
 	}
 

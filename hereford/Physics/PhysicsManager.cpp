@@ -67,15 +67,16 @@ void PhysicsManager::ResolveCollision(float deltaTime)
 			if (velocityAlongNormal > 0.0f)
 				continue;
 
-			float restitution = 0.5f;
+			float restitution = 0.85f;
 			float impulseScalar = -(1.0f + restitution) * velocityAlongNormal;
-			//impulseScalar /= (1 / collider->mMass + 1.0f / collider->mMass);
+			impulseScalar /= (1.0f / collider->mMass);
 			Vector3 impulse = impulseScalar * normal;
 			collider->mVelocity += (1.0f / collider->mMass) * impulse;
 
 			float penetrationDepth = 0.01f;
 			Vector3 correction = penetrationDepth * normal;
 			collider->mAttemptPos += correction * (1.0f / collider->mMass);
+
 		}
 		Vector3 posChange = collider->mVelocity * deltaTime;
 		Vector3 currentPos = collider->GetOwner()->GetPosition();
