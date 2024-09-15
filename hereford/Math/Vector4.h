@@ -8,7 +8,7 @@ struct Vector4
 
 	Vector4();
 	Vector4(float x, float y, float z, float w);
-
+	Vector4(float x);
 	float Magnitude() const;
 	float SqrMagnitude() const;
 	Vector4 normalized() const;
