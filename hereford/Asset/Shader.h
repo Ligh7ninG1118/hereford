@@ -11,6 +11,7 @@ class Shader : public Asset
 {
 public:
 	Shader(const std::string& inPath);
+	~Shader();
 
 	inline void Use() { glUseProgram(mID); };
 	inline uint32 GetID() const { return mID; }

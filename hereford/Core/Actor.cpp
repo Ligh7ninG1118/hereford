@@ -16,10 +16,13 @@ Actor::Actor(GameContext* game)
 
 Actor::~Actor()
 {
-	for (Component* pCom : mComponents)
+	printf("Actor Destructor\n");
+
+	// Using smart pointers to manage, no need for this
+	/*for (Component* pCom : mComponents)
 	{
 		delete pCom;
-	}
+	}*/
 	mGame->RemoveActor(this);
 }
 

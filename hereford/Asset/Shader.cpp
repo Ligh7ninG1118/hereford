@@ -10,6 +10,12 @@ Shader::Shader(const std::string& inPath)
 	Initialize();
 }
 
+Shader::~Shader()
+{
+	printf("Shader Destructor. Path: %s\n", mPath.c_str());
+	glDeleteShader(mID);
+}
+
 
 void Shader::Initialize()
 {
@@ -60,6 +66,7 @@ uint32 Shader::GenerateGLAsset(const std::string& inPath, GLenum shaderType)
 	shaderID = glCreateShader(shaderType);
 	glShaderSource(shaderID, 1, &shaderCode, NULL);
 	glCompileShader(shaderID);
+
 	return shaderID;
 }
 

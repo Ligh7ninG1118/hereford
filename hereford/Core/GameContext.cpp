@@ -34,6 +34,7 @@ GameContext::GameContext(int width, int height)
 
 GameContext::~GameContext()
 {
+	printf("GameContext Destructor\n");
 }
 
 
@@ -84,6 +85,11 @@ bool GameContext::Initialize()
 
 void GameContext::Shutdown()
 {
+	while (!mActors.empty())
+	{
+		delete mActors.back();
+	}
+
 	SDL_DestroyWindow(pSDLWindow);
 	pSDLWindow = nullptr;
 	SDL_Quit();
@@ -117,13 +123,13 @@ void GameContext::LoadData()
 	mPtrPlayer = new Player(this);
 	pRenderer->SetMainCamera(&mPtrPlayer->GetMainCamera());
 
-	for (int i = 0; i < 1; i++)
-	{
-		TestCube* cubeActor = new TestCube(this);
-		//cubeActor->SetPosition(Vec3(Random::Range(5.0f, 15.0f), Random::Range(-2.0f, 2.0f), Random::Range(-5.0f, 5.0f) ));
-		cubeActor->SetPosition(Vec3(5.0f, 15.0f, 0.0f));
+	//for (int i = 0; i < 1; i++)
+	//{
+	//	TestCube* cubeActor = new TestCube(this);
+	//	//cubeActor->SetPosition(Vec3(Random::Range(5.0f, 15.0f), Random::Range(-2.0f, 2.0f), Random::Range(-5.0f, 5.0f) ));
+	//	cubeActor->SetPosition(Vec3(5.0f, 15.0f, 0.0f));
 
-	}
+	//}
 
 	/*NPC* npc = new NPC(this);
 	npc->SetPosition(Vec3(0.0f, 0.0f, -2.0f));

@@ -34,7 +34,7 @@ public:
 
 private:
 	SDL_Window* mPtrSDLWindowContext;
-	SDL_GLContext mPtrGLContext;
+	SDL_GLContext mGLContext;
 	CameraComponent* mPtrMainCamera;
 	class GameContext* mPtrGameContext;
 
@@ -53,7 +53,6 @@ private:
 
 	std::vector<uint32> mDebugLines;
 
-	class UIAmmoIndicator* uiAmmo;
 
 	//std::vector<class RenderComponent> m_RenderCompons;
 	friend class RenderComponent;

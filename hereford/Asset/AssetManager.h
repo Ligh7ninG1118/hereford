@@ -8,6 +8,7 @@ class AssetManager
 public:
 	AssetManager();
 	~AssetManager();
+	static void Destroy();
 
 	template <typename T>
 	static std::shared_ptr<T> LoadAsset(const std::string& inPath)
@@ -17,7 +18,7 @@ public:
 		{
 			return std::dynamic_pointer_cast<T>(it->second);
 		}
-		std::shared_ptr<T> asset = std::make_shared<T>(T(inPath));
+		std::shared_ptr<T> asset = std::make_shared<T>(inPath);
 		mAssetsMap[inPath] = asset;
 		return asset;
 	}
