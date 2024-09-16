@@ -9,5 +9,4 @@ Asset::Asset(const std::string& inPath, EAssetType inType)
 
 Asset::~Asset()
 {
-	printf("Asset Destructor\n");
 }

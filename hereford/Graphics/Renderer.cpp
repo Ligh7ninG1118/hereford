@@ -55,6 +55,8 @@ Renderer::Renderer(SDL_Window* sdlWindow, class GameContext* gameContext, int wi
 
 Renderer::~Renderer()
 {
+	glDeleteVertexArrays(1, &skyboxVAOID);
+	glDeleteTextures(1, &skyboxTexID);
 	SDL_GL_DeleteContext(mGLContext);
 }
 

@@ -12,7 +12,7 @@ Shader::Shader(const std::string& inPath)
 
 Shader::~Shader()
 {
-	printf("Shader Destructor. Path: %s\n", mPath.c_str());
+	//printf("Shader Destructor. Path: %s\n", mPath.c_str());
 	glDeleteShader(mID);
 }
 

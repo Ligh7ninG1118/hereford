@@ -16,7 +16,7 @@ Actor::Actor(GameContext* game)
 
 Actor::~Actor()
 {
-	printf("Actor Destructor\n");
+	//printf("Actor Destructor\n");
 
 	// Using smart pointers to manage, no need for this
 	/*for (Component* pCom : mComponents)
