@@ -30,6 +30,10 @@
 #include <time.h>
 #include <string>
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_sdl2.h"
+#include "imgui/imgui_impl_opengl3.h"
+
 
 
 Renderer::Renderer(SDL_Window* sdlWindow, class GameContext* gameContext, int width, int height)
@@ -241,6 +245,7 @@ bool Renderer::Initialize()
 
 void Renderer::Shutdown()
 {
+	//ImGui_ImplOpenGL3_Shutdown();
 	SDL_GL_DeleteContext(mGLContext);
 }
 
@@ -454,7 +459,8 @@ void Renderer::Render(float deltaTime)
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 	}
 
-
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	SDL_GL_SwapWindow(mPtrSDLWindowContext);

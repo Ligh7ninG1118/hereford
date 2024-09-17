@@ -24,8 +24,6 @@ public:
 	void Shutdown();
 	void RunLoop();
 
-	void LoadData();
-
 	Renderer& GetRenderer() const { return *pRenderer.get(); }
 	PhysicsManager& GetPhysicsManager() const { return *pPhysicsManager.get(); }
 
@@ -36,6 +34,11 @@ public:
 	uint32 gpuTime;
 
 private:
+	
+
+	void LoadData();
+	void LoadScene(const std::string& sceneFilePath);
+
 	void ProcessInput();
 	void UpdateGame();
 	void CalculatePhysics();
@@ -49,6 +52,7 @@ private:
 	// separate asset manager to manage this
 	std::unordered_map<std::string, Uint32> m_ShaderMap;
 	std::unordered_map<std::string, Uint32> m_MeshMap;
+
 
 	std::vector<EInputState> mPrevKeyStates;
 

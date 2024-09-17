@@ -17,6 +17,13 @@
 #include <stdio.h>
 #include <string>
 
+#include <nlohmann/json.hpp>
+#include <fstream>
+
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_sdl2.h"
+#include "imgui/imgui_impl_opengl3.h"
+
 
 
 GameContext::GameContext()
@@ -56,8 +63,8 @@ bool GameContext::Initialize()
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-	pSDLWindow = SDL_CreateWindow("Hereford", 
-		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_ScreenWidth, m_ScreenHeight, 
+	pSDLWindow = SDL_CreateWindow("Hereford",
+		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_ScreenWidth, m_ScreenHeight,
 		SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 	if (pSDLWindow == nullptr)
 	{
@@ -76,10 +83,21 @@ bool GameContext::Initialize()
 	pPhysicsManager = std::make_unique<PhysicsManager>();
 
 	//SDL_SetWindowGrab(pSDLWindow, SDL_TRUE);
-	SDL_SetRelativeMouseMode(SDL_TRUE);
+	//SDL_SetRelativeMouseMode(SDL_TRUE);
 
 	isRunning = true;
 	LoadData();
+	LoadScene("Scenes/test.json");
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
+	ImGui::StyleColorsDark();
+	ImGui_ImplSDL2_InitForOpenGL(pSDLWindow, pRenderer->GetGLContext());
+	ImGui_ImplOpenGL3_Init();
+
 	return true;
 }
 
@@ -90,6 +108,10 @@ void GameContext::Shutdown()
 		delete mActors.back();
 	}
 
+	
+	/*ImGui::DestroyContext();
+	ImGui_ImplSDL2_Shutdown();*/
+
 	SDL_DestroyWindow(pSDLWindow);
 	pSDLWindow = nullptr;
 	SDL_Quit();
@@ -99,6 +121,53 @@ void GameContext::RunLoop()
 {
 	while (isRunning)
 	{
+		bool show_demo_window = true;
+		bool show_another_window = false;
+		ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+		// Start the Dear ImGui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplSDL2_NewFrame();
+		ImGui::NewFrame();
+
+		// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+		if (show_demo_window)
+			ImGui::ShowDemoWindow(&show_demo_window);
+
+		// 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
+		{
+			static float f = 0.0f;
+			static int counter = 0;
+
+			ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+
+			ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
+			ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+			ImGui::Checkbox("Another Window", &show_another_window);
+
+			ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+			ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+
+			if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
+				counter++;
+			ImGui::SameLine();
+			ImGui::Text("counter = %d", counter);
+
+			//ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+			ImGui::End();
+		}
+
+		// 3. Show another simple window.
+		if (show_another_window)
+		{
+			ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+			ImGui::Text("Hello from another window!");
+			if (ImGui::Button("Close Me"))
+				show_another_window = false;
+			ImGui::End();
+		}
+
+
 		Uint32 timestampStart = SDL_GetTicks();
 		ProcessInput();
 		Uint32 timestampAfterInput = SDL_GetTicks();
@@ -113,6 +182,10 @@ void GameContext::RunLoop()
 		Uint32 timestampRender = SDL_GetTicks();
 		gpuTime = timestampRender - timestampUpdate;
 		//printf("Render: %d ms \n", timestampRender - timestampUpdate);
+		// Rendering
+		// (Your code clears your framebuffer, renders your other stuff etc.)
+		
+		// (Your code calls SDL_GL_SwapWindow() etc.)
 		
 	}
 	Shutdown();
@@ -144,13 +217,28 @@ void GameContext::LoadData()
 
 }
 
+void GameContext::LoadScene(const std::string& sceneFilePath)
+{
+	/*using json = nlohmann::json;
+
+
+	std::ifstream file(sceneFilePath.c_str());
+	json scene;
+	file >> scene;
+	file.close();
+*/
+
+
+}
+
 
 void GameContext::ProcessInput()
 {
-	SDL_Event test_event;
-	while (SDL_PollEvent(&test_event))
+	SDL_Event pollEvent;
+	while (SDL_PollEvent(&pollEvent))
 	{
-		switch (test_event.type)
+		ImGui_ImplSDL2_ProcessEvent(&pollEvent);
+		switch (pollEvent.type)
 		{
 		case SDL_QUIT:
 			isRunning = false;

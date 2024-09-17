@@ -37,6 +37,7 @@ public:
 	void SetMainCamera(CameraComponent* pMainCam);
 
 	Vec2 GetScreenDimension() const { return Vec2(mScreenWidth, mScreenHeight); }
+	SDL_GLContext GetGLContext() const { return mGLContext; }
 
 	void AddDebugLines(Vec3 startPos, Vec3 endPos);
 
