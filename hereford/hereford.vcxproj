@@ -166,6 +166,14 @@
     <ClCompile Include="Core\Component.cpp" />
     <ClCompile Include="Core\GameContext.cpp" />
     <ClCompile Include="Asset\Primitive.cpp" />
+    <ClCompile Include="imgui\imgui.cpp" />
+    <ClCompile Include="imgui\imgui_demo.cpp" />
+    <ClCompile Include="imgui\imgui_draw.cpp" />
+    <ClCompile Include="imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="imgui\imgui_impl_sdl2.cpp" />
+    <ClCompile Include="imgui\imgui_stdlib.cpp" />
+    <ClCompile Include="imgui\imgui_tables.cpp" />
+    <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="Props\NPC.cpp" />
     <ClCompile Include="UI\UICrosshair.cpp" />
     <ClCompile Include="UI\UIAmmoIndicator.cpp" />
@@ -209,6 +217,16 @@
     <ClInclude Include="Core\Component.h" />
     <ClInclude Include="Core\GameContext.h" />
     <ClInclude Include="Asset\Primitive.h" />
+    <ClInclude Include="imgui\imconfig.h" />
+    <ClInclude Include="imgui\imgui.h" />
+    <ClInclude Include="imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="imgui\imgui_impl_sdl2.h" />
+    <ClInclude Include="imgui\imgui_internal.h" />
+    <ClInclude Include="imgui\imgui_stdlib.h" />
+    <ClInclude Include="imgui\imstb_rectpack.h" />
+    <ClInclude Include="imgui\imstb_textedit.h" />
+    <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="Physics\PhysicsPrimitive.h" />
     <ClInclude Include="Props\NPC.h" />
     <ClInclude Include="UI\UICrosshair.h" />
@@ -251,6 +269,7 @@
     <None Include="Graphics\Shaders\standard_frag.glsl" />
     <None Include="Graphics\Shaders\phongLighting.glsl" />
     <None Include="Graphics\Shaders\standard_vert.glsl" />
+    <None Include="imgui\imgui.natstepfilter" />
     <None Include="Shaders\debug_line_frag.glsl" />
     <None Include="Shaders\debug_line_vert.glsl" />
     <None Include="Shaders\model_tex_frag.glsl" />
@@ -266,6 +285,9 @@
     <None Include="Shaders\ui_image_ammo_count_vert.glsl" />
     <None Include="Shaders\ui_text_frag.glsl" />
     <None Include="Shaders\ui_text_vert.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="imgui\imgui.natvis" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
