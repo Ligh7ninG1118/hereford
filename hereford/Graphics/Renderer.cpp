@@ -245,7 +245,9 @@ bool Renderer::Initialize()
 
 void Renderer::Shutdown()
 {
-	//ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+
 	SDL_GL_DeleteContext(mGLContext);
 }
 
@@ -412,7 +414,7 @@ void Renderer::Render(float deltaTime)
 	const uint32 cpuTime = mPtrGameContext->cpuTime;
 	const uint32 gpuTime = mPtrGameContext->gpuTime;
 
-	std::string text = std::format("Pos: ({:.2f}, {:.2f}, {:.2f}) Rot:  ({:.2f}, {:.2f}, {:.2f}) CPU Frame Time: {:d} GPU Frame Time: {:d}"
+	/*std::string text = std::format("Pos: ({:.2f}, {:.2f}, {:.2f}) Rot:  ({:.2f}, {:.2f}, {:.2f}) CPU Frame Time: {:d} GPU Frame Time: {:d}"
 		, pos.mX, pos.mY, pos.mZ, rot.mX, rot.mY, rot.mZ, cpuTime, gpuTime);
 	float x = 100.0f;
 	float y = mScreenHeight - 100.0f;
@@ -445,7 +447,7 @@ void Renderer::Render(float deltaTime)
 		x += (ch.mAdvance >> 6) * scale;
 	}
 	glBindVertexArray(0);
-	glBindTexture(GL_TEXTURE_2D, 0); 
+	glBindTexture(GL_TEXTURE_2D, 0); */
 	
 
 	for (auto uiElement : mUIElements)
@@ -459,13 +461,12 @@ void Renderer::Render(float deltaTime)
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 	}
 
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	SDL_GL_SwapWindow(mPtrSDLWindowContext);
 
-	//TODO: OpenGL release assets: DeleteVertexArray, DeleteBuffer
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	SDL_GL_SwapWindow(mPtrSDLWindowContext);
 }
 
 void Renderer::SetMainCamera(CameraComponent* pMainCam)
