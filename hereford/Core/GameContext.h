@@ -24,8 +24,8 @@ public:
 	void Shutdown();
 	void RunLoop();
 
-	Renderer& GetRenderer() const { return *pRenderer.get(); }
-	PhysicsManager& GetPhysicsManager() const { return *pPhysicsManager.get(); }
+	Renderer& GetRenderer() const { return *mPtrRenderer.get(); }
+	PhysicsManager& GetPhysicsManager() const { return *mPtrPhysicsManager.get(); }
 
 	class Player* GetPlayer() const { return mPtrPlayer; }
 
@@ -44,28 +44,28 @@ private:
 	void CalculatePhysics();
 	void GenerateOutput();
 
-	SDL_Window* pSDLWindow;
-	std::unique_ptr<Renderer> pRenderer;
-	std::unique_ptr<PhysicsManager> pPhysicsManager;
+	SDL_Window* mPtrSDLWindow;
+	std::unique_ptr<Renderer> mPtrRenderer;
+	std::unique_ptr<PhysicsManager> mPtrPhysicsManager;
 	class Player* mPtrPlayer;
 
 	// separate asset manager to manage this
-	std::unordered_map<std::string, Uint32> m_ShaderMap;
-	std::unordered_map<std::string, Uint32> m_MeshMap;
+	std::unordered_map<std::string, Uint32> mShaderMap;
+	std::unordered_map<std::string, Uint32> mMeshMap;
 
 
 	std::vector<EInputState> mPrevKeyStates;
 
 	Uint32 mPrevMouseStates;
 
-	bool isRunning;
+	bool mIsRunning;
 	bool useVerticalSync;
 	Uint32 prevTimestamp;
 	Uint32 currTimestamp;
-	float deltaTime;
+	float mDeltaTime;
 
-	int m_ScreenWidth;
-	int m_ScreenHeight;
+	int mScreenWidth;
+	int mScreenHeight;
 
 	std::vector<Actor*> mActors;
 

@@ -49,9 +49,7 @@ Renderer::Renderer(SDL_Window* sdlWindow, class GameContext* gameContext, int wi
 
 Renderer::~Renderer()
 {
-	glDeleteVertexArrays(1, &skyboxVAOID);
-	glDeleteTextures(1, &skyboxTexID);
-	SDL_GL_DeleteContext(mGLContext);
+	//Handled in Shutdown()
 }
 
 bool Renderer::Initialize()
@@ -245,9 +243,11 @@ bool Renderer::Initialize()
 
 void Renderer::Shutdown()
 {
+	glDeleteVertexArrays(1, &skyboxVAOID);
+	glDeleteTextures(1, &skyboxTexID);
+
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
-
 	SDL_GL_DeleteContext(mGLContext);
 }
 

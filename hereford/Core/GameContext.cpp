@@ -27,7 +27,7 @@
 
 
 GameContext::GameContext()
-	: m_ScreenWidth(1920), m_ScreenHeight(1080)
+	: mScreenWidth(1920), mScreenHeight(1080)
 {
 	// Enough for most input key usage
 	mPrevKeyStates.resize(70);
@@ -35,7 +35,7 @@ GameContext::GameContext()
 }
 
 GameContext::GameContext(int width, int height)
-	: m_ScreenWidth(width), m_ScreenHeight(height)
+	: mScreenWidth(width), mScreenHeight(height)
 {
 }
 
@@ -63,29 +63,29 @@ bool GameContext::Initialize()
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-	pSDLWindow = SDL_CreateWindow("Hereford",
-		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_ScreenWidth, m_ScreenHeight,
+	mPtrSDLWindow = SDL_CreateWindow("Hereford",
+		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, mScreenWidth, mScreenHeight,
 		SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
-	if (pSDLWindow == nullptr)
+	if (mPtrSDLWindow == nullptr)
 	{
 		printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
 		return false;
 	}
 
-	pRenderer = std::make_unique<Renderer>(pSDLWindow, this, m_ScreenWidth, m_ScreenHeight);
+	mPtrRenderer = std::make_unique<Renderer>(mPtrSDLWindow, this, mScreenWidth, mScreenHeight);
 
-	if (!pRenderer->Initialize())
+	if (!mPtrRenderer->Initialize())
 	{
 		printf("Renderer could not be initialized! SDL_Error: %s\n", SDL_GetError());
 		return false;
 	}
 
-	pPhysicsManager = std::make_unique<PhysicsManager>();
+	mPtrPhysicsManager = std::make_unique<PhysicsManager>();
 
 	//SDL_SetWindowGrab(pSDLWindow, SDL_TRUE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 
-	isRunning = true;
+	mIsRunning = true;
 	LoadData();
 	LoadScene("Scenes/test.json");
 
@@ -94,7 +94,7 @@ bool GameContext::Initialize()
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	ImGui::StyleColorsDark();
-	ImGui_ImplSDL2_InitForOpenGL(pSDLWindow, pRenderer->GetGLContext());
+	ImGui_ImplSDL2_InitForOpenGL(mPtrSDLWindow, mPtrRenderer->GetGLContext());
 	ImGui_ImplOpenGL3_Init();
 
 	return true;
@@ -107,17 +107,18 @@ void GameContext::Shutdown()
 		delete mActors.back();
 	}
 
+	mPtrRenderer->Shutdown();
 	
 	ImGui::DestroyContext();
 
-	SDL_DestroyWindow(pSDLWindow);
-	pSDLWindow = nullptr;
+	SDL_DestroyWindow(mPtrSDLWindow);
+	mPtrSDLWindow = nullptr;
 	SDL_Quit();
 }
 
 void GameContext::RunLoop()
 {
-	while (isRunning)
+	while (mIsRunning)
 	{
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL2_NewFrame();
@@ -132,7 +133,7 @@ void GameContext::RunLoop()
 		ProcessInput();
 		UpdateGame();
 		CalculatePhysics();
-		DelayedActionManager::UpdateTimers(deltaTime);
+		DelayedActionManager::UpdateTimers(mDeltaTime);
 		Uint32 timestampUpdate = SDL_GetTicks();
 		cpuTime = timestampUpdate - timestampStart;
 
@@ -147,7 +148,7 @@ void GameContext::RunLoop()
 void GameContext::LoadData()
 {
 	mPtrPlayer = new Player(this);
-	pRenderer->SetMainCamera(&mPtrPlayer->GetMainCamera());
+	mPtrRenderer->SetMainCamera(&mPtrPlayer->GetMainCamera());
 
 	for (int i = 0; i < 1; i++)
 	{
@@ -172,15 +173,15 @@ void GameContext::LoadData()
 
 void GameContext::LoadScene(const std::string& sceneFilePath)
 {
-	/*using json = nlohmann::json;
+	using json = nlohmann::json;
 
 
 	std::ifstream file(sceneFilePath.c_str());
 	json scene;
 	file >> scene;
 	file.close();
-*/
 
+	printf("value: %s\n", ((std::string)scene["sceneID"]).c_str());
 
 }
 
@@ -194,7 +195,7 @@ void GameContext::ProcessInput()
 		switch (pollEvent.type)
 		{
 		case SDL_QUIT:
-			isRunning = false;
+			mIsRunning = false;
 			break;
 		default:
 			break;
@@ -203,7 +204,7 @@ void GameContext::ProcessInput()
 
 	const Uint8* rawKeyState = SDL_GetKeyboardState(nullptr);
 	if (rawKeyState[SDL_SCANCODE_ESCAPE])
-		isRunning = false;
+		mIsRunning = false;
 
 	for (int i = 0; i < mPrevKeyStates.size(); i++)
 	{
@@ -245,7 +246,7 @@ void GameContext::ProcessInput()
 void GameContext::UpdateGame()
 {
 	currTimestamp = SDL_GetTicks();
-	deltaTime = (currTimestamp - prevTimestamp) / 1000.0f;
+	mDeltaTime = (currTimestamp - prevTimestamp) / 1000.0f;
 	prevTimestamp = currTimestamp;
 
 	std::vector<Actor*> actorVector = mActors;
@@ -253,7 +254,7 @@ void GameContext::UpdateGame()
 
 	for (Actor* actor : actorVector)
 	{
-		actor->Update(deltaTime);
+		actor->Update(mDeltaTime);
 		if (actor->GetState() == ActorState::Destroy)
 			disabledActorVector.push_back(actor);
 	}
@@ -266,13 +267,13 @@ void GameContext::UpdateGame()
 
 void GameContext::CalculatePhysics()
 {
-	pPhysicsManager->UpdatePhysics(deltaTime);
+	mPtrPhysicsManager->UpdatePhysics(mDeltaTime);
 
 }
 
 void GameContext::GenerateOutput()
 {
-	pRenderer->Render(deltaTime);
+	mPtrRenderer->Render(mDeltaTime);
 }
 
 

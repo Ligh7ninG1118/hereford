@@ -13,8 +13,7 @@ int main(int argc, char* args[])
 	}
 
 	gameCtx->RunLoop();
-	
-	gameCtx->Shutdown();
+
 	delete gameCtx;
 	return 0;
 }
