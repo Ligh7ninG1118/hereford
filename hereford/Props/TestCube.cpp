@@ -49,5 +49,7 @@ void TestCube::Hit(const HitInfo& info)
 {
 	printf("Impact Point: (%f, %f, %f)\n", info.impactPoint.mX, info.impactPoint.mY, info.impactPoint.mZ);
 	printf("Distance: %f\n", info.distance);
-	SetState(ActorState::Destroy);
+	//SetState(ActorState::Destroy);
+
+	m_pPhysicsComponent->AddImpulse(info.impactPoint, info.hitPower);
 }

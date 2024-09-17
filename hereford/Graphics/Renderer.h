@@ -16,6 +16,14 @@ enum class EBGClearMode
 	SKYBOX,
 };
 
+struct Character
+{
+	Uint32 mTextureID;
+	Vec2 mSize;
+	Vec2 mBearing;
+	Uint32 mAdvance;
+};
+
 
 class Renderer : public std::enable_shared_from_this<Renderer>
 {
@@ -45,6 +53,11 @@ private:
 	std::shared_ptr<Shader> skyboxShader;
 	Uint32 skyboxVAOID;
 	Uint32 skyboxTexID;
+
+	std::shared_ptr<Shader> textShader;
+	Uint32 textVAO;
+	Uint32 textVBO;
+	std::map<char, Character> Characters;
 
 	std::vector<class RenderComponent*> mRenderComponents;
 	std::vector<class LightComponent*> mLightComponents;

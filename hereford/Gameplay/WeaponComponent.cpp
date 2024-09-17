@@ -90,7 +90,11 @@ void WeaponComponent::Fire()
 		
 		if (hitInfo.hitActor != nullptr)
 			if (auto hittable = dynamic_cast<IHittable*>(hitInfo.hitActor); hittable != nullptr)
+			{
+				//TODO: make this a var
+				hitInfo.hitPower = 1.0f;
 				hittable->Hit(hitInfo);
+			}
 		
 
 		//GetOwner()->GetGame()->GetRenderer().AddDebugLines(origin, origin + dir * 50.0f);

@@ -40,12 +40,25 @@ void PhysicsManager::UpdatePosition(float deltaTime)
 {
 	for (auto collider : mPhysicsComponents)
 	{
-		if (collider->mUseGravity)
+		/*if (collider->mUseGravity)
 		{
 			collider->mVelocity.mY += GRAVITY_CONSTANT * deltaTime;
 			Vector3 posChange = collider->mVelocity * deltaTime;
 			Vector3 currentPos = collider->GetOwner()->GetPosition();
 			collider->mAttemptPos = currentPos + posChange;
+		}
+		else*/
+		{
+			Vector3 posChange = collider->mVelocity * deltaTime;
+			Vector3 currentPos = collider->GetOwner()->GetPosition();
+			collider->mAttemptPos = currentPos + posChange;
+			collider->mVelocity = collider->mVelocity * (1.0f - collider->mDrag);
+
+			Vector3 angularChange = collider->mAngVelocity * deltaTime;
+			Vector3 realAngular = Vec3(angularChange.mY, 0.0f, 0.0f);
+			Vector3 currentRotation = collider->GetOwner()->GetRotation();
+			collider->mAttemptRot = currentRotation + realAngular;
+			collider->mAngVelocity = collider->mAngVelocity * (1.0f - collider->mAngDrag);
 		}
 	}
 }
@@ -59,7 +72,7 @@ void PhysicsManager::ResolveCollision(float deltaTime)
 		lowestPoint += collider->mPhyPrimitive.mPosOffset;
 		lowestPoint.mY -= aabb.mExtend.mY;
 
-		if (lowestPoint.mY < 0.0f)
+		/*if (lowestPoint.mY < 0.0f)
 		{
 			Vec3 normal = Vector3::Up;
 			Vec3 relativeVelocity = collider->mVelocity - Vec3::Zero;
@@ -75,15 +88,13 @@ void PhysicsManager::ResolveCollision(float deltaTime)
 
 			float penetrationDepth = 0.01f;
 			Vector3 correction = penetrationDepth * normal;
+
 			collider->mAttemptPos += correction * (1.0f / collider->mMass);
 
-		}
-		Vector3 posChange = collider->mVelocity * deltaTime;
-		Vector3 currentPos = collider->GetOwner()->GetPosition();
-		collider->mAttemptPos = currentPos + posChange;
+		}*/
 
 		collider->GetOwner()->SetPosition(collider->mAttemptPos);
-
+		collider->GetOwner()->SetRotation(collider->mAttemptRot);
 	}
 }
 

@@ -6,8 +6,10 @@
 PhysicsComponent::PhysicsComponent(Actor* owner, class PhysicsManager& phyMgrRef)
 	: Component(owner),
 	m_PhysicsManager(phyMgrRef),
-	mUseGravity(true),
-	mMass(50.0f)
+	mUseGravity(false),
+	mMass(1.0f),
+	mDrag(0.1f),
+	mAngDrag(0.0f)
 {
 	m_PhysicsManager.AddPhysicsComponent(this);
 
@@ -34,4 +36,20 @@ bool PhysicsComponent::CheckCollision(const PhysicsComponent& collider) const
 Vec3 PhysicsComponent::GetOwnerPosition() const
 {
 	return GetOwner()->GetPosition();
+}
+
+void PhysicsComponent::AddImpulse(Vec3 impactPoint, float impulseForce)
+{
+	Vec3 impulse = impactPoint * impulseForce;
+
+	//mVelocity += impulse / mMass;
+
+	Vec3 r = GetOwnerPosition() - impactPoint;
+	Vec3 iNorm = impulse.normalized();
+
+	Vec3 angularDir = iNorm.Cross(r);
+	Vec3 angDirNorm = angularDir.normalized();
+	//Vec3 angularDir = impulse.Cross(r);
+
+	mAngVelocity += angDirNorm;
 }

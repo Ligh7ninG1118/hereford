@@ -30,17 +30,7 @@
 #include <time.h>
 #include <string>
 
-struct Character
-{
-	Uint32 mTextureID;
-	Vec2 mSize;
-	Vec2 mBearing;
-	Uint32 mAdvance;
-};
 
-//std::map<char, Character> Characters;
-//std::shared_ptr<Shader> textShader;
-//Uint32 textVAO, textVBO;
 
 Renderer::Renderer(SDL_Window* sdlWindow, class GameContext* gameContext, int width, int height)
 	:
@@ -94,7 +84,7 @@ bool Renderer::Initialize()
 	debugLineShader->SetVec4("endColor", 1.0f, 0.0f, 0.0f, 1.0f);
 
 	skyboxShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/skybox_vert.glsl*Shaders/skybox_frag.glsl"));
-	//textShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_text_vert.glsl*Shaders/ui_text_frag.glsl"));
+	textShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_text_vert.glsl*Shaders/ui_text_frag.glsl"));
 
 	glGenTextures(1, &skyboxTexID);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);
@@ -183,7 +173,7 @@ bool Renderer::Initialize()
 
 	skyboxVAOID = skyboxVAO;
 
-	/*FT_Library ft;
+	FT_Library ft;
 	if (FT_Init_FreeType(&ft))
 	{
 		printf("ERROR::FREETYPE: Could not init Freetype Libaray\n");
@@ -244,7 +234,7 @@ bool Renderer::Initialize()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);*/
+	glBindVertexArray(0);
 
 	return true;
 }
@@ -400,57 +390,57 @@ void Renderer::Render(float deltaTime)
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	//textShader->Use();
-	//// TODO: use cast
-	//Mat4 uiProj = mPtrMainCamera->GetOrthoMatrix(0.0f, static_cast<float>(mScreenWidth), 0.0f, static_cast<float>(mScreenHeight));
+	textShader->Use();
+	// TODO: use cast
+	Mat4 uiProj = mPtrMainCamera->GetOrthoMatrix(0.0f, static_cast<float>(mScreenWidth), 0.0f, static_cast<float>(mScreenHeight));
 
-	//textShader->SetVec3("textColor", Vec3(0.1f, 0.1f, 0.1f));
-	//textShader->SetMat4("projection", uiProj);
-	//textShader->SetInt("text", 0);
-	//glActiveTexture(GL_TEXTURE0);
+	textShader->SetVec3("textColor", Vec3(0.1f, 0.1f, 0.1f));
+	textShader->SetMat4("projection", uiProj);
+	textShader->SetInt("text", 0);
+	glActiveTexture(GL_TEXTURE0);
 
-	//glBindVertexArray(textVAO);
-	//std::string::const_iterator c;
-	//// TODO: toString for my math classes?
-	//const Vec3 pos = mPtrMainCamera->GetOwner()->GetPosition();
-	//const Vec3 rot = mPtrMainCamera->GetRotation();
-	//const uint32 cpuTime = mPtrGameContext->cpuTime;
-	//const uint32 gpuTime = mPtrGameContext->gpuTime;
+	glBindVertexArray(textVAO);
+	std::string::const_iterator c;
+	// TODO: toString for my math classes?
+	const Vec3 pos = mPtrMainCamera->GetOwner()->GetPosition();
+	const Vec3 rot = mPtrMainCamera->GetRotation();
+	const uint32 cpuTime = mPtrGameContext->cpuTime;
+	const uint32 gpuTime = mPtrGameContext->gpuTime;
 
-	//std::string text = std::format("Pos: ({:.2f}, {:.2f}, {:.2f}) Rot:  ({:.2f}, {:.2f}, {:.2f}) CPU Frame Time: {:d} GPU Frame Time: {:d}"
-	//	, pos.mX, pos.mY, pos.mZ, rot.mX, rot.mY, rot.mZ, cpuTime, gpuTime);
-	//float x = 100.0f;
-	//float y = mScreenHeight - 100.0f;
-	//float scale = 0.5f;
-	//for (c = text.begin(); c != text.end(); c++)
-	//{
-	//	Character ch = Characters[*c];
-	//	float xpos = x + ch.mBearing.mX * scale;
-	//	float ypos = y - (ch.mSize.mY - ch.mBearing.mY) * scale;
+	std::string text = std::format("Pos: ({:.2f}, {:.2f}, {:.2f}) Rot:  ({:.2f}, {:.2f}, {:.2f}) CPU Frame Time: {:d} GPU Frame Time: {:d}"
+		, pos.mX, pos.mY, pos.mZ, rot.mX, rot.mY, rot.mZ, cpuTime, gpuTime);
+	float x = 100.0f;
+	float y = mScreenHeight - 100.0f;
+	float scale = 0.5f;
+	for (c = text.begin(); c != text.end(); c++)
+	{
+		Character ch = Characters[*c];
+		float xpos = x + ch.mBearing.mX * scale;
+		float ypos = y - (ch.mSize.mY - ch.mBearing.mY) * scale;
 
-	//	float w = ch.mSize.mX * scale;
-	//	float h = ch.mSize.mY * scale;
+		float w = ch.mSize.mX * scale;
+		float h = ch.mSize.mY * scale;
 
-	//	float vertices[6][4] =
-	//	{
-	//		{ xpos,		ypos + h,	0.0f, 0.0f},
-	//		{ xpos,     ypos,       0.0f, 1.0f },
-	//		{ xpos + w, ypos,       1.0f, 1.0f },
+		float vertices[6][4] =
+		{
+			{ xpos,		ypos + h,	0.0f, 0.0f},
+			{ xpos,     ypos,       0.0f, 1.0f },
+			{ xpos + w, ypos,       1.0f, 1.0f },
 
-	//		{ xpos,     ypos + h,   0.0f, 0.0f },
-	//		{ xpos + w, ypos,       1.0f, 1.0f },
-	//		{ xpos + w, ypos + h,   1.0f, 0.0f }
-	//	};
+			{ xpos,     ypos + h,   0.0f, 0.0f },
+			{ xpos + w, ypos,       1.0f, 1.0f },
+			{ xpos + w, ypos + h,   1.0f, 0.0f }
+		};
 
-	//	glBindTexture(GL_TEXTURE_2D, ch.mTextureID);
-	//	glBindBuffer(GL_ARRAY_BUFFER, textVBO);
-	//	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-	//	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//	glDrawArrays(GL_TRIANGLES, 0, 6);
-	//	x += (ch.mAdvance >> 6) * scale;
-	//}
-	//glBindVertexArray(0);
-	//glBindTexture(GL_TEXTURE_2D, 0); 
+		glBindTexture(GL_TEXTURE_2D, ch.mTextureID);
+		glBindBuffer(GL_ARRAY_BUFFER, textVBO);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		x += (ch.mAdvance >> 6) * scale;
+	}
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0); 
 	
 
 	for (auto uiElement : mUIElements)

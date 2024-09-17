@@ -15,6 +15,8 @@ public:
 
 	Vec3 GetOwnerPosition() const;
 
+	void AddImpulse(Vec3 impactPoint, float impulseForce);
+
 private:
 	class PhysicsManager& m_PhysicsManager;
 
@@ -26,7 +28,15 @@ private:
 	PhysicsPrimitive mPhyPrimitive;
 
 	Vec3 mVelocity;
+	Vec3 mAngVelocity;
 	Vec3 mAttemptPos;
+	Vec3 mAttemptRot;
+
 	bool mIsGrounded;
+
+	float mDrag;
+	float mAngDrag;
+
+	//drag, angleDrag
 };
 
