@@ -29,7 +29,7 @@ Player::Player(GameContext* gameCtx)
 
 	mPtrAnimRenderComp->SetTranslateOffset(Vec3(0.0f, 1.32f, 0.0f));
 	mPtrAnimRenderComp->SetScaleOffset(Vec3(0.03f));
-	mPtrAnimRenderComp->SetRotateOffset(Vec3(90.0f, 0.0f, 0.0f));
+	mPtrAnimRenderComp->SetRotateOffset(Vec3(0.0f, 0.0f, 90.0f));
 
 	mPtrAnimRenderComp->SetCamera(mPtrCameraComp.get());
 

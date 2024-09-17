@@ -49,12 +49,12 @@ Quaternion Quaternion::EulerToQuat(const Vector3& euler)
 {
 	Vector3 radEuler = euler * DEG2RAD;
 
-	float cosPitch = cos(radEuler.mX * 0.5f);
-	float sinPitch = sin(radEuler.mX * 0.5f);
+	float cosRoll = cos(radEuler.mX * 0.5f);
+	float sinRoll = sin(radEuler.mX * 0.5f);
 	float cosYaw = cos(radEuler.mY * 0.5f);
 	float sinYaw = sin(radEuler.mY * 0.5f);
-	float cosRoll = cos(radEuler.mZ * 0.5f);
-	float sinRoll = sin(radEuler.mZ * 0.5f);
+	float cosPitch = cos(radEuler.mZ * 0.5f);
+	float sinPitch = sin(radEuler.mZ * 0.5f);
 
 	Quaternion q;
 	q.mW = cosRoll * cosPitch * cosYaw + sinRoll * sinPitch * sinYaw;

@@ -26,17 +26,15 @@ Mat4 AnimatedRenderComponent::GetModelMatrix() const
 	if (mControlByFPCam)
 	{
 		Vec3 camRot = mPtrCamera->GetRotation();
-		rot.mX = -camRot.mY;
-		rot.mZ = -camRot.mX;
+		rot.mX = -camRot.mX;
+		rot.mZ = -camRot.mY;
 	}
 	else
 	{
 		rot = mOwner->GetRotation();
 	}
-	mat.Rotate(mRotateOffset);
-	mat.Rotate(rot);
-	mat.Translate(mTranslateOffset);
-	mat.Translate(mOwner->GetPosition());
+	mat.Rotate(mRotateOffset + rot);
+	mat.Translate(mTranslateOffset + mOwner->GetPosition());
 
 	return mat;
 }
