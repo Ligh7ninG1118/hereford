@@ -2,6 +2,7 @@
 #include "Core/Actor.h"
 #include "Gameplay/Player.h"
 #include "Props/TestCube.h"
+#include "Props/Ground.h"
 #include "Props/LightBulb.h"
 #include "Props/NPC.h"
 #include "Util/Random.h"
@@ -149,6 +150,8 @@ void GameContext::LoadData()
 {
 	mPtrPlayer = new Player(this);
 	mPtrRenderer->SetMainCamera(&mPtrPlayer->GetMainCamera());
+
+	Ground* ground = new Ground(this);
 }
 
 void GameContext::LoadScene(const std::string& sceneFilePath)
@@ -180,6 +183,11 @@ void GameContext::LoadScene(const std::string& sceneFilePath)
 		{
 			Vec3 pos = Vec3(static_cast<float>(actor["position"][0]), static_cast<float>(actor["position"][1]), static_cast<float>(actor["position"][2]));
 			pActor->SetPosition(pos);
+		}
+		if (!actor["rotation"].empty())
+		{
+			Vec3 rot = Vec3(static_cast<float>(actor["rotation"][0]), static_cast<float>(actor["rotation"][1]), static_cast<float>(actor["rotation"][2]));
+			pActor->SetRotation(rot);
 		}
 
 	}
