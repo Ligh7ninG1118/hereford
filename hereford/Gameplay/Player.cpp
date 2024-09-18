@@ -23,7 +23,7 @@ Player::Player(GameContext* gameCtx)
 	mPtrCameraComp = std::make_unique<CameraComponent>(static_cast<Actor*>(this));
 
 	
-	mPtrAnimRenderComp = std::make_unique<AnimatedRenderComponent>(this, mGame->GetRenderer());
+	mPtrAnimRenderComp = std::make_unique<AnimatedRenderComponent>(this, mGameCtx->GetRenderer());
 	mPtrAnimRenderComp->SetModel(AssetManager::LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v3.fbx")));
 	mPtrAnimRenderComp->SetShader(AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_vert.glsl*Shaders/model_tex_frag.glsl")));
 
@@ -51,7 +51,7 @@ Player::Player(GameContext* gameCtx)
 	std::shared_ptr<Texture> ammoTex = AssetManager::LoadAsset<Texture>(std::string("LocalResources/rifle-round-silhouette.png"));
 	std::shared_ptr<Shader> ammoShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_image_ammo_count_vert.glsl*Shaders/ui_image_ammo_count_frag.glsl"));
 
-	Renderer* renderer = &mGame->GetRenderer();
+	Renderer* renderer = &mGameCtx->GetRenderer();
 	Vec2 screenDimension = renderer->GetScreenDimension();
 
 	//TODO: Separate HUD Actor class to handle all HUD elements?

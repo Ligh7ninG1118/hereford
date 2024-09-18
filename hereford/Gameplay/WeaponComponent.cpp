@@ -86,7 +86,7 @@ void WeaponComponent::Fire()
 		Vec3 origin = cam.GetCameraPosition();
 		Vec3 dir = cam.GetFrontVector().normalized();
 		HitInfo hitInfo;
-		player->GetGame()->GetPhysicsManager().RaycastQuery(origin, dir, 1000.0f, hitInfo);
+		player->GetGameContext()->GetPhysicsManager().RaycastQuery(origin, dir, 1000.0f, hitInfo);
 		
 		if (hitInfo.hitActor != nullptr)
 			if (auto hittable = dynamic_cast<IHittable*>(hitInfo.hitActor); hittable != nullptr)

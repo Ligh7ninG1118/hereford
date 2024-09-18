@@ -3,15 +3,16 @@
 #include "Component.h"
 #include <algorithm>
 
+
 Actor::Actor(GameContext* game)
 	: 
-	mGame(game),
+	mGameCtx(game),
 	mState(ActorState::Active),
 	mPosition(Vector3::Zero),
 	mScale(Vector3::One),
 	mRotation(Vector3::Zero)
 {
-	mGame->AddActor(this);
+	mGameCtx->AddActor(this);
 }
 
 Actor::~Actor()
@@ -23,7 +24,7 @@ Actor::~Actor()
 	{
 		delete pCom;
 	}*/
-	mGame->RemoveActor(this);
+	mGameCtx->RemoveActor(this);
 }
 
 void Actor::Update(float deltaTime)
