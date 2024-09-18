@@ -172,7 +172,7 @@ void GameContext::LoadScene(const std::string& sceneFilePath)
 		Actor* pActor = ReflectionRegistry::Instance().CreateInstance(actor["class"], this);
 		if (pActor == nullptr)
 		{
-			printf("GameContext::LoadScene(): Class not found in registry\n");
+			printf("GameContext::LoadScene(): Class[%s] not found in registry\n", static_cast<std::string>(actor["class"]).c_str());
 			continue;
 		}
 
