@@ -1,9 +1,12 @@
 #pragma once
 #include "Core/Actor.h"
 #include "Gameplay/IHittable.h"
+#include "Util/Reflection.h"
 
 class TestCube : public Actor, public IHittable
 {
+	REFLECT(TestCube)
+
 public:
 	TestCube(class GameContext* gameCtx);
 	~TestCube();
@@ -20,4 +23,3 @@ private:
 	class RenderComponent* m_pRenderComponent;
 	class PhysicsComponent* m_pPhysicsComponent;
 };
-

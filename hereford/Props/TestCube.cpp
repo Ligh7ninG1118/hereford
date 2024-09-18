@@ -30,26 +30,14 @@ TestCube::~TestCube()
 
 void TestCube::OnUpdate(float deltaTime)
 {
-	/*Vec3 pos = GetPosition();
 
-	if (pos.mZ > 5.0f)
-	{
-		multiplier = -1.0f;
-	}
-	else if (pos.mZ < -5.0f)
-	{
-		multiplier = 1.0f;
-	}
-
-	pos.mZ += multiplier * deltaTime;
-	SetPosition(pos);*/
 }
 
 void TestCube::Hit(const HitInfo& info)
 {
 	printf("Impact Point: (%f, %f, %f)\n", info.impactPoint.mX, info.impactPoint.mY, info.impactPoint.mZ);
 	printf("Distance: %f\n", info.distance);
-	//SetState(ActorState::Destroy);
+	SetState(ActorState::Destroy);
 
-	m_pPhysicsComponent->AddImpulse(info.impactPoint, info.hitPower);
+	//m_pPhysicsComponent->AddImpulse(info.impactPoint, info.hitPower);
 }

@@ -87,7 +87,7 @@ bool GameContext::Initialize()
 
 	mIsRunning = true;
 	LoadData();
-	LoadScene("Scenes/test.json");
+	LoadScene("Scenes/playground.json");
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -149,39 +149,40 @@ void GameContext::LoadData()
 {
 	mPtrPlayer = new Player(this);
 	mPtrRenderer->SetMainCamera(&mPtrPlayer->GetMainCamera());
-
-	for (int i = 0; i < 1; i++)
-	{
-		TestCube* cubeActor = new TestCube(this);
-		//cubeActor->SetPosition(Vec3(Random::Range(5.0f, 15.0f), Random::Range(-2.0f, 2.0f), Random::Range(-5.0f, 5.0f) ));
-		cubeActor->SetPosition(Vec3(5.0f, 1.8f, 0.0f));
-
-	}
-
-	/*NPC* npc = new NPC(this);
-	npc->SetPosition(Vec3(0.0f, 0.0f, -2.0f));
-	npc->SetRotation(Vec3(-90.0f, 0.0f, 0.0f));*/
-
-
-	/*LightBulb* lightBulb = new LightBulb(this);
-	lightBulb->SetPosition(Vec3(0.0f, 5.0f, 0.0f));
-
-	LightBulb* lightBulb2 = new LightBulb(this);
-	lightBulb2->SetPosition(Vec3(0.0f, -2.0f, 0.0f));*/
-
 }
 
 void GameContext::LoadScene(const std::string& sceneFilePath)
 {
 	using json = nlohmann::json;
 
+	std::fstream file(sceneFilePath.c_str());
+	if (!file.is_open())
+	{
+		printf("GameContext::LoadScene(): Scene file not found\n");
+		return;
+	}
 
-	std::ifstream file(sceneFilePath.c_str());
-	json scene;
-	file >> scene;
+	json scene = json::parse(file);
 	file.close();
 
-	printf("value: %s\n", ((std::string)scene["sceneID"]).c_str());
+	unsigned int actorCount = (unsigned int)scene["actors"].size();
+	for (unsigned int i = 0; i < actorCount; i++)
+	{
+		json actor = scene["actors"][i];
+		Actor* pActor = ReflectionRegistry::Instance().CreateInstance(actor["class"], this);
+		if (pActor == nullptr)
+		{
+			printf("GameContext::LoadScene(): Class not found in registry\n");
+			continue;
+		}
+
+		if (!actor["position"].empty())
+		{
+			Vec3 pos = Vec3(static_cast<float>(actor["position"][0]), static_cast<float>(actor["position"][1]), static_cast<float>(actor["position"][2]));
+			pActor->SetPosition(pos);
+		}
+
+	}
 
 }
 

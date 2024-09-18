@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <string>
 #include <SDL2/SDL_stdinc.h>
 #include "Math/Math.h"
 #include "Util/Enums.h"
@@ -15,8 +16,8 @@ class Actor
 {
 public:
 	Actor(class GameContext* game);
-
 	virtual ~Actor();
+	virtual const std::string& GetClassName() const = 0;
 
 	void Update(float deltaTime);
 	void ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY);
@@ -40,7 +41,7 @@ public:
 	ActorState GetState() const { return mState; }
 	void SetState(ActorState state) { mState = state; }
 
-	class GameContext* GetGame() { return mGame; }
+	class GameContext* GetGameContext() { return mGameCtx; }
 
 	template <typename T>
 	T* GetComponent() const
@@ -61,7 +62,7 @@ protected:
 	virtual void OnUpdate(float deltaTime);
 	virtual void OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY);
 
-	class GameContext* mGame;
+	class GameContext* mGameCtx;
 	ActorState mState;
 
 	// Transform

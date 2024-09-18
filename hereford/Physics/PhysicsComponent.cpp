@@ -42,7 +42,7 @@ void PhysicsComponent::AddImpulse(Vec3 impactPoint, float impulseForce)
 {
 	Vec3 impulse = impactPoint * impulseForce;
 
-	//mVelocity += impulse / mMass;
+	mVelocity += impulse / mMass;
 
 	Vec3 r = GetOwnerPosition() - impactPoint;
 	Vec3 iNorm = impulse.normalized();

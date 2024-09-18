@@ -2,11 +2,14 @@
 #include "../Core/Actor.h"
 #include "Util/DelayedAction.h"
 #include "Util/GameEvent.h"
+#include "Util/Reflection.h"
 #include <memory>
 
 
 class Player : public Actor
 {
+	REFLECT(Player)
+
 public:
 	Player(class GameContext* gameCtx);
 	~Player();

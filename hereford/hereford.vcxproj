@@ -258,6 +258,7 @@
     <ClInclude Include="Util\GameEvent.h" />
     <ClInclude Include="Util\Random.h" />
     <ClInclude Include="Gameplay\WeaponComponent.h" />
+    <ClInclude Include="Util\Reflection.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Graphics\Shaders\debug_frag.glsl" />
