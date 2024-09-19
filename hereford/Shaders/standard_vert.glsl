@@ -10,16 +10,16 @@ uniform mat4 projection;
 uniform vec3 inColor;
 
 out vec3 outColor;
-out vec3 FragPos;
-out vec3 Norm;
+out vec3 WorldPos;
+out vec3 Normal;
 out vec2 TexCoords;
 
 void main()
 {
-    FragPos = vec3(model * vec4(inPos, 1.0));
-    Norm = mat3(transpose(inverse(model))) * inNorm;
+    WorldPos = vec3(model * vec4(inPos, 1.0));
+    Normal = mat3(transpose(inverse(model))) * inNorm;
     TexCoords = inTexCoords;
 
-    gl_Position = projection * view * vec4(FragPos, 1.0);
+    gl_Position = projection * view * vec4(WorldPos, 1.0);
     outColor = inColor;
 }

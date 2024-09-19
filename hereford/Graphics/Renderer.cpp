@@ -242,7 +242,6 @@ bool Renderer::Initialize()
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-
 	return true;
 }
 
@@ -289,25 +288,27 @@ void Renderer::Render(float deltaTime)
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);
 
-	for (const auto& renderComponents : mRenderComponentMap)
+	for (const auto& renderCompInLayer : mRenderComponentMap)
 	{
 		// Clear depth buffer across different layers
 		glClear(GL_DEPTH_BUFFER_BIT);
 
-		for (const auto& renderComponent : renderComponents.second)
+		int texChannel = 0;
+
+		for (const auto& renderComp : renderCompInLayer.second)
 		{
 			unsigned int VAO, VBO;
-			VAO = renderComponent->GetVAOID();
+			VAO = renderComp->GetVAOID();
 			glBindVertexArray(VAO);
 
-			auto shader = renderComponent->GetShader().get();
+			auto shader = renderComp->GetShader().get();
 			shader->Use();
 
 			shader->SetInt("lightNum", 1);
 
 			shader->SetVec3("pointLights[0].position", Vec3(0.0f, 5.0f, 0.0f));
 
-			shader->SetVec3("pointLights[0].ambient", Vec3(0.1f, 0.1f, 0.1f));
+			shader->SetVec3("pointLights[0].ambient", Vec3(0.5f, 0.5f, 0.5f));
 			shader->SetVec3("pointLights[0].diffuse", Vec3(0.6f, 0.6f, 0.6f));
 			shader->SetVec3("pointLights[0].specular", Vec3(1.0f, 1.0f, 1.0f));
 			shader->SetVec3("pointLights[0].color", Vec3(10.0f, 10.0f, 10.0f));
@@ -319,17 +320,17 @@ void Renderer::Render(float deltaTime)
 
 			shader->SetVec3("eyePos", mPtrMainCamera->GetCameraPosition());
 
-			Mat4 model = renderComponent->GetModelMatrix();
+			Mat4 model = renderComp->GetModelMatrix();
 			shader->SetMat4("model", model);
 			shader->SetMat4("projection", projection);
 			shader->SetMat4("view", view);
 
-			if (auto animRenderComp = dynamic_cast<AnimatedRenderComponent*>(renderComponent); animRenderComp != nullptr)
+			if (auto animRenderComp = dynamic_cast<AnimatedRenderComponent*>(renderComp); animRenderComp != nullptr)
 			{
 				Mat4 model = animRenderComp->GetModelMatrix();
 
 				shader->SetMat4("model", model);
-
+				shader->SetFloat("shininess", 64.0f);
 				auto transforms = animRenderComp->GetAnimator()->GetFinalBoneMatrices();
 				for (int i = 0; i < transforms.size(); i++)
 				{
@@ -378,6 +379,8 @@ void Renderer::Render(float deltaTime)
 						}
 						shader->SetInt(texStr.c_str(), j);
 						glBindTexture(GL_TEXTURE_2D, mesh->mTextures[j].GetID());
+
+						texChannel++;
 					}
 
 					glBindVertexArray(mesh->mVAOID);
@@ -389,14 +392,14 @@ void Renderer::Render(float deltaTime)
 			}
 			else
 			{
-				if (renderComponent->mTextures.size() > 0)
+				if (renderComp->mTextures.size() > 0)
 				{
-					for (unsigned int j = 0; j < renderComponent->mTextures.size(); j++)
+					for (unsigned int j = 0; j < renderComp->mTextures.size(); j++)
 					{
 						glActiveTexture(GL_TEXTURE0 + j);
 
 						std::string texStr;
-						switch (renderComponent->mTextures[j]->GetType())
+						switch (renderComp->mTextures[j]->GetType())
 						{
 						case ETextureType::DIFFUSE:
 							texStr = "tex_diffuse_1";
@@ -423,23 +426,27 @@ void Renderer::Render(float deltaTime)
 							break;
 						}
 						shader->SetInt(texStr.c_str(), j);
-						glBindTexture(GL_TEXTURE_2D, renderComponent->mTextures[j]->GetID());
+						glBindTexture(GL_TEXTURE_2D, renderComp->mTextures[j]->GetID());
+
+						texChannel++;
 					}
 				}
 				else
 				{
-					shader->SetVec3("inColor", renderComponent->GetColor());
+					shader->SetVec3("inColor", renderComp->GetColor());
 				}
 
 				glDrawArrays(GL_TRIANGLES, 0, 36);
 			}
 		}
+
+
 	}
 
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+	
 	textShader->Use();
 	Mat4 uiProj = mPtrMainCamera->GetOrthoMatrix(0.0f, static_cast<float>(mScreenWidth), 0.0f, static_cast<float>(mScreenHeight));
 

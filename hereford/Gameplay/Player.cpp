@@ -26,7 +26,7 @@ Player::Player(GameContext* gameCtx)
 	
 	mPtrAnimRenderComp = std::make_unique<AnimatedRenderComponent>(this, mGameCtx->GetRenderer(), ERenderLayer::Weapon);
 	mPtrAnimRenderComp->SetModel(AssetManager::LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v3.fbx")));
-	mPtrAnimRenderComp->SetShader(AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_vert.glsl*Shaders/model_tex_frag.glsl")));
+	mPtrAnimRenderComp->SetShader(AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_phong_vert.glsl*Shaders/model_tex_phong_frag.glsl")));
 
 	mPtrAnimRenderComp->SetTranslateOffset(Vec3(0.0f, 1.32f, 0.0f));
 	mPtrAnimRenderComp->SetScaleOffset(Vec3(0.03f));

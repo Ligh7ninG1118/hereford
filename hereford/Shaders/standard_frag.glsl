@@ -192,8 +192,8 @@ uniform PointLight pointLights[16];
 uniform vec3 eyePos;
 
 in vec3 outColor;
-in vec3 FragPos;
-in vec3 Norm;
+in vec3 WorldPos;
+in vec3 Normal;
 in vec2 TexCoords;
 
 uniform vec3 inColor;
@@ -203,14 +203,14 @@ out vec4 FragColor;
 
 void main()
 {
-    vec3 norm = normalize(Norm);
-    vec3 viewDir = normalize(eyePos - FragPos);
+    vec3 norm = normalize(Normal);
+    vec3 viewDir = normalize(eyePos - WorldPos);
 	vec3 result = vec3(0.0f);
 
 
 	for(int i=0;i<lightNum;i++)
 	{
-		result += CalcPointLightSimple(pointLights[i], norm, FragPos, viewDir, inColor, 64.0f);
+		result += CalcPointLightSimple(pointLights[i], norm, WorldPos, viewDir, inColor, 64.0f);
 	}
 
     //vec3 result = CalcDirLightSimple(ddLight, norm, viewDir, outColor, 64.0f);

@@ -12,7 +12,7 @@ NPC::NPC(GameContext* gameCtx)
 {
 	mPtrAnimRenderComp = new AnimatedRenderComponent(static_cast<Actor*>(this), gameCtx->GetRenderer());
 	mPtrAnimRenderComp->SetModel(AssetManager::LoadAsset<Model>(std::string("LocalResources/SillyDancing/Silly Dancing.dae")));
-	mPtrAnimRenderComp->SetShader(AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_vert.glsl*Shaders/model_tex_frag.glsl")));
+	mPtrAnimRenderComp->SetShader(AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_pbr_frag.glsl")));
 	mPtrAnimRenderComp->SetScaleOffset(Vec3(1.25f));
 	mPtrAnimRenderComp->SetRotateOffset(Vec3(90.0f, 0.0f, 0.0f));
 
