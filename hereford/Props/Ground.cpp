@@ -17,8 +17,9 @@ Ground::Ground(GameContext* gameCtx)
 	Primitive::GeneratePlane(planeInfo, 100, 100);
 	mPtrRenderComp->SetVAOID(planeInfo.mVAO);
 	mPtrRenderComp->SetVBOID(planeInfo.mVBO);
+	mPtrRenderComp->LoadTextures();
 
-	std::shared_ptr<Shader> shader = AssetManager::LoadAsset<Shader>(std::string("Shaders/standard_vert.glsl*Shaders/standard_frag.glsl"));
+	std::shared_ptr<Shader> shader = AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_vert.glsl*Shaders/model_tex_frag.glsl"));
 	mPtrRenderComp->SetShader(shader);
 
 	mPtrRenderComp->SetColor(Vec3(0.5f, 0.5f, 0.5f));

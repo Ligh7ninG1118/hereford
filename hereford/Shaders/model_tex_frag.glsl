@@ -41,10 +41,7 @@ void main()
     float ao = texture(tex_ao_1, TexCoords).r;
     vec3 emissive = texture(tex_emissive_1, TexCoords).rgb;
     
-    vec3 N = normalize(Normal);
-
-    //TODO: test difference
-    //vec3 N = texture(tex_normals_1, TexCoords).rgb;
+    vec3 N = texture(tex_normals_1, TexCoords).rgb;
 
     vec3 V = normalize(eyePos - WorldPos);
 
@@ -77,7 +74,7 @@ void main()
         Lo += (kD * albedo/PI + specular) * radiance * NdotL;
     }
 
-    vec3 ambient = vec3(0.53f) * albedo * ao;
+    vec3 ambient = vec3(0.2f) * albedo * ao;
     vec3 color = ambient + Lo;
 
     color = color / (color + vec3(1.0f));

@@ -389,7 +389,48 @@ void Renderer::Render(float deltaTime)
 			}
 			else
 			{
-				shader->SetVec3("inColor", renderComponent->GetColor());
+				if (renderComponent->mTextures.size() > 0)
+				{
+					for (unsigned int j = 0; j < renderComponent->mTextures.size(); j++)
+					{
+						glActiveTexture(GL_TEXTURE0 + j);
+
+						std::string texStr;
+						switch (renderComponent->mTextures[j]->GetType())
+						{
+						case ETextureType::DIFFUSE:
+							texStr = "tex_diffuse_1";
+							break;
+						case ETextureType::SPECULAR:
+							texStr = "tex_specular_1";
+							break;
+						case ETextureType::NORMALS:
+							texStr = "tex_normals_1";
+							break;
+						case ETextureType::HEIGHT:
+							texStr = "tex_height_1";
+							break;
+						case ETextureType::EMISSIVE:
+							texStr = "tex_emissive_1";
+							break;
+						case ETextureType::METALNESS:
+							texStr = "tex_metalrough_1";
+							break;
+						case ETextureType::AMBIENT:
+							texStr = "tex_ao_1";
+							break;
+						default:
+							break;
+						}
+						shader->SetInt(texStr.c_str(), j);
+						glBindTexture(GL_TEXTURE_2D, renderComponent->mTextures[j]->GetID());
+					}
+				}
+				else
+				{
+					shader->SetVec3("inColor", renderComponent->GetColor());
+				}
+
 				glDrawArrays(GL_TRIANGLES, 0, 36);
 			}
 		}

@@ -16,6 +16,8 @@ public:
 	RenderComponent(class Actor* owner, class Renderer& rendererRef, ERenderLayer renderLayer = ERenderLayer::Default);
 	~RenderComponent();
 
+	void LoadTextures();
+
 	inline std::shared_ptr<class Shader> GetShader() const { return mPtrShader; }
 	inline void SetShader(std::shared_ptr<class Shader> inPtrShader) { mPtrShader = inPtrShader; }
 
@@ -41,6 +43,7 @@ public:
 	inline void SetScaleOffset(Vec3 inOffset) { mScaleOffset = inOffset; }
 
 	virtual Mat4 GetModelMatrix() const;
+	std::vector<std::shared_ptr<class Texture>> mTextures;
 
 protected:
 	class Renderer& m_Renderer;
@@ -48,6 +51,7 @@ protected:
 	ERenderLayer mRenderLayer;
 
 	std::shared_ptr<class Shader> mPtrShader;
+
 	uint32 mVAO;
 	uint32 mVBO;
 

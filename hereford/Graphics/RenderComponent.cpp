@@ -1,5 +1,9 @@
 #include "Core/Actor.h"
 #include "Core/GameContext.h"
+
+#include "Asset/AssetManager.h"
+#include "Asset/Texture.h"
+
 #include "Graphics/Renderer.h"
 #include "Graphics/RenderComponent.h"
 
@@ -25,6 +29,24 @@ RenderComponent::~RenderComponent()
 	m_Renderer.RemoveRenderComponent(this);
 }
 
+void RenderComponent::LoadTextures()
+{
+	mTextures.push_back(AssetManager::LoadAsset<Texture>(std::string("LocalResources/gravel/gravel_albedo.png")));
+	mTextures.push_back(AssetManager::LoadAsset<Texture>(std::string("LocalResources/gravel/gravel_ao.png")));
+	mTextures.push_back(AssetManager::LoadAsset<Texture>(std::string("LocalResources/gravel/gravel_height.png")));
+	mTextures.push_back(AssetManager::LoadAsset<Texture>(std::string("LocalResources/gravel/gravel_metallic.png")));
+	mTextures.push_back(AssetManager::LoadAsset<Texture>(std::string("LocalResources/gravel/gravel_normal-ogl.png")));
+	mTextures.push_back(AssetManager::LoadAsset<Texture>(std::string("LocalResources/gravel/gravel_roughness.png")));
+
+	mTextures[0]->SetType(ETextureType::DIFFUSE);
+	mTextures[1]->SetType(ETextureType::AMBIENT);
+	mTextures[2]->SetType(ETextureType::HEIGHT);
+	mTextures[3]->SetType(ETextureType::METALNESS);
+	mTextures[4]->SetType(ETextureType::NORMALS);
+	mTextures[5]->SetType(ETextureType::DIFFUSE_ROUGHNESS);
+
+}
+
 Mat4 RenderComponent::GetModelMatrix() const
 {
 	Mat4 mat = Mat4::Identity;
@@ -37,10 +59,5 @@ Mat4 RenderComponent::GetModelMatrix() const
 	mat.Translate(mOwner->GetPosition());
 	mat.Translate(mTranslateOffset);
 	
-	
-
-	/*mat.Rotate(DEG2RAD * rot.mX, Vec3(1.0f, 0.0f, 0.0f));
-	mat.Rotate(DEG2RAD * rot.mY, Vec3(0.0f, 1.0f, 0.0f));
-	mat.Rotate(DEG2RAD * rot.mZ, Vec3(0.0f, 0.0f, 1.0f));*/
 	return mat;
 }

@@ -107,12 +107,12 @@ public:
 		float vertices[] = {
 			// positions								// normals				// texture coords
 			-halfWidth,		0.0f,		halfLength,		0.0f, 1.0f, 0.0f,		0.0f, 0.0f ,
-			-halfWidth,		0.0f,		-halfLength,    0.0f, 1.0f, 0.0f,		0.0f, 1.0f ,
-			halfWidth,		0.0f,		-halfLength,    0.0f, 1.0f, 0.0f,		1.0f, 1.0f ,
+			-halfWidth,		0.0f,		-halfLength,    0.0f, 1.0f, 0.0f,		0.0f, halfLength ,
+			halfWidth,		0.0f,		-halfLength,    0.0f, 1.0f, 0.0f,		halfWidth, halfLength ,
 
 			-halfWidth,		0.0f,		halfLength,		0.0f, 1.0f, 0.0f,		0.0f, 0.0f ,
-			halfWidth,		0.0f,		-halfLength,    0.0f, 1.0f, 0.0f,		1.0f, 1.0f ,
-			halfWidth,		0.0f,		halfLength,		0.0f, 1.0f, 0.0f,		1.0f, 0.0f };
+			halfWidth,		0.0f,		-halfLength,    0.0f, 1.0f, 0.0f,		halfWidth, halfLength ,
+			halfWidth,		0.0f,		halfLength,		0.0f, 1.0f, 0.0f,		halfWidth, 0.0f };
 		glGenVertexArrays(1, &outInfo.mVAO);
 		glGenBuffers(1, &outInfo.mVBO);
 		glBindVertexArray(outInfo.mVAO);
