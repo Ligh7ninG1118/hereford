@@ -21,7 +21,7 @@ public:
 
 private:
 	void ProcessMovement(const float& deltaTime);
-
+	void ShowDebugInfo();
 	void WeaponFiredEventListener(EventOnPlayerWeaponFired inEvent);
 
 	std::unique_ptr<class CameraComponent> mPtrCameraComp;

@@ -14,7 +14,7 @@ Ground::Ground(GameContext* gameCtx)
 	mPtrPhysicsComp = new PhysicsComponent(static_cast<Actor*>(this), gameCtx->GetPhysicsManager());
 
 	PrimitiveInfo planeInfo;
-	Primitive::GeneratePlane(planeInfo);
+	Primitive::GeneratePlane(planeInfo, 100, 100);
 	mPtrRenderComp->SetVAOID(planeInfo.mVAO);
 	mPtrRenderComp->SetVBOID(planeInfo.mVBO);
 

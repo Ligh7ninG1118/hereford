@@ -3,6 +3,7 @@
 #include "Gameplay/WeaponComponent.h"
 #include "Core/GameContext.h"
 #include <SDL2/SDL.h>
+#include "imgui/imgui.h"
 
 #include "Asset/AssetManager.h"
 #include "Animation/Animation.h"
@@ -74,6 +75,7 @@ Player::~Player()
 void Player::OnUpdate(float deltaTime)
 {
 	ProcessMovement(deltaTime);
+	ShowDebugInfo();
 }
 
 void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
@@ -160,6 +162,16 @@ void Player::ProcessMovement(const float& deltaTime)
 	{
 		currentVelocity = Vector3::Zero;
 	}
+}
+
+void Player::ShowDebugInfo()
+{
+	ImGui::Begin("Player");
+	Vec3 pos = GetPosition();
+	Vec3 rot = mPtrCameraComp->GetRotation();
+	ImGui::Text("Pos (%.2f, %.2f, %.2f)\tRot (%.2f, %.2f, %.2f)", pos.mX, pos.mY, pos.mZ, rot.mX, rot.mY, rot.mZ);
+	ImGui::End();
+
 }
 
 void Player::WeaponFiredEventListener(EventOnPlayerWeaponFired inEvent)
