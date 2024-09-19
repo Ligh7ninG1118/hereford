@@ -19,6 +19,7 @@
 
 #include <iostream>
 #include <format>
+#include <algorithm>
 
 #include "ft2build.h"
 #include FT_FREETYPE_H
@@ -44,7 +45,11 @@ Renderer::Renderer(SDL_Window* sdlWindow, class GameContext* gameContext, int wi
 	mScreenWidth(width),
 	mScreenHeight(height)
 {
-	
+	/*for (int i = 0; i < 8; i++)
+	{
+		mRenderComponents.push_back
+
+	}*/
 }
 
 Renderer::~Renderer()
@@ -265,120 +270,6 @@ void Renderer::Render(float deltaTime)
 	Uint32 lastShaderID = 0;
 	Uint32 lastVAOID = 0;
 
-	for (auto renderComponent : mRenderComponents)
-	{
-		unsigned int VAO, VBO;
-		VAO = renderComponent->GetVAOID();
-		glBindVertexArray(VAO);
-
-		auto shader = renderComponent->GetShader().get();
-		shader->Use();
-
-		shader->SetInt("lightNum", 1);
-
-		shader->SetVec3("pointLights[0].position", Vec3(0.0f, 5.0f, 0.0f));
-
-		shader->SetVec3("pointLights[0].ambient", Vec3(0.1f, 0.1f, 0.1f));
-		shader->SetVec3("pointLights[0].diffuse", Vec3(0.6f, 0.6f, 0.6f));
-		shader->SetVec3("pointLights[0].specular", Vec3(1.0f, 1.0f, 1.0f));
-		shader->SetVec3("pointLights[0].color", Vec3(10.0f, 10.0f, 10.0f));
-
-		shader->SetFloat("pointLights[0].constant", 1.0f);
-		shader->SetFloat("pointLights[0].linear", 0.007f);
-		shader->SetFloat("pointLights[0].quadratic", 0.0002f);
-
-
-		shader->SetVec3("eyePos", mPtrMainCamera->GetCameraPosition());
-		
-		Mat4 model = renderComponent->GetModelMatrix();
-		shader->SetMat4("model", model);
-		shader->SetMat4("projection", projection);
-		shader->SetMat4("view", view);
-
-
-
-		if (auto animRenderComp = dynamic_cast<AnimatedRenderComponent*>(renderComponent); animRenderComp != nullptr)
-		{
-			Mat4 model = animRenderComp->GetModelMatrix();
-
-			shader->SetMat4("model", model);
-		
-			auto transforms = animRenderComp->GetAnimator()->GetFinalBoneMatrices();
-			for (int i = 0; i < transforms.size(); i++)
-			{
-				shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
-			}
-			
-			auto meshes = animRenderComp->GetMeshes();
-			for (unsigned int i = 0; i < meshes.size(); i++)
-			{
-				Mesh* mesh = &meshes[i];
-
-				unsigned int diffuseNr = 1;
-				unsigned int specularNr = 1;
-				unsigned int normalNr = 1;
-				unsigned int heightNr = 1;
-				for (unsigned int j = 0; j < mesh->mTextures.size(); j++)
-				{
-					glActiveTexture(GL_TEXTURE0 + j);
-
-					std::string texStr;
-					switch (mesh->mTextures[j].GetType())
-					{
-					case ETextureType::DIFFUSE:
-						texStr = "tex_diffuse_1";
-						break;
-					case ETextureType::SPECULAR:
-						texStr = "tex_specular_1";
-						break;
-					case ETextureType::NORMALS:
-						texStr = "tex_normals_1";
-						break;
-					case ETextureType::HEIGHT:
-						texStr = "tex_height_1";
-						break;
-					case ETextureType::EMISSIVE:
-						texStr = "tex_emissive_1";
-						break;
-					case ETextureType::METALNESS:
-						texStr = "tex_metalrough_1";
-						break;
-					case ETextureType::AMBIENT:
-						texStr = "tex_ao_1";
-						break;
-					default:
-						break;
-					}
-					shader->SetInt(texStr.c_str(), j);
-					glBindTexture(GL_TEXTURE_2D, mesh->mTextures[j].GetID());
-				}
-
-				glBindVertexArray(mesh->mVAOID);
-				glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(mesh->mIndices.size()), GL_UNSIGNED_INT, 0);
-				
-				glBindVertexArray(0);
-				glActiveTexture(GL_TEXTURE0);
-			}
-		}
-		else
-		{
-			shader->SetVec3("inColor", renderComponent->GetColor());
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-	}
-
-	for (auto line : mDebugLines)
-	{
-		glBindVertexArray(line);
-		debugLineShader->Use();
-		debugLineShader->SetMat4("model", Mat4::Identity);
-		debugLineShader->SetMat4("projection", projection);
-		debugLineShader->SetMat4("view", view);
-		glLineWidth(1.5f);
-		glDrawArrays(GL_LINES, 0, 2);
-	}
-
-
 	glDepthFunc(GL_LEQUAL);
 	skyboxShader->Use();
 	skyboxShader->SetMat4("projection", projection);
@@ -392,6 +283,116 @@ void Renderer::Render(float deltaTime)
 	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glDepthFunc(GL_LESS);
+
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+	glDepthMask(GL_TRUE);
+
+	for (const auto& renderComponents : mRenderComponentMap)
+	{
+		glClear(GL_DEPTH_BUFFER_BIT);
+
+		for (const auto& renderComponent : renderComponents.second)
+		{
+			unsigned int VAO, VBO;
+			VAO = renderComponent->GetVAOID();
+			glBindVertexArray(VAO);
+
+			auto shader = renderComponent->GetShader().get();
+			shader->Use();
+
+			shader->SetInt("lightNum", 1);
+
+			shader->SetVec3("pointLights[0].position", Vec3(0.0f, 5.0f, 0.0f));
+
+			shader->SetVec3("pointLights[0].ambient", Vec3(0.1f, 0.1f, 0.1f));
+			shader->SetVec3("pointLights[0].diffuse", Vec3(0.6f, 0.6f, 0.6f));
+			shader->SetVec3("pointLights[0].specular", Vec3(1.0f, 1.0f, 1.0f));
+			shader->SetVec3("pointLights[0].color", Vec3(10.0f, 10.0f, 10.0f));
+
+			shader->SetFloat("pointLights[0].constant", 1.0f);
+			shader->SetFloat("pointLights[0].linear", 0.007f);
+			shader->SetFloat("pointLights[0].quadratic", 0.0002f);
+
+
+			shader->SetVec3("eyePos", mPtrMainCamera->GetCameraPosition());
+
+			Mat4 model = renderComponent->GetModelMatrix();
+			shader->SetMat4("model", model);
+			shader->SetMat4("projection", projection);
+			shader->SetMat4("view", view);
+
+			if (auto animRenderComp = dynamic_cast<AnimatedRenderComponent*>(renderComponent); animRenderComp != nullptr)
+			{
+				Mat4 model = animRenderComp->GetModelMatrix();
+
+				shader->SetMat4("model", model);
+
+				auto transforms = animRenderComp->GetAnimator()->GetFinalBoneMatrices();
+				for (int i = 0; i < transforms.size(); i++)
+				{
+					shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+				}
+
+				auto meshes = animRenderComp->GetMeshes();
+				for (unsigned int i = 0; i < meshes.size(); i++)
+				{
+					Mesh* mesh = &meshes[i];
+
+					unsigned int diffuseNr = 1;
+					unsigned int specularNr = 1;
+					unsigned int normalNr = 1;
+					unsigned int heightNr = 1;
+					for (unsigned int j = 0; j < mesh->mTextures.size(); j++)
+					{
+						glActiveTexture(GL_TEXTURE0 + j);
+
+						std::string texStr;
+						switch (mesh->mTextures[j].GetType())
+						{
+						case ETextureType::DIFFUSE:
+							texStr = "tex_diffuse_1";
+							break;
+						case ETextureType::SPECULAR:
+							texStr = "tex_specular_1";
+							break;
+						case ETextureType::NORMALS:
+							texStr = "tex_normals_1";
+							break;
+						case ETextureType::HEIGHT:
+							texStr = "tex_height_1";
+							break;
+						case ETextureType::EMISSIVE:
+							texStr = "tex_emissive_1";
+							break;
+						case ETextureType::METALNESS:
+							texStr = "tex_metalrough_1";
+							break;
+						case ETextureType::AMBIENT:
+							texStr = "tex_ao_1";
+							break;
+						default:
+							break;
+						}
+						shader->SetInt(texStr.c_str(), j);
+						glBindTexture(GL_TEXTURE_2D, mesh->mTextures[j].GetID());
+					}
+
+					glBindVertexArray(mesh->mVAOID);
+					glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(mesh->mIndices.size()), GL_UNSIGNED_INT, 0);
+
+					glBindVertexArray(0);
+					glActiveTexture(GL_TEXTURE0);
+				}
+			}
+			else
+			{
+				shader->SetVec3("inColor", renderComponent->GetColor());
+				glDrawArrays(GL_TRIANGLES, 0, 36);
+			}
+		}
+	}
 
 
 	glEnable(GL_BLEND);
@@ -497,12 +498,14 @@ void Renderer::AddDebugLines(Vec3 startPos, Vec3 endPos)
 
 void Renderer::AddRenderComponent(RenderComponent* c)
 {
-	mRenderComponents.push_back(c);
+	ERenderLayer renderLayer = c->GetRenderLayer();
+	mRenderComponentMap[renderLayer].push_back(c);
 }
 
 void Renderer::RemoveRenderComponent(RenderComponent* c)
 {
-	mRenderComponents.erase(std::find(mRenderComponents.begin(), mRenderComponents.end(), c));
+	ERenderLayer renderLayer = c->GetRenderLayer();
+	mRenderComponentMap[renderLayer].erase(std::find(mRenderComponentMap[renderLayer].begin(), mRenderComponentMap[renderLayer].end(), c));
 }
 
 void Renderer::AddLightComponent(LightComponent* c)

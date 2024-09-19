@@ -3,9 +3,9 @@
 #include "Gameplay/CameraComponent.h"
 
 
-AnimatedRenderComponent::AnimatedRenderComponent(Actor* owner, Renderer& rendererRef)
+AnimatedRenderComponent::AnimatedRenderComponent(Actor* owner, Renderer& rendererRef, ERenderLayer renderLayer)
 	:
-	RenderComponent(owner, rendererRef),
+	RenderComponent(owner, rendererRef, renderLayer),
 	mPtrAnimator(nullptr),
 	mPtrCamera(nullptr),
 	mControlByFPCam(false)

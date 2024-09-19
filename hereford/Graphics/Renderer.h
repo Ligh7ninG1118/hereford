@@ -1,12 +1,14 @@
 #pragma once
 
 #include "Gameplay/CameraComponent.h"
+#include "RenderComponent.h"
 
 #include "Asset/Model.h"
 #include "Asset/Shader.h"
 #include <SDL2/SDL.h>
 #include <vector>
 #include <memory>
+#include <unordered_map>
 
 
 enum class EBGClearMode
@@ -60,7 +62,9 @@ private:
 	Uint32 textVBO;
 	std::map<char, Character> Characters;
 
-	std::vector<class RenderComponent*> mRenderComponents;
+	std::map<ERenderLayer, std::vector<class RenderComponent*>> mRenderComponentMap;
+
+	//std::vector<class RenderComponent*> mRenderComponents;
 	std::vector<class LightComponent*> mLightComponents;
 
 	std::vector<class UIElement*> mUIElements;

@@ -8,10 +8,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
-RenderComponent::RenderComponent(Actor* owner, Renderer& rendererRef)
+RenderComponent::RenderComponent(Actor* owner, Renderer& rendererRef, ERenderLayer renderLayer)
 	: 
 	Component(owner),
 	m_Renderer(rendererRef),
+	mRenderLayer(renderLayer),
 	mTranslateOffset(Vec3::Zero),
 	mRotateOffset(Vec3::Zero),
 	mScaleOffset(Vec3::One)

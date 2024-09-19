@@ -6,7 +6,7 @@
 class AnimatedRenderComponent : public RenderComponent
 {
 public:
-	AnimatedRenderComponent(class Actor* owner, class Renderer& rendererRef);
+	AnimatedRenderComponent(class Actor* owner, class Renderer& rendererRef, ERenderLayer renderLayer = ERenderLayer::Default);
 	~AnimatedRenderComponent();
 
 	inline std::weak_ptr<class Model> GetModel() const { return mPtrModel; }

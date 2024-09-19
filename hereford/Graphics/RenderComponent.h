@@ -3,20 +3,24 @@
 #include "Core/Component.h"
 #include "Math/Math.h"
 
-enum class ERenderMode
+enum class ERenderLayer : uint8
 {
-
+	Default = 1,
+	Weapon = 1 << 1
 };
 
 
 class RenderComponent : public Component
 {
 public:
-	RenderComponent(class Actor* owner, class Renderer& rendererRef);
+	RenderComponent(class Actor* owner, class Renderer& rendererRef, ERenderLayer renderLayer = ERenderLayer::Default);
 	~RenderComponent();
 
 	inline std::shared_ptr<class Shader> GetShader() const { return mPtrShader; }
 	inline void SetShader(std::shared_ptr<class Shader> inPtrShader) { mPtrShader = inPtrShader; }
+
+	inline ERenderLayer GetRenderLayer() const { return mRenderLayer; }
+	inline void SetRenderLayer(ERenderLayer inOrder) { mRenderLayer = inOrder; }
 
 	inline uint32 GetVAOID() const { return mVAO; }
 	inline void SetVAOID(uint32 id) { mVAO = id; }
@@ -41,6 +45,8 @@ public:
 protected:
 	class Renderer& m_Renderer;
 
+	ERenderLayer mRenderLayer;
+
 	std::shared_ptr<class Shader> mPtrShader;
 	uint32 mVAO;
 	uint32 mVBO;
@@ -50,7 +56,5 @@ protected:
 	Vec3 mTranslateOffset;
 	Vec3 mRotateOffset;
 	Vec3 mScaleOffset;
-
-	//need to add custom parameters for T/R/S offset
 };
 
