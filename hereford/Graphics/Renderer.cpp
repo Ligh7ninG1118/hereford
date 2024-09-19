@@ -291,6 +291,7 @@ void Renderer::Render(float deltaTime)
 
 	for (const auto& renderComponents : mRenderComponentMap)
 	{
+		// Clear depth buffer across different layers
 		glClear(GL_DEPTH_BUFFER_BIT);
 
 		for (const auto& renderComponent : renderComponents.second)
@@ -399,7 +400,6 @@ void Renderer::Render(float deltaTime)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	textShader->Use();
-	// TODO: use cast
 	Mat4 uiProj = mPtrMainCamera->GetOrthoMatrix(0.0f, static_cast<float>(mScreenWidth), 0.0f, static_cast<float>(mScreenHeight));
 
 	textShader->SetVec3("textColor", Vec3(0.1f, 0.1f, 0.1f));

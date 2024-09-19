@@ -64,18 +64,13 @@ private:
 
 	std::map<ERenderLayer, std::vector<class RenderComponent*>> mRenderComponentMap;
 
-	//std::vector<class RenderComponent*> mRenderComponents;
 	std::vector<class LightComponent*> mLightComponents;
 
 	std::vector<class UIElement*> mUIElements;
 
 	std::vector<uint32> mDebugLines;
 
-
-	//std::vector<class RenderComponent> m_RenderCompons;
 	friend class RenderComponent;
-	// Adds component to Actor (this is automatically called
-	// in the component constructor)
 	void AddRenderComponent(class RenderComponent* c);
 	void RemoveRenderComponent(class RenderComponent* c);
 
