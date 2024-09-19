@@ -33,6 +33,9 @@ GameContext::GameContext()
 	// Enough for most input key usage
 	mPrevKeyStates.resize(70);
 	mPrevMouseStates = EMouseState::LMB_NOT_PRESSED | EMouseState::MMB_NOT_PRESSED | EMouseState::RMB_NOT_PRESSED;
+
+	mTelemetryUpdateInterval = 1.0f;
+	mTelemetryUpdateTimer = 0.0f;
 }
 
 GameContext::GameContext(int width, int height)
@@ -136,12 +139,16 @@ void GameContext::RunLoop()
 		CalculatePhysics();
 		DelayedActionManager::UpdateTimers(mDeltaTime);
 		Uint32 timestampUpdate = SDL_GetTicks();
-		cpuTime = timestampUpdate - timestampStart;
-
 		GenerateOutput();
 		Uint32 timestampRender = SDL_GetTicks();
-		gpuTime = timestampRender - timestampUpdate;
-		
+
+		mTelemetryUpdateTimer += mDeltaTime;
+		if (mTelemetryUpdateTimer >= mTelemetryUpdateInterval)
+		{
+			mTelemetryUpdateTimer = 0.0f;
+			cpuTime = timestampUpdate - timestampStart;
+			gpuTime = timestampRender - timestampUpdate;
+		}
 	}
 	Shutdown();
 }

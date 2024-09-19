@@ -64,6 +64,9 @@ private:
 	Uint32 currTimestamp;
 	float mDeltaTime;
 
+	float mTelemetryUpdateInterval;
+	float mTelemetryUpdateTimer;
+
 	int mScreenWidth;
 	int mScreenHeight;
 
