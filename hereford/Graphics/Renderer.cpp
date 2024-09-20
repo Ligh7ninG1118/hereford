@@ -330,7 +330,7 @@ void Renderer::Render(float deltaTime)
 				Mat4 model = animRenderComp->GetModelMatrix();
 
 				shader->SetMat4("model", model);
-				shader->SetFloat("shininess", 64.0f);
+				shader->SetFloat("shininess", 16.0f);
 				auto transforms = animRenderComp->GetAnimator()->GetFinalBoneMatrices();
 				for (int i = 0; i < transforms.size(); i++)
 				{

@@ -154,6 +154,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Gameplay\Action.cpp" />
+    <ClCompile Include="Gameplay\ActionComponent.cpp" />
     <ClCompile Include="Graphics\AnimatedRenderComponent.cpp" />
     <ClCompile Include="Animation\AnimationStateMachine.cpp" />
     <ClCompile Include="Animation\Animation.cpp" />
@@ -204,6 +206,8 @@
     <ClCompile Include="Gameplay\WeaponComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Gameplay\Action.h" />
+    <ClInclude Include="Gameplay\ActionComponent.h" />
     <ClInclude Include="Gameplay\IHittable.h" />
     <ClInclude Include="Gameplay\IInteractable.h" />
     <ClInclude Include="Graphics\AnimatedRenderComponent.h" />
@@ -258,6 +262,8 @@
     <ClInclude Include="Util\Enums.h" />
     <ClInclude Include="Util\Events.h" />
     <ClInclude Include="Util\GameEvent.h" />
+    <ClInclude Include="Util\GameplayTag.h" />
+    <ClInclude Include="Util\GameplayTagContainer.h" />
     <ClInclude Include="Util\Random.h" />
     <ClInclude Include="Gameplay\WeaponComponent.h" />
     <ClInclude Include="Util\Reflection.h" />
