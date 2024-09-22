@@ -9,6 +9,8 @@
 #include "Animation/Animation.h"
 #include "Animation/Animator.h"
 #include "Animation/AnimationStateMachine.h"
+#include "Actions/ActionComponent.h"
+#include "Actions/Action.h"
 
 #include "Graphics/AnimatedRenderComponent.h"
 
@@ -66,6 +68,20 @@ Player::Player(GameContext* gameCtx)
 
 	mPtrUICrosshair = new UICrosshair(renderer, crosshairShader.get(), mPtrActiveWeaponComp);
 	mPtrUICrosshair->Initialize();
+
+	mPtrActionComp = std::make_unique<ActionComponent>(this);
+
+	Action reloadAction("Reload");
+	reloadAction.AddGrantsTag(GameplayTag("Reloading"));
+	reloadAction.AddBlockeTag(GameplayTag("Crouching"));
+	
+	Action crouchAction("Crouch");
+	crouchAction.AddGrantsTag(GameplayTag("Crouching"));
+	crouchAction.AddBlockeTag(GameplayTag("Reloading"));
+
+	mPtrActionComp->AddAction(reloadAction);
+	mPtrActionComp->AddAction(crouchAction);
+
 }
 
 Player::~Player()
@@ -90,9 +106,6 @@ void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 		{
 			inputMoveDir += GetForward();
 			hasMovementInput = true;
-
-			/*printf("Event fired.\n");
-			GameEvent::Publish<EventTest>(EventTest(42));*/
 		}
 		if (keyState[SDL_SCANCODE_S] == EInputState::KEY_HOLD)
 		{
@@ -132,6 +145,27 @@ void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 			mRotation.mY = 0.0f;
 		if (mRotation.mY < -360.0f)
 			mRotation.mY = 0.0f;
+	}
+
+	{
+		if (keyState[SDL_SCANCODE_C] == EInputState::KEY_DOWN)
+		{
+			mPtrActionComp->StartActionByName("Crouch");
+		}
+		if (keyState[SDL_SCANCODE_C] == EInputState::KEY_UP)
+		{
+			mPtrActionComp->StopActionByName("Crouch");
+		}
+		if (keyState[SDL_SCANCODE_R] == EInputState::KEY_DOWN)
+		{
+			mPtrActionComp->StartActionByName("Reload");
+
+		}
+		if (keyState[SDL_SCANCODE_R] == EInputState::KEY_UP)
+		{
+			mPtrActionComp->StopActionByName("Reload");
+
+		}
 	}
 }
 

@@ -159,10 +159,10 @@
     <ClCompile Include="Props\Ground.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Gameplay\ActionComponent.cpp">
+    <ClCompile Include="Gameplay\Actions\ActionComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Gameplay\Action.cpp">
+    <ClCompile Include="Gameplay\Actions\Action.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -344,10 +344,10 @@
     <ClInclude Include="Util\GameplayTagContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Gameplay\ActionComponent.h">
+    <ClInclude Include="Gameplay\Actions\ActionComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Gameplay\Action.h">
+    <ClInclude Include="Gameplay\Actions\Action.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

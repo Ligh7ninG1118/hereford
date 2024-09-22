@@ -9,7 +9,10 @@ public:
 	void AddTag(const GameplayTag& tag) { mTags.insert(tag); }
 	void RemoveTag(const GameplayTag& tag) { mTags.erase(tag); }
 
-	bool HasTag(const GameplayTag& tag) const { return mTags.find(tag) != mTags.end(); }
+	void AddTags(const GameplayTagContainer& tags) { mTags.insert(tags.mTags.begin(), tags.mTags.end()); }
+	void RemoveTags(const GameplayTagContainer& tags) { mTags.erase(tags.mTags.begin(), tags.mTags.end()); }
+
+	bool HasTag(const GameplayTag& tag) const { if (mTags.size() == 0) return false; return mTags.find(tag) != mTags.end(); }
 	bool HasAny(const GameplayTagContainer& other) const 
 	{
 		for (const auto& tag : other.mTags)

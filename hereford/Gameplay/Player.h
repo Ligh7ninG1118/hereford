@@ -27,6 +27,9 @@ private:
 	std::unique_ptr<class CameraComponent> mPtrCameraComp;
 	std::unique_ptr<class AnimatedRenderComponent> mPtrAnimRenderComp;
 	std::shared_ptr<class AnimationStateMachine> mPtrAnimStateMachine;
+
+	std::shared_ptr<class ActionComponent> mPtrActionComp;
+
 	class WeaponComponent* mPtrActiveWeaponComp;
 	class UIAmmoIndicator* mPtrUIAmmo;
 	class UICrosshair* mPtrUICrosshair;

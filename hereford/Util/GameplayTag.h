@@ -13,7 +13,7 @@ public:
 
 	bool operator<(const GameplayTag& other) const
 	{
-		return mName < other.mName;
+		return mName.compare(other.mName);
 	}
 
 	std::string GetName() const { return mName; }
