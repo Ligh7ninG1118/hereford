@@ -11,6 +11,7 @@
 #include "Animation/AnimationStateMachine.h"
 #include "Actions/ActionComponent.h"
 #include "Actions/Action.h"
+#include "Util/GameplayTagContainer.h"
 
 #include "Graphics/AnimatedRenderComponent.h"
 
@@ -150,12 +151,20 @@ void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 	{
 		if (keyState[SDL_SCANCODE_C] == EInputState::KEY_DOWN)
 		{
-			mPtrActionComp->StartActionByName("Crouch");
+			//TODO: Creating additional copy here. Overload enum version
+			if (mPtrActionComp->GetActiveGameplayTags().HasTag(GameplayTag(EActionType::CROUCHING)))
+			{
+				mPtrActionComp->StopActionByName("Crouch");
+				mPtrCameraComp->SetEyeHeight(1.8f);
+			}
+			else
+			{
+				mPtrActionComp->StartActionByName("Crouch");
+				mPtrCameraComp->SetEyeHeight(0.9f);
+
+			}
 		}
-		if (keyState[SDL_SCANCODE_C] == EInputState::KEY_UP)
-		{
-			mPtrActionComp->StopActionByName("Crouch");
-		}
+		
 	}
 }
 

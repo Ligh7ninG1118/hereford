@@ -39,7 +39,7 @@ bool ActionComponent::StartActionByName(const std::string& actionName)
 
 	if (it == mActions.end())
 	{
-		printf("ActionComponent::StartActionByName(): Action [%s] doesn't exist in component\n", actionName.c_str());
+		//printf("ActionComponent::StartActionByName(): Action [%s] doesn't exist in component\n", actionName.c_str());
 		return false;
 	}
 
@@ -48,17 +48,17 @@ bool ActionComponent::StartActionByName(const std::string& actionName)
 
 	if (targetAction.IsRunning())
 	{
-		printf("ActionComponent::StartActionByName(): Action [%s] is already running\n", targetAction.GetActionName().c_str());
+		//printf("ActionComponent::StartActionByName(): Action [%s] is already running\n", targetAction.GetActionName().c_str());
 		return false;
 	}
 
 	if (!targetAction.CanStart())
 	{
-		printf("ActionComponent::StartActionByName(): Action [%s] blocked by other tags\n", targetAction.GetActionName().c_str());
+		//printf("ActionComponent::StartActionByName(): Action [%s] blocked by other tags\n", targetAction.GetActionName().c_str());
 		return false;
 	}
 
-	printf("ActionComponent::StartActionByName(): Action [%s] started!\n", targetAction.GetActionName().c_str());
+	//printf("ActionComponent::StartActionByName(): Action [%s] started!\n", targetAction.GetActionName().c_str());
 	targetAction.StartAction();
 	return true;
 }
@@ -71,7 +71,7 @@ bool ActionComponent::StopActionByName(const std::string& actionName)
 
 	if (it == mActions.end())
 	{
-		printf("ActionComponent::StopActionByName(): Action [%s] doesn't exist in component\n", actionName.c_str());
+		//printf("ActionComponent::StopActionByName(): Action [%s] doesn't exist in component\n", actionName.c_str());
 		return false;
 	}
 
@@ -80,10 +80,10 @@ bool ActionComponent::StopActionByName(const std::string& actionName)
 
 	if (!targetAction.IsRunning())
 	{
-		printf("ActionComponent::StopActionByName(): Action [%s] has already stopped\n", targetAction.GetActionName().c_str());
+		//printf("ActionComponent::StopActionByName(): Action [%s] has already stopped\n", targetAction.GetActionName().c_str());
 		return false;
 	}
-	printf("ActionComponent::StopActionByName(): Action [%s] stopped\n", targetAction.GetActionName().c_str());
+	//printf("ActionComponent::StopActionByName(): Action [%s] stopped\n", targetAction.GetActionName().c_str());
 	targetAction.StopAction();
 	return true;
 }

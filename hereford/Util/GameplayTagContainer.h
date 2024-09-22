@@ -2,7 +2,6 @@
 #include <set>
 #include <string>
 #include "GameplayTag.h"
-#include <stdio.h>
 
 class GameplayTagContainer
 {

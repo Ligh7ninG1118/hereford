@@ -1,13 +1,13 @@
 #include "CameraComponent.h"
 #include "Core/Actor.h"
 
-CameraComponent::CameraComponent(Actor* owner)
+CameraComponent::CameraComponent(Actor* owner, float eyeHeight)
 	: Component(owner),
-	m_PositionOffset(Vector3(0.0f, 1.8f, 0.0f)),
-	m_Rotation(Vector3(0.0f, 0.0f, 0.0f)),
-	m_HorFOV(80.0f),
-	m_NearPlane(0.03f),
-	m_FarPlane(10000.0f)
+	mPositionOffset(Vector3(0.0f, eyeHeight, 0.0f)),
+	mRotation(Vector3(0.0f, 0.0f, 0.0f)),
+	mHorFOV(80.0f),
+	mNearPlane(0.03f),
+	mFarPlane(10000.0f)
 {
 }
 
@@ -21,20 +21,20 @@ void CameraComponent::Update(float deltaTime)
 
 void CameraComponent::ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
 {
-	m_Rotation.mY += mouseDeltaX * mouseSens;
-	m_Rotation.mX += mouseDeltaY * mouseSens;
+	mRotation.mY += mouseDeltaX * mMouseSens;
+	mRotation.mX += mouseDeltaY * mMouseSens;
 
-	m_Rotation.mY = (m_Rotation.mY > 360.0f || m_Rotation.mY < -360.0f) ? 0.0f : m_Rotation.mY;
-	m_Rotation.mX = Math::Clamp(m_Rotation.mX, -89.0f, 89.0f);
+	mRotation.mY = (mRotation.mY > 360.0f || mRotation.mY < -360.0f) ? 0.0f : mRotation.mY;
+	mRotation.mX = Math::Clamp(mRotation.mX, -89.0f, 89.0f);
 }
 
 void CameraComponent::RotateCamera(Vec2 dir)
 {
-	m_Rotation.mY += dir.mX;
-	m_Rotation.mX += dir.mY;
+	mRotation.mY += dir.mX;
+	mRotation.mX += dir.mY;
 
-	m_Rotation.mX = Math::Clamp(m_Rotation.mX, -89.0f, 89.0f);
-	m_Rotation.mY = (m_Rotation.mY > 360.0f || m_Rotation.mY < -360.0f) ? 0.0f : m_Rotation.mY;
+	mRotation.mX = Math::Clamp(mRotation.mX, -89.0f, 89.0f);
+	mRotation.mY = (mRotation.mY > 360.0f || mRotation.mY < -360.0f) ? 0.0f : mRotation.mY;
 }
 
 Mat4 CameraComponent::GetViewMatrix() const
@@ -42,7 +42,7 @@ Mat4 CameraComponent::GetViewMatrix() const
 	Vec3 Front = GetFrontVector();
 	Vec3 Right = GetRightVector();
 	Vec3 Up = Right.Cross(Front).normalized();
-	Vec3 pos = GetOwner()->GetPosition() + m_PositionOffset;
+	Vec3 pos = GetOwner()->GetPosition() + mPositionOffset;
 
 	Mat4 Mtsl2 = Mat4::Identity;
 	Mat4 Mrot2 = Mat4::Identity;
@@ -62,12 +62,12 @@ Mat4 CameraComponent::GetPerspMatrix(const float& screenRatio) const
 {
 	Mat4 projection = Mat4::Zero;
 
-	float tanHalfFOVy = tan(DEG2RAD * m_HorFOV / 2.0f);
+	float tanHalfFOVy = tan(DEG2RAD * mHorFOV / 2.0f);
 	projection.m[0][0] = 1.0f / (screenRatio * tanHalfFOVy);
 	projection.m[1][1] = 1.0f / tanHalfFOVy;
-	projection.m[2][2] = -(m_FarPlane + m_NearPlane) / (m_FarPlane - m_NearPlane);
+	projection.m[2][2] = -(mFarPlane + mNearPlane) / (mFarPlane - mNearPlane);
 	projection.m[2][3] = -1.0f;
-	projection.m[3][2] = -(2.0f * m_FarPlane * m_NearPlane) / (m_FarPlane - m_NearPlane);
+	projection.m[3][2] = -(2.0f * mFarPlane * mNearPlane) / (mFarPlane - mNearPlane);
 
 	return projection;
 }
@@ -88,5 +88,5 @@ Mat4 CameraComponent::GetOrthoMatrix(float left, float right, float bottom, floa
 
 Vec3 CameraComponent::GetCameraPosition() const
 {
-	return m_PositionOffset + mOwner->GetPosition();
+	return mPositionOffset + mOwner->GetPosition();
 }

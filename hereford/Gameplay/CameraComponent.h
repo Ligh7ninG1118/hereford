@@ -6,7 +6,7 @@
 class CameraComponent : public Component
 {
 public:
-	CameraComponent(class Actor* owner);
+	CameraComponent(class Actor* owner, float eyeHeight = 1.8f);
 	~CameraComponent();
 
 	void Update(float deltaTime) override;
@@ -14,30 +14,32 @@ public:
 
 	void RotateCamera(Vec2 dir);
 
+	void SetEyeHeight(float eyeHeight) { mPositionOffset.mY = eyeHeight; }
+
 	Mat4 GetViewMatrix() const;
 	Mat4 GetPerspMatrix(const float& screenRatio) const;
 	Mat4 GetOrthoMatrix(float left, float right, float bottom, float top) const;
 	Vec3 GetFrontVector() const
 	{
-		return Vec3(cos(DEG2RAD * m_Rotation.mY) * cos(DEG2RAD * m_Rotation.mX),
-			sin(DEG2RAD * m_Rotation.mX),
-			sin(DEG2RAD * m_Rotation.mY) * cos(DEG2RAD * m_Rotation.mX)).normalized();
+		return Vec3(cos(DEG2RAD * mRotation.mY) * cos(DEG2RAD * mRotation.mX),
+			sin(DEG2RAD * mRotation.mX),
+			sin(DEG2RAD * mRotation.mY) * cos(DEG2RAD * mRotation.mX)).normalized();
 	}
 	Vec3 GetRightVector() const
 	{
 		return GetFrontVector().Cross(Vec3(0.0f, 1.0f, 0.0f)).normalized();
 	}
 
-	Vec3 GetRotation() const { return m_Rotation; }
+	Vec3 GetRotation() const { return mRotation; }
 
-	float GetMouseSens() const { return mouseSens; }
-	Vec3 GetPositionOffset() const{ return m_PositionOffset; }
+	float GetMouseSens() const { return mMouseSens; }
+	Vec3 GetPositionOffset() const{ return mPositionOffset; }
 	Vec3 GetCameraPosition() const;
 private:
-	Vec3 m_PositionOffset;
-	Vec3 m_Rotation;
-	float m_HorFOV;
-	float m_NearPlane;
-	float m_FarPlane;
-	float mouseSens = 0.15f;
+	Vec3 mPositionOffset;
+	Vec3 mRotation;
+	float mHorFOV;
+	float mNearPlane;
+	float mFarPlane;
+	float mMouseSens = 0.15f;
 };
