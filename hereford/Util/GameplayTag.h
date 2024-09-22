@@ -1,23 +1,31 @@
 #pragma once
 #include <string>
 
+enum class EActionType
+{
+	RESERVED_DEFAULT = 0,
+	RELOADING,
+	CROUCHING,
+};
+
+
 class GameplayTag
 {
 public:
-	GameplayTag(const std::string& tagName) : mName(tagName) { }
+	GameplayTag(const EActionType& action) : mAction(action) { }
 
 	bool operator==(const GameplayTag& other) const
 	{
-		return mName == other.mName;
+		return mAction == other.mAction;
 	}
 
 	bool operator<(const GameplayTag& other) const
 	{
-		return mName.compare(other.mName);
+		return mAction < other.mAction;
 	}
 
-	std::string GetName() const { return mName; }
+	EActionType GetAction() const { return mAction; }
 
 private:
-	std::string mName;
+	EActionType mAction;
 };

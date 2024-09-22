@@ -72,12 +72,12 @@ Player::Player(GameContext* gameCtx)
 	mPtrActionComp = std::make_unique<ActionComponent>(this);
 
 	Action reloadAction("Reload");
-	reloadAction.AddGrantsTag(GameplayTag("Reloading"));
-	reloadAction.AddBlockeTag(GameplayTag("Crouching"));
+	reloadAction.AddGrantsTag(GameplayTag(EActionType::RELOADING));
+	reloadAction.AddBlockeTag(GameplayTag(EActionType::CROUCHING));
 	
 	Action crouchAction("Crouch");
-	crouchAction.AddGrantsTag(GameplayTag("Crouching"));
-	crouchAction.AddBlockeTag(GameplayTag("Reloading"));
+	crouchAction.AddGrantsTag(GameplayTag(EActionType::CROUCHING));
+	crouchAction.AddBlockeTag(GameplayTag(EActionType::RELOADING));
 
 	mPtrActionComp->AddAction(reloadAction);
 	mPtrActionComp->AddAction(crouchAction);
