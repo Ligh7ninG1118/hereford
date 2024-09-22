@@ -16,8 +16,8 @@ public:
 	void RemoveAction(const class Action& inAction);
 
 	bool HasActionByName(const std::string& actionName);
-	void StartActionByName(const std::string& actionName);
-	void StopActionByName(const std::string& actionName);
+	bool StartActionByName(const std::string& actionName);
+	bool StopActionByName(const std::string& actionName);
 
 	void AddActiveTags(const GameplayTagContainer& tags) { mActiveGameplayTags.AddTags(tags); }
 	void RemoveActiveTags(const GameplayTagContainer& tags) { mActiveGameplayTags.RemoveTags(tags); }

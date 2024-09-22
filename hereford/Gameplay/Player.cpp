@@ -156,16 +156,6 @@ void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 		{
 			mPtrActionComp->StopActionByName("Crouch");
 		}
-		if (keyState[SDL_SCANCODE_R] == EInputState::KEY_DOWN)
-		{
-			mPtrActionComp->StartActionByName("Reload");
-
-		}
-		if (keyState[SDL_SCANCODE_R] == EInputState::KEY_UP)
-		{
-			mPtrActionComp->StopActionByName("Reload");
-
-		}
 	}
 }
 

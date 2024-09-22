@@ -6,6 +6,7 @@
 #include "Gameplay/Player.h"
 #include "Gameplay/CameraComponent.h"
 #include "Gameplay/IHittable.h"
+#include "Gameplay/Actions/ActionComponent.h"
 #include "Physics/PhysicsManager.h"
 #include "Util/Random.h"
 #include "Util/GameEvent.h"
@@ -68,7 +69,11 @@ void WeaponComponent::ProcessInput(const std::vector<EInputState>& keyState, Uin
 
 	if (keyState[SDL_SCANCODE_R] == EInputState::KEY_DOWN)
 	{
-		Reload();
+		Player* player = static_cast<Player*>(mOwner);
+		if(player->GetActionComp()->StartActionByName("Reload"))
+		{
+			Reload();
+		}
 	}
 }
 
@@ -127,6 +132,9 @@ void WeaponComponent::FinishedReload()
 	mCurrentReserveAmmo -= reducedAmmo;
 
 	printf("Current Ammo: %d/%d\n", mCurrentMagazineAmmo, mCurrentReserveAmmo);
+
+	Player* player = static_cast<Player*>(mOwner);
+	player->GetActionComp()->StopActionByName("Reload");
 
 	mCurrentState = EWeaponState::READY;
 }

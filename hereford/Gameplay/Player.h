@@ -19,6 +19,8 @@ public:
 
 	class CameraComponent& GetMainCamera() const { return *mPtrCameraComp.get(); }
 
+	class ActionComponent* GetActionComp() const { return mPtrActionComp.get(); }
+
 private:
 	void ProcessMovement(const float& deltaTime);
 	void ShowDebugInfo();
@@ -28,7 +30,7 @@ private:
 	std::unique_ptr<class AnimatedRenderComponent> mPtrAnimRenderComp;
 	std::shared_ptr<class AnimationStateMachine> mPtrAnimStateMachine;
 
-	std::shared_ptr<class ActionComponent> mPtrActionComp;
+	std::unique_ptr<class ActionComponent> mPtrActionComp;
 
 	class WeaponComponent* mPtrActiveWeaponComp;
 	class UIAmmoIndicator* mPtrUIAmmo;
