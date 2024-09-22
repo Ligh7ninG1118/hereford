@@ -2,6 +2,7 @@
 #include <set>
 #include <string>
 #include "GameplayTag.h"
+#include <stdio.h>
 
 class GameplayTagContainer
 {
@@ -10,7 +11,7 @@ public:
 	void RemoveTag(const GameplayTag& tag) { mTags.erase(tag); }
 
 	void AddTags(const GameplayTagContainer& tags) { mTags.insert(tags.mTags.begin(), tags.mTags.end()); }
-	void RemoveTags(const GameplayTagContainer& tags) { mTags.erase(tags.mTags.begin(), tags.mTags.end()); }
+	void RemoveTags(const GameplayTagContainer& tags) { for (const auto& tag : tags.mTags) mTags.erase(tag); }
 
 	bool HasTag(const GameplayTag& tag) const { if (mTags.size() == 0) return false; return mTags.find(tag) != mTags.end(); }
 	bool HasAny(const GameplayTagContainer& other) const 
