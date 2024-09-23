@@ -31,7 +31,7 @@ GameContext::GameContext()
 	: mScreenWidth(1920), mScreenHeight(1080)
 {
 	// Enough for most input key usage
-	mPrevKeyStates.resize(70);
+	mPrevKeyStates.resize(232);
 	mPrevMouseStates = EMouseState::LMB_NOT_PRESSED | EMouseState::MMB_NOT_PRESSED | EMouseState::RMB_NOT_PRESSED;
 
 	mTelemetryUpdateInterval = 1.0f;

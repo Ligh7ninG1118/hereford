@@ -6,6 +6,7 @@ enum class EActionType
 	RESERVED_DEFAULT = 0,
 	RELOADING,
 	CROUCHING,
+	SPRINTING,
 };
 
 

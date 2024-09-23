@@ -74,15 +74,18 @@ Player::Player(GameContext* gameCtx)
 
 	Action reloadAction("Reload");
 	reloadAction.AddGrantsTag(GameplayTag(EActionType::RELOADING));
-	reloadAction.AddBlockeTag(GameplayTag(EActionType::CROUCHING));
 	
 	Action crouchAction("Crouch");
 	crouchAction.AddGrantsTag(GameplayTag(EActionType::CROUCHING));
-	crouchAction.AddBlockeTag(GameplayTag(EActionType::RELOADING));
+	crouchAction.AddBlockeTag(GameplayTag(EActionType::SPRINTING));
+
+	Action sprintAction("Sprint");
+	sprintAction.AddGrantsTag(GameplayTag(EActionType::SPRINTING));
+	sprintAction.AddBlockeTag(GameplayTag(EActionType::CROUCHING));
 
 	mPtrActionComp->AddAction(reloadAction);
 	mPtrActionComp->AddAction(crouchAction);
-
+	mPtrActionComp->AddAction(sprintAction);
 }
 
 Player::~Player()
@@ -156,14 +159,25 @@ void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 			{
 				mPtrActionComp->StopActionByName("Crouch");
 				mPtrCameraComp->SetEyeHeight(1.8f);
+				mPtrAnimRenderComp->SetTranslateOffset(Vec3(0.0f, 1.32f, 0.0f));
 			}
 			else
 			{
 				mPtrActionComp->StartActionByName("Crouch");
 				mPtrCameraComp->SetEyeHeight(0.9f);
-
+				mPtrAnimRenderComp->SetTranslateOffset(Vec3(0.0f, 0.56f, 0.0f));
 			}
 		}
+
+		if (keyState[SDL_SCANCODE_LSHIFT] == EInputState::KEY_DOWN)
+		{
+			mPtrActionComp->StartActionByName("Sprint");
+		}
+		if (keyState[SDL_SCANCODE_LSHIFT] == EInputState::KEY_UP)
+		{
+			mPtrActionComp->StopActionByName("Sprint");
+		}
+
 		
 	}
 }
@@ -174,6 +188,12 @@ void Player::ProcessMovement(const float& deltaTime)
 	Vector3 updatedPos = GetPosition();
 	updatedPos += currentVelocity * deltaTime;
 	SetPosition(updatedPos);
+
+	float topSpeed = topWalkingSpeed;
+	if (mPtrActionComp->GetActiveGameplayTags().HasTag(GameplayTag(EActionType::CROUCHING)))
+		topSpeed = topCrouchSpeed;
+	else if (mPtrActionComp->GetActiveGameplayTags().HasTag(GameplayTag(EActionType::SPRINTING)))
+		topSpeed = topSprintingSpeed;
 
 	// Update Velocity
 	if (hasMovementInput)
@@ -186,9 +206,9 @@ void Player::ProcessMovement(const float& deltaTime)
 	}
 
 	// Cap velocity at top speed
-	if (currentVelocity.SqrMagnitude() > topWalkingSpeed * topWalkingSpeed)
+	if (currentVelocity.SqrMagnitude() > topSpeed * topSpeed)
 	{
-		currentVelocity = currentVelocity.normalized() * topWalkingSpeed;
+		currentVelocity = currentVelocity.normalized() * topSpeed;
 	}
 
 	// Prevent drifting

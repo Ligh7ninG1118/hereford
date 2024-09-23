@@ -44,10 +44,11 @@ private:
 
 	bool lmbPressed = false;
 
-	const float topWalkingSpeed = 2.5f;
-	const float topSprintingSpeed = 5.0f;
-	const float accelerationSpeed = 15.0f;
-	const float decelerationSpeed = 20.0f;
+	const float topWalkingSpeed = 3.5f;
+	const float topCrouchSpeed = 1.5f;
+	const float topSprintingSpeed = 6.0f;
+	const float accelerationSpeed = 55.0f;
+	const float decelerationSpeed = 40.0f;
 	const float minVelocityOffset = 0.01f;
 
 	GameEvent::Subscription<EventOnPlayerWeaponFired>* mPtrWeaponFiredEvent;
