@@ -31,7 +31,7 @@ WeaponComponent::WeaponComponent(Actor* owner, std::weak_ptr<AnimationStateMachi
 
 	mRecoilType = ERecoilType::RECOIL_DIAMOND;
 	mRecoilDiamond = Vec2(0.1f, 0.2f);
-	mDefaultAccuracySpreadFactor = 0.05f;
+	mDefaultAccuracySpreadFactor = 0.02f;
 	mTargetAccuracySpreadFactor = mDefaultAccuracySpreadFactor;
 	mAccuracySpreadFactor = mDefaultAccuracySpreadFactor;
 
@@ -106,6 +106,12 @@ void WeaponComponent::Fire()
 
 		Vec3 origin = cam.GetCameraPosition();
 		Vec3 dir = cam.GetFrontVector().normalized();
+		
+		dir.mX += Random::Range(-mAccuracySpreadFactor, mAccuracySpreadFactor);
+		dir.mZ += Random::Range(-mAccuracySpreadFactor, mAccuracySpreadFactor);
+
+		dir.Normalize();
+
 		HitInfo hitInfo;
 		player->GetGameContext()->GetPhysicsManager().RaycastQuery(origin, dir, 1000.0f, hitInfo);
 		
@@ -118,7 +124,7 @@ void WeaponComponent::Fire()
 			}
 		
 
-		//GetOwner()->GetGame()->GetRenderer().AddDebugLines(origin, origin + dir * 50.0f);
+		//GetOwner()->GetGameContext()->GetRenderer().AddDebugLines(origin, origin + dir * 50.0f);
 
 		GameEvent::Publish<EventOnPlayerWeaponFired>(EventOnPlayerWeaponFired(CalculateRecoilDeviation()));
 	}
@@ -210,6 +216,6 @@ Vec2 WeaponComponent::CalculateRecoilDeviation() const
 void WeaponComponent::AimingTimeline(float alpha)
 {
 	Player* player = static_cast<Player*>(mOwner);
-	player->GetMainCamera().SetHorFOV(Math::Lerp(80.0f, 60.0f, alpha));
+	player->GetMainCamera().SetHorFOV(Math::Lerp(80.0f, 50.0f, alpha));
 }
 

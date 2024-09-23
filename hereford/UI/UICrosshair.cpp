@@ -53,6 +53,8 @@ void UICrosshair::Initialize()
 void UICrosshair::UpdateContent()
 {
 	float accDev = mPtrWeaponComp->GetAccuracyDeviation();
+	float gap = accDev * mPtrRenderer->GetScreenDimension().mX / (0.9f * 2.0f);
+
 	mPtrShader->Use();
-	mPtrShader->SetFloat("crosshairGap", accDev * 200.0f);
+	mPtrShader->SetFloat("crosshairGap", gap);
 }

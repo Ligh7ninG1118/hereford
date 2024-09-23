@@ -443,6 +443,16 @@ void Renderer::Render(float deltaTime)
 
 	}
 
+	for (auto line : mDebugLines)
+	{
+		glBindVertexArray(line);
+		debugLineShader->Use();
+		debugLineShader->SetMat4("model", Mat4::Identity);
+		debugLineShader->SetMat4("projection", projection);
+		debugLineShader->SetMat4("view", view);
+		glLineWidth(1.5f);
+		glDrawArrays(GL_LINES, 0, 2);
+	}
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -509,6 +519,8 @@ void Renderer::Render(float deltaTime)
 			glBindTexture(GL_TEXTURE_2D, uiImage->GetTexture()->GetID());
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 	}
+
+	
 
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
