@@ -32,7 +32,7 @@ Player::Player(GameContext* gameCtx)
 
 	mPtrAnimRenderComp->SetShader(AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_phong_frag.glsl")));
 
-	mPtrAnimRenderComp->SetTranslateOffset(Vec3(0.0f, 1.32f, 0.0f));
+	mPtrAnimRenderComp->SetTranslateOffset(Vec3(-0.2f, 1.32f, 0.0f));
 	mPtrAnimRenderComp->SetScaleOffset(Vec3(0.03f));
 	mPtrAnimRenderComp->SetRotateOffset(Vec3(0.0f, 0.0f, 90.0f));
 

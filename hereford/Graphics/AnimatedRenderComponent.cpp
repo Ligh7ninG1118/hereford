@@ -19,6 +19,7 @@ AnimatedRenderComponent::~AnimatedRenderComponent()
 Mat4 AnimatedRenderComponent::GetModelMatrix() const
 {
 	Mat4 mat = Mat4::Identity;
+
 	mat.Scale(mScaleOffset);
 	mat.Scale(mOwner->GetScale());
 
@@ -34,7 +35,18 @@ Mat4 AnimatedRenderComponent::GetModelMatrix() const
 		rot = mOwner->GetRotation();
 	}
 	mat.Rotate(mRotateOffset + rot);
-	mat.Translate(mTranslateOffset + mOwner->GetPosition());
+
+	Vec3 actorFwd = mOwner->GetForward();
+	Vec3 actorRight = -actorFwd.Cross(Vec3(0.0f, 1.0f, 0.0f)).normalized();
+	Vec3 actorUp = Vec3(0.0f, 1.0f, 0.0f);
+
+	float x = mTranslateOffset.Dot(actorFwd);
+	float y = mTranslateOffset.Dot(actorUp);
+	float z = mTranslateOffset.Dot(actorRight);
+
+	Vec3 actualOffset = Vec3(x, y, z);
+
+	mat.Translate(actualOffset + mOwner->GetPosition());
 
 	return mat;
 }
