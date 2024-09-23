@@ -17,14 +17,20 @@ private:
 	class TimelineAction
 	{
 	public:
-		TimelineAction(float inTime, std::function<void(float)> inCallback)
-			: mTotalTime(inTime), mCurrentAlpha(0.0f), mPendingDelete(false), mCallback(inCallback)
-		{}
+		TimelineAction(float inTime, bool isReverse, std::function<void(float)> inCallback)
+			: mTotalTime(inTime), mCurrentAlpha(0.0f), mIsReverse(isReverse), mPendingDelete(false), mCallback(inCallback)
+		{
+			mCurrentAlpha = isReverse ? 1.0f : 0.0f;
+		}
 
 		void Execute(float deltaTime) 
 		{ 
-			mCurrentAlpha += deltaTime / mTotalTime;
-			if (mCurrentAlpha >= 1.0f)
+			float diff = deltaTime / mTotalTime;
+			if (mIsReverse)
+				diff *= -1.0f;
+
+			mCurrentAlpha += diff;
+			if (mCurrentAlpha >= 1.0f || mCurrentAlpha <= 0.0f)
 				mPendingDelete = true;
 
 			mCurrentAlpha = Math::Clamp(mCurrentAlpha, 0.0f, 1.0f);
@@ -37,26 +43,21 @@ private:
 	private:
 		float mTotalTime;
 		float mCurrentAlpha;
+		bool mIsReverse;
 		bool mPendingDelete;
 
 		std::function<void(float)> mCallback;
 	};
 
 public:
-	static void AddAction(TAHandle& inHandle, const std::function<void(float)>& inCallback, float inPeriod)
+	static void PlayFromStart(TAHandle& inHandle, const std::function<void(float)>& inCallback, float inPeriod)
 	{
-		// If handle doesnt own any action before
-		if (mTimelineActionMap.find(inHandle.mIndex) == mTimelineActionMap.end())
-		{
-			// Find next free index (useful if index went overbound and looped over) & skip 0
-			while (mTimelineActionMap.find(topIndex) != mTimelineActionMap.end() || topIndex == 0)
-				topIndex++;
+		AddAction(inHandle, inCallback, inPeriod, false);
+	}
 
-			inHandle.mIndex = topIndex++;
-		}
-
-		// Previous action (if any) will be deleted automatically (unique ptr)
-		mTimelineActionMap[inHandle.mIndex] = std::make_unique<TimelineAction>(TimelineAction(inPeriod, inCallback));
+	static void ReverseFromEnd(TAHandle& inHandle, const std::function<void(float)>& inCallback, float inPeriod)
+	{
+		AddAction(inHandle, inCallback, inPeriod, true);
 	}
 
 	static void RemoveAction(const TAHandle& inHandle)
@@ -91,9 +92,25 @@ public:
 	}
 
 private:
+	static void AddAction(TAHandle& inHandle, const std::function<void(float)>& inCallback, float inPeriod, bool isReverse)
+	{
+		// If handle doesnt own any action before
+		if (mTimelineActionMap.find(inHandle.mIndex) == mTimelineActionMap.end())
+		{
+			// Find next free index (useful if index went overbound and looped over) & skip 0
+			while (mTimelineActionMap.find(topIndex) != mTimelineActionMap.end() || topIndex == 0)
+				topIndex++;
+
+			inHandle.mIndex = topIndex++;
+		}
+
+		// Previous action (if any) will be deleted automatically (unique ptr)
+		mTimelineActionMap[inHandle.mIndex] = std::make_unique<TimelineAction>(TimelineAction(inPeriod, isReverse, inCallback));
+	}
+
+
 	static unsigned int topIndex;
 	static std::unordered_map<unsigned int, std::unique_ptr<TimelineAction>> mTimelineActionMap;
-
 };
 
 
