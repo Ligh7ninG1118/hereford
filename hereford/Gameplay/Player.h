@@ -3,6 +3,7 @@
 #include "Util/DelayedAction.h"
 #include "Util/GameEvent.h"
 #include "Util/Reflection.h"
+#include "Util/TimelineAction.h"
 #include <memory>
 
 
@@ -26,6 +27,8 @@ private:
 	void ShowDebugInfo();
 	void WeaponFiredEventListener(EventOnPlayerWeaponFired inEvent);
 
+	void CrouchTimeline(float alpha);
+
 	std::unique_ptr<class CameraComponent> mPtrCameraComp;
 	std::unique_ptr<class AnimatedRenderComponent> mPtrAnimRenderComp;
 	std::shared_ptr<class AnimationStateMachine> mPtrAnimStateMachine;
@@ -35,6 +38,8 @@ private:
 	class WeaponComponent* mPtrActiveWeaponComp;
 	class UIAmmoIndicator* mPtrUIAmmo;
 	class UICrosshair* mPtrUICrosshair;
+
+	TAHandle mHCrouchTimeline;
 
 
 	bool hasMovementInput = false;

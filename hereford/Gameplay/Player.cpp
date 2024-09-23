@@ -154,18 +154,17 @@ void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 	{
 		if (keyState[SDL_SCANCODE_C] == EInputState::KEY_DOWN)
 		{
+			//TODO: Block when already crouching (or add the buffer system)
 			//TODO: Creating additional copy here. Overload enum version
 			if (mPtrActionComp->GetActiveGameplayTags().HasTag(GameplayTag(EActionType::CROUCHING)))
 			{
 				mPtrActionComp->StopActionByName("Crouch");
-				mPtrCameraComp->SetEyeHeight(1.8f);
-				mPtrAnimRenderComp->SetTranslateOffset(Vec3(0.0f, 1.32f, 0.0f));
+				TimelineActionManager::ReverseFromEnd(mHCrouchTimeline, std::bind(&Player::CrouchTimeline, this, std::placeholders::_1), 0.25f);
 			}
 			else
 			{
 				mPtrActionComp->StartActionByName("Crouch");
-				mPtrCameraComp->SetEyeHeight(0.9f);
-				mPtrAnimRenderComp->SetTranslateOffset(Vec3(0.0f, 0.56f, 0.0f));
+				TimelineActionManager::PlayFromStart(mHCrouchTimeline, std::bind(&Player::CrouchTimeline, this, std::placeholders::_1), 0.25f);
 			}
 		}
 
@@ -231,4 +230,13 @@ void Player::ShowDebugInfo()
 void Player::WeaponFiredEventListener(EventOnPlayerWeaponFired inEvent)
 {
 	mPtrCameraComp->RotateCamera(inEvent.mRecoilDeviation);
+}
+
+void Player::CrouchTimeline(float alpha)
+{
+	float heightVal = Math::Lerp(1.8f, 0.9f, alpha);
+	float armOffsetVal = Math::Lerp(1.32f, 0.56f, alpha);
+
+	mPtrCameraComp->SetEyeHeight(heightVal);
+	mPtrAnimRenderComp->SetTranslateOffset(Vec3(0.0f, armOffsetVal, 0.0f));
 }

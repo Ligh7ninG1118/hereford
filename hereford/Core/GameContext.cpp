@@ -7,6 +7,7 @@
 #include "Props/NPC.h"
 #include "Util/Random.h"
 #include "Util/DelayedAction.h"
+#include "Util/TimelineAction.h"
 #include "Asset/Shader.h"
 
 #include "Asset/Model.h"
@@ -138,6 +139,7 @@ void GameContext::RunLoop()
 		UpdateGame();
 		CalculatePhysics();
 		DelayedActionManager::UpdateTimers(mDeltaTime);
+		TimelineActionManager::UpdateTimers(mDeltaTime);
 		Uint32 timestampUpdate = SDL_GetTicks();
 		GenerateOutput();
 		Uint32 timestampRender = SDL_GetTicks();
