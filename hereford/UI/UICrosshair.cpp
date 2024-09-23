@@ -1,6 +1,7 @@
 #include "UICrosshair.h"
 #include "Asset/Shader.h"
 #include "Graphics/Renderer.h"
+#include "Gameplay/WeaponComponent.h"
 #include <glad/glad.h>
 
 UICrosshair::UICrosshair(Renderer* inPtrRenderer, Shader* inPtrShader, WeaponComponent* inPtrWeaponComp)
@@ -51,4 +52,7 @@ void UICrosshair::Initialize()
 
 void UICrosshair::UpdateContent()
 {
+	float accDev = mPtrWeaponComp->GetAccuracyDeviation();
+	mPtrShader->Use();
+	mPtrShader->SetFloat("crosshairGap", accDev * 200.0f);
 }
