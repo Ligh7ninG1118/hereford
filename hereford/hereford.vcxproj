@@ -178,6 +178,7 @@
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="Props\NPC.cpp" />
+    <ClCompile Include="Util\TimelineAction.cpp" />
     <ClCompile Include="UI\UICrosshair.cpp" />
     <ClCompile Include="UI\UIAmmoIndicator.cpp" />
     <ClCompile Include="Util\DelayedAction.cpp" />
@@ -235,6 +236,7 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="Physics\PhysicsPrimitive.h" />
     <ClInclude Include="Props\NPC.h" />
+    <ClInclude Include="Util\TimelineAction.h" />
     <ClInclude Include="UI\UICrosshair.h" />
     <ClInclude Include="UI\UIAmmoIndicator.h" />
     <ClInclude Include="Util\DelayedAction.h" />
