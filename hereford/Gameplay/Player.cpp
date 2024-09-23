@@ -257,5 +257,5 @@ void Player::CrouchTimeline(float alpha)
 	float armOffsetVal = Math::Lerp(1.32f, 0.56f, alpha);
 
 	mPtrCameraComp->SetEyeHeight(heightVal);
-	mPtrAnimRenderComp->SetTranslateOffset(Vec3(0.0f, armOffsetVal, 0.0f));
+	mPtrAnimRenderComp->SetTranslateOffset(Vec3(-0.2f, armOffsetVal, 0.0f));
 }

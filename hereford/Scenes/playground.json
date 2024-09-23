@@ -3,12 +3,39 @@
     "actors": [
     	{
     		"class": "TestCube",
-    		"position": [5.0, 1.8, 0.0]
+    		"position": [5.0, 0.5, 2.0],
+            "rotation": [0.0, 0.0, -23.21]
     	},
     	{
-    		"class": "TestCube",
-    		"position": [2.0, 1.8, 2.0]
-    	},
+            "class": "TestCube",
+            "position": [4.657, 0.5, 0.81],
+            "rotation": [0.0, 0.0,9.994]
+        },
+        {
+            "class": "TestCube",
+            "position": [4.944, 1.5, 1.23],
+            "rotation": [0.0, 0.0, -14.978]
+        },
+        {
+            "class": "TestCube",
+            "position": [4.608, 1.5, 2.51],
+            "rotation": [0.0, 0.0, -0.72]
+        },
+        {
+            "class": "TestCube",
+            "position": [4.537, 0.5, 3.047],
+            "rotation": [0.0, 0.0, -13.28]
+        },
+        {
+            "class": "TestCube",
+            "position": [4.92, 0.5, -3.99],
+            "rotation": [0.0, 0.0, -13.28]
+        },
+        {
+            "class": "TestCube",
+            "position": [4.25, 0.5, -2.82],
+            "rotation": [0.0, 0.0, 27.887]
+        },
         {
             "class": "Ground"
         },
