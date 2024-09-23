@@ -7,8 +7,8 @@ The project's main purpose is for me to learn more about game engine development
 
 >Note: Due to different license requirements, assets used aren't included in this repo
 
-## Progress Showcase (Updated 09/06/2024)
-[![Hereford Progress Showcase](http://img.youtube.com/vi/VHlY_zjUnFU/0.jpg)](https://youtu.be/VHlY_zjUnFU)
+## Progress Showcase (Updated 09/23/2024)
+[![Hereford Progress Showcase](http://img.youtube.com/vi/x6tBoMDr7QA/0.jpg)](https://youtu.be/x6tBoMDr7QA)
 
 ## Features Developed
 or at least, "it's working!"
@@ -19,10 +19,16 @@ or at least, "it's working!"
 - Actor and Component Structure
 - Event
 - Delayed Action
+- Timeline Action
+- Reflection
+- Scene Content (JSON)
 
 ### Gameplay
 - First Person Camera and Control
 - Animation State Machine
+- Gameplay Actions
+- Movement States (Crouch, Sprint)
+- Weapon
 
 ### Phyiscs
 - Raycast Query (Against Sphere, AABB)
@@ -36,13 +42,12 @@ or at least, "it's working!"
 
 ## Planned Features
 ### Engine
-- Scene Content (JSON)
 - Lua Scripting
 - Scripted Level Sequence
 
 ### Gameplay
-- Movement States (Crouch, Prone, Sprint, Ladder Climbing, Rapple Down)
-- Weapon and Gadgets
+- Movement States (Prone, Ladder Climbing, Rapple Down)
+- Gadgets
 - Object Interaction
 
 ### Physics
@@ -63,6 +68,8 @@ or at least, "it's working!"
 - Assimp
 - stb_image
 - Freetype
+- JSON for Modern C++
+- ImGUI
 
 ## Assets Used
 WIP
