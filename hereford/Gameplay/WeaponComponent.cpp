@@ -7,6 +7,7 @@
 #include "Gameplay/CameraComponent.h"
 #include "Gameplay/IHittable.h"
 #include "Gameplay/Actions/ActionComponent.h"
+#include "Gameplay/CameraComponent.h"
 #include "Physics/PhysicsManager.h"
 #include "Util/Random.h"
 #include "Util/GameEvent.h"
@@ -30,7 +31,9 @@ WeaponComponent::WeaponComponent(Actor* owner, std::weak_ptr<AnimationStateMachi
 
 	mRecoilType = ERecoilType::RECOIL_DIAMOND;
 	mRecoilDiamond = Vec2(0.1f, 0.2f);
-	mAccuracySpreadFactor = 0.05f;
+	mDefaultAccuracySpreadFactor = 0.05f;
+	mTargetAccuracySpreadFactor = mDefaultAccuracySpreadFactor;
+	mAccuracySpreadFactor = mDefaultAccuracySpreadFactor;
 
 	mHeatReduceDelayCooldown = 0.2f;
 	mHeatReduceRatePerSec = 30.0f;
@@ -59,6 +62,10 @@ void WeaponComponent::Update(float deltaTime)
 		mHeatReduceDelayTimer -= deltaTime;
 	else if (mCurrentHeat > 0.0f)
 		mCurrentHeat -= mHeatReduceRatePerSec * deltaTime;
+
+	// Smooth crosshair transition
+	if (abs(mAccuracySpreadFactor - mTargetAccuracySpreadFactor) > EPSILON)
+		mAccuracySpreadFactor = Math::Lerp(mAccuracySpreadFactor, mTargetAccuracySpreadFactor, 0.3f);
 }
 
 void WeaponComponent::ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
@@ -66,6 +73,15 @@ void WeaponComponent::ProcessInput(const std::vector<EInputState>& keyState, Uin
 	EMouseState targetFlag = mIsSemiAuto ? LMB_DOWN : LMB_HOLD;
 	if (mouseState & targetFlag)
 		Fire();
+
+	if (mouseState & RMB_DOWN)
+	{
+		TimelineActionManager::PlayFromStart(mHAimingTimeline, std::bind(&WeaponComponent::AimingTimeline, this, std::placeholders::_1), 0.2f);
+	}
+	else if (mouseState & RMB_UP)
+	{
+		TimelineActionManager::ReverseFromEnd(mHAimingTimeline, std::bind(&WeaponComponent::AimingTimeline, this, std::placeholders::_1), 0.2f);
+	}
 
 	if (keyState[SDL_SCANCODE_R] == EInputState::KEY_DOWN)
 	{
@@ -116,7 +132,7 @@ void WeaponComponent::Reload()
 		auto lock = mAnimStateMachine.lock();
 		if (lock)
 			lock->PlayAnimation(3, false, mReloadAnimDuration);
-		DelayedActionManager::AddAction(mReloadAction, std::bind(&WeaponComponent::FinishedReload, this), mReloadAnimDuration, false);
+		DelayedActionManager::AddAction(mHReloadCallback, std::bind(&WeaponComponent::FinishedReload, this), mReloadAnimDuration, false);
 	}
 }
 
@@ -190,3 +206,10 @@ Vec2 WeaponComponent::CalculateRecoilDeviation() const
 		return Vec2(0.0f, 0.0f);
 	}
 }
+
+void WeaponComponent::AimingTimeline(float alpha)
+{
+	Player* player = static_cast<Player*>(mOwner);
+	player->GetMainCamera().SetHorFOV(Math::Lerp(80.0f, 60.0f, alpha));
+}
+

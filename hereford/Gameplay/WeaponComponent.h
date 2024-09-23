@@ -2,6 +2,7 @@
 #include "Core/Component.h"
 #include "Math/Math.h"
 #include "Util/DelayedAction.h"
+#include "Util/TimelineAction.h"
 
 
 enum class EWeaponState
@@ -38,6 +39,10 @@ public:
 
 	inline uint16 GetMaxMagazineCapacity() const { return mMaxMagazineCapacity; }
 	inline uint16 GetMaxReserveCapacity() const { return mMaxReserveCapacity; }
+
+	inline void SetAccuracySpreadMultiplier(float multiplier = 1.0f) { mTargetAccuracySpreadFactor = mDefaultAccuracySpreadFactor * multiplier; }
+
+	inline float GetAccuracyDeviation() const { return mAccuracySpreadFactor; }
 	
 private:
 	void FinishedReload();
@@ -47,10 +52,14 @@ private:
 
 	Vec2 CalculateRecoilDeviation() const;
 
+	void AimingTimeline(float alpha);
+
+
 	std::weak_ptr<class AnimationStateMachine> mAnimStateMachine;
 
 	EWeaponState mCurrentState;
-	DAHandle mReloadAction;
+	DAHandle mHReloadCallback;
+	TAHandle mHAimingTimeline;
 
 	// General
 	float mReloadAnimDuration;
@@ -68,6 +77,8 @@ private:
 	ERecoilType mRecoilType;
 	Vec2 mRecoilDiamond;
 	float mAccuracySpreadFactor;
+	float mDefaultAccuracySpreadFactor;
+	float mTargetAccuracySpreadFactor;
 
 	float mHeatReduceDelayCooldown;
 	float mHeatReduceRatePerSec;

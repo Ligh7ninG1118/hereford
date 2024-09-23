@@ -96,6 +96,24 @@ Player::~Player()
 void Player::OnUpdate(float deltaTime)
 {
 	ProcessMovement(deltaTime);
+
+
+	if (hasMovementInput)
+	{
+		if (mPtrActionComp->GetActiveGameplayTags().HasTag(GameplayTag(EActionType::CROUCHING)))
+			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.125f);
+		else
+			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.5f);
+	}
+	else
+	{
+		if (mPtrActionComp->GetActiveGameplayTags().HasTag(GameplayTag(EActionType::CROUCHING)))
+			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(0.75f);
+		else
+			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.0f);
+	}
+
+
 	ShowDebugInfo();
 }
 
@@ -151,6 +169,7 @@ void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 			mRotation.mY = 0.0f;
 	}
 
+	// Movement States (Crouching, Sprinting, etc.)
 	{
 		if (keyState[SDL_SCANCODE_C] == EInputState::KEY_DOWN)
 		{
