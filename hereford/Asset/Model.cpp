@@ -155,10 +155,10 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType 
 				tType = ETextureType::EMISSIVE;
 				break;
 			case aiTextureType_DIFFUSE_ROUGHNESS:
-				tType = ETextureType::DIFFUSE_ROUGHNESS;
+				tType = ETextureType::ROUGHNESS;
 				break;
 			case aiTextureType_METALNESS:
-				tType = ETextureType::METALNESS;
+				tType = ETextureType::METALLIC;
 				break;
 			case aiTextureType_LIGHTMAP:
 				tType = ETextureType::AMBIENT_OCCLUSION;
