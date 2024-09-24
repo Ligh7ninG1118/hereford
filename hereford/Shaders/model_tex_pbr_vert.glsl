@@ -2,6 +2,8 @@
 layout (location = 0) in vec3 inPos;
 layout (location = 1) in vec3 inNormal;
 layout (location = 2) in vec2 inTexCoords;
+layout (location = 3) in vec3 inTangent;
+layout (location = 4) in vec3 inBiTangent;
 layout (location = 5) in ivec4 inBoneIDs;
 layout (location = 6) in vec4 inWeights;
 
@@ -12,6 +14,7 @@ uniform mat4 projection;
 out vec2 TexCoords;
 out vec3 WorldPos;
 out vec3 Normal;
+out mat3 TBN;
 
 const int MAX_BONES = 100;
 const int MAX_BONE_INFLUENCE = 4;
@@ -42,6 +45,7 @@ void main()
      if(!hasBoneInfluenced)
         totalPosition = vec4(inPos, 1.0f);
 
+    TBN = mat3(normalize(inTangent), normalize(inBiTangent), normalize(inNormal));
     TexCoords = inTexCoords;    
     WorldPos = vec3(model * totalPosition);
     Normal = inNormal;
