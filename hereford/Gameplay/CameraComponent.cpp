@@ -58,32 +58,14 @@ Mat4 CameraComponent::GetViewMatrix() const
 	return Mrot2 * Mtsl2;
 }
 
-Mat4 CameraComponent::GetPerspMatrix(const float& screenRatio) const
+Mat4 CameraComponent::GetPerspMatrix(float screenRatio) const
 {
-	Mat4 projection = Mat4::Zero;
-
-	float tanHalfFOVy = tan(DEG2RAD * mHorFOV / 2.0f);
-	projection.m[0][0] = 1.0f / (screenRatio * tanHalfFOVy);
-	projection.m[1][1] = 1.0f / tanHalfFOVy;
-	projection.m[2][2] = -(mFarPlane + mNearPlane) / (mFarPlane - mNearPlane);
-	projection.m[2][3] = -1.0f;
-	projection.m[3][2] = -(2.0f * mFarPlane * mNearPlane) / (mFarPlane - mNearPlane);
-
-	return projection;
+	return Mat4::CalculatePerspMatrix(mHorFOV, screenRatio, mNearPlane, mFarPlane);
 }
 
 Mat4 CameraComponent::GetOrthoMatrix(float left, float right, float bottom, float top) const
 {
-	Mat4 projection = Mat4::Identity;
-	projection.m[0][0] = 2.0f / (right - left);
-	projection.m[1][1] = 2.0f / (top - bottom);
-	projection.m[2][2] = -1.0f;
-
-	projection.m[3][0] = -(right + left) / (right - left);
-	projection.m[3][1] = -(top + bottom) / (top - bottom);
-	projection.m[3][2] = 0.0f;
-
-	return projection;
+	return Mat4::CalculateOrthoMatrix(left, right, bottom, top);
 }
 
 Vec3 CameraComponent::GetCameraPosition() const

@@ -18,7 +18,7 @@ public:
 	void SetHorFOV(float hov) { mHorFOV = hov; }
 
 	Mat4 GetViewMatrix() const;
-	Mat4 GetPerspMatrix(const float& screenRatio) const;
+	Mat4 GetPerspMatrix(float screenRatio) const;
 	Mat4 GetOrthoMatrix(float left, float right, float bottom, float top) const;
 	Vec3 GetFrontVector() const
 	{

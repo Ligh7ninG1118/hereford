@@ -52,7 +52,7 @@ Matrix4x4::Matrix4x4(const Matrix4x4& rhs)
 {
 }
 
-Matrix4x4& Matrix4x4::Translate(const Vector3& translate)
+Matrix4x4& Matrix4x4::Translate(Vector3 translate)
 {
 	// column major? switch to [i][3]
 	for (int i = 0; i < 3; i++)
@@ -69,35 +69,36 @@ Matrix4x4& Matrix4x4::Translate(float x, float y, float z)
 }
 
 
-Matrix4x4& Matrix4x4::Rotate(const float& radAngle, const Vector3& axis)
-{
-	Vector3 axisNorm = axis.normalized();
-	float cosTheta = cos(radAngle);
-	float sinTheta = sin(radAngle);
-
-	Matrix4x4 rot = Matrix4x4::Identity;
-	Vector3 temp = axisNorm * (1 - cosTheta);
-
-	rot.m[0][0] = cosTheta + temp[0] * axisNorm[0]; 
-	rot.m[0][1] = temp[0] * axisNorm[1] + sinTheta * axisNorm[2];
-	rot.m[0][2] = temp[0];
-
-	rot.m[0][0] = cosTheta + temp[0] * axisNorm[0];
-	rot.m[0][1] = temp[0] * axisNorm[1] + sinTheta * axisNorm[2];
-	rot.m[0][2] = temp[0] * axisNorm[2] - sinTheta * axisNorm[1];
-
-	rot.m[1][0] = temp[1] * axisNorm[0] - sinTheta * axisNorm[2];
-	rot.m[1][1] = cosTheta + temp[1] * axisNorm[1];
-	rot.m[1][2] = temp[1] * axisNorm[2] + sinTheta * axisNorm[0];
-
-	rot.m[2][0] = temp[2] * axisNorm[0] + sinTheta * axisNorm[1];
-	rot.m[2][1] = temp[2] * axisNorm[1] - sinTheta * axisNorm[0];
-	rot.m[2][2] = cosTheta + temp[2] * axisNorm[2];
-
-	*this = *this * rot;
-
-	return *this;
-}
+// Deprecated
+//Matrix4x4& Matrix4x4::Rotate(const float& radAngle, const Vector3& axis)
+//{
+//	Vector3 axisNorm = axis.normalized();
+//	float cosTheta = cos(radAngle);
+//	float sinTheta = sin(radAngle);
+//
+//	Matrix4x4 rot = Matrix4x4::Identity;
+//	Vector3 temp = axisNorm * (1 - cosTheta);
+//
+//	rot.m[0][0] = cosTheta + temp[0] * axisNorm[0]; 
+//	rot.m[0][1] = temp[0] * axisNorm[1] + sinTheta * axisNorm[2];
+//	rot.m[0][2] = temp[0];
+//
+//	rot.m[0][0] = cosTheta + temp[0] * axisNorm[0];
+//	rot.m[0][1] = temp[0] * axisNorm[1] + sinTheta * axisNorm[2];
+//	rot.m[0][2] = temp[0] * axisNorm[2] - sinTheta * axisNorm[1];
+//
+//	rot.m[1][0] = temp[1] * axisNorm[0] - sinTheta * axisNorm[2];
+//	rot.m[1][1] = cosTheta + temp[1] * axisNorm[1];
+//	rot.m[1][2] = temp[1] * axisNorm[2] + sinTheta * axisNorm[0];
+//
+//	rot.m[2][0] = temp[2] * axisNorm[0] + sinTheta * axisNorm[1];
+//	rot.m[2][1] = temp[2] * axisNorm[1] - sinTheta * axisNorm[0];
+//	rot.m[2][2] = cosTheta + temp[2] * axisNorm[2];
+//
+//	*this = *this * rot;
+//
+//	return *this;
+//}
 
 //In degree angles
 Matrix4x4& Matrix4x4::Rotate(float x, float y, float z)
@@ -107,13 +108,13 @@ Matrix4x4& Matrix4x4::Rotate(float x, float y, float z)
 }
 
 //In degree angles
-Matrix4x4& Matrix4x4::Rotate(const Vector3& eulerRot)
+Matrix4x4& Matrix4x4::Rotate(Vector3 eulerRot)
 {
 	Quat quat = Quaternion::EulerToQuat(eulerRot);
 	return Rotate(quat);
 }
 
-Matrix4x4& Matrix4x4::Rotate(const Quaternion& quat)
+Matrix4x4& Matrix4x4::Rotate(Quaternion quat)
 {
 	Matrix4x4 rot = Matrix4x4::Identity;
 
@@ -151,14 +152,14 @@ Matrix4x4& Matrix4x4::Rotate(const Quaternion& quat)
 	return *this;
 }
 
-Matrix4x4& Matrix4x4::Scale(const Vector3& scale)
+Matrix4x4& Matrix4x4::Scale(Vector3 scale)
 {
 	for (int i = 0; i < 3; i++)
 		m[i][i] *= scale[i];
 	return *this;
 }
 
-Matrix4x4& Matrix4x4::Scale(const float& scale)
+Matrix4x4& Matrix4x4::Scale(float scale)
 {
 	for (int i = 0; i < 3; i++)
 		m[i][i] *= scale;
@@ -166,6 +167,34 @@ Matrix4x4& Matrix4x4::Scale(const float& scale)
 }
 
 
+
+Matrix4x4& Matrix4x4::CalculatePerspMatrix(float horFOV, float screenRatio, float nearPlane, float farPlane)
+{
+	Mat4 projection = Mat4::Zero;
+
+	float tanHalfFOVy = tan(DEG2RAD * horFOV / 2.0f);
+	projection.m[0][0] = 1.0f / (screenRatio * tanHalfFOVy);
+	projection.m[1][1] = 1.0f / tanHalfFOVy;
+	projection.m[2][2] = -(farPlane + nearPlane) / (farPlane - nearPlane);
+	projection.m[2][3] = -1.0f;
+	projection.m[3][2] = -(2.0f * farPlane * nearPlane) / (farPlane - nearPlane);
+
+	return projection;
+}
+
+Matrix4x4& Matrix4x4::CalculateOrthoMatrix(float left, float right, float bottom, float top)
+{
+	Mat4 projection = Mat4::Identity;
+	projection.m[0][0] = 2.0f / (right - left);
+	projection.m[1][1] = 2.0f / (top - bottom);
+	projection.m[2][2] = -1.0f;
+
+	projection.m[3][0] = -(right + left) / (right - left);
+	projection.m[3][1] = -(top + bottom) / (top - bottom);
+	projection.m[3][2] = 0.0f;
+
+	return projection;
+}
 
 Matrix4x4& Matrix4x4::Clear()
 {
