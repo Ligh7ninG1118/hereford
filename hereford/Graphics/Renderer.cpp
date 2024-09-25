@@ -84,7 +84,7 @@ bool Renderer::Initialize()
 
 	glViewport(0, 0, mScreenWidth, mScreenHeight);
 	glClearColor(0.0f, 0.3f, 1.0f, 0.0f);
-
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	debugLineShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/debug_line_vert.glsl*Shaders/debug_line_frag.glsl"));
 	debugLineShader->Use();
 	debugLineShader->SetVec4("startColor", 0.0f, 1.0f, 0.0f, 1.0f);
@@ -622,11 +622,11 @@ void Renderer::Render(float deltaTime)
 					glBindTexture(GL_TEXTURE_CUBE_MAP, irraTexID);
 
 					shader->SetInt("prefilter", texChannel + 1);
-					glActiveTexture(GL_TEXTURE0 + texChannel);
+					glActiveTexture(GL_TEXTURE0 + texChannel + 1);
 					glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterTexID);
 
 					shader->SetInt("brdfLUT", texChannel + 2);
-					glActiveTexture(GL_TEXTURE0 + texChannel);
+					glActiveTexture(GL_TEXTURE0 + texChannel + 2);
 					glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 				}
 				else
