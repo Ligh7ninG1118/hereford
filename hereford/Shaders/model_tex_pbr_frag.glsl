@@ -128,7 +128,7 @@ void main()
 
     color = color / (color + vec3(1.0f));
     color = pow(color, vec3(1.0f/2.2f));
-    //color += emissive;
+    color += emissive;
 
     FragColor = vec4(color, 1.0f) ;
 }

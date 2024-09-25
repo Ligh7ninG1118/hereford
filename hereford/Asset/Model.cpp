@@ -87,6 +87,7 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
+
 	std::vector<Texture> tempTextures;
 
 	std::vector<aiTextureType> targetTextureType{ 
@@ -95,9 +96,9 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 		aiTextureType_DIFFUSE_ROUGHNESS, aiTextureType_LIGHTMAP
 	};
 
-	for (auto tType : targetTextureType)
+	for (auto type : targetTextureType)
 	{
-		tempTextures = LoadMaterialTextures(material, tType, scene);
+		tempTextures = LoadMaterialTextures(material, type, scene);
 		finalMesh.mTextures.insert(finalMesh.mTextures.end(), tempTextures.begin(), tempTextures.end());
 	}
 
@@ -158,6 +159,7 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType 
 				tType = ETextureType::ROUGHNESS;
 				break;
 			case aiTextureType_METALNESS:
+			case aiTextureType_SHININESS:
 				tType = ETextureType::METALLIC;
 				break;
 			case aiTextureType_LIGHTMAP:

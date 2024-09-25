@@ -498,6 +498,15 @@ void Renderer::Render(float deltaTime)
 			shader->SetMat4("projection", projection);
 			shader->SetMat4("view", view);
 
+			shader->SetInt("tex_specular_1", 30);
+			shader->SetInt("tex_diffuse_1", 30);
+			shader->SetInt("tex_height_1", 30);
+			shader->SetInt("tex_normals_1", 30);
+			shader->SetInt("tex_emissive_1", 30);
+			shader->SetInt("tex_roughness_1", 30);
+			shader->SetInt("tex_metallic_1", 30);
+			shader->SetInt("tex_ao_1", 30);
+
 			if (auto animRenderComp = dynamic_cast<AnimatedRenderComponent*>(renderComp); animRenderComp != nullptr)
 			{
 				Mat4 model = animRenderComp->GetModelMatrix();
@@ -567,6 +576,7 @@ void Renderer::Render(float deltaTime)
 
 					glBindVertexArray(0);
 					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, 0);
 				}
 			}
 			else
@@ -635,7 +645,14 @@ void Renderer::Render(float deltaTime)
 				}
 
 				glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
+
+				glBindVertexArray(0);
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, 0);
 			}
+
 		}
 
 

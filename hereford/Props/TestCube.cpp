@@ -17,8 +17,9 @@ TestCube::TestCube(GameContext* gameCtx)
 	Primitive::GenerateCube(cubeInfo);
 	m_pRenderComponent->SetVAOID(cubeInfo.mVAO);
 	m_pRenderComponent->SetVBOID(cubeInfo.mVBO);
+	m_pRenderComponent->LoadTextures();
 
-	std::shared_ptr<Shader> shader = AssetManager::LoadAsset<Shader>(std::string("Shaders/standard_vert.glsl*Shaders/standard_frag.glsl"));
+	std::shared_ptr<Shader> shader = AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_pbr_frag.glsl"));
 	m_pRenderComponent->SetShader(shader);
 
 	m_pRenderComponent->SetColor(Vec3(Random::Range(0.1f, 0.9f), Random::Range(0.1f, 0.9f), Random::Range(0.1f, 0.9f)));

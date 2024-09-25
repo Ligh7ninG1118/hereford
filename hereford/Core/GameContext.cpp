@@ -159,8 +159,6 @@ void GameContext::LoadData()
 {
 	mPtrPlayer = new Player(this);
 	mPtrRenderer->SetMainCamera(&mPtrPlayer->GetMainCamera());
-
-	Ground* ground = new Ground(this);
 }
 
 void GameContext::LoadScene(const std::string& sceneFilePath)
