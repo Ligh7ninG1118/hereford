@@ -27,9 +27,9 @@ struct Matrix4x4
 	Matrix4x4& Scale(Vector3 scale);
 	Matrix4x4& Scale(float scale);
 
-	static Matrix4x4& CalculatePerspMatrix(float horFOV, float screenRatio, float nearPlane, float farPlane);
-	static Matrix4x4& CalculateOrthoMatrix(float left, float right, float bottom, float top);
-	static Matrix4x4& CalculateLookAtMatrix(Vector3 front, Vector3 right, Vector3 up);
+	static Matrix4x4 CalculatePerspMatrix(float horFOV, float screenRatio, float nearPlane, float farPlane);
+	static Matrix4x4 CalculateOrthoMatrix(float left, float right, float bottom, float top);
+	static Matrix4x4 CalculateLookAtMatrix(Vector3 front, Vector3 right, Vector3 up);
 
 
 	Matrix4x4& Clear();

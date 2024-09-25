@@ -168,7 +168,7 @@ Matrix4x4& Matrix4x4::Scale(float scale)
 
 
 
-Matrix4x4& Matrix4x4::CalculatePerspMatrix(float horFOV, float screenRatio, float nearPlane, float farPlane)
+Matrix4x4 Matrix4x4::CalculatePerspMatrix(float horFOV, float screenRatio, float nearPlane, float farPlane)
 {
 	Mat4 projection = Mat4::Zero;
 
@@ -182,7 +182,7 @@ Matrix4x4& Matrix4x4::CalculatePerspMatrix(float horFOV, float screenRatio, floa
 	return projection;
 }
 
-Matrix4x4& Matrix4x4::CalculateOrthoMatrix(float left, float right, float bottom, float top)
+Matrix4x4 Matrix4x4::CalculateOrthoMatrix(float left, float right, float bottom, float top)
 {
 	Mat4 projection = Mat4::Identity;
 	projection.m[0][0] = 2.0f / (right - left);
@@ -196,9 +196,13 @@ Matrix4x4& Matrix4x4::CalculateOrthoMatrix(float left, float right, float bottom
 	return projection;
 }
 
-Matrix4x4& Matrix4x4::CalculateLookAtMatrix(Vector3 front, Vector3 right, Vector3 up)
+Matrix4x4 Matrix4x4::CalculateLookAtMatrix(Vector3 front, Vector3 right, Vector3 up)
 {
 	Mat4 MLookAt = Mat4::Identity;
+
+	front.Normalize();
+	right.Normalize();
+	up.Normalize();
 
 	MLookAt.m[0][0] = right.mX;		MLookAt.m[1][0] = right.mY;		MLookAt.m[2][0] = right.mZ;		MLookAt.m[3][0] = 0.0f;
 	MLookAt.m[0][1] = up.mX;		MLookAt.m[1][1] = up.mY;		MLookAt.m[2][1] = up.mZ;		MLookAt.m[3][1] = 0.0f;
