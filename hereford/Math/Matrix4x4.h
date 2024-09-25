@@ -29,7 +29,7 @@ struct Matrix4x4
 
 	static Matrix4x4& CalculatePerspMatrix(float horFOV, float screenRatio, float nearPlane, float farPlane);
 	static Matrix4x4& CalculateOrthoMatrix(float left, float right, float bottom, float top);
-
+	static Matrix4x4& CalculateLookAtMatrix(Vector3 front, Vector3 right, Vector3 up);
 
 
 	Matrix4x4& Clear();

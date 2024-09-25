@@ -196,6 +196,18 @@ Matrix4x4& Matrix4x4::CalculateOrthoMatrix(float left, float right, float bottom
 	return projection;
 }
 
+Matrix4x4& Matrix4x4::CalculateLookAtMatrix(Vector3 front, Vector3 right, Vector3 up)
+{
+	Mat4 MLookAt = Mat4::Identity;
+
+	MLookAt.m[0][0] = right.mX;		MLookAt.m[1][0] = right.mY;		MLookAt.m[2][0] = right.mZ;		MLookAt.m[3][0] = 0.0f;
+	MLookAt.m[0][1] = up.mX;		MLookAt.m[1][1] = up.mY;		MLookAt.m[2][1] = up.mZ;		MLookAt.m[3][1] = 0.0f;
+	MLookAt.m[0][2] = -front.mX;	MLookAt.m[1][2] = -front.mY;	MLookAt.m[2][2] = -front.mZ;	MLookAt.m[3][2] = 0.0f;
+	MLookAt.m[0][3] = 0.0f;			MLookAt.m[1][3] = 0.0f;			MLookAt.m[2][3] = 0.0f;			MLookAt.m[3][3] = 1.0f;
+
+	return MLookAt;
+}
+
 Matrix4x4& Matrix4x4::Clear()
 {
 	for (int i = 0; i < 4; i++)

@@ -45,15 +45,9 @@ Mat4 CameraComponent::GetViewMatrix() const
 	Vec3 pos = GetOwner()->GetPosition() + mPositionOffset;
 
 	Mat4 Mtsl2 = Mat4::Identity;
-	Mat4 Mrot2 = Mat4::Identity;
+	Mat4 Mrot2 = Mat4::CalculateLookAtMatrix(Front, Right, Up);
 
 	Mtsl2.Translate(-pos);
-
-	Mrot2.m[0][0] = Right.mX;	Mrot2.m[1][0] = Right.mY;	Mrot2.m[2][0] = Right.mZ;	Mrot2.m[3][0] = 0.0f;
-	Mrot2.m[0][1] = Up.mX;		Mrot2.m[1][1] = Up.mY;		Mrot2.m[2][1] = Up.mZ;		Mrot2.m[3][1] = 0.0f;
-	Mrot2.m[0][2] = -Front.mX;	Mrot2.m[1][2] = -Front.mY;	Mrot2.m[2][2] = -Front.mZ;	Mrot2.m[3][2] = 0.0f;
-	Mrot2.m[0][3] = 0.0f;		Mrot2.m[1][3] = 0.0f;		Mrot2.m[2][3] = 0.0f;		Mrot2.m[3][3] = 1.0f;
-
 
 	return Mrot2 * Mtsl2;
 }
