@@ -56,6 +56,9 @@ private:
 	std::shared_ptr<Shader> skyboxShader;
 	Uint32 skyboxVAOID;
 	Uint32 skyboxTexID;
+	Uint32 irraTexID;
+	Uint32 captureFBO;
+	std::shared_ptr<Shader> irraShader;
 
 	std::shared_ptr<Shader> textShader;
 	Uint32 textVAO;

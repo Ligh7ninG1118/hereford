@@ -83,7 +83,7 @@ bool Renderer::Initialize()
 	//glEnable(GL_CULL_FACE);
 
 	glViewport(0, 0, mScreenWidth, mScreenHeight);
-	glClearColor(0.0f, 0.5f, 1.0f, 0.0f);
+	glClearColor(0.0f, 0.3f, 1.0f, 0.0f);
 
 	debugLineShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/debug_line_vert.glsl*Shaders/debug_line_frag.glsl"));
 	debugLineShader->Use();
@@ -96,9 +96,13 @@ bool Renderer::Initialize()
 	glGenTextures(1, &skyboxTexID);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);
 
-	std::vector<std::string> textures_faces{ "LocalResources/skybox/AboveDay_Right.png", "LocalResources/skybox/AboveDay_Left.png", 
+	/*std::vector<std::string> textures_faces{ "LocalResources/skybox/AboveDay_Right.png", "LocalResources/skybox/AboveDay_Left.png", 
 	"LocalResources/skybox/AboveDay_Up.png", "LocalResources/skybox/AboveDay_Down.png", "LocalResources/skybox/AboveDay_Back.png", 
-	"LocalResources/skybox/AboveDay_Front.png"};
+	"LocalResources/skybox/AboveDay_Front.png"};*/
+
+	std::vector<std::string> textures_faces{ "LocalResources/skybox/CartoonSunset_Right.png", "LocalResources/skybox/CartoonSunset_Left.png",
+	"LocalResources/skybox/CartoonSunset_Up.png", "LocalResources/skybox/CartoonSunset_Down.png", "LocalResources/skybox/CartoonSunset_Back.png",
+	"LocalResources/skybox/CartoonSunset_Front.png" };
 
 	int width, height, channelNum;
 	unsigned char* data;
@@ -124,6 +128,7 @@ bool Renderer::Initialize()
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
+	
 	float skyboxVertices[] = {
 		// positions          
 		-1.0f,  1.0f, -1.0f,
@@ -179,8 +184,72 @@ bool Renderer::Initialize()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
 	skyboxVAOID = skyboxVAO;
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
-	FT_Library ft;
+
+	irraShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/skybox_vert.glsl*Shaders/skybox_irradiance_convolution_frag.glsl"));
+
+	unsigned int captureRBO;
+	glGenFramebuffers(1, &captureFBO);
+	glGenRenderbuffers(1, &captureRBO);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
+
+	glGenTextures(1, &irraTexID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, irraTexID);
+	for (unsigned int i = 0; i < 6; ++i)
+	{
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 512, 512, 0, GL_RGB, GL_FLOAT, nullptr);
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+
+	Mat4 captureProjection = Mat4::CalculatePerspMatrix(90.0f, 1.0f, 0.1f, 10.0f);
+	Mat4 captureViews[] =
+	{
+		Mat4::CalculateLookAtMatrix(Vec3(1.0f, 0.0f, 0.0f), Vec3(0.0f,  0.0f,  -1.0f), Vec3(0.0f, -1.0f,  0.0f)),
+		Mat4::CalculateLookAtMatrix(Vec3(-1.0f, 0.0f, 0.0f), Vec3(0.0f,  0.0f,  1.0f), Vec3(0.0f, -1.0f,  0.0f)),
+		Mat4::CalculateLookAtMatrix(Vec3(0.0f, 1.0f, 0.0f), Vec3(1.0f,  0.0f,  0.0f), Vec3(0.0f,  0.0f,  1.0f)),
+		Mat4::CalculateLookAtMatrix(Vec3(0.0f, -1.0f, 0.0f), Vec3(1.0f, 0.0f,  0.0f), Vec3(0.0f,  0.0f, -1.0f)),
+		Mat4::CalculateLookAtMatrix(Vec3(0.0f, 0.0f, 1.0f), Vec3(1.0f,  0.0f,  0.0f), Vec3(0.0f, -1.0f,  0.0f)),
+		Mat4::CalculateLookAtMatrix(Vec3(0.0f, 0.0f, -1.0f), Vec3(-1.0f,  0.0f, 0.0f), Vec3(0.0f, -1.0f,  0.0f))
+	};
+	glDepthFunc(GL_LEQUAL);
+
+
+	glViewport(0, 0, 512, 512);
+
+	irraShader->Use();
+	irraShader->SetMat4("projection", captureProjection);
+	irraShader->SetInt("skybox", 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);
+	for (unsigned int i = 0; i < 6; ++i)
+	{
+		irraShader->SetMat4("view", captureViews[i]);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irraTexID, 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glBindVertexArray(skyboxVAOID);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+	glViewport(0, 0, mScreenWidth, mScreenHeight);
+	
+
+
+	/*FT_Library ft;
 	if (FT_Init_FreeType(&ft))
 	{
 		printf("ERROR::FREETYPE: Could not init Freetype Libaray\n");
@@ -241,7 +310,11 @@ bool Renderer::Initialize()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	glBindVertexArray(0);*/
+
+	
+
+
 	return true;
 }
 
@@ -279,7 +352,7 @@ void Renderer::Render(float deltaTime)
 	skyboxShader->SetInt("skybox", 0);
 	glBindVertexArray(skyboxVAOID);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, irraTexID);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glDepthFunc(GL_LESS);
 
@@ -306,12 +379,12 @@ void Renderer::Render(float deltaTime)
 
 			shader->SetInt("lightNum", 1);
 
-			shader->SetVec3("pointLights[0].position", Vec3(0.0f, 5.0f, 0.0f));
+			shader->SetVec3("pointLights[0].position", Vec3(5.0f, 5.0f, 2.0f));
 
 			shader->SetVec3("pointLights[0].ambient", Vec3(0.5f, 0.5f, 0.5f));
 			shader->SetVec3("pointLights[0].diffuse", Vec3(0.6f, 0.6f, 0.6f));
 			shader->SetVec3("pointLights[0].specular", Vec3(1.0f, 1.0f, 1.0f));
-			shader->SetVec3("pointLights[0].color", Vec3(10.0f, 10.0f, 10.0f));
+			shader->SetVec3("pointLights[0].color", Vec3(150.0f, 150.0f, 150.0f));
 
 			shader->SetFloat("pointLights[0].constant", 1.0f);
 			shader->SetFloat("pointLights[0].linear", 0.007f);
@@ -368,8 +441,11 @@ void Renderer::Render(float deltaTime)
 						case ETextureType::EMISSIVE:
 							texStr = "tex_emissive_1";
 							break;
-						case ETextureType::METALNESS:
-							texStr = "tex_metalrough_1";
+						case ETextureType::ROUGHNESS:
+							texStr = "tex_roughness_1";
+							break;
+						case ETextureType::METALLIC:
+							texStr = "tex_metallic_1";
 							break;
 						case ETextureType::AMBIENT:
 							texStr = "tex_ao_1";
@@ -392,8 +468,13 @@ void Renderer::Render(float deltaTime)
 			}
 			else
 			{
+				/*shader->SetInt("skybox", 0);
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);*/
+
 				if (renderComp->mTextures.size() > 0)
 				{
+					texChannel = 0;
 					for (unsigned int j = 0; j < renderComp->mTextures.size(); j++)
 					{
 						glActiveTexture(GL_TEXTURE0 + j);
@@ -416,8 +497,11 @@ void Renderer::Render(float deltaTime)
 						case ETextureType::EMISSIVE:
 							texStr = "tex_emissive_1";
 							break;
-						case ETextureType::METALNESS:
-							texStr = "tex_metalrough_1";
+						case ETextureType::ROUGHNESS:
+							texStr = "tex_roughness_1";
+							break;
+						case ETextureType::METALLIC:
+							texStr = "tex_metallic_1";
 							break;
 						case ETextureType::AMBIENT:
 							texStr = "tex_ao_1";
@@ -430,6 +514,9 @@ void Renderer::Render(float deltaTime)
 
 						texChannel++;
 					}
+					shader->SetInt("skybox", texChannel);
+					glActiveTexture(GL_TEXTURE0 + texChannel);
+					glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);
 				}
 				else
 				{
