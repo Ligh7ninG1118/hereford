@@ -281,6 +281,8 @@
     <None Include="Graphics\Shaders\phongLighting.glsl" />
     <None Include="Graphics\Shaders\standard_vert.glsl" />
     <None Include="imgui\imgui.natstepfilter" />
+    <None Include="Shaders\brdf_frag.glsl" />
+    <None Include="Shaders\brdf_vert.glsl" />
     <None Include="Shaders\debug_line_frag.glsl" />
     <None Include="Shaders\debug_line_vert.glsl" />
     <None Include="Shaders\model_tex_pbr_frag.glsl" />
@@ -290,6 +292,7 @@
     <None Include="Shaders\phongLighting.glsl" />
     <None Include="Shaders\skybox_frag.glsl" />
     <None Include="Shaders\skybox_irradiance_convolution_frag.glsl" />
+    <None Include="Shaders\skybox_prefilter_frag.glsl" />
     <None Include="Shaders\skybox_vert.glsl" />
     <None Include="Shaders\standard_frag.glsl" />
     <None Include="Shaders\standard_vert.glsl" />

@@ -57,8 +57,13 @@ private:
 	Uint32 skyboxVAOID;
 	Uint32 skyboxTexID;
 	Uint32 irraTexID;
+	Uint32 prefilterTexID;
+	Uint32 brdfLUTTexture;
 	Uint32 captureFBO;
 	std::shared_ptr<Shader> irraShader;
+	std::shared_ptr<Shader> prefilterShader;
+	std::shared_ptr<Shader> brdfShader;
+
 
 	std::shared_ptr<Shader> textShader;
 	Uint32 textVAO;

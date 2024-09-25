@@ -19,6 +19,8 @@ uniform sampler2D tex_height_1;
 
 uniform sampler2D tex_ao_1;
 uniform samplerCube skybox;
+uniform samplerCube prefilter;
+uniform sampler2D brdfLUT;
 
 uniform int lightNum;
 uniform PointLight pointLights[16];
@@ -68,7 +70,6 @@ void main()
     vec3 VinTangent = normalize(TBN * V);
     vec2 newTexCoords = ParallaxMapping(TexCoords, V);
 
-
     //sRGB
     vec3 albedo = pow(texture(tex_diffuse_1, TexCoords).rgb, vec3(2.2f));
     float roughness = texture(tex_roughness_1, TexCoords).r;
@@ -78,6 +79,7 @@ void main()
 
     vec3 N = CalculateNormalFromMap(TexCoords);
 
+    vec3 R = reflect(-V, N);
 
     vec3 F0 = vec3(0.04f);
     F0 = mix(F0, albedo, metallic);
@@ -111,11 +113,16 @@ void main()
     }
 
     vec3 kS = FresnelComponent(max(dot(N,V),0.0f), F0, roughness);
+    vec3 F = kS;
     vec3 kD = 1.0f - kS;
     vec3 irradiance = texture(skybox, N).rgb;
 
     vec3 diffuse = irradiance * albedo;
-    vec3 ambient = (kD * diffuse) * ao;
+    const float MAX_REFLECTION_LOD = 4.0;
+    vec3 prefilteredColor = textureLod(prefilter, R, roughness * MAX_REFLECTION_LOD).rgb;
+    vec2 brdf = texture(brdfLUT, vec2(max(dot(N,V),0.0f), roughness)).rg;
+    vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
+    vec3 ambient = (kD * diffuse + specular) * ao;
 
     vec3 color = ambient + Lo;
 
