@@ -37,6 +37,8 @@ GameContext::GameContext()
 
 	mTelemetryUpdateInterval = 1.0f;
 	mTelemetryUpdateTimer = 0.0f;
+
+	mCursorMode = false;
 }
 
 GameContext::GameContext(int width, int height)
@@ -138,6 +140,7 @@ void GameContext::RunLoop()
 		ProcessInput();
 		UpdateGame();
 		CalculatePhysics();
+		DebugSceneObjects();
 		DelayedActionManager::UpdateTimers(mDeltaTime);
 		TimelineActionManager::UpdateTimers(mDeltaTime);
 		Uint32 timestampUpdate = SDL_GetTicks();
@@ -222,6 +225,8 @@ void GameContext::ProcessInput()
 	if (rawKeyState[SDL_SCANCODE_ESCAPE])
 		mIsRunning = false;
 
+	
+
 	for (int i = 0; i < mPrevKeyStates.size(); i++)
 	{
 		if (mPrevKeyStates[i] == EInputState::KEY_HOLD || mPrevKeyStates[i] == EInputState::KEY_DOWN)
@@ -230,26 +235,36 @@ void GameContext::ProcessInput()
 			mPrevKeyStates[i] = rawKeyState[i] ? EInputState::KEY_DOWN : EInputState::NOT_PRESSED;
 	}
 
-	int mouseDeltaX, mouseDeltaY;
-	Uint32 rawMouseState = SDL_GetRelativeMouseState(&mouseDeltaX, &mouseDeltaY);
+	if (mPrevKeyStates[SDL_SCANCODE_GRAVE] == EInputState::KEY_DOWN)
+	{
+		mCursorMode = !mCursorMode;
+		SDL_SetRelativeMouseMode(static_cast<SDL_bool>(!mCursorMode));
+	}
+
+	int mouseDeltaX = 0, mouseDeltaY = 0;
 	Uint32 newMouseState = 0;
+	
+	if (!mCursorMode)
+	{
+		Uint32 rawMouseState = SDL_GetRelativeMouseState(&mouseDeltaX, &mouseDeltaY);
 
-	if ((mPrevMouseStates & EMouseState::LMB_HOLD) || (mPrevMouseStates & EMouseState::LMB_DOWN))
-		newMouseState |= (rawMouseState & SDL_BUTTON_LMASK) ? EMouseState::LMB_HOLD : EMouseState::LMB_UP;
-	else if ((mPrevMouseStates & EMouseState::LMB_NOT_PRESSED) || (mPrevMouseStates & EMouseState::LMB_UP))
-		newMouseState |= (rawMouseState & SDL_BUTTON_LMASK) ? EMouseState::LMB_DOWN : EMouseState::LMB_NOT_PRESSED;
+		if ((mPrevMouseStates & EMouseState::LMB_HOLD) || (mPrevMouseStates & EMouseState::LMB_DOWN))
+			newMouseState |= (rawMouseState & SDL_BUTTON_LMASK) ? EMouseState::LMB_HOLD : EMouseState::LMB_UP;
+		else if ((mPrevMouseStates & EMouseState::LMB_NOT_PRESSED) || (mPrevMouseStates & EMouseState::LMB_UP))
+			newMouseState |= (rawMouseState & SDL_BUTTON_LMASK) ? EMouseState::LMB_DOWN : EMouseState::LMB_NOT_PRESSED;
 
-	if ((mPrevMouseStates & EMouseState::RMB_HOLD) || (mPrevMouseStates & EMouseState::RMB_DOWN))
-		newMouseState |= (rawMouseState & SDL_BUTTON_RMASK) ? EMouseState::RMB_HOLD : EMouseState::RMB_UP;
-	else if ((mPrevMouseStates & EMouseState::RMB_NOT_PRESSED) || (mPrevMouseStates & EMouseState::RMB_UP))
-		newMouseState |= (rawMouseState & SDL_BUTTON_RMASK) ? EMouseState::RMB_DOWN : EMouseState::RMB_NOT_PRESSED;
+		if ((mPrevMouseStates & EMouseState::RMB_HOLD) || (mPrevMouseStates & EMouseState::RMB_DOWN))
+			newMouseState |= (rawMouseState & SDL_BUTTON_RMASK) ? EMouseState::RMB_HOLD : EMouseState::RMB_UP;
+		else if ((mPrevMouseStates & EMouseState::RMB_NOT_PRESSED) || (mPrevMouseStates & EMouseState::RMB_UP))
+			newMouseState |= (rawMouseState & SDL_BUTTON_RMASK) ? EMouseState::RMB_DOWN : EMouseState::RMB_NOT_PRESSED;
 
-	if ((mPrevMouseStates & EMouseState::MMB_HOLD) || (mPrevMouseStates & EMouseState::MMB_DOWN))
-		newMouseState |= (rawMouseState & SDL_BUTTON_MMASK) ? EMouseState::MMB_HOLD : EMouseState::MMB_UP;
-	else if ((mPrevMouseStates & EMouseState::MMB_NOT_PRESSED) || (mPrevMouseStates & EMouseState::MMB_UP))
-		newMouseState |= (rawMouseState & SDL_BUTTON_MMASK) ? EMouseState::MMB_DOWN : EMouseState::MMB_NOT_PRESSED;
+		if ((mPrevMouseStates & EMouseState::MMB_HOLD) || (mPrevMouseStates & EMouseState::MMB_DOWN))
+			newMouseState |= (rawMouseState & SDL_BUTTON_MMASK) ? EMouseState::MMB_HOLD : EMouseState::MMB_UP;
+		else if ((mPrevMouseStates & EMouseState::MMB_NOT_PRESSED) || (mPrevMouseStates & EMouseState::MMB_UP))
+			newMouseState |= (rawMouseState & SDL_BUTTON_MMASK) ? EMouseState::MMB_DOWN : EMouseState::MMB_NOT_PRESSED;
 
-	mPrevMouseStates = newMouseState;
+		mPrevMouseStates = newMouseState;
+	}
 
 	std::vector<Actor*> actorVector = mActors;
 	for (Actor* actor : actorVector)
@@ -290,6 +305,42 @@ void GameContext::CalculatePhysics()
 void GameContext::GenerateOutput()
 {
 	mPtrRenderer->Render(mDeltaTime);
+}
+
+void GameContext::DebugSceneObjects()
+{
+	ImGui::ShowDemoWindow();
+	ImGui::Begin("Scene Objects", 0, ImGuiWindowFlags_AlwaysAutoResize);
+
+	int id = 0;
+	for (const auto& actor : mActors)
+	{
+		if (ImGui::TreeNode((actor->GetClassName() + std::to_string(id)).c_str()))
+		{
+			Vec3 pos = actor->GetPosition();
+			ImGui::Text("Position");
+			ImGui::SliderFloat("X", &pos.mX, -100.0f, 100.0f);
+			ImGui::SameLine();
+			ImGui::SliderFloat("Y", &pos.mY, -100.0f, 100.0f);
+			ImGui::SameLine();
+			ImGui::SliderFloat("Z", &pos.mZ, -100.0f, 100.0f);
+			actor->SetPosition(pos);
+
+			Vec3 rot = actor->GetRotation();
+			ImGui::Text("Rotation");
+			ImGui::SliderFloat("Roll", &rot.mX, -180.0f, 180.0f);
+			ImGui::SameLine();
+			ImGui::SliderFloat("Pitch", &rot.mY, -180.0f, 180.0f);
+			ImGui::SameLine();
+			ImGui::SliderFloat("Yaw", &rot.mZ, -180.0f, 180.0f);
+			actor->SetRotation(rot);
+
+			ImGui::TreePop();
+		}
+		id++;
+	}
+
+	ImGui::End();
 }
 
 

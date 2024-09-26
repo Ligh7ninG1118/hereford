@@ -44,6 +44,8 @@ private:
 	void CalculatePhysics();
 	void GenerateOutput();
 
+	void DebugSceneObjects();
+
 	SDL_Window* mPtrSDLWindow;
 	std::unique_ptr<Renderer> mPtrRenderer;
 	std::unique_ptr<PhysicsManager> mPtrPhysicsManager;
@@ -57,6 +59,8 @@ private:
 	std::vector<EInputState> mPrevKeyStates;
 
 	Uint32 mPrevMouseStates;
+
+	bool mCursorMode;
 
 	bool mIsRunning;
 	bool useVerticalSync;
