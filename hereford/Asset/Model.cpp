@@ -20,6 +20,8 @@ Model::Model(const std::string& inPath)
 	Initialize();
 }
 
+
+
 void Model::Initialize()
 {
 	Assimp::Importer importer;
@@ -96,6 +98,12 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 		aiTextureType_DIFFUSE_ROUGHNESS, aiTextureType_LIGHTMAP
 	};
 
+	/*for (int i=0;i<22;i++)
+	{
+		tempTextures = LoadMaterialTextures(material, static_cast<aiTextureType>(i), scene);
+		finalMesh.mTextures.insert(finalMesh.mTextures.end(), tempTextures.begin(), tempTextures.end());
+	}*/
+
 	for (auto type : targetTextureType)
 	{
 		tempTextures = LoadMaterialTextures(material, type, scene);
@@ -137,7 +145,7 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType 
 			std::string actualFilename = aiScene::GetShortFilename(filename.C_Str());
 			std::string path = mDirectory + "/" + actualFilename;
 			Texture texture(path.c_str(), embbedTex);
-			ETextureType tType;
+			ETextureType tType = ETextureType::RESERVED_DEFAULT;
 			switch (type)
 			{
 			case aiTextureType_DIFFUSE:
@@ -178,7 +186,14 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType 
 	return textures;
 }
 
-
+void Model::ManualLoadTexture(Texture tex)
+{
+	for (auto& mesh : mMeshes)
+	{
+		mesh.mTextures.push_back(tex);
+	}
+	mLoadedTextures.push_back(tex);
+}
 
 void Model::GenerateGLAsset(Mesh& inMesh)
 {

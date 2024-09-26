@@ -48,6 +48,9 @@ public:
 	Model(const std::string& inPath);
 	auto& GetBoneInfoMap() const { return mBoneInfoMap; }
 	int& GetBoneCount() { return mBoneCounter; }
+
+	void ManualLoadTexture(Texture tex);
+
 private:
 	std::string mDirectory;
 	std::vector<class Texture> mLoadedTextures;

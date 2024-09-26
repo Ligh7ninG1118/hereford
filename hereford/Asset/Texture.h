@@ -5,7 +5,8 @@
 
 enum class ETextureType
 {
-	DIFFUSE = 0,
+	RESERVED_DEFAULT = 0,
+	DIFFUSE,
 	SPECULAR,
 	NORMALS,
 	HEIGHT,
