@@ -44,7 +44,7 @@ private:
 
 	bool hasMovementInput = false;
 	Vector3 inputMoveDir;
-
+	Vector3 translationOffset;
 	Vector3 currentVelocity = Vector3::Zero;
 
 	bool lmbPressed = false;
