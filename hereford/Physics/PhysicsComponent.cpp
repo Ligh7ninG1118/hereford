@@ -3,17 +3,16 @@
 #include "Physics/PhysicsManager.h"
 #include "PhysicsPrimitive.h"
 
-PhysicsComponent::PhysicsComponent(Actor* owner, class PhysicsManager& phyMgrRef)
+PhysicsComponent::PhysicsComponent(Actor* owner, class PhysicsManager& phyMgrRef, PhysicsPrimitive primitive)
 	: Component(owner),
 	m_PhysicsManager(phyMgrRef),
+	mPhyPrimitive(primitive),
 	mUseGravity(false),
 	mMass(1.0f),
 	mDrag(0.1f),
 	mAngDrag(0.0f)
 {
 	m_PhysicsManager.AddPhysicsComponent(this);
-
-	mPhyPrimitive = PhysicsPrimitive{ AABBPrimitive{Vec3(0.5f)}, Vec3::Zero};
 }
 
 PhysicsComponent::~PhysicsComponent()

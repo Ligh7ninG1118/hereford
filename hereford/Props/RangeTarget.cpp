@@ -8,18 +8,15 @@
 
 RangeTarget::RangeTarget(GameContext* gameCtx)
 	:
-	Actor(gameCtx)
+	Actor(gameCtx),
+	hasHit(false)
 {
 	mPtrRenderComp = new RenderComponent(static_cast<Actor*>(this), gameCtx->GetRenderer());
-	mPtrPhysicsComp = new PhysicsComponent(static_cast<Actor*>(this), gameCtx->GetPhysicsManager());
 
-	PrimitiveInfo cubeInfo;
-	Primitive::GenerateCube(cubeInfo);
-	mPtrRenderComp->SetVAOID(cubeInfo.mVAO);
-	mPtrRenderComp->SetVBOID(cubeInfo.mVBO);
 	mPtrRenderComp->SetModel(AssetManager::LoadAsset<Model>(std::string("LocalResources/rangedummy/model3.fbx")));
 	mPtrRenderComp->SetScaleOffset(Vec3(0.015f));
 	mPtrRenderComp->SetRotateOffset(Vec3(-90.0f, 0.0f, 90.0f));
+	mPtrRenderComp->SetTranslateOffset(Vec3(0.0f, 0.0f, -0.05f));
 
 	auto model = mPtrRenderComp->GetModel();
 	
@@ -43,24 +40,52 @@ RangeTarget::RangeTarget(GameContext* gameCtx)
 	roughnessTex.SetType(ETextureType::ROUGHNESS);
 	model.lock()->ManualLoadTexture(roughnessTex);
 
-
 	std::shared_ptr<Shader> shader = AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_pbr_frag.glsl"));
 	mPtrRenderComp->SetShader(shader);
 
+	PhysicsPrimitive bodyPrimitive = PhysicsPrimitive{ AABBPrimitive{Vec3(0.05f, 0.4f, 0.4f)}, Vec3(0.0f, 1.3f, 0.0f) };
+	mPtrPhysicsCompBody = new PhysicsComponent(static_cast<Actor*>(this), gameCtx->GetPhysicsManager(), bodyPrimitive);
+
+	PhysicsPrimitive headPrimitive = PhysicsPrimitive{ AABBPrimitive{Vec3(0.05f, 0.225f, 0.15f)}, Vec3(0.0f, 1.95f, 0.0f) };
+	mPtrPhysicsCompHead = new PhysicsComponent(static_cast<Actor*>(this), gameCtx->GetPhysicsManager(), headPrimitive);
 }
 
 RangeTarget::~RangeTarget()
 {
 }
 
-void RangeTarget::OnUpdate(float deltaTime)
-{
-
-}
 
 void RangeTarget::Hit(const HitInfo& info)
 {
-	printf("Impact Point: (%f, %f, %f)\n", info.impactPoint.mX, info.impactPoint.mY, info.impactPoint.mZ);
-	printf("Distance: %f\n", info.distance);
-	SetState(ActorState::Destroy);
+	if (!hasHit)
+	{
+		printf("Impact Point: (%f, %f, %f)\n", info.impactPoint.mX, info.impactPoint.mY, info.impactPoint.mZ);
+		printf("Distance: %f\n", info.distance);
+	
+		TimelineActionManager::PlayFromStart(mHHitTimeline, std::bind(&RangeTarget::HitTimeline, this, std::placeholders::_1), 0.15f);
+		hasHit = true;
+
+		//TODO: Deactive phys component
+	}
+	/*else
+	{
+		ResetTarget();
+	}*/
 }
+
+void RangeTarget::ResetTarget()
+{
+	hasHit = false;
+	Vec3 rot = GetRotation();
+	rot.mY = 0.0f;
+	SetRotation(rot);
+}
+
+void RangeTarget::HitTimeline(float alpha)
+{
+	Vec3 rot = GetRotation();
+	rot.mY = Math::Lerp(rot.mY, 80.0f, alpha);
+
+	SetRotation(rot);
+}
+

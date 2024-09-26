@@ -2,6 +2,7 @@
 #include "Core/Actor.h"
 #include "Gameplay/IHittable.h"
 #include "Util/Reflection.h"
+#include "Util/TimelineAction.h"
 
 class RangeTarget : public Actor, public IHittable
 {
@@ -10,14 +11,19 @@ class RangeTarget : public Actor, public IHittable
 public:
 	RangeTarget(class GameContext* gameCtx);
 	~RangeTarget();
-	void OnUpdate(float deltaTime) override;
 
 	void Hit(const struct HitInfo& info) override;
-
-	class RenderComponent* GetRenderComponent() const { return mPtrRenderComp; }
-	class PhysicsComponent* GetPhysicsComponent() const { return mPtrPhysicsComp; }
+	void ResetTarget();
 
 private:
+	bool hasHit;
+	void HitTimeline(float alpha);
+
+
 	class RenderComponent* mPtrRenderComp;
-	class PhysicsComponent* mPtrPhysicsComp;
+	class PhysicsComponent* mPtrPhysicsCompBody;
+	class PhysicsComponent* mPtrPhysicsCompHead;
+
+	TAHandle mHHitTimeline;
+
 };

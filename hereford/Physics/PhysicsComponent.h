@@ -7,7 +7,7 @@
 class PhysicsComponent : public Component
 {
 public:
-	PhysicsComponent(class Actor* owner, class PhysicsManager& phyMgrRef);
+	PhysicsComponent(class Actor* owner, class PhysicsManager& phyMgrRef, PhysicsPrimitive primitive = PhysicsPrimitive{ AABBPrimitive{Vec3(0.5f)}, Vec3::Zero});
 	~PhysicsComponent();
 
 	bool Initialize();
@@ -15,12 +15,17 @@ public:
 
 	Vec3 GetOwnerPosition() const;
 
+	void SetPhyPrimitive(const PhysicsPrimitive& primitive) { mPhyPrimitive = primitive; }
+
 	void AddImpulse(Vec3 impactPoint, float impulseForce);
 
 private:
 	class PhysicsManager& m_PhysicsManager;
 
 	friend PhysicsManager;
+
+	//TODO: bool Deactive field
+
 	bool mIsTrigger;
 	bool mUseGravity;
 	float mMass;
