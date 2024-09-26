@@ -17,7 +17,12 @@ Ground::Ground(GameContext* gameCtx)
 	Primitive::GeneratePlane(planeInfo, 100, 100);
 	mPtrRenderComp->SetVAOID(planeInfo.mVAO);
 	mPtrRenderComp->SetVBOID(planeInfo.mVBO);
-	mPtrRenderComp->LoadTextures();
+	mPtrRenderComp->LoadTexture("LocalResources/gravel/gravel_albedo.png", ETextureType::DIFFUSE);
+	mPtrRenderComp->LoadTexture("LocalResources/gravel/gravel_ao.png", ETextureType::AMBIENT);
+	mPtrRenderComp->LoadTexture("LocalResources/gravel/gravel_height.png", ETextureType::HEIGHT);
+	mPtrRenderComp->LoadTexture("LocalResources/gravel/gravel_metallic.png", ETextureType::METALLIC);
+	mPtrRenderComp->LoadTexture("LocalResources/gravel/gravel_normal-ogl.png", ETextureType::NORMALS);
+	mPtrRenderComp->LoadTexture("LocalResources/gravel/gravel_roughness.png", ETextureType::ROUGHNESS);
 
 	std::shared_ptr<Shader> shader = AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_pbr_frag.glsl"));
 	mPtrRenderComp->SetShader(shader);

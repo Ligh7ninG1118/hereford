@@ -10,19 +10,25 @@ TestCube::TestCube(GameContext* gameCtx)
 	:
 	Actor(gameCtx)
 {
-	m_pRenderComponent = new RenderComponent(static_cast<Actor*>(this), gameCtx->GetRenderer());
-	m_pPhysicsComponent = new PhysicsComponent(static_cast<Actor*>(this), gameCtx->GetPhysicsManager());
+	mPtrRenderComp = new RenderComponent(static_cast<Actor*>(this), gameCtx->GetRenderer());
+	mPtrPhysicsComp = new PhysicsComponent(static_cast<Actor*>(this), gameCtx->GetPhysicsManager());
 
 	PrimitiveInfo cubeInfo;
 	Primitive::GenerateCube(cubeInfo);
-	m_pRenderComponent->SetVAOID(cubeInfo.mVAO);
-	m_pRenderComponent->SetVBOID(cubeInfo.mVBO);
-	m_pRenderComponent->LoadTextures();
+	mPtrRenderComp->SetVAOID(cubeInfo.mVAO);
+	mPtrRenderComp->SetVBOID(cubeInfo.mVBO);
+	mPtrRenderComp->LoadTexture("LocalResources/used-stainless-steel2/used-stainless-steel2_albedo.png", ETextureType::DIFFUSE);
+	mPtrRenderComp->LoadTexture("LocalResources/used-stainless-steel2/used-stainless-steel2_ao.png", ETextureType::AMBIENT);
+	mPtrRenderComp->LoadTexture("LocalResources/used-stainless-steel2/used-stainless-steel2_height.png", ETextureType::HEIGHT);
+	mPtrRenderComp->LoadTexture("LocalResources/used-stainless-steel2/used-stainless-steel2_metallic.png", ETextureType::METALLIC);
+	mPtrRenderComp->LoadTexture("LocalResources/used-stainless-steel2/used-stainless-steel2_normal-ogl.png", ETextureType::NORMALS);
+	mPtrRenderComp->LoadTexture("LocalResources/used-stainless-steel2/used-stainless-steel2_roughness.png", ETextureType::ROUGHNESS);
+
 
 	std::shared_ptr<Shader> shader = AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_pbr_frag.glsl"));
-	m_pRenderComponent->SetShader(shader);
+	mPtrRenderComp->SetShader(shader);
 
-	m_pRenderComponent->SetColor(Vec3(Random::Range(0.1f, 0.9f), Random::Range(0.1f, 0.9f), Random::Range(0.1f, 0.9f)));
+	mPtrRenderComp->SetColor(Vec3(Random::Range(0.1f, 0.9f), Random::Range(0.1f, 0.9f), Random::Range(0.1f, 0.9f)));
 }
 
 TestCube::~TestCube()

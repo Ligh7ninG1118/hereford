@@ -518,8 +518,11 @@ void Renderer::Render(float deltaTime)
 				{
 					shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 				}
+			}
 
-				auto meshes = animRenderComp->GetMeshes();
+			if (renderComp->GetModel().lock())
+			{
+				auto meshes = renderComp->GetMeshes();
 				for (unsigned int i = 0; i < meshes.size(); i++)
 				{
 					Mesh* mesh = &meshes[i];
@@ -581,19 +584,17 @@ void Renderer::Render(float deltaTime)
 			}
 			else
 			{
-				/*shader->SetInt("skybox", 0);
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);*/
+				auto textures = renderComp->GetTextures();
 
-				if (renderComp->mTextures.size() > 0)
+				if (textures.size() > 0)
 				{
 					texChannel = 0;
-					for (unsigned int j = 0; j < renderComp->mTextures.size(); j++)
+					for (unsigned int j = 0; j < textures.size(); j++)
 					{
 						glActiveTexture(GL_TEXTURE0 + j);
 
 						std::string texStr;
-						switch (renderComp->mTextures[j]->GetType())
+						switch (textures[j]->GetType())
 						{
 						case ETextureType::DIFFUSE:
 							texStr = "tex_diffuse_1";
@@ -623,7 +624,7 @@ void Renderer::Render(float deltaTime)
 							break;
 						}
 						shader->SetInt(texStr.c_str(), j);
-						glBindTexture(GL_TEXTURE_2D, renderComp->mTextures[j]->GetID());
+						glBindTexture(GL_TEXTURE_2D, textures[j]->GetID());
 
 						texChannel++;
 					}

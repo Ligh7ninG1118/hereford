@@ -14,12 +14,12 @@ public:
 
 	void Hit(const struct HitInfo& info) override;
 
-	class RenderComponent* GetRenderComponent() const { return m_pRenderComponent; }
-	class PhysicsComponent* GetPhysicsComponent() const { return m_pPhysicsComponent; }
+	class RenderComponent* GetRenderComponent() const { return mPtrRenderComp; }
+	class PhysicsComponent* GetPhysicsComponent() const { return mPtrPhysicsComp; }
 
 private:
 	float multiplier = 1.0f;
 	Vec3 mColor;
-	class RenderComponent* m_pRenderComponent;
-	class PhysicsComponent* m_pPhysicsComponent;
+	class RenderComponent* mPtrRenderComp;
+	class PhysicsComponent* mPtrPhysicsComp;
 };

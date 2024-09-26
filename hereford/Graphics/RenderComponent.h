@@ -2,6 +2,11 @@
 
 #include "Core/Component.h"
 #include "Math/Math.h"
+#include <string>
+#include <vector>
+#include "Asset/Texture.h"
+#include "Asset/Model.h"
+
 
 enum class ERenderLayer : uint8
 {
@@ -16,7 +21,6 @@ public:
 	RenderComponent(class Actor* owner, class Renderer& rendererRef, ERenderLayer renderLayer = ERenderLayer::Default);
 	~RenderComponent();
 
-	void LoadTextures();
 
 	inline std::shared_ptr<class Shader> GetShader() const { return mPtrShader; }
 	inline void SetShader(std::shared_ptr<class Shader> inPtrShader) { mPtrShader = inPtrShader; }
@@ -42,14 +46,22 @@ public:
 	inline Vec3 GetScaleOffset() const { return mScaleOffset; }
 	inline void SetScaleOffset(Vec3 inOffset) { mScaleOffset = inOffset; }
 
+
+	inline std::weak_ptr<Model> GetModel() const { return mPtrModel; }
+	inline const std::vector<Mesh>& GetMeshes() const { return mPtrModel->mMeshes; }
+	inline void SetModel(std::shared_ptr<Model> inModel) { mPtrModel = inModel; }
+	inline const std::vector<std::shared_ptr<Texture>>& GetTextures() const { return mTextures; }
+	void LoadTexture(const std::string& texPath, ETextureType texType);
+
 	virtual Mat4 GetModelMatrix() const;
-	std::vector<std::shared_ptr<class Texture>> mTextures;
 
 protected:
 	class Renderer& m_Renderer;
 
 	ERenderLayer mRenderLayer;
 
+	std::shared_ptr<Model> mPtrModel;
+	std::vector<std::shared_ptr<class Texture>> mTextures;
 	std::shared_ptr<class Shader> mPtrShader;
 
 	uint32 mVAO;
