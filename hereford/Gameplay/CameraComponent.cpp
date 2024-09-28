@@ -1,6 +1,7 @@
 #include "CameraComponent.h"
 #include "Core/Actor.h"
 
+
 CameraComponent::CameraComponent(Actor* owner, float eyeHeight)
 	: Component(owner),
 	mDeferredRecoilDir(Vec2(0.0f,0.0f)),
@@ -20,8 +21,6 @@ void CameraComponent::Update(float deltaTime)
 {
 	if (mDeferredRecoilDir.SqrMagnitude() > EPSILON)
 	{
-
-
 		Vec2 stepDir = mDeferredRecoilDir * deltaTime * 15.0f;
 		mDeferredRecoilDir -= stepDir;
 		mRotation.mY += stepDir.mX;
@@ -29,9 +28,14 @@ void CameraComponent::Update(float deltaTime)
 
 		mRotation.mX = Math::Clamp(mRotation.mX, -89.0f, 89.0f);
 		mRotation.mY = (mRotation.mY > 360.0f || mRotation.mY < -360.0f) ? 0.0f : mRotation.mY;
+
+		//Set owner rotation as well
+		mOwner->SetRotation(Vec3(0.0f, mRotation.mY, 0.0f));
+
 	}
 }
 
+// use float delta for smoothing?
 void CameraComponent::ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
 {
 	mRotation.mY += mouseDeltaX * mMouseSens;
@@ -47,6 +51,9 @@ void CameraComponent::ProcessInput(const std::vector<EInputState>& keyState, Uin
 
 	mRotation.mY = (mRotation.mY > 360.0f || mRotation.mY < -360.0f) ? 0.0f : mRotation.mY;
 	mRotation.mX = Math::Clamp(mRotation.mX, -89.0f, 89.0f);
+
+	//Set owner rotation as well
+	mOwner->SetRotation(Vec3(0.0f, mRotation.mY, 0.0f));
 }
 
 void CameraComponent::RotateCamera(Vec2 dir)

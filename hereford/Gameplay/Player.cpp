@@ -31,7 +31,7 @@ Player::Player(GameContext* gameCtx)
 	mPtrAnimRenderComp->SetModel(AssetManager::LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v3.fbx")));
 
 	mPtrAnimRenderComp->SetShader(AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_phong_frag.glsl")));
-	translationOffset = Vec3(-0.2f, 1.32f, 0.0f);
+	translationOffset = Vec3(-0.2f, 1.42f, 0.0f);
 	mPtrAnimRenderComp->SetTranslateOffset(translationOffset);
 	mPtrAnimRenderComp->SetScaleOffset(Vec3(0.02f));
 	mPtrAnimRenderComp->SetRotateOffset(Vec3(0.0f, 0.0f, 90.0f));
@@ -159,15 +159,6 @@ void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 		inputMoveDir.Normalize();
 	}
 
-	// Rotation
-	{
-		mRotation.mY += mouseDeltaX * mPtrCameraComp->GetMouseSens();
-		if (mRotation.mY > 360.0f)
-			mRotation.mY = 0.0f;
-		if (mRotation.mY < -360.0f)
-			mRotation.mY = 0.0f;
-	}
-
 	// Movement States (Crouching, Sprinting, etc.)
 	{
 		if (keyState[SDL_SCANCODE_C] == EInputState::KEY_DOWN)
@@ -239,8 +230,10 @@ void Player::ShowDebugInfo()
 {
 	ImGui::Begin("Player");
 	Vec3 pos = GetPosition();
+	Vec3 pRot = GetRotation();
 	Vec3 rot = mPtrCameraComp->GetRotation();
 	ImGui::Text("Pos (%.2f, %.2f, %.2f)\tRot (%.2f, %.2f, %.2f)", pos.mX, pos.mY, pos.mZ, rot.mX, rot.mY, rot.mZ);
+	ImGui::Text("Player Rot (%.2f, %.2f, %.2f)", pRot.mX, pRot.mY, pRot.mZ);
 	ImGui::End();
 
 	/*ImGui::Begin("Arm Offset", 0, ImGuiWindowFlags_AlwaysAutoResize);
@@ -256,7 +249,7 @@ void Player::ShowDebugInfo()
 
 void Player::WeaponFiredEventListener(EventOnPlayerWeaponFired inEvent)
 {
-	mPtrCameraComp->RotateCamera(inEvent.mRecoilDeviation);
+	mPtrCameraComp->RotateCamera(inEvent.mRecoilDeviation * 50.0f);
 }
 
 void Player::CrouchTimeline(float alpha)
