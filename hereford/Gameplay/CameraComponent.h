@@ -39,6 +39,9 @@ public:
 private:
 	Vec3 mPositionOffset;
 	Vec3 mRotation;
+
+	Vec2 mDeferredRecoilDir;
+
 	float mHorFOV;
 	float mNearPlane;
 	float mFarPlane;

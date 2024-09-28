@@ -3,6 +3,7 @@
 
 CameraComponent::CameraComponent(Actor* owner, float eyeHeight)
 	: Component(owner),
+	mDeferredRecoilDir(Vec2(0.0f,0.0f)),
 	mPositionOffset(Vector3(0.0f, eyeHeight, 0.0f)),
 	mRotation(Vector3(0.0f, 0.0f, 0.0f)),
 	mHorFOV(80.0f),
@@ -17,6 +18,18 @@ CameraComponent::~CameraComponent()
 
 void CameraComponent::Update(float deltaTime)
 {
+	if (mDeferredRecoilDir.SqrMagnitude() > EPSILON)
+	{
+
+
+		Vec2 stepDir = mDeferredRecoilDir * deltaTime * 15.0f;
+		mDeferredRecoilDir -= stepDir;
+		mRotation.mY += stepDir.mX;
+		mRotation.mX += stepDir.mY;
+
+		mRotation.mX = Math::Clamp(mRotation.mX, -89.0f, 89.0f);
+		mRotation.mY = (mRotation.mY > 360.0f || mRotation.mY < -360.0f) ? 0.0f : mRotation.mY;
+	}
 }
 
 void CameraComponent::ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
@@ -24,17 +37,21 @@ void CameraComponent::ProcessInput(const std::vector<EInputState>& keyState, Uin
 	mRotation.mY += mouseDeltaX * mMouseSens;
 	mRotation.mX += mouseDeltaY * mMouseSens;
 
+	if (mDeferredRecoilDir.SqrMagnitude() > EPSILON)
+	{
+		// Mouse movement on vertical axis can offset deferred recoil changes
+		mDeferredRecoilDir.mY -= mouseDeltaX * mMouseSens;
+		mDeferredRecoilDir.mY = mDeferredRecoilDir.mY <= 0.0f ? 0.0f : mDeferredRecoilDir.mY;
+	}
+
+
 	mRotation.mY = (mRotation.mY > 360.0f || mRotation.mY < -360.0f) ? 0.0f : mRotation.mY;
 	mRotation.mX = Math::Clamp(mRotation.mX, -89.0f, 89.0f);
 }
 
 void CameraComponent::RotateCamera(Vec2 dir)
 {
-	mRotation.mY += dir.mX;
-	mRotation.mX += dir.mY;
-
-	mRotation.mX = Math::Clamp(mRotation.mX, -89.0f, 89.0f);
-	mRotation.mY = (mRotation.mY > 360.0f || mRotation.mY < -360.0f) ? 0.0f : mRotation.mY;
+	mDeferredRecoilDir += dir;
 }
 
 Mat4 CameraComponent::GetViewMatrix() const
