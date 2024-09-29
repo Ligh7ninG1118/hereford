@@ -249,7 +249,7 @@ void Player::ShowDebugInfo()
 
 void Player::WeaponFiredEventListener(EventOnPlayerWeaponFired inEvent)
 {
-	mPtrCameraComp->RotateCamera(inEvent.mRecoilDeviation * 50.0f);
+	mPtrCameraComp->RotateCamera(inEvent.mRecoilDeviation * 5.0f);
 }
 
 void Player::CrouchTimeline(float alpha)

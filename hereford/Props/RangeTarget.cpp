@@ -57,11 +57,11 @@ RangeTarget::~RangeTarget()
 
 void RangeTarget::Hit(const HitInfo& info)
 {
+	printf("Impact Point: (%f, %f, %f)\n", info.impactPoint.mX, info.impactPoint.mY, info.impactPoint.mZ);
+	printf("Distance: %f\n", info.distance);
+
 	if (!hasHit)
 	{
-		printf("Impact Point: (%f, %f, %f)\n", info.impactPoint.mX, info.impactPoint.mY, info.impactPoint.mZ);
-		printf("Distance: %f\n", info.distance);
-	
 		TimelineActionManager::PlayFromStart(mHHitTimeline, std::bind(&RangeTarget::HitTimeline, this, std::placeholders::_1), 0.15f);
 		hasHit = true;
 
