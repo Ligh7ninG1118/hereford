@@ -52,6 +52,7 @@ private:
 	bool lmbPressed = false;
 	float totalRuntime;
 
+	float currentTopSpeed;
 	const float topWalkingSpeed = 3.5f;
 	const float topCrouchSpeed = 1.5f;
 	const float topSprintingSpeed = 6.0f;

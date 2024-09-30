@@ -88,6 +88,7 @@ Player::Player(GameContext* gameCtx)
 	mPtrActionComp->AddAction(sprintAction);
 
 	totalRuntime = 0.0f;
+	currentTopSpeed = topWalkingSpeed;
 }
 
 Player::~Player()
@@ -107,10 +108,8 @@ void Player::OnUpdate(float deltaTime)
 		else
 			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.5f);
 
-		//TODO: relate amplitutde to movement speed
-		float yD = sinf(totalRuntime * 6.0f) * 0.03f;
-		//float zD = sinf(totalRuntime * 2.0f) * cosf(totalRuntime * 2.0f) * 0.1f;
-		float zD = sinf(totalRuntime * 3.0f) * 0.03f;
+		float yD = sinf(totalRuntime * 6.0f) * currentTopSpeed * 0.01f;
+		float zD = sinf(totalRuntime * 3.0f) * currentTopSpeed * 0.01f;
 
 		Vec3 offset = currentArmTranslationOffset;
 		offset.mY += yD;
@@ -180,21 +179,27 @@ void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 			{
 				mPtrActionComp->StopActionByName("Crouch");
 				TimelineActionManager::ReverseFromEnd(mHCrouchTimeline, std::bind(&Player::CrouchTimeline, this, std::placeholders::_1), 0.25f);
+				currentTopSpeed = topWalkingSpeed;
+
 			}
 			else
 			{
 				mPtrActionComp->StartActionByName("Crouch");
 				TimelineActionManager::PlayFromStart(mHCrouchTimeline, std::bind(&Player::CrouchTimeline, this, std::placeholders::_1), 0.25f);
+				currentTopSpeed = topCrouchSpeed;
+
 			}
 		}
 
 		if (keyState[SDL_SCANCODE_LSHIFT] == EInputState::KEY_DOWN)
 		{
 			mPtrActionComp->StartActionByName("Sprint");
+			currentTopSpeed = topSprintingSpeed;
 		}
 		if (keyState[SDL_SCANCODE_LSHIFT] == EInputState::KEY_UP)
 		{
 			mPtrActionComp->StopActionByName("Sprint");
+			currentTopSpeed = topWalkingSpeed;
 		}
 
 		
@@ -214,12 +219,6 @@ void Player::ProcessMovement(const float& deltaTime)
 	updatedPos += currentVelocity * deltaTime;
 	SetPosition(updatedPos);
 
-	float topSpeed = topWalkingSpeed;
-	if (mPtrActionComp->GetActiveGameplayTags().HasTag(GameplayTag(EActionType::CROUCHING)))
-		topSpeed = topCrouchSpeed;
-	else if (mPtrActionComp->GetActiveGameplayTags().HasTag(GameplayTag(EActionType::SPRINTING)))
-		topSpeed = topSprintingSpeed;
-
 	// Update Velocity
 	if (hasMovementInput)
 	{
@@ -231,9 +230,9 @@ void Player::ProcessMovement(const float& deltaTime)
 	}
 
 	// Cap velocity at top speed
-	if (currentVelocity.SqrMagnitude() > topSpeed * topSpeed)
+	if (currentVelocity.SqrMagnitude() > currentTopSpeed * currentTopSpeed)
 	{
-		currentVelocity = currentVelocity.normalized() * topSpeed;
+		currentVelocity = currentVelocity.normalized() * currentTopSpeed;
 	}
 
 	// Prevent drifting
@@ -278,6 +277,4 @@ void Player::CrouchTimeline(float alpha)
 	float armOffsetVal = Math::Lerp(1.32f, 0.56f, alpha);
 
 	mPtrCameraComp->SetEyeHeight(heightVal);
-	//TODO: Fix
-	mPtrAnimRenderComp->SetTranslateOffset(Vec3(-0.2f, armOffsetVal, 0.0f));
 }
