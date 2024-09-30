@@ -24,11 +24,21 @@ Mat4 AnimatedRenderComponent::GetModelMatrix() const
 	mat.Scale(mOwner->GetScale());
 
 	Vec3 rot = Vec3::Zero;
+	Vec3 ownPos = mOwner->GetPosition();
+	Vec3 actorFwd = mOwner->GetForward();
+	Vec3 actorRight = -actorFwd.Cross(Vec3(0.0f, 1.0f, 0.0f)).normalized();
+	Vec3 actorUp = -actorRight.Cross(actorFwd);
+
 	if (mControlByFPCam)
 	{
 		Vec3 camRot = mPtrCamera->GetRotation();
 		rot.mX = -camRot.mX;
 		rot.mZ = -camRot.mY;
+
+		actorFwd = mPtrCamera->GetFrontVector();
+		actorRight = -actorFwd.Cross(Vec3(0.0f, 1.0f, 0.0f)).normalized();
+		actorUp = -actorRight.Cross(actorFwd);
+		ownPos += mPtrCamera->GetPositionOffset();
 	}
 	else
 	{
@@ -36,17 +46,12 @@ Mat4 AnimatedRenderComponent::GetModelMatrix() const
 	}
 	mat.Rotate(mRotateOffset + rot);
 
-	Vec3 actorFwd = mOwner->GetForward();
-	Vec3 actorRight = -actorFwd.Cross(Vec3(0.0f, 1.0f, 0.0f)).normalized();
-	Vec3 actorUp = Vec3(0.0f, 1.0f, 0.0f);
+	Vec3 actualOffset = Vec3::Zero;
+	actualOffset += mTranslateOffset.mX * actorFwd;
+	actualOffset += mTranslateOffset.mY * actorUp;
+	actualOffset += mTranslateOffset.mZ * actorRight;
 
-	float x = mTranslateOffset.Dot(actorFwd);
-	float y = mTranslateOffset.Dot(actorUp);
-	float z = mTranslateOffset.Dot(actorRight);
-
-	Vec3 actualOffset = Vec3(x, y, z);
-
-	mat.Translate(actualOffset + mOwner->GetPosition());
+	mat.Translate(actualOffset + ownPos);
 
 	return mat;
 }

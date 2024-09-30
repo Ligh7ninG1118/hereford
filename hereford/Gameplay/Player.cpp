@@ -31,7 +31,8 @@ Player::Player(GameContext* gameCtx)
 	mPtrAnimRenderComp->SetModel(AssetManager::LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v3.fbx")));
 
 	mPtrAnimRenderComp->SetShader(AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_phong_frag.glsl")));
-	translationOffset = Vec3(-0.2f, 1.42f, 0.0f);
+	translationOffset = Vec3(-0.2f, -0.4f, 0.0f);
+
 	mPtrAnimRenderComp->SetTranslateOffset(translationOffset);
 	mPtrAnimRenderComp->SetScaleOffset(Vec3(0.02f));
 	mPtrAnimRenderComp->SetRotateOffset(Vec3(0.0f, 0.0f, 90.0f));
@@ -233,15 +234,18 @@ void Player::ProcessMovement(const float& deltaTime)
 
 void Player::ShowDebugInfo()
 {
-	/*ImGui::Begin("Player");
+	ImGui::Begin("Player");
 	Vec3 pos = GetPosition();
 	Vec3 pRot = GetRotation();
+
 	Vec3 rot = mPtrCameraComp->GetRotation();
+	Vec3 frt = mPtrCameraComp->GetFrontVector();
 	ImGui::Text("Pos (%.2f, %.2f, %.2f)\tRot (%.2f, %.2f, %.2f)", pos.mX, pos.mY, pos.mZ, rot.mX, rot.mY, rot.mZ);
+	ImGui::Text("Cam Front (%.2f, %.2f, %.2f)", frt.mX, frt.mY, frt.mZ);
 	ImGui::Text("Player Rot (%.2f, %.2f, %.2f)", pRot.mX, pRot.mY, pRot.mZ);
 	ImGui::End();
 
-	ImGui::Begin("Arm Offset", 0, ImGuiWindowFlags_AlwaysAutoResize);
+	/*ImGui::Begin("Arm Offset", 0, ImGuiWindowFlags_AlwaysAutoResize);
 	ImGui::SliderFloat("X Offset", &translationOffset.mX, -2.0f, 2.0f);
 	ImGui::SliderFloat("Y Offset", &translationOffset.mY, -2.0f, 2.0f);
 	ImGui::SliderFloat("Z Offset", &translationOffset.mZ, -2.0f, 2.0f);

@@ -127,6 +127,7 @@ bool Vector3::operator!=(const Vector3& rhs) const
 
 Vector3 Vector3::operator+(const Vector3& rhs) const
 {
+	//TODO: Might have issue with multiple adding;
 	return Vector3(mX + rhs.mX, mY + rhs.mY, mZ + rhs.mZ);
 }
 
@@ -142,6 +143,7 @@ Vector3 Vector3::operator-() const
 
 Vector3 Vector3::operator*(const float& scalar) const
 {
+	//TODO: Might have issue with multiple adding;
 	return Vector3(mX * scalar, mY * scalar, mZ * scalar);
 }
 
