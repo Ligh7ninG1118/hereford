@@ -59,7 +59,8 @@ private:
 	const float decelerationSpeed = 40.0f;
 	const float minVelocityOffset = 0.01f;
 
-	const Vec3 armTranslationOffset = Vec3(-0.2f, -0.4f, 0.0f);
+	const Vec3 hipArmTranslationOffset = Vec3(-0.2f, -0.4f, 0.0f);
+	Vec3 currentArmTranslationOffset;
 
 	GameEvent::Subscription<EventOnPlayerWeaponFired>* mPtrWeaponFiredEvent;
 };

@@ -31,8 +31,8 @@ Player::Player(GameContext* gameCtx)
 	mPtrAnimRenderComp->SetModel(AssetManager::LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v3.fbx")));
 
 	mPtrAnimRenderComp->SetShader(AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_phong_frag.glsl")));
-
-	mPtrAnimRenderComp->SetTranslateOffset(armTranslationOffset);
+	currentArmTranslationOffset = hipArmTranslationOffset;
+	mPtrAnimRenderComp->SetTranslateOffset(currentArmTranslationOffset);
 	mPtrAnimRenderComp->SetScaleOffset(Vec3(0.02f));
 	mPtrAnimRenderComp->SetRotateOffset(Vec3(0.0f, 0.0f, 90.0f));
 
@@ -107,9 +107,12 @@ void Player::OnUpdate(float deltaTime)
 		else
 			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.5f);
 
-		float yD = sinf(totalRuntime * 2.0f) * 0.1f;
-		float zD = sinf(totalRuntime * 2.0f) * cosf(totalRuntime * 2.0f) * 0.1f;
-		Vec3 offset = armTranslationOffset;
+		//TODO: relate amplitutde to movement speed
+		float yD = sinf(totalRuntime * 6.0f) * 0.03f;
+		//float zD = sinf(totalRuntime * 2.0f) * cosf(totalRuntime * 2.0f) * 0.1f;
+		float zD = sinf(totalRuntime * 3.0f) * 0.03f;
+
+		Vec3 offset = currentArmTranslationOffset;
 		offset.mY += yD;
 		offset.mZ += zD;
 		mPtrAnimRenderComp->SetTranslateOffset(offset);
@@ -121,7 +124,6 @@ void Player::OnUpdate(float deltaTime)
 		else
 			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.0f);
 	}
-
 	ShowDebugInfo();
 }
 
@@ -201,7 +203,8 @@ void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 
 void Player::SetArmOffset(Vec3 offset)
 {
-	mPtrAnimRenderComp->SetTranslateOffset(offset);
+	currentArmTranslationOffset = offset;
+	mPtrAnimRenderComp->SetTranslateOffset(currentArmTranslationOffset);
 }
 
 void Player::ProcessMovement(const float& deltaTime)
@@ -275,5 +278,6 @@ void Player::CrouchTimeline(float alpha)
 	float armOffsetVal = Math::Lerp(1.32f, 0.56f, alpha);
 
 	mPtrCameraComp->SetEyeHeight(heightVal);
+	//TODO: Fix
 	mPtrAnimRenderComp->SetTranslateOffset(Vec3(-0.2f, armOffsetVal, 0.0f));
 }

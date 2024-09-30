@@ -217,6 +217,7 @@ void WeaponComponent::AimingTimeline(float alpha)
 {
 	Player* player = static_cast<Player*>(mOwner);
 	player->GetMainCamera().SetHorFOV(Math::Lerp(80.0f, 50.0f, alpha));
+	//TODO: parameterize this
 	player->SetArmOffset(Math::Lerp(Vec3(-0.2f, -0.4f, 0.0f), Vec3(-0.5f, -0.275f, 0.215f), alpha));
 }
 
