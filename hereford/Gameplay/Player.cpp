@@ -190,6 +190,11 @@ void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 	}
 }
 
+void Player::SetArmOffset(Vec3 offset)
+{
+	mPtrAnimRenderComp->SetTranslateOffset(offset);
+}
+
 void Player::ProcessMovement(const float& deltaTime)
 {
 	// Update Position
@@ -228,7 +233,7 @@ void Player::ProcessMovement(const float& deltaTime)
 
 void Player::ShowDebugInfo()
 {
-	ImGui::Begin("Player");
+	/*ImGui::Begin("Player");
 	Vec3 pos = GetPosition();
 	Vec3 pRot = GetRotation();
 	Vec3 rot = mPtrCameraComp->GetRotation();
@@ -236,7 +241,7 @@ void Player::ShowDebugInfo()
 	ImGui::Text("Player Rot (%.2f, %.2f, %.2f)", pRot.mX, pRot.mY, pRot.mZ);
 	ImGui::End();
 
-	/*ImGui::Begin("Arm Offset", 0, ImGuiWindowFlags_AlwaysAutoResize);
+	ImGui::Begin("Arm Offset", 0, ImGuiWindowFlags_AlwaysAutoResize);
 	ImGui::SliderFloat("X Offset", &translationOffset.mX, -2.0f, 2.0f);
 	ImGui::SliderFloat("Y Offset", &translationOffset.mY, -2.0f, 2.0f);
 	ImGui::SliderFloat("Z Offset", &translationOffset.mZ, -2.0f, 2.0f);

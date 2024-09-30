@@ -22,6 +22,8 @@ public:
 
 	class ActionComponent* GetActionComp() const { return mPtrActionComp.get(); }
 
+	void SetArmOffset(Vec3 offset);
+
 private:
 	void ProcessMovement(const float& deltaTime);
 	void ShowDebugInfo();
