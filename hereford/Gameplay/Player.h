@@ -50,6 +50,7 @@ private:
 	Vector3 currentVelocity = Vector3::Zero;
 
 	bool lmbPressed = false;
+	float totalRuntime;
 
 	const float topWalkingSpeed = 3.5f;
 	const float topCrouchSpeed = 1.5f;
@@ -57,6 +58,8 @@ private:
 	const float accelerationSpeed = 55.0f;
 	const float decelerationSpeed = 40.0f;
 	const float minVelocityOffset = 0.01f;
+
+	const Vec3 armTranslationOffset = Vec3(-0.2f, -0.4f, 0.0f);
 
 	GameEvent::Subscription<EventOnPlayerWeaponFired>* mPtrWeaponFiredEvent;
 };
