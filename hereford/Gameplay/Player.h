@@ -22,7 +22,8 @@ public:
 
 	class ActionComponent* GetActionComp() const { return mPtrActionComp.get(); }
 
-	void SetArmOffset(Vec3 offset);
+	void SetArmRotateOffset(Vec3 offset);
+	void SetArmTranslateOffset(Vec3 offset);
 
 private:
 	void ProcessMovement(const float& deltaTime);
@@ -46,7 +47,6 @@ private:
 
 	bool hasMovementInput = false;
 	Vector3 inputMoveDir;
-	Vector3 translationOffset;
 	Vector3 currentVelocity = Vector3::Zero;
 
 	bool lmbPressed = false;
@@ -61,7 +61,11 @@ private:
 	const float minVelocityOffset = 0.01f;
 
 	const Vec3 hipArmTranslationOffset = Vec3(-0.2f, -0.4f, 0.0f);
+	const Vec3 hipArmRotationOffset = Vec3(0.0f, 0.0f, 90.0f);
+
 	Vec3 currentArmTranslationOffset;
+	Vec3 currentArmRotationOffset;
+
 
 	GameEvent::Subscription<EventOnPlayerWeaponFired>* mPtrWeaponFiredEvent;
 };

@@ -32,9 +32,10 @@ Player::Player(GameContext* gameCtx)
 
 	mPtrAnimRenderComp->SetShader(AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_phong_frag.glsl")));
 	currentArmTranslationOffset = hipArmTranslationOffset;
+	currentArmRotationOffset = hipArmRotationOffset;
 	mPtrAnimRenderComp->SetTranslateOffset(currentArmTranslationOffset);
 	mPtrAnimRenderComp->SetScaleOffset(Vec3(0.02f));
-	mPtrAnimRenderComp->SetRotateOffset(Vec3(0.0f, 0.0f, 90.0f));
+	mPtrAnimRenderComp->SetRotateOffset(currentArmRotationOffset);
 
 	mPtrAnimRenderComp->SetCamera(mPtrCameraComp.get());
 
@@ -123,6 +124,14 @@ void Player::OnUpdate(float deltaTime)
 		else
 			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.0f);
 	}
+
+	currentArmRotationOffset.mX = Math::Lerp(currentArmRotationOffset.mX, 0.0f, 0.2f);
+
+	currentArmRotationOffset.mZ = Math::Lerp(currentArmRotationOffset.mZ, 90.0f, 0.2f);
+
+	mPtrAnimRenderComp->SetRotateOffset(currentArmRotationOffset);
+
+
 	ShowDebugInfo();
 }
 
@@ -201,12 +210,20 @@ void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 			mPtrActionComp->StopActionByName("Sprint");
 			currentTopSpeed = topWalkingSpeed;
 		}
+	}
 
-		
+	{
+		currentArmRotationOffset.mX -= mouseDeltaY * 0.1f;
+		currentArmRotationOffset.mZ += mouseDeltaX * 0.1f;
 	}
 }
 
-void Player::SetArmOffset(Vec3 offset)
+void Player::SetArmRotateOffset(Vec3 offset)
+{
+	mPtrAnimRenderComp->SetRotateOffset(offset);
+}
+
+void Player::SetArmTranslateOffset(Vec3 offset)
 {
 	currentArmTranslationOffset = offset;
 	mPtrAnimRenderComp->SetTranslateOffset(currentArmTranslationOffset);
