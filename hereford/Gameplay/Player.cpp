@@ -102,6 +102,16 @@ void Player::OnUpdate(float deltaTime)
 	ProcessMovement(deltaTime);
 	totalRuntime += deltaTime;
 
+	float speed = currentVelocity.Magnitude();
+
+	float yD = sinf(totalRuntime * 6.0f) * speed * 0.01f;
+	float zD = sinf(totalRuntime * 3.0f) * speed * 0.01f;
+
+	Vec3 offset = currentArmTranslationOffset;
+	offset.mY += yD;
+	offset.mZ += zD;
+	mPtrAnimRenderComp->SetTranslateOffset(offset);
+
 	if (hasMovementInput)
 	{
 		if (mPtrActionComp->GetActiveGameplayTags().HasTag(GameplayTag(EActionType::CROUCHING)))
@@ -109,13 +119,7 @@ void Player::OnUpdate(float deltaTime)
 		else
 			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.5f);
 
-		float yD = sinf(totalRuntime * 6.0f) * currentTopSpeed * 0.01f;
-		float zD = sinf(totalRuntime * 3.0f) * currentTopSpeed * 0.01f;
-
-		Vec3 offset = currentArmTranslationOffset;
-		offset.mY += yD;
-		offset.mZ += zD;
-		mPtrAnimRenderComp->SetTranslateOffset(offset);
+		
 	}
 	else
 	{
