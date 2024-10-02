@@ -204,6 +204,39 @@ void GameContext::LoadScene(const std::string& sceneFilePath)
 
 }
 
+void GameContext::SaveScene(const std::string& sceneFilePath)
+{
+	using json = nlohmann::json;
+	json scene;
+
+	for (const auto& actor : mActors)
+	{
+		if (dynamic_cast<Player*>(actor))
+			continue;
+
+		json actorJson;
+		actorJson["class"] = actor->GetClassName();
+
+		Vec3 pos = actor->GetPosition();
+		actorJson["position"] = { pos.mX, pos.mY, pos.mZ };
+
+		Vec3 rot = actor->GetRotation();
+		actorJson["rotation"] = { rot.mX, rot.mY, rot.mZ };
+
+		scene["actors"].push_back(actorJson);
+	}
+
+	std::ofstream file(sceneFilePath.c_str());
+	if (!file.is_open())
+	{
+		printf("GameContext::SaveScene(): Could not open scene file for writing\n");
+		return;
+	}
+
+	file << scene.dump(4); // Pretty print with 4 spaces
+	file.close();
+}
+
 
 void GameContext::ProcessInput()
 {
@@ -222,10 +255,11 @@ void GameContext::ProcessInput()
 	}
 
 	const Uint8* rawKeyState = SDL_GetKeyboardState(nullptr);
+	int mouseDeltaX = 0, mouseDeltaY = 0;
+	Uint32 newMouseState = 0;
+
 	if (rawKeyState[SDL_SCANCODE_ESCAPE])
 		mIsRunning = false;
-
-	
 
 	for (int i = 0; i < mPrevKeyStates.size(); i++)
 	{
@@ -239,11 +273,10 @@ void GameContext::ProcessInput()
 	{
 		mCursorMode = !mCursorMode;
 		SDL_SetRelativeMouseMode(static_cast<SDL_bool>(!mCursorMode));
+		// Clear mouse state to avoid sudden view change
+		SDL_GetRelativeMouseState(nullptr, nullptr);
 	}
 
-	int mouseDeltaX = 0, mouseDeltaY = 0;
-	Uint32 newMouseState = 0;
-	
 	if (!mCursorMode)
 	{
 		Uint32 rawMouseState = SDL_GetRelativeMouseState(&mouseDeltaX, &mouseDeltaY);
@@ -264,6 +297,12 @@ void GameContext::ProcessInput()
 			newMouseState |= (rawMouseState & SDL_BUTTON_MMASK) ? EMouseState::MMB_DOWN : EMouseState::MMB_NOT_PRESSED;
 
 		mPrevMouseStates = newMouseState;
+	}
+	else
+	{
+		EInputState cacheState = mPrevKeyStates[SDL_SCANCODE_GRAVE];
+		mPrevKeyStates.assign(mPrevKeyStates.size(), EInputState::NOT_PRESSED);
+		mPrevKeyStates[SDL_SCANCODE_GRAVE] = cacheState;
 	}
 
 	std::vector<Actor*> actorVector = mActors;
@@ -309,8 +348,13 @@ void GameContext::GenerateOutput()
 
 void GameContext::DebugSceneObjects()
 {
-	ImGui::ShowDemoWindow();
+	//ImGui::ShowDemoWindow();
 	ImGui::Begin("Scene Objects", 0, ImGuiWindowFlags_AlwaysAutoResize);
+
+	if (ImGui::Button("Save Scene"))
+	{
+		SaveScene("Scenes/playground.json");
+	}
 
 	int id = 0;
 	for (const auto& actor : mActors)
@@ -340,6 +384,15 @@ void GameContext::DebugSceneObjects()
 		id++;
 	}
 
+	
+	ImGui::Text("Add Actor");
+	static char actorClass[64] = "";
+	ImGui::InputText("Class Name", actorClass, IM_ARRAYSIZE(actorClass));
+
+	if (ImGui::Button("Add"))
+	{
+		ReflectionRegistry::Instance().CreateInstance(std::string(actorClass), this);
+	}
 	ImGui::End();
 }
 
