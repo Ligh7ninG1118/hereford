@@ -104,8 +104,8 @@ void Player::OnUpdate(float deltaTime)
 
 	float speed = currentVelocity.Magnitude();
 
-	float yD = sinf(totalRuntime * 6.0f) * speed * 0.01f;
-	float zD = sinf(totalRuntime * 3.0f) * speed * 0.01f;
+	float yD = sinf(totalRuntime * 6.0f) * speed * 0.001f;
+	float zD = sinf(totalRuntime * 3.0f) * speed * 0.001f;
 
 	Vec3 offset = currentArmTranslationOffset;
 	offset.mY += yD;
