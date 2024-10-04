@@ -94,7 +94,7 @@ bool GameContext::Initialize()
 
 	mIsRunning = true;
 	LoadData();
-	LoadScene("Scenes/playground.json");
+	LoadScene("Scenes/scenefile.json");
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -182,10 +182,10 @@ void GameContext::LoadScene(const std::string& sceneFilePath)
 	for (unsigned int i = 0; i < actorCount; i++)
 	{
 		json actor = scene["actors"][i];
-		Actor* pActor = ReflectionRegistry::Instance().CreateInstance(actor["class"], this);
+		Actor* pActor = ReflectionRegistry::Instance().CreateInstance(actor["className"], this);
 		if (pActor == nullptr)
 		{
-			printf("GameContext::LoadScene(): Class[%s] not found in registry\n", static_cast<std::string>(actor["class"]).c_str());
+			printf("GameContext::LoadScene(): Class[%s] not found in registry\n", static_cast<std::string>(actor["className"]).c_str());
 			continue;
 		}
 
@@ -220,7 +220,7 @@ void GameContext::SaveScene(const std::string& sceneFilePath)
 			continue;
 
 		json actorJson;
-		actorJson["class"] = actor->GetClassName();
+		actorJson["className"] = actor->GetClassName();
 
 		Vec3 pos = actor->GetPosition();
 		actorJson["position"] = { pos.mX, pos.mY, pos.mZ };
@@ -386,6 +386,15 @@ void GameContext::DebugSceneObjects()
 			ImGui::SameLine();
 			ImGui::SliderFloat("Yaw", &rot.mZ, -180.0f, 180.0f);
 			actor->SetRotation(rot);
+
+			Vec3 scale = actor->GetScale();
+			ImGui::Text("Scale");
+			ImGui::SliderFloat("Scale X", &scale.mX, -100.0f, 100.0f);
+			ImGui::SameLine();
+			ImGui::SliderFloat("Scale Y", &scale.mY, -100.0f, 100.0f);
+			ImGui::SameLine();
+			ImGui::SliderFloat("Scale Z", &scale.mZ, -100.0f, 100.0f);
+			actor->SetScale(scale);
 
 			ImGui::TreePop();
 		}
