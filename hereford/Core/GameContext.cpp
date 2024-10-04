@@ -199,6 +199,11 @@ void GameContext::LoadScene(const std::string& sceneFilePath)
 			Vec3 rot = Vec3(static_cast<float>(actor["rotation"][0]), static_cast<float>(actor["rotation"][1]), static_cast<float>(actor["rotation"][2]));
 			pActor->SetRotation(rot);
 		}
+		if (!actor["scale"].empty())
+		{
+			Vec3 scale = Vec3(static_cast<float>(actor["scale"][0]), static_cast<float>(actor["scale"][1]), static_cast<float>(actor["scale"][2]));
+			pActor->SetScale(scale);
+		}
 
 	}
 
@@ -222,6 +227,9 @@ void GameContext::SaveScene(const std::string& sceneFilePath)
 
 		Vec3 rot = actor->GetRotation();
 		actorJson["rotation"] = { rot.mX, rot.mY, rot.mZ };
+
+		Vec3 scale = actor->GetScale();
+		actorJson["scale"] = { scale.mX, scale.mY, scale.mZ };
 
 		scene["actors"].push_back(actorJson);
 	}
