@@ -243,11 +243,13 @@ void Player::ProcessMovement(const float& deltaTime)
 	// Update Velocity
 	if (hasMovementInput)
 	{
-		currentVelocity += inputMoveDir * accelerationSpeed * deltaTime;
+		Vector3 desiredVelocity = inputMoveDir * currentTopSpeed;
+		currentVelocity = Math::Lerp(currentVelocity, desiredVelocity, accelerationSpeed * deltaTime);
 	}
 	else // In case of no-gravity space combat, comment this part
 	{
-		currentVelocity -= currentVelocity.normalized() * decelerationSpeed * deltaTime;
+		//currentVelocity -= currentVelocity.normalized() * decelerationSpeed * deltaTime;
+		currentVelocity = Math::Lerp(currentVelocity, Vector3::Zero, decelerationSpeed * deltaTime);
 	}
 
 	// Cap velocity at top speed
