@@ -235,34 +235,17 @@ void Player::SetArmTranslateOffset(Vec3 offset)
 
 void Player::ProcessMovement(const float& deltaTime)
 {
-	// Update Position
+    float targetSpeed = hasMovementInput ? currentTopSpeed : 0.0f;
+	float currentHorSpeed = Vector3(currentVelocity.mX, 0.0f, currentVelocity.mZ).Magnitude();
+
+	if (currentHorSpeed < targetSpeed - speedOffset || currentHorSpeed > targetSpeed + speedOffset)
+		currentVelocity = Math::Lerp(currentHorSpeed, targetSpeed, deltaTime * maxSpeedChangingRate) * inputMoveDir;
+	else
+		currentVelocity = targetSpeed * inputMoveDir;
+
 	Vector3 updatedPos = GetPosition();
 	updatedPos += currentVelocity * deltaTime;
 	SetPosition(updatedPos);
-
-	// Update Velocity
-	if (hasMovementInput)
-	{
-		Vector3 desiredVelocity = inputMoveDir * currentTopSpeed;
-		currentVelocity = Math::Lerp(currentVelocity, desiredVelocity, accelerationSpeed * deltaTime);
-	}
-	else // In case of no-gravity space combat, comment this part
-	{
-		//currentVelocity -= currentVelocity.normalized() * decelerationSpeed * deltaTime;
-		currentVelocity = Math::Lerp(currentVelocity, Vector3::Zero, decelerationSpeed * deltaTime);
-	}
-
-	// Cap velocity at top speed
-	if (currentVelocity.SqrMagnitude() > currentTopSpeed * currentTopSpeed)
-	{
-		currentVelocity = currentVelocity.normalized() * currentTopSpeed;
-	}
-
-	// Prevent drifting
-	if (currentVelocity.SqrMagnitude() < minVelocityOffset)
-	{
-		currentVelocity = Vector3::Zero;
-	}
 }
 
 void Player::ShowDebugInfo()

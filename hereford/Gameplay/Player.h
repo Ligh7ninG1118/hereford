@@ -56,9 +56,9 @@ private:
 	const float topWalkingSpeed = 3.5f;
 	const float topCrouchSpeed = 1.5f;
 	const float topSprintingSpeed = 6.0f;
-	const float accelerationSpeed = 55.0f;
-	const float decelerationSpeed = 40.0f;
-	const float minVelocityOffset = 0.01f;
+	const float maxSpeedChangingRate = 25.0f;
+	const float speedOffset = 0.01f;
+
 
 	const Vec3 hipArmTranslationOffset = Vec3(-0.2f, -0.4f, 0.0f);
 	const Vec3 hipArmRotationOffset = Vec3(0.0f, 0.0f, 90.0f);
