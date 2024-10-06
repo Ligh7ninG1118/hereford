@@ -1,7 +1,7 @@
 {
     "actors": [
         {
-            "class": "TestCube",
+            "className": "TestCube",
             "position": [
                 5.0,
                 0.5,
@@ -14,7 +14,7 @@
             ]
         },
         {
-            "class": "TestCube",
+            "className": "TestCube",
             "position": [
                 4.6570000648498535,
                 0.5,
@@ -27,7 +27,7 @@
             ]
         },
         {
-            "class": "TestCube",
+            "className": "TestCube",
             "position": [
                 4.943999767303467,
                 1.5,
@@ -40,7 +40,7 @@
             ]
         },
         {
-            "class": "TestCube",
+            "className": "TestCube",
             "position": [
                 4.607999801635742,
                 1.5,
@@ -53,7 +53,7 @@
             ]
         },
         {
-            "class": "TestCube",
+            "className": "TestCube",
             "position": [
                 4.5370001792907715,
                 0.5,
@@ -66,7 +66,7 @@
             ]
         },
         {
-            "class": "TestCube",
+            "className": "TestCube",
             "position": [
                 4.920000076293945,
                 0.5,
@@ -79,7 +79,7 @@
             ]
         },
         {
-            "class": "TestCube",
+            "className": "TestCube",
             "position": [
                 4.25,
                 0.5,
@@ -92,7 +92,7 @@
             ]
         },
         {
-            "class": "RangeTarget",
+            "className": "RangeTarget",
             "position": [
                 0.0,
                 0.0,
@@ -105,7 +105,7 @@
             ]
         },
         {
-            "class": "Ground",
+            "className": "Ground",
             "position": [
                 0.0,
                 0.0,
@@ -118,7 +118,7 @@
             ]
         },
         {
-            "class": "NPC",
+            "className": "NPC",
             "position": [
                 0.0,
                 0.0,
@@ -131,7 +131,7 @@
             ]
         },
         {
-            "class": "TestCube",
+            "className": "TestCube",
             "position": [
                 18.75,
                 7.291999816894531,
