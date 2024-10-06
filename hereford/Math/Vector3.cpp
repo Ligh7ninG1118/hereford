@@ -103,6 +103,38 @@ float Vector3::AngleAsRad(const Vector3& lhs, const Vector3& rhs)
 	return acosf(lhs.Dot(rhs) / (lhs.Magnitude() * rhs.Magnitude()));
 }
 
+Vector3 Vector3::SmoothDamp(Vector3 current, Vector3 target, Vector3& currenVelocity, float smoothTime, float deltaTime, float maxSpeed)
+{
+	smoothTime = std::fmax(0.0001f, smoothTime);
+	float omega = 2.0f / smoothTime;
+	float x = omega * deltaTime;
+	float expFactor = 1.0f / (1.0f + x + 0.48f * x * x + 0.235f * x * x * x);
+
+	Vector3 change = current - target;
+
+	float maxChange = maxSpeed * smoothTime;
+	if (change.Magnitude() > maxChange)
+		change = change.normalized() * maxChange;
+	else if (change.Magnitude() < -maxChange)
+		change = change.normalized() * (-maxChange);
+
+	Vector3 tempTarget = target;
+	target = current - change;
+
+	Vector3 tempVelocity = (currenVelocity + omega * change) * deltaTime;
+	currenVelocity = (currenVelocity - omega * tempVelocity) * expFactor;
+
+	Vector3 newValue = target + (change + tempVelocity) * expFactor;
+
+	if ((tempTarget - current).Magnitude() > 0.0f == (newValue - tempTarget).Magnitude() > 0.0f) 
+	{
+		newValue = tempTarget;
+		currenVelocity = (newValue - tempTarget) / deltaTime;
+	}
+
+	return newValue;
+}
+
 Vector3& Vector3::operator=(const Vector3& rhs)
 {
 	if (this == &rhs)
@@ -199,7 +231,7 @@ Vector3& Vector3::operator/=(const float& scalar)
 	return *this;
 }
 
-const Vector3& operator*(const float& scalar, const Vector3& vec3)
+Vector3 operator*(const float& scalar, const Vector3& vec3)
 {
 	return vec3 * scalar;
 }

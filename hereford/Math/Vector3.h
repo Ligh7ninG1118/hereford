@@ -30,6 +30,7 @@ struct Vector3
 	static float Distance(const Vector3& lhs, const Vector3& rhs);
 	static float AngleAsDeg(const Vector3& lhs, const Vector3& rhs);
 	static float AngleAsRad(const Vector3& lhs, const Vector3& rhs);
+	static Vector3 SmoothDamp(Vector3 current, Vector3 target, Vector3& velocity, float smoothTime, float deltaTime, float maxSpeed = std::numeric_limits<float>::infinity());
 
 	static const Vector3 Zero;
 	static const Vector3 One;
@@ -57,7 +58,7 @@ struct Vector3
 	Vector3& operator*=(const float& scalar);
 	Vector3& operator/=(const float& scalar);
 
-	friend const Vector3& operator*(const float& scalar, const Vector3& vec3);
+	friend Vector3 operator*(const float& scalar, const Vector3& vec3);
 
 };
 
