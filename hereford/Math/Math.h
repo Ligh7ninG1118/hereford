@@ -45,7 +45,7 @@ public:
 		else
 			return val;
 	}
-	
+
 	template <typename T>
 	static T Lerp(const T& a, const T& b, const float& t)
 	{
@@ -79,6 +79,36 @@ public:
 		}
 
 		return scaleA * a + scaleB * b;
+	}
+
+
+	template <typename T>
+	static T SmoothDamp(T current, T target, float& velocity, float smoothTime, float deltaTime, float maxSpeed = std::numeric_limits<float>::infinity())
+	{
+		smoothTime = std::fmax(0.0001f, smoothTime);
+		float omega = 2.0f / smoothTime;
+		float x = omega * deltaTime;
+		float expFactor = 1.0f / (1.0f + x + 0.48f * x * x + 0.235f * x * x * x);
+
+		float change = current - target;
+
+		float maxChange = maxSpeed * smoothTime;
+		change = Clamp(change, -maxChange, maxChange);
+
+		float tempTarget = target;
+		target = current - change;
+
+		float tempVelocity = (velocity + omega * change) * deltaTime;
+		velocity = (velocity - omega * tempVelocity) * expFactor;
+
+		float newPosition = target + (change + tempVelocity) * expFactor;
+		if ((tempTarget - current) > 0.0f) == (newPosition > tempTarget))
+		{
+			newPosition = tempTarget;
+			velocity = (newPosition - tempTarget) / deltaTime;
+		}
+
+		return newPosition;
 	}
 
 	// TODO: to lower/to floor ?
