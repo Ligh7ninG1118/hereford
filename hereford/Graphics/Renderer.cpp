@@ -574,6 +574,14 @@ void Renderer::Render(float deltaTime)
 					glActiveTexture(GL_TEXTURE0 + texChannel);
 					glBindTexture(GL_TEXTURE_CUBE_MAP, irraTexID);
 
+					shader->SetInt("prefilter", texChannel + 1);
+					glActiveTexture(GL_TEXTURE0 + texChannel + 1);
+					glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterTexID);
+
+					shader->SetInt("brdfLUT", texChannel + 2);
+					glActiveTexture(GL_TEXTURE0 + texChannel + 2);
+					glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+
 					glBindVertexArray(mesh->mVAOID);
 					glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(mesh->mIndices.size()), GL_UNSIGNED_INT, 0);
 
