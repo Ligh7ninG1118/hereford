@@ -236,7 +236,7 @@ void Player::SetArmTranslateOffset(Vec3 offset)
 void Player::ProcessMovement(const float& deltaTime)
 {
     float targetSpeed = hasMovementInput ? currentTopSpeed : 0.0f;
-	float currentHorSpeed = Vector3(currentVelocity.mX, 0.0f, currentVelocity.mZ).Magnitude();
+	float currentHorSpeed = Vector3(currentVelocity.mX, currentVelocity.mY, currentVelocity.mZ).Magnitude();
 
 	if (currentHorSpeed < targetSpeed - speedOffset || currentHorSpeed > targetSpeed + speedOffset)
 		currentVelocity = Math::Lerp(currentHorSpeed, targetSpeed, deltaTime * maxSpeedChangingRate) * inputMoveDir;

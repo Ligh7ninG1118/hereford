@@ -94,8 +94,7 @@ bool GameContext::Initialize()
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 
 	mIsRunning = true;
-	LoadData();
-	LoadScene("Scenes/hereford test v1.json");
+	LoadStarterData();
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -159,7 +158,7 @@ void GameContext::RunLoop()
 	Shutdown();
 }
 
-void GameContext::LoadData()
+void GameContext::LoadStarterData()
 {
 	mPtrPlayer = new Player(this);
 	mPtrRenderer->SetMainCamera(&mPtrPlayer->GetMainCamera());
@@ -167,6 +166,8 @@ void GameContext::LoadData()
 
 void GameContext::LoadScene(const std::string& sceneFilePath)
 {
+	ClearScene();
+
 	using json = nlohmann::json;
 
 	std::fstream file(sceneFilePath.c_str());
@@ -217,6 +218,17 @@ void GameContext::LoadScene(const std::string& sceneFilePath)
 
 	}
 
+}
+
+void GameContext::ClearScene()
+{
+	while (!mActors.empty())
+	{
+		if (dynamic_cast<Player*>(mActors.back()))
+			break;
+
+		delete mActors.back();
+	}
 }
 
 void GameContext::SaveScene(const std::string& sceneFilePath)
@@ -367,59 +379,81 @@ void GameContext::GenerateOutput()
 void GameContext::DebugSceneObjects()
 {
 	//ImGui::ShowDemoWindow();
-	ImGui::Begin("Scene Objects", 0, ImGuiWindowFlags_AlwaysAutoResize);
-
-	if (ImGui::Button("Save Scene"))
+	ImGui::Begin("Scene Editing", 0, ImGuiWindowFlags_AlwaysAutoResize);
+	if (ImGui::TreeNode("Save Scene"))
 	{
-		SaveScene("Scenes/playground.json");
+		static char saveSceneName[64] = "";
+		ImGui::InputText("Save Scene Name", saveSceneName, IM_ARRAYSIZE(saveSceneName));
+		if (ImGui::Button("Save Scene"))
+			SaveScene("Scenes/" + std::string(saveSceneName) + ".json");
+		ImGui::TreePop();
 	}
 
-	int id = 0;
-	for (const auto& actor : mActors)
+	if (ImGui::TreeNode("Load Scene"))
 	{
-		if (ImGui::TreeNode((actor->GetClassName() + std::to_string(id)).c_str()))
+		static char loadSceneName[64] = "";
+		ImGui::InputText("Load Scene Name", loadSceneName, IM_ARRAYSIZE(loadSceneName));
+		if (ImGui::Button("Load Scene"))
+			LoadScene("Scenes/" + std::string(loadSceneName) + ".json");
+		ImGui::TreePop();
+	}
+
+
+	if (ImGui::TreeNode("Scene Objects"))
+	{
+		int id = 0;
+		for (const auto& actor : mActors)
 		{
-			Vec3 pos = actor->GetPosition();
-			ImGui::Text("Position");
-			ImGui::SliderFloat("X", &pos.mX, -100.0f, 100.0f);
-			ImGui::SameLine();
-			ImGui::SliderFloat("Y", &pos.mY, -100.0f, 100.0f);
-			ImGui::SameLine();
-			ImGui::SliderFloat("Z", &pos.mZ, -100.0f, 100.0f);
-			actor->SetPosition(pos);
+			if (ImGui::TreeNode((actor->GetClassName() + std::to_string(id)).c_str()))
+			{
+				Vec3 pos = actor->GetPosition();
+				ImGui::Text("Position");
+				ImGui::SliderFloat("X", &pos.mX, -100.0f, 100.0f);
+				ImGui::SameLine();
+				ImGui::SliderFloat("Y", &pos.mY, -100.0f, 100.0f);
+				ImGui::SameLine();
+				ImGui::SliderFloat("Z", &pos.mZ, -100.0f, 100.0f);
+				actor->SetPosition(pos);
 
-			Vec3 rot = actor->GetRotation();
-			ImGui::Text("Rotation");
-			ImGui::SliderFloat("Roll", &rot.mX, -360.0f, 360.0f);
-			ImGui::SameLine();
-			ImGui::SliderFloat("Pitch", &rot.mY, -360.0f, 360.0f);
-			ImGui::SameLine();
-			ImGui::SliderFloat("Yaw", &rot.mZ, -360.0f, 360.0f);
-			actor->SetRotation(rot);
+				Vec3 rot = actor->GetRotation();
+				ImGui::Text("Rotation");
+				ImGui::SliderFloat("Roll", &rot.mX, -360.0f, 360.0f);
+				ImGui::SameLine();
+				ImGui::SliderFloat("Pitch", &rot.mY, -360.0f, 360.0f);
+				ImGui::SameLine();
+				ImGui::SliderFloat("Yaw", &rot.mZ, -360.0f, 360.0f);
+				actor->SetRotation(rot);
 
-			Vec3 scale = actor->GetScale();
-			ImGui::Text("Scale");
-			ImGui::SliderFloat("Scale X", &scale.mX, -100.0f, 100.0f);
-			ImGui::SameLine();
-			ImGui::SliderFloat("Scale Y", &scale.mY, -100.0f, 100.0f);
-			ImGui::SameLine();
-			ImGui::SliderFloat("Scale Z", &scale.mZ, -100.0f, 100.0f);
-			actor->SetScale(scale);
+				Vec3 scale = actor->GetScale();
+				ImGui::Text("Scale");
+				ImGui::SliderFloat("Scale X", &scale.mX, -100.0f, 100.0f);
+				ImGui::SameLine();
+				ImGui::SliderFloat("Scale Y", &scale.mY, -100.0f, 100.0f);
+				ImGui::SameLine();
+				ImGui::SliderFloat("Scale Z", &scale.mZ, -100.0f, 100.0f);
+				actor->SetScale(scale);
 
-			ImGui::TreePop();
+				ImGui::TreePop();
+			}
+			id++;
 		}
-		id++;
+		ImGui::TreePop();
 	}
 
 	
-	ImGui::Text("Add Actor");
-	static char actorClass[64] = "";
-	ImGui::InputText("Class Name", actorClass, IM_ARRAYSIZE(actorClass));
-
-	if (ImGui::Button("Add"))
+	if (ImGui::TreeNode("Add Object"))
 	{
-		ReflectionRegistry::Instance().CreateInstance(std::string(actorClass), this);
+		ImGui::Text("Add Actor");
+		static char actorClass[64] = "";
+		ImGui::InputText("Class Name", actorClass, IM_ARRAYSIZE(actorClass));
+
+		if (ImGui::Button("Add"))
+		{
+			ReflectionRegistry::Instance().CreateInstance(std::string(actorClass), this);
+		}
+		ImGui::TreePop();
 	}
+	
 	ImGui::End();
 }
 

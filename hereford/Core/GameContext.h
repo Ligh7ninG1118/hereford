@@ -34,9 +34,10 @@ public:
 	uint32 gpuTime;
 
 private:
-	void LoadData();
+	void LoadStarterData();
 	void SaveScene(const std::string& sceneFilePath);
 	void LoadScene(const std::string& sceneFilePath);
+	void ClearScene();
 
 	void ProcessInput();
 	void UpdateGame();
