@@ -5,6 +5,7 @@
 #include "Props/Ground.h"
 #include "Props/LightBulb.h"
 #include "Props/NPC.h"
+#include "Props/PlywoodWall.h"
 #include "Util/Random.h"
 #include "Util/DelayedAction.h"
 #include "Util/TimelineAction.h"
@@ -94,7 +95,7 @@ bool GameContext::Initialize()
 
 	mIsRunning = true;
 	LoadData();
-	LoadScene("Scenes/scenefile.json");
+	LoadScene("Scenes/hereford test v1.json");
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -182,7 +183,16 @@ void GameContext::LoadScene(const std::string& sceneFilePath)
 	for (unsigned int i = 0; i < actorCount; i++)
 	{
 		json actor = scene["actors"][i];
-		Actor* pActor = ReflectionRegistry::Instance().CreateInstance(actor["className"], this);
+		Actor* pActor = nullptr;
+		if (actor["className"] == "PlywoodWall")
+		{
+			pActor = new PlywoodWall(this, actor["type"]);
+		}
+		else
+		{
+			pActor = ReflectionRegistry::Instance().CreateInstance(actor["className"], this);
+
+		}
 		if (pActor == nullptr)
 		{
 			printf("GameContext::LoadScene(): Class[%s] not found in registry\n", static_cast<std::string>(actor["className"]).c_str());
@@ -380,11 +390,11 @@ void GameContext::DebugSceneObjects()
 
 			Vec3 rot = actor->GetRotation();
 			ImGui::Text("Rotation");
-			ImGui::SliderFloat("Roll", &rot.mX, -180.0f, 180.0f);
+			ImGui::SliderFloat("Roll", &rot.mX, -360.0f, 360.0f);
 			ImGui::SameLine();
-			ImGui::SliderFloat("Pitch", &rot.mY, -180.0f, 180.0f);
+			ImGui::SliderFloat("Pitch", &rot.mY, -360.0f, 360.0f);
 			ImGui::SameLine();
-			ImGui::SliderFloat("Yaw", &rot.mZ, -180.0f, 180.0f);
+			ImGui::SliderFloat("Yaw", &rot.mZ, -360.0f, 360.0f);
 			actor->SetRotation(rot);
 
 			Vec3 scale = actor->GetScale();
