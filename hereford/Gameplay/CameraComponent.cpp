@@ -1,6 +1,7 @@
 #include "CameraComponent.h"
 #include "Core/Actor.h"
 
+#include "imgui/imgui.h"
 
 CameraComponent::CameraComponent(Actor* owner, float eyeHeight)
 	: Component(owner),
@@ -9,7 +10,8 @@ CameraComponent::CameraComponent(Actor* owner, float eyeHeight)
 	mRotation(Vector3(0.0f, 0.0f, 0.0f)),
 	mHorFOV(80.0f),
 	mNearPlane(0.03f),
-	mFarPlane(10000.0f)
+	mFarPlane(10000.0f),
+	mVerticalRecenteringTarget(0.0f)
 {
 }
 
@@ -19,18 +21,27 @@ CameraComponent::~CameraComponent()
 
 void CameraComponent::Update(float deltaTime)
 {
-	if (mDeferredRecoilDir.SqrMagnitude() > EPSILON)
+	ImGui::Begin("Recoil");
+	ImGui::Text("Deferred (%.2f, %.2f)", mDeferredRecoilDir.mX, mDeferredRecoilDir.mY);
+	ImGui::Text("Recenter Target (%.2f)", mVerticalRecenteringTarget);
+	ImGui::End();
+
+	if (mDeferredRecoilDir.Magnitude() > EPSILON)
 	{
-		Vec2 stepDir = mDeferredRecoilDir * deltaTime * 15.0f;
+		Vec2 stepDir = mDeferredRecoilDir * deltaTime * mCameraRecenteringRate;
 		mDeferredRecoilDir -= stepDir;
 		mRotation.mY += stepDir.mX;
 		mRotation.mX += stepDir.mY;
 
-		mRotation.mX = Math::Clamp(mRotation.mX, -89.0f, 89.0f);
-		mRotation.mY = (mRotation.mY > 360.0f || mRotation.mY < -360.0f) ? 0.0f : mRotation.mY;
+		mRotation.mX = Math::Clamp(mRotation.mX, -mMaxVerticalAngle, mMaxVerticalAngle);
+		mRotation.mY = (mRotation.mY > mMaxHorizontalAngle || mRotation.mY < -mMaxHorizontalAngle) ? 0.0f : mRotation.mY;
 
 		//Set owner rotation as well
 		mOwner->SetRotation(Vec3(0.0f, mRotation.mY, 0.0f));
+	}
+	else if (abs(mRotation.mX - mVerticalRecenteringTarget) > EPSILON)
+	{
+		mRotation.mX = Math::Lerp(mRotation.mX, mVerticalRecenteringTarget, deltaTime * mCameraRecenteringRate);
 
 	}
 }
@@ -40,17 +51,23 @@ void CameraComponent::ProcessInput(const std::vector<EInputState>& keyState, Uin
 {
 	mRotation.mY += mouseDeltaX * mMouseSens;
 	mRotation.mX += mouseDeltaY * mMouseSens;
+	mVerticalRecenteringTarget += mouseDeltaY * mMouseSens;
 
-	if (mDeferredRecoilDir.SqrMagnitude() > EPSILON)
+	if (mDeferredRecoilDir.Magnitude() > EPSILON)
 	{
 		// Mouse movement on vertical axis can offset deferred recoil changes
-		mDeferredRecoilDir.mY -= mouseDeltaX * mMouseSens;
-		mDeferredRecoilDir.mY = mDeferredRecoilDir.mY <= 0.0f ? 0.0f : mDeferredRecoilDir.mY;
+		mDeferredRecoilDir.mY -= mouseDeltaY * mMouseSens;
+		mDeferredRecoilDir.mY = mDeferredRecoilDir.mX <= 0.0f ? 0.0f : mDeferredRecoilDir.mX;
+
+		//TODO
+		if (mouseDeltaY < 0.0f)
+			mVerticalRecenteringTarget -= mouseDeltaY * mMouseSens;
 	}
 
 
-	mRotation.mY = (mRotation.mY > 360.0f || mRotation.mY < -360.0f) ? 0.0f : mRotation.mY;
-	mRotation.mX = Math::Clamp(mRotation.mX, -89.0f, 89.0f);
+	mRotation.mY = (mRotation.mY > mMaxHorizontalAngle || mRotation.mY < -mMaxHorizontalAngle) ? 0.0f : mRotation.mY;
+	mRotation.mX = Math::Clamp(mRotation.mX, -mMaxVerticalAngle, mMaxVerticalAngle);
+	mVerticalRecenteringTarget = Math::Clamp(mVerticalRecenteringTarget, -mMaxVerticalAngle, mMaxVerticalAngle);
 
 	//Set owner rotation as well
 	mOwner->SetRotation(Vec3(0.0f, mRotation.mY, 0.0f));

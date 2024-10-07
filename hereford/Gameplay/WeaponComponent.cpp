@@ -22,8 +22,8 @@ WeaponComponent::WeaponComponent(Actor* owner, std::weak_ptr<AnimationStateMachi
 
 	mReloadAnimDuration = 2.0f;
 
-	mIsSemiAuto = true;
-	mFireRatePerMin = 300.0f;
+	mIsSemiAuto = false;
+	mFireRatePerMin = 800.0f;
 	mFireRateCooldown = 60.0f / mFireRatePerMin;
 
 	mFireRateTimer = -0.1f;
@@ -41,7 +41,7 @@ WeaponComponent::WeaponComponent(Actor* owner, std::weak_ptr<AnimationStateMachi
 	mHeatReduceDelayTimer = -0.1f;
 	mCurrentHeat = 0.0f;
 	
-	mMaxMagazineCapacity = 12;
+	mMaxMagazineCapacity = 100;
 	mMaxReserveCapacity = 5 * mMaxMagazineCapacity;
 	mIsOpenBolt = true;
 

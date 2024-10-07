@@ -39,11 +39,17 @@ public:
 private:
 	Vec3 mPositionOffset;
 	Vec3 mRotation;
-
+	float mVerticalRecenteringTarget;
 	Vec2 mDeferredRecoilDir;
 
 	float mHorFOV;
 	float mNearPlane;
 	float mFarPlane;
-	float mMouseSens = 0.15f;
+	float mMouseSens = 0.1f;
+
+	const float mCameraRecenteringRate = 15.0f;
+	const float mRecoilClimbingRate = 15.0f;
+	const float mMaxVerticalAngle = 89.0f;
+	const float mMaxHorizontalAngle = 360.0f;
+
 };
