@@ -36,6 +36,9 @@ public:
 	float GetMouseSens() const { return mMouseSens; }
 	Vec3 GetPositionOffset() const{ return mPositionOffset; }
 	Vec3 GetCameraPosition() const;
+
+	float mAimingSensMultiplier = 1.0f;
+
 private:
 	Vec3 mPositionOffset;
 	Vec3 mRotation;
@@ -45,7 +48,8 @@ private:
 	float mHorFOV;
 	float mNearPlane;
 	float mFarPlane;
-	float mMouseSens = 0.1f;
+	const float mMouseSens = 0.1f;
+
 
 	const float mCameraRecenteringRate = 15.0f;
 	const float mRecoilClimbingRate = 15.0f;

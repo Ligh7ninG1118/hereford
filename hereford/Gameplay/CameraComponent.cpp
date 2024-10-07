@@ -49,19 +49,19 @@ void CameraComponent::Update(float deltaTime)
 // use float delta for smoothing?
 void CameraComponent::ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
 {
-	mRotation.mY += mouseDeltaX * mMouseSens;
-	mRotation.mX += mouseDeltaY * mMouseSens;
-	mVerticalRecenteringTarget += mouseDeltaY * mMouseSens;
+	mRotation.mY += mouseDeltaX * mMouseSens * mAimingSensMultiplier;
+	mRotation.mX += mouseDeltaY * mMouseSens * mAimingSensMultiplier;
+	mVerticalRecenteringTarget += mouseDeltaY * mMouseSens * mAimingSensMultiplier;
 
 	if (mDeferredRecoilDir.Magnitude() > EPSILON)
 	{
 		// Mouse movement on vertical axis can offset deferred recoil changes
-		mDeferredRecoilDir.mY -= mouseDeltaY * mMouseSens;
+		mDeferredRecoilDir.mY -= mouseDeltaY * mMouseSens * mAimingSensMultiplier;
 		mDeferredRecoilDir.mY = mDeferredRecoilDir.mX <= 0.0f ? 0.0f : mDeferredRecoilDir.mX;
 
 		//TODO
 		if (mouseDeltaY < 0.0f)
-			mVerticalRecenteringTarget -= mouseDeltaY * mMouseSens;
+			mVerticalRecenteringTarget -= mouseDeltaY * mMouseSens * mAimingSensMultiplier;
 	}
 
 

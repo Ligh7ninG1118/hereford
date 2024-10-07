@@ -77,10 +77,14 @@ void WeaponComponent::ProcessInput(const std::vector<EInputState>& keyState, Uin
 	if (mouseState & RMB_DOWN)
 	{
 		TimelineActionManager::PlayFromStart(mHAimingTimeline, std::bind(&WeaponComponent::AimingTimeline, this, std::placeholders::_1), 0.2f);
+		Player* player = static_cast<Player*>(mOwner);
+		player->GetMainCamera().mAimingSensMultiplier = 0.85f;
 	}
 	else if (mouseState & RMB_UP)
 	{
 		TimelineActionManager::ReverseFromEnd(mHAimingTimeline, std::bind(&WeaponComponent::AimingTimeline, this, std::placeholders::_1), 0.2f);
+		Player* player = static_cast<Player*>(mOwner);
+		player->GetMainCamera().mAimingSensMultiplier = 1.0f;
 	}
 
 	if (keyState[SDL_SCANCODE_R] == EInputState::KEY_DOWN)
