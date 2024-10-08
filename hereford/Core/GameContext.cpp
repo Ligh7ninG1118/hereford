@@ -95,6 +95,7 @@ bool GameContext::Initialize()
 
 	mIsRunning = true;
 	LoadStarterData();
+	LoadScene("Scenes/playground.json");
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -166,7 +167,7 @@ void GameContext::LoadStarterData()
 
 void GameContext::LoadScene(const std::string& sceneFilePath)
 {
-	ClearScene();
+	//ClearScene();
 
 	using json = nlohmann::json;
 
