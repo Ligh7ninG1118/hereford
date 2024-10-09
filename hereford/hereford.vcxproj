@@ -208,6 +208,9 @@
     <ClCompile Include="UI\UIElement.cpp" />
     <ClCompile Include="Util\GameEvent.cpp" />
     <ClCompile Include="Gameplay\WeaponComponent.cpp" />
+    <ClCompile Include="Gameplay\Weapon.cpp" />
+    <ClCompile Include="Gameplay\WeaponPistol.cpp" />
+    <ClCompile Include="Gameplay\WeaponSMG.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Gameplay\Actions\Action.h" />
@@ -274,6 +277,9 @@
     <ClInclude Include="Util\Random.h" />
     <ClInclude Include="Gameplay\WeaponComponent.h" />
     <ClInclude Include="Util\Reflection.h" />
+    <ClInclude Include="Gameplay\Weapon.h" />
+    <ClInclude Include="Gameplay\WeaponPistol.h" />
+    <ClInclude Include="Gameplay\WeaponSMG.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Graphics\Shaders\debug_frag.glsl" />
