@@ -41,6 +41,10 @@ void AudioManager::Update()
 	}
 }
 
+// TODO Features:
+// Sound fade out when pausing/stopping
+// Sound playback speed
+
 SoundHandle AudioManager::PlaySound(const std::string& soundName, bool shouldLooping, bool is3D, Vec3 soundPos)
 {
 	Mix_Chunk* pChunk = GetSound(soundName);
@@ -65,7 +69,7 @@ SoundHandle AudioManager::PlaySound(const std::string& soundName, bool shouldLoo
 		}
 	}
 
-	//TODO: Prioritazation
+	//TODO: Prioritization
 
 	/*The oldest instance of the same soundName and if there is none…
 		The oldest non - looping sound and if there is none…
@@ -83,7 +87,7 @@ void AudioManager::StopSound(SoundHandle sound)
 		printf("AudioManager::StopSound(): Unable to find sound handle of id [%d]\n", sound);
 		return;
 	}
-	//pass in sound??
+
 	Mix_HaltChannel(itr->second.mChannel);
 	mChannels[sound] = 0;
 	mHandleMap.erase(itr);
@@ -100,7 +104,6 @@ void AudioManager::PauseSound(SoundHandle sound)
 
 	if (!itr->second.mIsPaused)
 	{
-		//pass in sound??
 		Mix_Pause(itr->second.mChannel);
 		itr->second.mIsPaused = true;
 	}
@@ -117,7 +120,6 @@ void AudioManager::ResumeSound(SoundHandle sound)
 
 	if (itr->second.mIsPaused)
 	{
-		//pass in sound??
 		Mix_Resume(itr->second.mChannel);
 		itr->second.mIsPaused = true;
 	}
