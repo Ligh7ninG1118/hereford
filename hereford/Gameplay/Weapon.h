@@ -13,8 +13,8 @@ public:
 	void OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY) override;
 
 protected:
-	std::unique_ptr<class AnimatedRenderComponent> mPtrAnimRenderComp;
+	/*std::unique_ptr<class AnimatedRenderComponent> mPtrAnimRenderComp;
 	std::shared_ptr<class AnimationStateMachine> mPtrAnimStateMachine;
-	std::unique_ptr<class WeaponComponent> mPtrWeaponComp;
+	std::unique_ptr<class WeaponComponent> mPtrWeaponComp;*/
 };
 
