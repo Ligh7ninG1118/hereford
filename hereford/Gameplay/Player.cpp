@@ -94,6 +94,10 @@ Player::Player(GameContext* gameCtx)
 
 	mPtrAudioComponent = std::make_unique<AudioComponent>(this, gameCtx->GetAudioManager());
 	mPtrAudioComponent->InitAsset("USP_SingleFire.wav");
+
+	mPtrAudioComponent2 = std::make_unique<AudioComponent>(this, gameCtx->GetAudioManager());
+	mPtrAudioComponent2->InitAsset("Walk-Gravel.wav");
+
 }
 
 Player::~Player()
@@ -123,7 +127,10 @@ void Player::OnUpdate(float deltaTime)
 		else
 			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.5f);
 
-		
+		if (mPtrAudioComponent2->GetSoundState() != ESoundState::Playing)
+		{
+			mPtrAudioComponent2->Play(true);
+		}
 	}
 	else
 	{
@@ -131,6 +138,11 @@ void Player::OnUpdate(float deltaTime)
 			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(0.75f);
 		else
 			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.0f);
+
+		if (mPtrAudioComponent2->GetSoundState() == ESoundState::Playing)
+		{
+			mPtrAudioComponent2->Pause();
+		}
 	}
 
 	currentArmRotationOffset.mX = Math::Lerp(currentArmRotationOffset.mX, 0.0f, 0.2f);
