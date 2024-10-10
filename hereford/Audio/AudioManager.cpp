@@ -6,6 +6,7 @@
 
 
 AudioManager::AudioManager(int channelNum)
+	: mPlayerRef(nullptr)
 {
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 	Mix_AllocateChannels(channelNum);
@@ -14,28 +15,30 @@ AudioManager::AudioManager(int channelNum)
 
 AudioManager::~AudioManager()
 {
-	for (auto& s : mSounds)
+	for (auto& s : mSoundAssets)
 	{
 		Mix_FreeChunk(s.second);
 	}
-	mSounds.clear();
+	mSoundAssets.clear();
 	Mix_CloseAudio();
 }
 
 void AudioManager::Update()
 {
-	for (auto& c : mChannels)
+	for (int i = 0; i < mChannels.size(); i++)
 	{
-		if (c != 0 && !Mix_Playing(c))
+		if (mChannels[i] != 0 && !Mix_Playing(i))
 		{
-			mHandleMap.erase(c);
-			c = 0;
+			mHandleMap.erase(mChannels[i]);
+			mChannels[i] = 0;
 		}
-		if(c!=0 && Mix_Playing(c))
-			Set3DEffect(c, Vec3::Zero);
-
+		//TODO: need a way to distinguish channel playing 3d sound
+		else if (Mix_Playing(i))
+		{
+			if(mHandleMap[mChannels[i]].mIs3D)
+				Set3DEffect(i, mHandleMap[mChannels[i]].mSoundPos);
+		}
 	}
-	//TODO: update 3d sound position
 }
 
 SoundHandle AudioManager::PlaySound(const std::string& soundName, bool shouldLooping, bool is3D, Vec3 soundPos)
@@ -52,16 +55,13 @@ SoundHandle AudioManager::PlaySound(const std::string& soundName, bool shouldLoo
 		if (mChannels[i] == 0)
 		{
 			mLastHandle++;
-			HandleInfo handle(soundName, i, shouldLooping, false);
+			HandleInfo handle(soundName, i, shouldLooping, false, is3D, soundPos);
 			mHandleMap[mLastHandle] = handle;
 			mChannels[i] = mLastHandle;
-			Mix_Volume(-1, 8);
-			/*if (is3D)
-			{
-				Set3DEffect(i, soundPos);
-			}*/
-
+			Mix_Volume(-1, 128);
 			Mix_PlayChannel(i, pChunk, shouldLooping ? -1 : 0);
+
+			break;
 		}
 	}
 
@@ -160,8 +160,8 @@ Mix_Chunk* AudioManager::GetSound(const std::string& soundName)
 	fileName += soundName;
 
 	Mix_Chunk* chunk = nullptr;
-	auto itr = mSounds.find(fileName);
-	if (itr != mSounds.end())
+	auto itr = mSoundAssets.find(fileName);
+	if (itr != mSoundAssets.end())
 	{
 		chunk = itr->second;
 	}
@@ -170,11 +170,11 @@ Mix_Chunk* AudioManager::GetSound(const std::string& soundName)
 		chunk = Mix_LoadWAV(fileName.c_str());
 		if (!chunk)
 		{
-			printf("");
+			printf("AudioManager::GetSound(): Cannot load sound file named %s", soundName.c_str());
 			return nullptr;
 		}
 
-		mSounds.emplace(fileName, chunk);
+		mSoundAssets.emplace(fileName, chunk);
 	}
 	
 	return chunk;
@@ -184,7 +184,8 @@ void AudioManager::Set3DEffect(int channelNum, Vec3 soundPos)
 {
 	Vec3 listenerToSource = soundPos - mPlayerRef->GetPosition();
 	float dis = listenerToSource.Magnitude();
-	float compressedDis = dis; // 255.0f * dis / 40.0f;
+	float compressedDis = 255.0f * dis / 40.0f;
+	compressedDis = Math::Clamp(compressedDis, 0.0f, 255.0f);
 
 	listenerToSource.Normalize();
 	float angle = std::atan2f(listenerToSource.mZ, listenerToSource.mX) * RAD2DEG;
@@ -192,7 +193,7 @@ void AudioManager::Set3DEffect(int channelNum, Vec3 soundPos)
 	facingDir.Normalize();
 	angle -= std::atan2f(facingDir.mZ, facingDir.mX) * RAD2DEG;
 
-	//also need to consider player's forward direction
+	//TODO: Distance attenuation is pretty bad, no "cutoff". Might as well implement my own version later
 	if (Mix_SetPosition(channelNum, angle, static_cast<Uint8>(compressedDis)) == 0)
 	{
 		printf("AudioManager::PlaySound(): Cannot set 3D effect on channel %d", channelNum);

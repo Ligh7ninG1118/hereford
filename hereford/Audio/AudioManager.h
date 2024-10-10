@@ -18,7 +18,7 @@ enum class ESoundState
 class AudioManager
 {
 public:
-	AudioManager(int channelNum = 8);
+	AudioManager(int channelNum = 16);
 	~AudioManager();
 
 	void Update();
@@ -45,11 +45,13 @@ private:
 		uint8 mChannel = -1;
 		bool mIsLooping = false;
 		bool mIsPaused = false;
+		bool mIs3D = false;
+		Vec3 mSoundPos = Vec3::Zero;
 	};
 
 	std::vector<SoundHandle> mChannels;
 	std::map<SoundHandle, HandleInfo> mHandleMap;
-	std::unordered_map<std::string, struct Mix_Chunk*> mSounds;
+	std::unordered_map<std::string, struct Mix_Chunk*> mSoundAssets;
 
 	class Actor* mPlayerRef;
 
