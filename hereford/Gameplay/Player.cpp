@@ -6,6 +6,7 @@
 #include "imgui/imgui.h"
 
 #include "Asset/AssetManager.h"
+#include "Audio/AudioComponent.h"
 #include "Animation/Animation.h"
 #include "Animation/Animator.h"
 #include "Animation/AnimationStateMachine.h"
@@ -90,6 +91,13 @@ Player::Player(GameContext* gameCtx)
 
 	totalRuntime = 0.0f;
 	currentTopSpeed = topWalkingSpeed;
+
+	mPtrAudioComponent = std::make_unique<AudioComponent>(this, gameCtx->GetAudioManager());
+	mPtrAudioComponent->InitAsset("USP_SingleFire.wav");
+
+	mPtrAudioComponent2 = std::make_unique<AudioComponent>(this, gameCtx->GetAudioManager());
+	mPtrAudioComponent2->InitAsset("Walk-Gravel.wav");
+
 }
 
 Player::~Player()
@@ -119,7 +127,10 @@ void Player::OnUpdate(float deltaTime)
 		else
 			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.5f);
 
-		
+		if (mPtrAudioComponent2->GetSoundState() != ESoundState::Playing)
+		{
+			mPtrAudioComponent2->Play(true);
+		}
 	}
 	else
 	{
@@ -127,6 +138,11 @@ void Player::OnUpdate(float deltaTime)
 			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(0.75f);
 		else
 			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.0f);
+
+		if (mPtrAudioComponent2->GetSoundState() == ESoundState::Playing)
+		{
+			mPtrAudioComponent2->Pause();
+		}
 	}
 
 	currentArmRotationOffset.mX = Math::Lerp(currentArmRotationOffset.mX, 0.0f, 0.2f);
@@ -275,6 +291,7 @@ void Player::ShowDebugInfo()
 void Player::WeaponFiredEventListener(EventOnPlayerWeaponFired inEvent)
 {
 	mPtrCameraComp->RotateCamera(inEvent.mRecoilDeviation * 5.0f);
+	mPtrAudioComponent->Play();
 }
 
 void Player::CrouchTimeline(float alpha)
