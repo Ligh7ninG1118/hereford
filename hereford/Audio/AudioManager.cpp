@@ -1,6 +1,8 @@
 #include "AudioManager.h"
+#include "Core/Actor.h"
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_mixer.h"
+#include "imgui/imgui.h"
 
 
 AudioManager::AudioManager(int channelNum)
@@ -29,10 +31,14 @@ void AudioManager::Update()
 			mHandleMap.erase(c);
 			c = 0;
 		}
+		if(c!=0 && Mix_Playing(c))
+			Set3DEffect(c, Vec3::Zero);
+
 	}
+	//TODO: update 3d sound position
 }
 
-SoundHandle AudioManager::PlaySound(const std::string& soundName, bool shouldLooping)
+SoundHandle AudioManager::PlaySound(const std::string& soundName, bool shouldLooping, bool is3D, Vec3 soundPos)
 {
 	Mix_Chunk* pChunk = GetSound(soundName);
 	if (pChunk == nullptr)
@@ -48,9 +54,13 @@ SoundHandle AudioManager::PlaySound(const std::string& soundName, bool shouldLoo
 			mLastHandle++;
 			HandleInfo handle(soundName, i, shouldLooping, false);
 			mHandleMap[mLastHandle] = handle;
+			mChannels[i] = mLastHandle;
 			Mix_Volume(-1, 8);
-			//Mix_VolumeChunk
-			//Mix_SetPosition();
+			/*if (is3D)
+			{
+				Set3DEffect(i, soundPos);
+			}*/
+
 			Mix_PlayChannel(i, pChunk, shouldLooping ? -1 : 0);
 		}
 	}
@@ -168,4 +178,28 @@ Mix_Chunk* AudioManager::GetSound(const std::string& soundName)
 	}
 	
 	return chunk;
+}
+
+void AudioManager::Set3DEffect(int channelNum, Vec3 soundPos)
+{
+	Vec3 listenerToSource = soundPos - mPlayerRef->GetPosition();
+	float dis = listenerToSource.Magnitude();
+	float compressedDis = dis; // 255.0f * dis / 40.0f;
+
+	listenerToSource.Normalize();
+	float angle = std::atan2f(listenerToSource.mZ, listenerToSource.mX) * RAD2DEG;
+	Vec3 facingDir = mPlayerRef->GetForward();
+	facingDir.Normalize();
+	angle -= std::atan2f(facingDir.mZ, facingDir.mX) * RAD2DEG;
+
+	//also need to consider player's forward direction
+	if (Mix_SetPosition(channelNum, angle, static_cast<Uint8>(compressedDis)) == 0)
+	{
+		printf("AudioManager::PlaySound(): Cannot set 3D effect on channel %d", channelNum);
+	}
+
+	ImGui::Begin("Sound Test");
+	ImGui::Text("Angle: %f\n", angle);
+	ImGui::Text("Dis: %f\n", dis);
+	ImGui::End();
 }

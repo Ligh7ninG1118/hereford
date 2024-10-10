@@ -23,7 +23,7 @@ public:
 
 	void Update();
 
-	SoundHandle PlaySound(const std::string& soundName, bool shouldLooping = false);
+	SoundHandle PlaySound(const std::string& soundName, bool shouldLooping = false, bool is3D = false, Vec3 soundPos = Vec3::Zero);
 
 	void StopSound(SoundHandle sound);
 	void PauseSound(SoundHandle sound);
@@ -33,8 +33,11 @@ public:
 	void CacheAllSounds();
 	void CacheSound(const std::string& soundName);
 
+	void SetPlayerReference(class Actor* player) { mPlayerRef = player; };
+
 private:
 	struct Mix_Chunk* GetSound(const std::string& soundName);
+	void Set3DEffect(int channelNum, Vec3 soundPos);
 
 	struct HandleInfo
 	{
@@ -47,6 +50,8 @@ private:
 	std::vector<SoundHandle> mChannels;
 	std::map<SoundHandle, HandleInfo> mHandleMap;
 	std::unordered_map<std::string, struct Mix_Chunk*> mSounds;
+
+	class Actor* mPlayerRef;
 
 	SoundHandle mLastHandle = 0;
 
