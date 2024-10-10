@@ -125,7 +125,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;opengl32.lib;assimp-vc143-mt.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib;opengl32.lib;assimp-vc143-mt.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -147,7 +147,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -155,6 +155,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Audio\AudioComponent.cpp" />
+    <ClCompile Include="Audio\AudioManager.cpp" />
     <ClCompile Include="Gameplay\Actions\Action.cpp" />
     <ClCompile Include="Gameplay\Actions\ActionComponent.cpp" />
     <ClCompile Include="Graphics\AnimatedRenderComponent.cpp" />
@@ -213,6 +215,8 @@
     <ClCompile Include="Gameplay\WeaponSMG.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Audio\AudioComponent.h" />
+    <ClInclude Include="Audio\AudioManager.h" />
     <ClInclude Include="Gameplay\Actions\Action.h" />
     <ClInclude Include="Gameplay\Actions\ActionComponent.h" />
     <ClInclude Include="Gameplay\IHittable.h" />

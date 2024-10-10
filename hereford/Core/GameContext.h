@@ -1,8 +1,11 @@
 #pragma once
 
-#include "Graphics/Renderer.h"
 #include "Core/Actor.h"
+
+#include "Audio/AudioManager.h"
+#include "Graphics/Renderer.h"
 #include "Physics/PhysicsManager.h"
+
 #include <SDL2/SDL.h>
 #include <vector>
 #include <memory>
@@ -41,6 +44,7 @@ private:
 
 	void ProcessInput();
 	void UpdateGame();
+	void UpdateAudio();
 	void CalculatePhysics();
 	void GenerateOutput();
 
@@ -49,6 +53,8 @@ private:
 	SDL_Window* mPtrSDLWindow;
 	std::unique_ptr<Renderer> mPtrRenderer;
 	std::unique_ptr<PhysicsManager> mPtrPhysicsManager;
+	std::unique_ptr<AudioManager> mPtrAudioManager;
+
 	class Player* mPtrPlayer;
 
 	// separate asset manager to manage this

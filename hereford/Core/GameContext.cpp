@@ -56,7 +56,7 @@ GameContext::~GameContext()
 
 bool GameContext::Initialize()
 {
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
 	{
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
 		return false;
@@ -89,6 +89,9 @@ bool GameContext::Initialize()
 	}
 
 	mPtrPhysicsManager = std::make_unique<PhysicsManager>();
+
+	mPtrAudioManager = std::make_unique<AudioManager>();
+	mPtrAudioManager->CacheSound("USP_SingleFireOriginal.wav");
 
 	//SDL_SetWindowGrab(pSDLWindow, SDL_TRUE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -140,6 +143,7 @@ void GameContext::RunLoop()
 		Uint32 timestampStart = SDL_GetTicks();
 		ProcessInput();
 		UpdateGame();
+		UpdateAudio();
 		CalculatePhysics();
 		DebugSceneObjects();
 		DelayedActionManager::UpdateTimers(mDeltaTime);
@@ -342,6 +346,11 @@ void GameContext::ProcessInput()
 		actor->ProcessInput(mPrevKeyStates, mPrevMouseStates, mouseDeltaX, -mouseDeltaY);
 	}
 
+	if (mPrevMouseStates & EMouseState::LMB_DOWN)
+	{
+		mPtrAudioManager->PlaySound("USP_SingleFireOriginal.wav");
+	}
+
 }
 
 void GameContext::UpdateGame()
@@ -364,6 +373,11 @@ void GameContext::UpdateGame()
 	{
 		delete actor;
 	}
+}
+
+void GameContext::UpdateAudio()
+{
+	mPtrAudioManager->Update();
 }
 
 void GameContext::CalculatePhysics()
