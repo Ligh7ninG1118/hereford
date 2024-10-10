@@ -37,7 +37,7 @@ SoundHandle AudioManager::PlaySound(const std::string& soundName, bool shouldLoo
 	Mix_Chunk* pChunk = GetSound(soundName);
 	if (pChunk == nullptr)
 	{
-		printf("");
+		printf("AudioManager::PlaySound(): Unable to get sound asset named [%s]", soundName.c_str());
 		return 0;
 	}
 
@@ -63,7 +63,7 @@ void AudioManager::StopSound(SoundHandle sound)
 	auto itr = mHandleMap.find(sound);
 	if (itr == mHandleMap.end())
 	{
-		printf("");
+		printf("AudioManager::StopSound(): Unable to find sound handle of id [%d]", sound);
 		return;
 	}
 	//pass in sound??
@@ -77,7 +77,7 @@ void AudioManager::PauseSound(SoundHandle sound)
 	auto itr = mHandleMap.find(sound);
 	if (itr == mHandleMap.end())
 	{
-		printf("");
+		printf("AudioManager::PauseSound(): Unable to find sound handle of id [%d]", sound);
 		return;
 	}
 
@@ -94,7 +94,7 @@ void AudioManager::ResumeSound(SoundHandle sound)
 	auto itr = mHandleMap.find(sound);
 	if (itr == mHandleMap.end())
 	{
-		printf("");
+		printf("AudioManager::ResumeSound(): Unable to find sound handle of id [%d]", sound);
 		return;
 	}
 
