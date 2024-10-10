@@ -6,6 +6,7 @@
 #include "imgui/imgui.h"
 
 #include "Asset/AssetManager.h"
+#include "Audio/AudioComponent.h"
 #include "Animation/Animation.h"
 #include "Animation/Animator.h"
 #include "Animation/AnimationStateMachine.h"
@@ -90,6 +91,9 @@ Player::Player(GameContext* gameCtx)
 
 	totalRuntime = 0.0f;
 	currentTopSpeed = topWalkingSpeed;
+
+	mPtrAudioComponent = std::make_unique<AudioComponent>(this, gameCtx->GetAudioManager());
+	mPtrAudioComponent->InitAsset("USP_SingleFire.wav");
 }
 
 Player::~Player()
@@ -275,6 +279,7 @@ void Player::ShowDebugInfo()
 void Player::WeaponFiredEventListener(EventOnPlayerWeaponFired inEvent)
 {
 	mPtrCameraComp->RotateCamera(inEvent.mRecoilDeviation * 5.0f);
+	mPtrAudioComponent->Play();
 }
 
 void Player::CrouchTimeline(float alpha)
