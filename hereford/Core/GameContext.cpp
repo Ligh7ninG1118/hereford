@@ -91,7 +91,6 @@ bool GameContext::Initialize()
 	mPtrPhysicsManager = std::make_unique<PhysicsManager>();
 
 	mPtrAudioManager = std::make_unique<AudioManager>();
-	mPtrAudioManager->CacheSound("USP_SingleFire.wav");
 	mPtrAudioManager->CacheSound("Let There Be Light.wav");
 
 
@@ -110,7 +109,7 @@ bool GameContext::Initialize()
 	ImGui_ImplSDL2_InitForOpenGL(mPtrSDLWindow, mPtrRenderer->GetGLContext());
 	ImGui_ImplOpenGL3_Init();
 
-	mPtrAudioManager->PlaySound("Let There Be Light.wav", true, true);
+	//mPtrAudioManager->PlaySound("Let There Be Light.wav", true, true);
 
 	return true;
 }
@@ -351,12 +350,6 @@ void GameContext::ProcessInput()
 	{
 		actor->ProcessInput(mPrevKeyStates, mPrevMouseStates, mouseDeltaX, -mouseDeltaY);
 	}
-
-	if (mPrevMouseStates & EMouseState::LMB_DOWN)
-	{
-		mPtrAudioManager->PlaySound("USP_SingleFire.wav");
-	}
-
 }
 
 void GameContext::UpdateGame()

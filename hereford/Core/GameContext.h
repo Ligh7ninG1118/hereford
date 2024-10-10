@@ -29,6 +29,7 @@ public:
 
 	Renderer& GetRenderer() const { return *mPtrRenderer.get(); }
 	PhysicsManager& GetPhysicsManager() const { return *mPtrPhysicsManager.get(); }
+	AudioManager& GetAudioManager() const { return *mPtrAudioManager.get(); }
 
 	class Player* GetPlayer() const { return mPtrPlayer; }
 

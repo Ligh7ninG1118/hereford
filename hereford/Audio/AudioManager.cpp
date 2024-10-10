@@ -46,7 +46,7 @@ SoundHandle AudioManager::PlaySound(const std::string& soundName, bool shouldLoo
 	Mix_Chunk* pChunk = GetSound(soundName);
 	if (pChunk == nullptr)
 	{
-		printf("AudioManager::PlaySound(): Unable to get sound asset named [%s]", soundName.c_str());
+		printf("AudioManager::PlaySound(): Unable to get sound asset named [%s]\n", soundName.c_str());
 		return 0;
 	}
 
@@ -65,6 +65,13 @@ SoundHandle AudioManager::PlaySound(const std::string& soundName, bool shouldLoo
 		}
 	}
 
+	//TODO: Prioritazation
+
+	/*The oldest instance of the same soundName and if there is none…
+		The oldest non - looping sound and if there is none…
+		The oldest sound*/
+
+
 	return mLastHandle;
 }
 
@@ -73,7 +80,7 @@ void AudioManager::StopSound(SoundHandle sound)
 	auto itr = mHandleMap.find(sound);
 	if (itr == mHandleMap.end())
 	{
-		printf("AudioManager::StopSound(): Unable to find sound handle of id [%d]", sound);
+		printf("AudioManager::StopSound(): Unable to find sound handle of id [%d]\n", sound);
 		return;
 	}
 	//pass in sound??
@@ -87,7 +94,7 @@ void AudioManager::PauseSound(SoundHandle sound)
 	auto itr = mHandleMap.find(sound);
 	if (itr == mHandleMap.end())
 	{
-		printf("AudioManager::PauseSound(): Unable to find sound handle of id [%d]", sound);
+		printf("AudioManager::PauseSound(): Unable to find sound handle of id [%d]\n", sound);
 		return;
 	}
 
@@ -104,7 +111,7 @@ void AudioManager::ResumeSound(SoundHandle sound)
 	auto itr = mHandleMap.find(sound);
 	if (itr == mHandleMap.end())
 	{
-		printf("AudioManager::ResumeSound(): Unable to find sound handle of id [%d]", sound);
+		printf("AudioManager::ResumeSound(): Unable to find sound handle of id [%d]\n", sound);
 		return;
 	}
 
@@ -170,7 +177,7 @@ Mix_Chunk* AudioManager::GetSound(const std::string& soundName)
 		chunk = Mix_LoadWAV(fileName.c_str());
 		if (!chunk)
 		{
-			printf("AudioManager::GetSound(): Cannot load sound file named %s", soundName.c_str());
+			printf("AudioManager::GetSound(): Cannot load sound file named %s\n", soundName.c_str());
 			return nullptr;
 		}
 
@@ -187,6 +194,7 @@ void AudioManager::Set3DEffect(int channelNum, Vec3 soundPos)
 	float compressedDis = 255.0f * dis / 40.0f;
 	compressedDis = Math::Clamp(compressedDis, 0.0f, 255.0f);
 
+
 	listenerToSource.Normalize();
 	float angle = std::atan2f(listenerToSource.mZ, listenerToSource.mX) * RAD2DEG;
 	Vec3 facingDir = mPlayerRef->GetForward();
@@ -196,7 +204,7 @@ void AudioManager::Set3DEffect(int channelNum, Vec3 soundPos)
 	//TODO: Distance attenuation is pretty bad, no "cutoff". Might as well implement my own version later
 	if (Mix_SetPosition(channelNum, angle, static_cast<Uint8>(compressedDis)) == 0)
 	{
-		printf("AudioManager::PlaySound(): Cannot set 3D effect on channel %d", channelNum);
+		printf("AudioManager::PlaySound(): Cannot set 3D effect on channel %d\n", channelNum);
 	}
 
 	ImGui::Begin("Sound Test");
