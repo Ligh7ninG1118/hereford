@@ -25,7 +25,18 @@ void AudioComponent::Play(bool loop)
 	mHandle = mAudioManager.PlaySound(mSoundAssetName, loop, mIs3D, mOwner->GetPosition());
 }
 
-void AudioComponent::Pause()
+void AudioComponent::Resume(bool fadeIn, bool fadeInDuration)
+{
+	if (mHandle == 0)
+	{
+		printf("AudioComponent::Resume(): Audio Component's handle is not assigned to any Sound Handle\n");
+		return;
+	}
+
+	mAudioManager.ResumeSound(mHandle, fadeIn, fadeInDuration);
+}
+
+void AudioComponent::Pause(bool fadeOut, bool fadeOutDuration)
 {
 	if (mHandle == 0)
 	{
@@ -33,10 +44,10 @@ void AudioComponent::Pause()
 		return;
 	}
 
-	mAudioManager.PauseSound(mHandle);
+	mAudioManager.PauseSound(mHandle, fadeOut, fadeOutDuration);
 }
 
-void AudioComponent::Stop()
+void AudioComponent::Stop(bool fadeOut, bool fadeOutDuration)
 {
 	if (mHandle == 0)
 	{
@@ -44,7 +55,7 @@ void AudioComponent::Stop()
 		return;
 	}
 
-	mAudioManager.StopSound(mHandle);
+	mAudioManager.StopSound(mHandle, fadeOut, fadeOutDuration);
 	mHandle = 0;
 }
 
