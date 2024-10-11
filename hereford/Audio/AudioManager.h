@@ -25,9 +25,9 @@ public:
 
 	SoundHandle PlaySound(const std::string& soundName, bool shouldLooping = false, bool is3D = false, Vec3 soundPos = Vec3::Zero);
 
-	void StopSound(SoundHandle sound);
-	void PauseSound(SoundHandle sound);
-	void ResumeSound(SoundHandle sound);
+	void StopSound(SoundHandle sound, bool fadeOut = false, float fadeOutDuration = 0.0f);
+	void PauseSound(SoundHandle sound, bool fadeOut = false, float fadeOutDuration = 0.0f);
+	void ResumeSound(SoundHandle sound, bool fadeIn = false, float fadeInDuration = 0.0f);
 	ESoundState GetSoundState(SoundHandle sound);
 	void StopAllSounds();
 	void CacheAllSounds();
@@ -36,9 +36,6 @@ public:
 	void SetPlayerReference(class Actor* player) { mPlayerRef = player; };
 
 private:
-	struct Mix_Chunk* GetSound(const std::string& soundName);
-	void Set3DEffect(int channelNum, Vec3 soundPos);
-
 	struct HandleInfo
 	{
 		std::string mSoundName;
@@ -48,6 +45,14 @@ private:
 		bool mIs3D = false;
 		Vec3 mSoundPos = Vec3::Zero;
 	};
+
+	struct Mix_Chunk* GetSound(const std::string& soundName);
+	void Set3DEffect(int channelNum, Vec3 soundPos);
+	void AdjustVolumeTimeline(int channelNum, int startVolume, int targetVolume, float alpha);
+	void Pause(SoundHandle sound);
+	void Stop(SoundHandle sound);
+
+	
 
 	std::vector<SoundHandle> mChannels;
 	std::map<SoundHandle, HandleInfo> mHandleMap;

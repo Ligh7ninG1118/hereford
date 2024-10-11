@@ -3,6 +3,7 @@
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_mixer.h"
 #include "imgui/imgui.h"
+#include "Util/TimelineAction.h"
 
 
 AudioManager::AudioManager(int channelNum)
@@ -62,7 +63,7 @@ SoundHandle AudioManager::PlaySound(const std::string& soundName, bool shouldLoo
 			HandleInfo handle(soundName, i, shouldLooping, false, is3D, soundPos);
 			mHandleMap[mLastHandle] = handle;
 			mChannels[i] = mLastHandle;
-			Mix_Volume(-1, 128);
+			Mix_Volume(i, 128);
 			Mix_PlayChannel(i, pChunk, shouldLooping ? -1 : 0);
 
 			break;
@@ -79,7 +80,7 @@ SoundHandle AudioManager::PlaySound(const std::string& soundName, bool shouldLoo
 	return mLastHandle;
 }
 
-void AudioManager::StopSound(SoundHandle sound)
+void AudioManager::StopSound(SoundHandle sound, bool fadeOut, float fadeOutDuration)
 {
 	auto itr = mHandleMap.find(sound);
 	if (itr == mHandleMap.end())
@@ -88,12 +89,21 @@ void AudioManager::StopSound(SoundHandle sound)
 		return;
 	}
 
-	Mix_HaltChannel(itr->second.mChannel);
-	mChannels[sound] = 0;
-	mHandleMap.erase(itr);
+	if (fadeOut)
+	{
+		TAHandle temp;
+		TimelineActionManager::PlayFromStart(temp,
+			std::bind(&AudioManager::AdjustVolumeTimeline, this, itr->second.mChannel, Mix_Volume(itr->second.mChannel, -1), 0, std::placeholders::_1),
+			fadeOutDuration,
+			std::bind(&AudioManager::Stop, this, sound));
+	}
+	else
+	{
+		Stop(sound);
+	}
 }
 
-void AudioManager::PauseSound(SoundHandle sound)
+void AudioManager::PauseSound(SoundHandle sound, bool fadeOut, float fadeOutDuration)
 {
 	auto itr = mHandleMap.find(sound);
 	if (itr == mHandleMap.end())
@@ -104,12 +114,22 @@ void AudioManager::PauseSound(SoundHandle sound)
 
 	if (!itr->second.mIsPaused)
 	{
-		Mix_Pause(itr->second.mChannel);
-		itr->second.mIsPaused = true;
+		if (fadeOut)
+		{
+			TAHandle temp;
+			TimelineActionManager::PlayFromStart(temp,
+				std::bind(&AudioManager::AdjustVolumeTimeline, this, itr->second.mChannel, Mix_Volume(itr->second.mChannel, -1), 0, std::placeholders::_1),
+				fadeOutDuration,
+				std::bind(&AudioManager::Pause, this, sound));
+		}
+		else
+		{
+			Pause(sound);
+		}
 	}
 }
 
-void AudioManager::ResumeSound(SoundHandle sound)
+void AudioManager::ResumeSound(SoundHandle sound, bool fadeIn, float fadeInDuration)
 {
 	auto itr = mHandleMap.find(sound);
 	if (itr == mHandleMap.end())
@@ -121,7 +141,18 @@ void AudioManager::ResumeSound(SoundHandle sound)
 	if (itr->second.mIsPaused)
 	{
 		Mix_Resume(itr->second.mChannel);
-		itr->second.mIsPaused = true;
+		itr->second.mIsPaused = false;
+
+		if (fadeIn)
+		{
+			TAHandle temp;
+			int channelVolume = Mix_Volume(itr->second.mChannel, -1);
+			int targetVolume = channelVolume == 0 ? 128 : channelVolume;
+
+			TimelineActionManager::PlayFromStart(temp,
+				std::bind(&AudioManager::AdjustVolumeTimeline, this, itr->second.mChannel, 0, targetVolume, std::placeholders::_1),
+				fadeInDuration);
+		}
 	}
 }
 
@@ -208,9 +239,29 @@ void AudioManager::Set3DEffect(int channelNum, Vec3 soundPos)
 	{
 		printf("AudioManager::PlaySound(): Cannot set 3D effect on channel %d\n", channelNum);
 	}
-
-	ImGui::Begin("Sound Test");
-	ImGui::Text("Angle: %f\n", angle);
-	ImGui::Text("Dis: %f\n", dis);
-	ImGui::End();
 }
+
+void AudioManager::AdjustVolumeTimeline(int channelNum, int startVolume, int targetVolume, float alpha)
+{
+	int newVolume = Math::Lerp(startVolume, targetVolume, alpha);
+	Mix_Volume(channelNum, newVolume);
+}
+
+void AudioManager::Pause(SoundHandle sound)
+{
+	auto itr = mHandleMap.find(sound);
+
+	Mix_Pause(itr->second.mChannel);
+	itr->second.mIsPaused = true;
+}
+
+void AudioManager::Stop(SoundHandle sound)
+{
+	auto itr = mHandleMap.find(sound);
+
+	Mix_HaltChannel(itr->second.mChannel);
+	mChannels[sound] = 0;
+	mHandleMap.erase(itr);
+}
+
+

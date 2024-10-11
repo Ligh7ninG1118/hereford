@@ -27,7 +27,7 @@
 #include "imgui/imgui_impl_sdl2.h"
 #include "imgui/imgui_impl_opengl3.h"
 
-
+SoundHandle handle;
 
 GameContext::GameContext()
 	: mScreenWidth(1920), mScreenHeight(1080)
@@ -99,7 +99,7 @@ bool GameContext::Initialize()
 
 	mIsRunning = true;
 	LoadStarterData();
-	LoadScene("Scenes/playground.json");
+	LoadScene("Scenes/playground-lite.json");
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -109,7 +109,7 @@ bool GameContext::Initialize()
 	ImGui_ImplSDL2_InitForOpenGL(mPtrSDLWindow, mPtrRenderer->GetGLContext());
 	ImGui_ImplOpenGL3_Init();
 
-	//mPtrAudioManager->PlaySound("Let There Be Light.wav", true, true);
+	//handle = mPtrAudioManager->PlaySound("Let There Be Light.wav", true, true);
 
 	return true;
 }

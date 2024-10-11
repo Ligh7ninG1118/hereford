@@ -17,8 +17,9 @@ private:
 	class TimelineAction
 	{
 	public:
-		TimelineAction(float inTime, bool isReverse, std::function<void(float)> inCallback)
-			: mTotalTime(inTime), mCurrentAlpha(0.0f), mIsReverse(isReverse), mPendingDelete(false), mCallback(inCallback)
+		TimelineAction(float inTime, bool isReverse, std::function<void(float)> inProgressCallback, std::function<void()> inOnEndCallback = nullptr)
+			: mTotalTime(inTime), mCurrentAlpha(0.0f), mIsReverse(isReverse), mPendingDelete(false), 
+			mProgressCallback(inProgressCallback), mOnEndCallback(inOnEndCallback)
 		{
 			mCurrentAlpha = isReverse ? 1.0f : 0.0f;
 		}
@@ -30,12 +31,16 @@ private:
 				diff *= -1.0f;
 
 			mCurrentAlpha += diff;
-			if (mCurrentAlpha >= 1.0f || mCurrentAlpha <= 0.0f)
+			if (mCurrentAlpha >= 1.0f || mCurrentAlpha <= 0.0f && !mPendingDelete)
+			{
 				mPendingDelete = true;
+				if(mOnEndCallback != nullptr)
+					mOnEndCallback();
+			}
 
 			mCurrentAlpha = Math::Clamp(mCurrentAlpha, 0.0f, 1.0f);
 
-			mCallback(mCurrentAlpha);
+			mProgressCallback(mCurrentAlpha);
 		}
 
 		friend class TimelineActionManager;
@@ -46,18 +51,21 @@ private:
 		bool mIsReverse;
 		bool mPendingDelete;
 
-		std::function<void(float)> mCallback;
+		std::function<void(float)> mProgressCallback;
+		std::function<void()> mOnEndCallback;
 	};
 
 public:
-	static void PlayFromStart(TAHandle& inHandle, const std::function<void(float)>& inCallback, float inPeriod)
+	static void PlayFromStart(TAHandle& inHandle, const std::function<void(float)>& inProgressCallback, 
+		float inPeriod, const std::function<void()>& inOnEndCallback = nullptr)
 	{
-		AddAction(inHandle, inCallback, inPeriod, false);
+		AddAction(inHandle, inProgressCallback, inPeriod, false, inOnEndCallback);
 	}
 
-	static void ReverseFromEnd(TAHandle& inHandle, const std::function<void(float)>& inCallback, float inPeriod)
+	static void ReverseFromEnd(TAHandle& inHandle, const std::function<void(float)>& inProgressCallback, 
+		float inPeriod, const std::function<void()>& inOnEndCallback = nullptr)
 	{
-		AddAction(inHandle, inCallback, inPeriod, true);
+		AddAction(inHandle, inProgressCallback, inPeriod, true, inOnEndCallback);
 	}
 
 	static void RemoveAction(const TAHandle& inHandle)
@@ -92,7 +100,8 @@ public:
 	}
 
 private:
-	static void AddAction(TAHandle& inHandle, const std::function<void(float)>& inCallback, float inPeriod, bool isReverse)
+	static void AddAction(TAHandle& inHandle, const std::function<void(float)>& inProgressCallback, 
+		float inPeriod, bool isReverse, const std::function<void()>& inOnEndCallback = nullptr)
 	{
 		// If handle doesnt own any action before
 		if (mTimelineActionMap.find(inHandle.mIndex) == mTimelineActionMap.end())
@@ -105,7 +114,7 @@ private:
 		}
 
 		// Previous action (if any) will be deleted automatically (unique ptr)
-		mTimelineActionMap[inHandle.mIndex] = std::make_unique<TimelineAction>(TimelineAction(inPeriod, isReverse, inCallback));
+		mTimelineActionMap[inHandle.mIndex] = std::make_unique<TimelineAction>(TimelineAction(inPeriod, isReverse, inProgressCallback, inOnEndCallback));
 	}
 
 

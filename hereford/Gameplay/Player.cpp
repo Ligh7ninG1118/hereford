@@ -127,7 +127,11 @@ void Player::OnUpdate(float deltaTime)
 		else
 			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.5f);
 
-		if (mPtrAudioComponent2->GetSoundState() != ESoundState::Playing)
+		if (mPtrAudioComponent2->GetSoundState() == ESoundState::Paused)
+		{
+			mPtrAudioComponent2->Resume();
+		}
+		else if(mPtrAudioComponent2->GetSoundState() == ESoundState::Stopped)
 		{
 			mPtrAudioComponent2->Play(true);
 		}
