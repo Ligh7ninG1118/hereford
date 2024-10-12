@@ -36,6 +36,8 @@ void PhysicsManager::UpdatePhysics(float deltaTime)
 	ResolveCollision(deltaTime);
 }
 
+
+
 void PhysicsManager::UpdatePosition(float deltaTime)
 {
 	for (auto collider : mPhysicsComponents)
@@ -98,7 +100,7 @@ void PhysicsManager::ResolveCollision(float deltaTime)
 	}
 }
 
-bool PhysicsManager::RaycastQuery(const struct Vector3& origin, const struct Vector3& dir, const float& maxDistance, HitInfo& outInfo)
+bool PhysicsManager::RaycastQuery(const struct Vector3& origin, const struct Vector3& dir, float maxDistance, HitInfo& outInfo)
 {
 	//printf("-------------------------------------\n");
 	bool hasHit = false;
@@ -149,7 +151,7 @@ bool PhysicsManager::RaycastQuery(const struct Vector3& origin, const struct Vec
 
 
 
-bool PhysicsManager::RayAgainstSphere(const Vector3& origin, const Vector3& dir, const float& maxDistance, 
+bool PhysicsManager::RayAgainstSphere(const Vector3& origin, const Vector3& dir, float maxDistance, 
 	const PhysicsPrimitive& primitive, const struct Vector3& colliderPos, HitInfo& outInfo)
 {
 	Vec3 adjustedPos = colliderPos + primitive.mPosOffset;
@@ -202,7 +204,7 @@ bool PhysicsManager::RayAgainstSphere(const Vector3& origin, const Vector3& dir,
 	}
 }
 
-bool PhysicsManager::RayAgainstAABB(const Vector3& origin, const Vector3& dir, const float& maxDistance, 
+bool PhysicsManager::RayAgainstAABB(const Vector3& origin, const Vector3& dir, float maxDistance, 
 	const PhysicsPrimitive& primitive, const struct Vector3& colliderPos, HitInfo& outInfo)
 {
 	Vec3 adjustedPos = colliderPos + primitive.mPosOffset;
@@ -233,7 +235,8 @@ bool PhysicsManager::RayAgainstAABB(const Vector3& origin, const Vector3& dir, c
 	}
 }
 
-bool PhysicsManager::RayAgainstPlane(const Vector3& origin, const Vector3& dir, const float& maxDistance, const PhysicsPrimitive& primitive, const Vector3& colliderPos, HitInfo& outInfo)
+bool PhysicsManager::RayAgainstPlane(const Vector3& origin, const Vector3& dir, float maxDistance, 
+	const PhysicsPrimitive& primitive, const Vector3& colliderPos, HitInfo& outInfo)
 {
 	Vec3 adjustedPos = colliderPos + primitive.mPosOffset;
 	PlanePrimitive plane = std::get<PlanePrimitive>(primitive.mPrimitive);
@@ -256,7 +259,8 @@ bool PhysicsManager::RayAgainstPlane(const Vector3& origin, const Vector3& dir, 
 	return true;
 }
 
-bool PhysicsManager::RayAgainstCapsule(const Vector3& origin, const Vector3& dir, const float& maxDistance, const PhysicsPrimitive& primitive, const Vector3& colliderPos, HitInfo& outInfo)
+bool PhysicsManager::RayAgainstCapsule(const Vector3& origin, const Vector3& dir, float maxDistance, 
+	const PhysicsPrimitive& primitive, const Vector3& colliderPos, HitInfo& outInfo)
 {
 	Vec3 adjustedPos = colliderPos + primitive.mPosOffset;
 	CapsulePrimitive capsule = std::get<CapsulePrimitive>(primitive.mPrimitive);
@@ -294,6 +298,124 @@ bool PhysicsManager::RayAgainstCapsule(const Vector3& origin, const Vector3& dir
 
 	return false;
 }
+
+bool PhysicsManager::SpherecastQuery(const Vector3& origin, const Vector3& dir, float sphereRadius, float maxDistance, HitInfo& outInfo)
+{
+	bool hasHit = false;
+	float nearestDis = maxDistance;
+
+	for (auto collider : mPhysicsComponents)
+	{
+		PhysicsPrimitive primitive = collider->mPhyPrimitive;
+		HitInfo tempInfo;
+
+		if (std::holds_alternative<SpherePrimitive>(primitive.mPrimitive))
+		{
+			bool result = SpherecastAgainstSphere(origin, dir, maxDistance, sphereRadius, primitive, collider->GetOwnerPosition(), tempInfo);
+			if (result && tempInfo.distance < nearestDis)
+			{
+				hasHit = true;
+				nearestDis = tempInfo.distance;
+				outInfo.hitActor = collider->GetOwner();
+				outInfo.impactPoint = tempInfo.impactPoint;
+			}
+		}
+		else if (std::holds_alternative<AABBPrimitive>(primitive.mPrimitive))
+		{
+			bool result = SpherecastAgainstAABB(origin, dir, maxDistance, sphereRadius, primitive, collider->GetOwnerPosition(), tempInfo);
+			if (result && tempInfo.distance < nearestDis)
+			{
+				hasHit = true;
+				nearestDis = tempInfo.distance;
+				outInfo.hitActor = collider->GetOwner();
+				outInfo.impactPoint = tempInfo.impactPoint;
+			}
+		}
+		else if (std::holds_alternative<PlanePrimitive>(primitive.mPrimitive))
+		{
+			bool result = SpherecastAgainstPlane(origin, dir, maxDistance, sphereRadius, primitive, collider->GetOwnerPosition(), tempInfo);
+			if (result && tempInfo.distance < nearestDis)
+			{
+				hasHit = true;
+				nearestDis = tempInfo.distance;
+				outInfo.hitActor = collider->GetOwner();
+				outInfo.impactPoint = tempInfo.impactPoint;
+			}
+		}
+	}
+	outInfo.distance = nearestDis;
+	return hasHit;
+}
+
+bool PhysicsManager::SpherecastAgainstSphere(const Vector3& origin, const Vector3& dir, float sphereRadius, float maxDistance, const PhysicsPrimitive& primitive, const Vector3& colliderPos, HitInfo& outInfo)
+{
+	Vec3 adjustedPos = colliderPos + primitive.mPosOffset;
+	SpherePrimitive sphere = std::get<SpherePrimitive>(primitive.mPrimitive);
+	float targetRadius = sphere.mRadius;
+	float summedRadius = targetRadius + sphereRadius;
+	Vector3 originToCenter = adjustedPos - origin;
+	float projectedDis = originToCenter.Dot(dir);
+
+	float originToCenterLenSq = originToCenter.SqrMagnitude();
+
+	if (projectedDis < 0.0f)
+	{
+		if (originToCenterLenSq < summedRadius * summedRadius)
+		{
+			//printf("inside\n");
+			outInfo.impactPoint = origin;
+			outInfo.distance = 0.0f;
+			return true;
+		}
+		else
+		{
+			//printf("no collision\n");
+			return false;
+		}
+	}
+
+	float centerToProjectedDis = sqrt(originToCenterLenSq - projectedDis * projectedDis);
+	float sideDis = sqrt(summedRadius * summedRadius - centerToProjectedDis * centerToProjectedDis);
+
+	if (summedRadius * summedRadius - originToCenterLenSq + projectedDis * projectedDis < 0.0f)
+	{
+		//printf("no collision\n");
+		return false;
+
+	}
+	else if (originToCenterLenSq < summedRadius * summedRadius)
+	{
+		//printf("inside\n");
+		outInfo.impactPoint = origin;
+		outInfo.distance = 0.0f;
+		return true;
+	}
+	else
+	{
+		//printf("collided\n");
+		outInfo.distance = sqrtf(originToCenterLenSq - summedRadius * summedRadius);
+		Vector3 originToCenterDir = originToCenter.normalized();
+		outInfo.impactPoint = origin + originToCenterDir * outInfo.distance;
+		return true;
+	}
+}
+
+bool PhysicsManager::SpherecastAgainstAABB(const Vector3& origin, const Vector3& dir, float sphereRadius, float maxDistance, const PhysicsPrimitive& primitive, const Vector3& colliderPos, HitInfo& outInfo)
+{
+	return false;
+}
+
+bool PhysicsManager::SpherecastAgainstPlane(const Vector3& origin, const Vector3& dir, float sphereRadius, float maxDistance, const PhysicsPrimitive& primitive, const Vector3& colliderPos, HitInfo& outInfo)
+{
+	return false;
+}
+
+bool PhysicsManager::SpherecastAgainstCapsule(const Vector3& origin, const Vector3& dir, float sphereRadius, float maxDistance, const PhysicsPrimitive& primitive, const Vector3& colliderPos, HitInfo& outInfo)
+{
+	return false;
+}
+
+
 
 void PhysicsManager::AddPhysicsComponent(PhysicsComponent* c)
 {
