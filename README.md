@@ -73,3 +73,11 @@ or at least, "it's working!"
 
 ## Assets Used
 WIP
+
+## References
+LearnOpenGL by Joey De Vries
+- https://learnopengl.com/
+ITP 380 (USC) by Sanjay Madhav
+- https://itp380.org/
+3D Collisions by Gabor Szauer
+- https://gdbooks.gitbooks.io/3dcollisions/content/
