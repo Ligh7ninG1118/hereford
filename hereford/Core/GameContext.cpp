@@ -27,8 +27,6 @@
 #include "imgui/imgui_impl_sdl2.h"
 #include "imgui/imgui_impl_opengl3.h"
 
-SoundHandle handle;
-
 GameContext::GameContext()
 	: mScreenWidth(1920), mScreenHeight(1080)
 {
@@ -91,7 +89,7 @@ bool GameContext::Initialize()
 	mPtrPhysicsManager = std::make_unique<PhysicsManager>();
 
 	mPtrAudioManager = std::make_unique<AudioManager>();
-	mPtrAudioManager->CacheSound("Let There Be Light.wav");
+	mPtrAudioManager->CacheSound("bootcamp_ambient.wav");
 
 
 	//SDL_SetWindowGrab(pSDLWindow, SDL_TRUE);
@@ -109,7 +107,7 @@ bool GameContext::Initialize()
 	ImGui_ImplSDL2_InitForOpenGL(mPtrSDLWindow, mPtrRenderer->GetGLContext());
 	ImGui_ImplOpenGL3_Init();
 
-	//handle = mPtrAudioManager->PlaySound("Let There Be Light.wav", true, true);
+	mPtrAudioManager->PlaySound("bootcamp_ambient.wav", true, false);
 
 	return true;
 }

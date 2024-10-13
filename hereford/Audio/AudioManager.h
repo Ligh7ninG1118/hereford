@@ -31,7 +31,7 @@ public:
 	ESoundState GetSoundState(SoundHandle sound);
 	void StopAllSounds();
 	void CacheAllSounds();
-	void CacheSound(const std::string& soundName);
+	void CacheSound(const std::string& soundName, int chuckVolumeOverride = 128);
 
 	void SetPlayerReference(class Actor* player) { mPlayerRef = player; };
 
@@ -46,7 +46,7 @@ private:
 		Vec3 mSoundPos = Vec3::Zero;
 	};
 
-	struct Mix_Chunk* GetSound(const std::string& soundName);
+	struct Mix_Chunk* GetSound(const std::string& soundName, int chuckVolumeOverride = 128);
 	void Set3DEffect(int channelNum, Vec3 soundPos);
 	void AdjustVolumeTimeline(int channelNum, int startVolume, int targetVolume, float alpha);
 	void Pause(SoundHandle sound);

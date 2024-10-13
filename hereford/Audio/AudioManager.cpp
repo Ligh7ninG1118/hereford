@@ -189,12 +189,12 @@ void AudioManager::CacheAllSounds()
 	}*/
 }
 
-void AudioManager::CacheSound(const std::string& soundName)
+void AudioManager::CacheSound(const std::string& soundName, int chuckVolumeOverride)
 {
-	GetSound(soundName);
+	GetSound(soundName, chuckVolumeOverride);
 }
 
-Mix_Chunk* AudioManager::GetSound(const std::string& soundName)
+Mix_Chunk* AudioManager::GetSound(const std::string& soundName, int chuckVolumeOverride)
 {
 	std::string fileName = "LocalResources/Sound/";
 	fileName += soundName;
@@ -213,7 +213,7 @@ Mix_Chunk* AudioManager::GetSound(const std::string& soundName)
 			printf("AudioManager::GetSound(): Cannot load sound file named %s\n", soundName.c_str());
 			return nullptr;
 		}
-
+		Mix_VolumeChunk(chunk, chuckVolumeOverride);
 		mSoundAssets.emplace(fileName, chunk);
 	}
 	
