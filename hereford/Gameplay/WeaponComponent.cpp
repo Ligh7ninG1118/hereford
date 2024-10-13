@@ -22,12 +22,11 @@ WeaponComponent::WeaponComponent(Actor* owner, std::weak_ptr<AnimationStateMachi
 
 	mReloadAnimDuration = 2.0f;
 
-	mIsSemiAuto = false;
-	mFireRatePerMin = 800.0f;
+	mIsSemiAuto = true;
+	mFireRatePerMin = 300.0f;
 	mFireRateCooldown = 60.0f / mFireRatePerMin;
 
 	mFireRateTimer = -0.1f;
-	mIsLMBPressed = false;
 
 	mRecoilType = ERecoilType::RECOIL_DIAMOND;
 	mRecoilDiamond = Vec2(0.1f, 0.2f);
@@ -41,7 +40,7 @@ WeaponComponent::WeaponComponent(Actor* owner, std::weak_ptr<AnimationStateMachi
 	mHeatReduceDelayTimer = -0.1f;
 	mCurrentHeat = 0.0f;
 	
-	mMaxMagazineCapacity = 100;
+	mMaxMagazineCapacity = 12;
 	mMaxReserveCapacity = 5 * mMaxMagazineCapacity;
 	mIsOpenBolt = true;
 
@@ -118,7 +117,7 @@ void WeaponComponent::Fire()
 
 		HitInfo hitInfo;
 		player->GetGameContext()->GetPhysicsManager().RaycastQuery(origin, dir, 1000.0f, hitInfo);
-		
+
 		if (hitInfo.hitActor != nullptr)
 			if (auto hittable = dynamic_cast<IHittable*>(hitInfo.hitActor); hittable != nullptr)
 			{

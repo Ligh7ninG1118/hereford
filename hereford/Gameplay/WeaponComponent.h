@@ -71,7 +71,6 @@ private:
 
 	// Fire Rate Runtime Variables
 	float mFireRateTimer;
-	bool mIsLMBPressed;
 
 	// Recoil and Heat Parameters
 	ERecoilType mRecoilType;

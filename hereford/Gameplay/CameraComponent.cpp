@@ -75,7 +75,7 @@ void CameraComponent::ProcessInput(const std::vector<EInputState>& keyState, Uin
 
 void CameraComponent::RotateCamera(Vec2 dir)
 {
-	mDeferredRecoilDir += dir;
+	//mDeferredRecoilDir += dir;
 }
 
 Mat4 CameraComponent::GetViewMatrix() const
