@@ -1,9 +1,10 @@
 #pragma once
 #include "Core/Actor.h"
 #include "Gameplay/IHittable.h"
+#include "Gameplay/IInteractable.h"
 #include "Util/Reflection.h"
 
-class TestCube : public Actor, public IHittable
+class TestCube : public Actor, public IHittable, public IInteractable
 {
 	REFLECT(TestCube)
 
@@ -13,6 +14,7 @@ public:
 	void OnUpdate(float deltaTime) override;
 
 	void Hit(const struct HitInfo& info) override;
+	void Interact() override;
 
 	class RenderComponent* GetRenderComponent() const { return mPtrRenderComp; }
 	class PhysicsComponent* GetPhysicsComponent() const { return mPtrPhysicsComp; }
