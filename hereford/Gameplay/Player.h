@@ -26,9 +26,10 @@ public:
 	void SetArmTranslateOffset(Vec3 offset);
 
 private:
-	void ProcessMovement(const float& deltaTime);
+	void ProcessMovement(float deltaTime);
+	void Jump();
 	void ProcessInteractionPrompt();
-	void ProcessInteraction();
+	void Interaction();
 	void ShowDebugInfo();
 	void WeaponFiredEventListener(EventOnPlayerWeaponFired inEvent);
 
@@ -57,6 +58,8 @@ private:
 	bool lmbPressed = false;
 	float totalRuntime;
 
+	bool mIsGrounded = true;
+
 	float currentTopSpeed;
 	const float topWalkingSpeed = 3.5f;
 	const float topCrouchSpeed = 1.5f;
@@ -64,6 +67,8 @@ private:
 	const float maxSpeedChangingRate = 25.0f;
 	const float speedOffset = 0.01f;
 
+	const float OVERRIDE_GRAVITY_CONSTANT = -20.0f;
+	const float JUMP_HEIGHT_CONSTANT = 1.5f;
 
 	const Vec3 hipArmTranslationOffset = Vec3(-0.2f, -0.4f, 0.0f);
 	const Vec3 hipArmRotationOffset = Vec3(0.0f, 0.0f, 90.0f);

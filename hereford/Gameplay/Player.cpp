@@ -99,6 +99,7 @@ Player::Player(GameContext* gameCtx)
 	mPtrAudioComponent2 = std::make_unique<AudioComponent>(this, gameCtx->GetAudioManager());
 	mPtrAudioComponent2->InitAsset("Walk-Gravel.wav");
 
+	mIsGrounded = true;
 }
 
 Player::~Player()
@@ -129,6 +130,7 @@ void Player::OnUpdate(float deltaTime)
 		else
 			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.5f);
 
+
 		if (mPtrAudioComponent2->GetSoundState() == ESoundState::Paused)
 		{
 			mPtrAudioComponent2->Resume();
@@ -145,11 +147,28 @@ void Player::OnUpdate(float deltaTime)
 		else
 			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.0f);
 
+		
+	}
+
+	if (hasMovementInput && mIsGrounded)
+	{
+		if (mPtrAudioComponent2->GetSoundState() == ESoundState::Paused)
+		{
+			mPtrAudioComponent2->Resume();
+		}
+		else if (mPtrAudioComponent2->GetSoundState() == ESoundState::Stopped)
+		{
+			mPtrAudioComponent2->Play(true);
+		}
+	}
+	else
+	{
 		if (mPtrAudioComponent2->GetSoundState() == ESoundState::Playing)
 		{
 			mPtrAudioComponent2->Pause();
 		}
 	}
+
 
 	currentArmRotationOffset.mX = Math::Lerp(currentArmRotationOffset.mX, 0.0f, 0.2f);
 
@@ -236,6 +255,11 @@ void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 			mPtrActionComp->StopActionByName("Sprint");
 			currentTopSpeed = topWalkingSpeed;
 		}
+
+		if (keyState[SDL_SCANCODE_SPACE] == EInputState::KEY_DOWN)
+		{
+			Jump();
+		}
 	}
 
 	{
@@ -245,7 +269,7 @@ void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 
 	if (keyState[SDL_SCANCODE_F] == EInputState::KEY_DOWN)
 	{
-		ProcessInteraction();
+		Interaction();
 	}
 }
 
@@ -260,19 +284,43 @@ void Player::SetArmTranslateOffset(Vec3 offset)
 	mPtrAnimRenderComp->SetTranslateOffset(currentArmTranslationOffset);
 }
 
-void Player::ProcessMovement(const float& deltaTime)
+void Player::ProcessMovement(float deltaTime)
 {
+	//TODO: reduce control while in air
     float targetSpeed = hasMovementInput ? currentTopSpeed : 0.0f;
-	float currentHorSpeed = Vector3(currentVelocity.mX, currentVelocity.mY, currentVelocity.mZ).Magnitude();
+	float currentHorSpeed = Vector3(currentVelocity.mX, 0.0f, currentVelocity.mZ).Magnitude();
+	float currentVerticalSpeed = currentVelocity.mY;
 
 	if (currentHorSpeed < targetSpeed - speedOffset || currentHorSpeed > targetSpeed + speedOffset)
 		currentVelocity = Math::Lerp(currentHorSpeed, targetSpeed, deltaTime * maxSpeedChangingRate) * inputMoveDir;
 	else
 		currentVelocity = targetSpeed * inputMoveDir;
 
+	if(!mIsGrounded)
+		currentVerticalSpeed += OVERRIDE_GRAVITY_CONSTANT * deltaTime;
+
+	currentVelocity.mY = currentVerticalSpeed;
+
 	Vector3 updatedPos = GetPosition();
 	updatedPos += currentVelocity * deltaTime;
+
+	if (updatedPos.mY <= 0.0f)
+	{
+		currentVelocity.mY = 0.0f;
+		updatedPos.mY = 0.0f;
+		mIsGrounded = true;
+	}
+
 	SetPosition(updatedPos);
+}
+
+void Player::Jump()
+{
+	if (mIsGrounded)
+	{
+		currentVelocity.mY = std::sqrtf(JUMP_HEIGHT_CONSTANT * -2.0f * OVERRIDE_GRAVITY_CONSTANT);
+		mIsGrounded = false;
+	}
 }
 
 void Player::ProcessInteractionPrompt()
@@ -306,7 +354,7 @@ void Player::ProcessInteractionPrompt()
 	ImGui::End();
 }
 
-void Player::ProcessInteraction()
+void Player::Interaction()
 {
 	if (mInteractCandidate != nullptr)
 	{
