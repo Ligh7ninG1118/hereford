@@ -67,37 +67,37 @@ void PhysicsManager::UpdatePosition(float deltaTime)
 
 void PhysicsManager::ResolveCollision(float deltaTime)
 {
-	for (auto collider : mPhysicsComponents)
-	{
-		AABBPrimitive aabb = std::get<AABBPrimitive>(collider->mPhyPrimitive.mPrimitive);
-		Vec3 lowestPoint = collider->GetOwnerPosition();
-		lowestPoint += collider->mPhyPrimitive.mPosOffset;
-		lowestPoint.mY -= aabb.mExtend.mY;
+	//for (auto collider : mPhysicsComponents)
+	//{
+	//	AABBPrimitive aabb = std::get<AABBPrimitive>(collider->mPhyPrimitive.mPrimitive);
+	//	Vec3 lowestPoint = collider->GetOwnerPosition();
+	//	lowestPoint += collider->mPhyPrimitive.mPosOffset;
+	//	lowestPoint.mY -= aabb.mExtend.mY;
 
-		/*if (lowestPoint.mY < 0.0f)
-		{
-			Vec3 normal = Vector3::Up;
-			Vec3 relativeVelocity = collider->mVelocity - Vec3::Zero;
-			float velocityAlongNormal = relativeVelocity.Dot(normal);
-			if (velocityAlongNormal > 0.0f)
-				continue;
+	//	/*if (lowestPoint.mY < 0.0f)
+	//	{
+	//		Vec3 normal = Vector3::Up;
+	//		Vec3 relativeVelocity = collider->mVelocity - Vec3::Zero;
+	//		float velocityAlongNormal = relativeVelocity.Dot(normal);
+	//		if (velocityAlongNormal > 0.0f)
+	//			continue;
 
-			float restitution = 0.85f;
-			float impulseScalar = -(1.0f + restitution) * velocityAlongNormal;
-			impulseScalar /= (1.0f / collider->mMass);
-			Vector3 impulse = impulseScalar * normal;
-			collider->mVelocity += (1.0f / collider->mMass) * impulse;
+	//		float restitution = 0.85f;
+	//		float impulseScalar = -(1.0f + restitution) * velocityAlongNormal;
+	//		impulseScalar /= (1.0f / collider->mMass);
+	//		Vector3 impulse = impulseScalar * normal;
+	//		collider->mVelocity += (1.0f / collider->mMass) * impulse;
 
-			float penetrationDepth = 0.01f;
-			Vector3 correction = penetrationDepth * normal;
+	//		float penetrationDepth = 0.01f;
+	//		Vector3 correction = penetrationDepth * normal;
 
-			collider->mAttemptPos += correction * (1.0f / collider->mMass);
+	//		collider->mAttemptPos += correction * (1.0f / collider->mMass);
 
-		}*/
+	//	}*/
 
-		collider->GetOwner()->SetPosition(collider->mAttemptPos);
-		collider->GetOwner()->SetRotation(collider->mAttemptRot);
-	}
+	//	collider->GetOwner()->SetPosition(collider->mAttemptPos);
+	//	collider->GetOwner()->SetRotation(collider->mAttemptRot);
+	//}
 }
 
 bool PhysicsManager::RaycastQuery(const struct Vector3& origin, const struct Vector3& dir, float maxDistance, HitInfo& outInfo)
@@ -301,6 +301,7 @@ bool PhysicsManager::RayAgainstCapsule(const Vector3& origin, const Vector3& dir
 
 bool PhysicsManager::SpherecastQuery(const Vector3& origin, const Vector3& dir, float sphereRadius, float maxDistance, HitInfo& outInfo)
 {
+	//printf("-------------------------------------\n");
 	bool hasHit = false;
 	float nearestDis = maxDistance;
 
@@ -311,7 +312,7 @@ bool PhysicsManager::SpherecastQuery(const Vector3& origin, const Vector3& dir, 
 
 		if (std::holds_alternative<SpherePrimitive>(primitive.mPrimitive))
 		{
-			bool result = SpherecastAgainstSphere(origin, dir, maxDistance, sphereRadius, primitive, collider->GetOwnerPosition(), tempInfo);
+			bool result = SpherecastAgainstSphere(origin, dir, sphereRadius, maxDistance,  primitive, collider->GetOwnerPosition(), tempInfo);
 			if (result && tempInfo.distance < nearestDis)
 			{
 				hasHit = true;
@@ -322,7 +323,7 @@ bool PhysicsManager::SpherecastQuery(const Vector3& origin, const Vector3& dir, 
 		}
 		else if (std::holds_alternative<AABBPrimitive>(primitive.mPrimitive))
 		{
-			bool result = SpherecastAgainstAABB(origin, dir, maxDistance, sphereRadius, primitive, collider->GetOwnerPosition(), tempInfo);
+			bool result = SpherecastAgainstAABB(origin, dir, sphereRadius, maxDistance,  primitive, collider->GetOwnerPosition(), tempInfo);
 			if (result && tempInfo.distance < nearestDis)
 			{
 				hasHit = true;
@@ -333,7 +334,7 @@ bool PhysicsManager::SpherecastQuery(const Vector3& origin, const Vector3& dir, 
 		}
 		else if (std::holds_alternative<PlanePrimitive>(primitive.mPrimitive))
 		{
-			bool result = SpherecastAgainstPlane(origin, dir, maxDistance, sphereRadius, primitive, collider->GetOwnerPosition(), tempInfo);
+			bool result = SpherecastAgainstPlane(origin, dir, sphereRadius, maxDistance,  primitive, collider->GetOwnerPosition(), tempInfo);
 			if (result && tempInfo.distance < nearestDis)
 			{
 				hasHit = true;
@@ -402,7 +403,40 @@ bool PhysicsManager::SpherecastAgainstSphere(const Vector3& origin, const Vector
 
 bool PhysicsManager::SpherecastAgainstAABB(const Vector3& origin, const Vector3& dir, float sphereRadius, float maxDistance, const PhysicsPrimitive& primitive, const Vector3& colliderPos, HitInfo& outInfo)
 {
-	return false;
+	Vec3 adjustedPos = colliderPos + primitive.mPosOffset;
+	AABBPrimitive aabb = std::get<AABBPrimitive>(primitive.mPrimitive);
+
+	Vec3 aabbMin = adjustedPos - aabb.mExtend;
+	Vec3 aabbMax = adjustedPos + aabb.mExtend;
+
+	aabbMin.mX -= sphereRadius;
+	aabbMin.mY -= sphereRadius;
+	aabbMin.mZ -= sphereRadius;
+	aabbMax.mX += sphereRadius;
+	aabbMax.mY += sphereRadius;
+	aabbMax.mZ += sphereRadius;
+
+
+	float t1 = (aabbMin.mX - origin.mX) / dir.mX;
+	float t2 = (aabbMax.mX - origin.mX) / dir.mX;
+	float t3 = (aabbMin.mY - origin.mY) / dir.mY;
+	float t4 = (aabbMax.mY - origin.mY) / dir.mY;
+	float t5 = (aabbMin.mZ - origin.mZ) / dir.mZ;
+	float t6 = (aabbMax.mZ - origin.mZ) / dir.mZ;
+
+	float tmin = std::max(std::max(std::min(t1, t2), std::min(t3, t4)), std::min(t5, t6));
+	float tmax = std::min(std::min(std::max(t1, t2), std::max(t3, t4)), std::max(t5, t6));
+
+	if (tmax < 0.0f || tmin > tmax)
+	{
+		return false;
+	}
+	else
+	{
+		outInfo.impactPoint = origin + dir * tmin;
+		outInfo.distance = tmin;
+		return true;
+	}
 }
 
 bool PhysicsManager::SpherecastAgainstPlane(const Vector3& origin, const Vector3& dir, float sphereRadius, float maxDistance, const PhysicsPrimitive& primitive, const Vector3& colliderPos, HitInfo& outInfo)
