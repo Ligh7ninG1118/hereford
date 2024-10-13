@@ -99,7 +99,7 @@ bool GameContext::Initialize()
 
 	mIsRunning = true;
 	LoadStarterData();
-	LoadScene("Scenes/playground-lite.json");
+	LoadScene("Scenes/playground-target.json");
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
