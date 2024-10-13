@@ -304,7 +304,7 @@ bool PhysicsManager::SpherecastQuery(const Vector3& origin, const Vector3& dir, 
 	//printf("-------------------------------------\n");
 	bool hasHit = false;
 	float nearestDis = maxDistance;
-
+	outInfo.hitActor = nullptr;
 	for (auto collider : mPhysicsComponents)
 	{
 		PhysicsPrimitive primitive = collider->mPhyPrimitive;

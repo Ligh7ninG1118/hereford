@@ -27,6 +27,7 @@ public:
 
 private:
 	void ProcessMovement(const float& deltaTime);
+	void ProcessInteraction();
 	void ShowDebugInfo();
 	void WeaponFiredEventListener(EventOnPlayerWeaponFired inEvent);
 
