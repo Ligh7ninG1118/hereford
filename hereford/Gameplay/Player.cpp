@@ -109,7 +109,7 @@ Player::~Player()
 void Player::OnUpdate(float deltaTime)
 {
 	ProcessMovement(deltaTime);
-	ProcessInteraction();
+	ProcessInteractionPrompt();
 	totalRuntime += deltaTime;
 
 	float speed = currentVelocity.Magnitude();
@@ -242,6 +242,11 @@ void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 		currentArmRotationOffset.mX -= mouseDeltaY * 0.1f;
 		currentArmRotationOffset.mZ += mouseDeltaX * 0.1f;
 	}
+
+	if (keyState[SDL_SCANCODE_F] == EInputState::KEY_DOWN)
+	{
+		ProcessInteraction();
+	}
 }
 
 void Player::SetArmRotateOffset(Vec3 offset)
@@ -270,7 +275,7 @@ void Player::ProcessMovement(const float& deltaTime)
 	SetPosition(updatedPos);
 }
 
-void Player::ProcessInteraction()
+void Player::ProcessInteractionPrompt()
 {
 	Vec3 origin = mPtrCameraComp->GetCameraPosition();
 	Vec3 dir = mPtrCameraComp->GetFrontVector().normalized();
@@ -283,17 +288,30 @@ void Player::ProcessInteraction()
 	ImGui::SliderFloat("Distance", &interactDis, 0.0f, 2.0f);
 
 	HitInfo hitInfo;
+	mInteractCandidate = nullptr;
+
 	if (GetGameContext()->GetPhysicsManager().SpherecastQuery(origin, dir, 2.0f, 0.5f, hitInfo))
 	{
 		if (hitInfo.hitActor != nullptr)
 			if (auto interactable = dynamic_cast<IInteractable*>(hitInfo.hitActor); interactable != nullptr)
+			{
+				mInteractCandidate = interactable;
 				ImGui::Text("Result: %s", interactable->GetInteractPrompt().c_str());
+			}
 	}
 	else
 	{
 		ImGui::Text("Result: No");
 	}
 	ImGui::End();
+}
+
+void Player::ProcessInteraction()
+{
+	if (mInteractCandidate != nullptr)
+	{
+		mInteractCandidate->Interact();
+	}
 }
 
 void Player::ShowDebugInfo()

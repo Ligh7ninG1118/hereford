@@ -27,6 +27,7 @@ public:
 
 private:
 	void ProcessMovement(const float& deltaTime);
+	void ProcessInteractionPrompt();
 	void ProcessInteraction();
 	void ShowDebugInfo();
 	void WeaponFiredEventListener(EventOnPlayerWeaponFired inEvent);
@@ -47,6 +48,7 @@ private:
 
 	TAHandle mHCrouchTimeline;
 
+	class IInteractable* mInteractCandidate;
 
 	bool hasMovementInput = false;
 	Vector3 inputMoveDir;

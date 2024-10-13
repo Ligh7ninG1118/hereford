@@ -52,6 +52,5 @@ void TestCube::Hit(const HitInfo& info)
 void TestCube::Interact()
 {
 	printf("Interacted\n");
-
 	SetState(ActorState::Destroy);
 }

@@ -406,16 +406,8 @@ bool PhysicsManager::SpherecastAgainstAABB(const Vector3& origin, const Vector3&
 	Vec3 adjustedPos = colliderPos + primitive.mPosOffset;
 	AABBPrimitive aabb = std::get<AABBPrimitive>(primitive.mPrimitive);
 
-	Vec3 aabbMin = adjustedPos - aabb.mExtend;
-	Vec3 aabbMax = adjustedPos + aabb.mExtend;
-
-	aabbMin.mX -= sphereRadius;
-	aabbMin.mY -= sphereRadius;
-	aabbMin.mZ -= sphereRadius;
-	aabbMax.mX += sphereRadius;
-	aabbMax.mY += sphereRadius;
-	aabbMax.mZ += sphereRadius;
-
+	Vec3 aabbMin = adjustedPos - aabb.mExtend - Vec3(sphereRadius);
+	Vec3 aabbMax = adjustedPos + aabb.mExtend + Vec3(sphereRadius);
 
 	float t1 = (aabbMin.mX - origin.mX) / dir.mX;
 	float t2 = (aabbMax.mX - origin.mX) / dir.mX;
