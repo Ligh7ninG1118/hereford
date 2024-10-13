@@ -24,6 +24,8 @@ private:
 	class PhysicsComponent* mPtrPhysicsCompBody;
 	class PhysicsComponent* mPtrPhysicsCompHead;
 
+	std::unique_ptr<class AudioComponent> mPtrAudioComponent;
+
 	TAHandle mHHitTimeline;
 
 };

@@ -2,6 +2,7 @@
 #include "Graphics/RenderComponent.h"
 #include "Core/GameContext.h"
 #include "Physics/PhysicsComponent.h"
+#include "Audio/AudioComponent.h"
 #include "Asset/Primitive.h"
 #include "Asset/AssetManager.h"
 #include "Asset/Texture.h"
@@ -48,6 +49,9 @@ RangeTarget::RangeTarget(GameContext* gameCtx)
 
 	PhysicsPrimitive headPrimitive = PhysicsPrimitive{ AABBPrimitive{Vec3(0.05f, 0.225f, 0.15f)}, Vec3(0.0f, 1.95f, 0.0f) };
 	mPtrPhysicsCompHead = new PhysicsComponent(static_cast<Actor*>(this), gameCtx->GetPhysicsManager(), headPrimitive);
+
+	mPtrAudioComponent = std::make_unique<AudioComponent>(this, gameCtx->GetAudioManager(), true);
+	mPtrAudioComponent->InitAsset("bullet_impact_metal.wav");
 }
 
 RangeTarget::~RangeTarget()
@@ -59,6 +63,8 @@ void RangeTarget::Hit(const HitInfo& info)
 {
 	printf("Impact Point: (%f, %f, %f)\n", info.impactPoint.mX, info.impactPoint.mY, info.impactPoint.mZ);
 	printf("Distance: %f\n", info.distance);
+
+	mPtrAudioComponent->Play();
 
 	if (!hasHit)
 	{
