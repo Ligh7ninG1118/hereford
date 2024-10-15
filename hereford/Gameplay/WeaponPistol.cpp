@@ -26,11 +26,13 @@ void WeaponPistol::Init(Player* playerPtr)
 	mPtrAnimRenderComp->SetModel(AssetManager::LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v3.fbx")));
 
 	mPtrAnimRenderComp->SetShader(AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_phong_frag.glsl")));
-	//currentArmTranslationOffset = hipArmTranslationOffset;
-	//currentArmRotationOffset = hipArmRotationOffset;
-	mPtrAnimRenderComp->SetTranslateOffset(Vec3(-0.2f, -0.4f, 0.0f));
+	hipArmTranslationOffset = Vec3(-0.2f, -0.4f, 0.0f);
+	currentArmTranslationOffset = hipArmTranslationOffset;
+	hipArmRotationOffset = Vec3(0.0f, 0.0f, 90.0f);
+	currentArmRotationOffset = hipArmRotationOffset;
+	mPtrAnimRenderComp->SetTranslateOffset(currentArmTranslationOffset);
 	mPtrAnimRenderComp->SetScaleOffset(Vec3(0.02f));
-	mPtrAnimRenderComp->SetRotateOffset(Vec3(0.0f, 0.0f, 90.0f));
+	mPtrAnimRenderComp->SetRotateOffset(currentArmRotationOffset);
 
 
 	mPtrAnimRenderComp->SetCamera(&(mPtrPlayer->GetMainCamera()));

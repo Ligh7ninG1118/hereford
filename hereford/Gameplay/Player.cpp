@@ -92,37 +92,7 @@ void Player::OnUpdate(float deltaTime)
 	float yD = sinf(totalRuntime * 6.0f) * speed * 0.001f;
 	float zD = sinf(totalRuntime * 3.0f) * speed * 0.001f;
 
-	Vec3 offset = currentArmTranslationOffset;
-	offset.mY += yD;
-	offset.mZ += zD;
-	//mPtrAnimRenderComp->SetTranslateOffset(offset);
-
-	if (hasMovementInput)
-	{
-		/*if (mPtrActionComp->GetActiveGameplayTags().HasTag(GameplayTag(EActionType::CROUCHING)))
-			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.125f);
-		else
-			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.5f);*/
-
-
-		if (mPtrAudioComponent2->GetSoundState() == ESoundState::Paused)
-		{
-			mPtrAudioComponent2->Resume();
-		}
-		else if(mPtrAudioComponent2->GetSoundState() == ESoundState::Stopped)
-		{
-			mPtrAudioComponent2->Play(true);
-		}
-	}
-	else
-	{
-		/*if (mPtrActionComp->GetActiveGameplayTags().HasTag(GameplayTag(EActionType::CROUCHING)))
-			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(0.75f);
-		else
-			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.0f);*/
-
-		
-	}
+	mPtrActiveWeapon->SetArmOffset(Vec3(0.0f, yD, zD));
 
 	if (hasMovementInput && mIsGrounded)
 	{
@@ -142,14 +112,6 @@ void Player::OnUpdate(float deltaTime)
 			mPtrAudioComponent2->Pause();
 		}
 	}
-
-
-	currentArmRotationOffset.mX = Math::Lerp(currentArmRotationOffset.mX, 0.0f, 0.2f);
-
-	currentArmRotationOffset.mZ = Math::Lerp(currentArmRotationOffset.mZ, 90.0f, 0.2f);
-
-	//mPtrAnimRenderComp->SetRotateOffset(currentArmRotationOffset);
-
 
 	ShowDebugInfo();
 }
@@ -234,11 +196,6 @@ void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 		{
 			Jump();
 		}
-	}
-
-	{
-		currentArmRotationOffset.mX -= mouseDeltaY * 0.1f;
-		currentArmRotationOffset.mZ += mouseDeltaX * 0.1f;
 	}
 
 	if (keyState[SDL_SCANCODE_F] == EInputState::KEY_DOWN)

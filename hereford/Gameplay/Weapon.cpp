@@ -30,6 +30,18 @@ void Weapon::Init(Player* playerPtr)
 
 void Weapon::OnUpdate(float deltaTime)
 {
+	SetPosition(mPtrPlayer->GetPosition());
+	SetRotation(mPtrPlayer->GetRotation());
+
+	//TODO 
+	/*if (mPtrActionComp->GetActiveGameplayTags().HasTag(GameplayTag(EActionType::CROUCHING)))
+			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.125f);
+		else
+			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.5f);*/
+	/*if (mPtrActionComp->GetActiveGameplayTags().HasTag(GameplayTag(EActionType::CROUCHING)))
+			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(0.75f);
+		else
+			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.0f);*/
 }
 
 void Weapon::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
@@ -37,7 +49,7 @@ void Weapon::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 	EMouseState targetFlag = mPtrWeaponComp->mIsSemiAuto ? LMB_DOWN : LMB_HOLD;
 	if (mouseState & targetFlag)
 	{
-		mPtrWeaponComp->Fire();
+		Fire();
 	}
 
 	if (mouseState & RMB_DOWN)
@@ -58,6 +70,21 @@ void Weapon::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 			Reload();
 		}
 	}
+
+	{
+		currentArmRotationOffset.mX -= mouseDeltaY * 0.1f;
+		currentArmRotationOffset.mZ += mouseDeltaX * 0.1f;
+	}
+}
+
+void Weapon::SetArmOffset(Vec3 translationOffset)
+{
+	Vec3 newTransOffset = currentArmTranslationOffset + translationOffset;
+	mPtrAnimRenderComp->SetTranslateOffset(newTransOffset);
+
+	currentArmRotationOffset.mX = Math::Lerp(currentArmRotationOffset.mX, hipArmRotationOffset.mX, 0.2f);
+	currentArmRotationOffset.mZ = Math::Lerp(currentArmRotationOffset.mZ, hipArmRotationOffset.mZ, 0.2f);
+	mPtrAnimRenderComp->SetRotateOffset(currentArmRotationOffset);
 }
 
 void Weapon::Fire()
@@ -108,10 +135,12 @@ void Weapon::AimingTimeline(float alpha)
 {
 	mPtrPlayer->GetMainCamera().SetHorFOV(Math::Lerp(80.0f, 50.0f, alpha));
 	//TODO: parameterize this
-	mPtrAnimRenderComp->SetTranslateOffset(Math::Lerp(Vec3(-0.2f, -0.4f, 0.0f), Vec3(-0.5f, -0.275f, 0.215f), alpha));
+	currentArmTranslationOffset = Math::Lerp(Vec3(-0.2f, -0.4f, 0.0f), Vec3(-0.5f, -0.275f, 0.215f), alpha);
+	mPtrAnimRenderComp->SetTranslateOffset(currentArmTranslationOffset);
 }
 
 void Weapon::FinishedReload()
 {
+	mPtrWeaponComp->FinishedReload();
 	mPtrPlayer->GetActionComp()->StopActionByName("Reload");
 }

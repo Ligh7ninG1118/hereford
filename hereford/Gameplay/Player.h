@@ -63,11 +63,7 @@ private:
 	const float OVERRIDE_GRAVITY_CONSTANT = -20.0f;
 	const float JUMP_HEIGHT_CONSTANT = 1.5f;
 
-	const Vec3 hipArmTranslationOffset = Vec3(-0.2f, -0.4f, 0.0f);
-	const Vec3 hipArmRotationOffset = Vec3(0.0f, 0.0f, 90.0f);
-
-	Vec3 currentArmTranslationOffset;
-	Vec3 currentArmRotationOffset;
+	
 
 
 	GameEvent::Subscription<EventOnPlayerWeaponFired>* mPtrWeaponFiredEvent;

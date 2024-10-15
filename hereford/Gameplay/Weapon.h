@@ -18,6 +18,8 @@ public:
 	void OnUpdate(float deltaTime) override;
 	void OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY) override;
 
+	void SetArmOffset(Vec3 translationOffset);
+
 protected:
 	virtual void Fire();
 	virtual void Reload();
@@ -29,6 +31,12 @@ protected:
 
 	DAHandle mHReloadCallback;
 	TAHandle mHAimingTimeline;
+
+	Vec3 hipArmTranslationOffset = Vec3(-0.2f, -0.4f, 0.0f);
+	Vec3 hipArmRotationOffset = Vec3(0.0f, 0.0f, 90.0f);
+
+	Vec3 currentArmTranslationOffset;
+	Vec3 currentArmRotationOffset;
 
 	std::unique_ptr<class AnimatedRenderComponent> mPtrAnimRenderComp;
 	std::shared_ptr<class AnimationStateMachine> mPtrAnimStateMachine;
