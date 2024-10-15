@@ -7,6 +7,7 @@
 #include "Core/GameContext.h"
 #include "Animation/AnimationStateMachine.h"
 #include "Graphics/AnimatedRenderComponent.h"
+#include "imgui/imgui.h"
 
 #include "Audio/AudioComponent.h"
 #include <SDL2/SDL.h>
@@ -42,6 +43,25 @@ void Weapon::OnUpdate(float deltaTime)
 			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(0.75f);
 		else
 			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.0f);*/
+
+	static float scaleOffset = 0.01f;
+
+	ImGui::Begin("Arm Offset", 0, ImGuiWindowFlags_AlwaysAutoResize);
+	ImGui::SliderFloat("X Offset", &currentArmTranslationOffset.mX, -10.0f, 10.0f);
+	ImGui::SliderFloat("Y Offset", &currentArmTranslationOffset.mY, -10.0f, 10.0f);
+	ImGui::SliderFloat("Z Offset", &currentArmTranslationOffset.mZ, -10.0f, 10.0f);
+	ImGui::SliderFloat("RX Offset", &currentArmRotationOffset.mX, -360.0f, 360.0f);
+	ImGui::SliderFloat("RY Offset", &currentArmRotationOffset.mY, -360.0f, 360.0f);
+	ImGui::SliderFloat("RZ Offset", &currentArmRotationOffset.mZ, -360.0f, 360.0f);
+	ImGui::SliderFloat("Scale Offset", &scaleOffset, -5.0f, 5.0f);
+
+
+	ImGui::End();
+
+
+	mPtrAnimRenderComp->SetTranslateOffset(currentArmTranslationOffset);
+	mPtrAnimRenderComp->SetRotateOffset(currentArmRotationOffset);
+	mPtrAnimRenderComp->SetScaleOffset(Vec3(scaleOffset));
 }
 
 void Weapon::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
@@ -79,12 +99,12 @@ void Weapon::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 
 void Weapon::SetArmOffset(Vec3 translationOffset)
 {
-	Vec3 newTransOffset = currentArmTranslationOffset + translationOffset;
+	/*Vec3 newTransOffset = currentArmTranslationOffset + translationOffset;
 	mPtrAnimRenderComp->SetTranslateOffset(newTransOffset);
 
 	currentArmRotationOffset.mX = Math::Lerp(currentArmRotationOffset.mX, hipArmRotationOffset.mX, 0.2f);
 	currentArmRotationOffset.mZ = Math::Lerp(currentArmRotationOffset.mZ, hipArmRotationOffset.mZ, 0.2f);
-	mPtrAnimRenderComp->SetRotateOffset(currentArmRotationOffset);
+	mPtrAnimRenderComp->SetRotateOffset(currentArmRotationOffset);*/
 }
 
 void Weapon::Fire()
@@ -92,7 +112,7 @@ void Weapon::Fire()
 	if (mPtrWeaponComp->CanFire())
 	{
 		mPtrWeaponComp->Fire();
-		mPtrAnimStateMachine->PlayAnimation(4, false, 0.2f);
+		mPtrAnimStateMachine->PlayAnimation(3, false, 0.2f);
 		
 		CameraComponent& cam = mPtrPlayer->GetMainCamera();
 
@@ -126,7 +146,7 @@ void Weapon::Reload()
 {
 	if (mPtrWeaponComp->CanReload())
 	{
-		mPtrAnimStateMachine->PlayAnimation(3, false, mPtrWeaponComp->mReloadAnimDuration);
+		mPtrAnimStateMachine->PlayAnimation(2, false, mPtrWeaponComp->mReloadAnimDuration);
 		DelayedActionManager::AddAction(mHReloadCallback, std::bind(&Weapon::FinishedReload, this), mPtrWeaponComp->mReloadAnimDuration, false);
 	}
 }

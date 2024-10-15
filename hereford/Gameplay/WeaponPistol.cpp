@@ -23,7 +23,7 @@ void WeaponPistol::Init(Player* playerPtr)
 	Weapon::Init(playerPtr);
 
 	mPtrAnimRenderComp = std::make_unique<AnimatedRenderComponent>(this, mGameCtx->GetRenderer(), ERenderLayer::Weapon);
-	mPtrAnimRenderComp->SetModel(AssetManager::LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v3.fbx")));
+	mPtrAnimRenderComp->SetModel(AssetManager::LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v5.fbx")));
 
 	mPtrAnimRenderComp->SetShader(AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_phong_frag.glsl")));
 	hipArmTranslationOffset = Vec3(-0.2f, -0.4f, 0.0f);
@@ -38,14 +38,15 @@ void WeaponPistol::Init(Player* playerPtr)
 	mPtrAnimRenderComp->SetCamera(&(mPtrPlayer->GetMainCamera()));
 
 	std::unique_ptr<Animator> animator = std::make_unique<Animator>(
-		Animator(Animation::LoadAnimations("LocalResources/mark23/source/Mark23v3.fbx", mPtrAnimRenderComp->GetModel())));
+		Animator(Animation::LoadAnimations("LocalResources/mark23/source/Mark23v5.fbx", mPtrAnimRenderComp->GetModel())));
 
-	// 0: Draw, 1: Hide, 2: Static, 3: Reload, 4: Fire
+	// 0: Hide, 1: Static, 2: Reload, 3: Fire, 4: Equip
 	// Construct shared ptr in place to avoid copying unique ptr inside ASM class
 	mPtrAnimStateMachine = std::shared_ptr<AnimationStateMachine>(new AnimationStateMachine(this, std::move(animator)));
-	mPtrAnimStateMachine->AddTransitionRule(0, AnimState(2, false));
-	mPtrAnimStateMachine->AddTransitionRule(3, AnimState(2, false));
-	mPtrAnimStateMachine->AddTransitionRule(4, AnimState(2, false));
+	mPtrAnimStateMachine->AddTransitionRule(0, AnimState(1, false));
+	mPtrAnimStateMachine->AddTransitionRule(2, AnimState(1, false));
+	mPtrAnimStateMachine->AddTransitionRule(3, AnimState(1, false));
+	mPtrAnimStateMachine->AddTransitionRule(4, AnimState(1, false));
 
 	mPtrAnimRenderComp->SetAnimator(mPtrAnimStateMachine->GetAnimator());
 
@@ -53,4 +54,8 @@ void WeaponPistol::Init(Player* playerPtr)
 
 	mPtrAudioComponent = std::make_unique<AudioComponent>(this, GetGameContext()->GetAudioManager());
 	mPtrAudioComponent->InitAsset("USP_SingleFire.wav");
+
+	//TODO: Specific weapon parameters
+
+	//TODO: separate into differnt init functions?
 }

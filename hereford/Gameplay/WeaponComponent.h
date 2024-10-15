@@ -22,6 +22,9 @@ enum class ERecoilType
 class WeaponComponent : public Component
 {
 	friend class Weapon;
+	friend class WeaponPistol;
+	friend class WeaponSMG;
+
 
 public:
 	WeaponComponent(class Actor* owner, std::weak_ptr<class AnimationStateMachine> inASM);

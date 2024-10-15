@@ -1,23 +1,18 @@
 #include "Gameplay/Player.h"
 #include "Gameplay/CameraComponent.h"
-#include "Gameplay/WeaponComponent.h"
 #include "Gameplay/Weapon.h"
 #include "Gameplay/IInteractable.h"
 #include "Core/GameContext.h"
 #include <SDL2/SDL.h>
 #include "imgui/imgui.h"
 
-#include "Asset/AssetManager.h"
 #include "Audio/AudioComponent.h"
-#include "Animation/Animation.h"
-#include "Animation/Animator.h"
-#include "Animation/AnimationStateMachine.h"
 #include "Actions/ActionComponent.h"
 #include "Actions/Action.h"
 #include "Util/GameplayTagContainer.h"
 
-#include "Graphics/AnimatedRenderComponent.h"
 #include "Gameplay/WeaponPistol.h"
+#include "Gameplay/WeaponSMG.h"
 
 #include "UI/UIAmmoIndicator.h"
 #include "UI/UICrosshair.h"
@@ -30,7 +25,9 @@ Player::Player(GameContext* gameCtx)
 {
 	mPtrCameraComp = std::make_unique<CameraComponent>(static_cast<Actor*>(this));
 
-	mPtrActiveWeapon = new WeaponPistol(gameCtx);
+	//mPtrActiveWeapon = new WeaponPistol(gameCtx);
+	mPtrActiveWeapon = new WeaponSMG(gameCtx);
+
 	mPtrActiveWeapon->Init(this);
 
 	//std::shared_ptr<Texture> ammoTex = AssetManager::LoadAsset<Texture>(std::string("LocalResources/rifle-round-silhouette.png"));
@@ -295,16 +292,6 @@ void Player::ShowDebugInfo()
 	ImGui::Text("Cam Front (%.2f, %.2f, %.2f)", frt.mX, frt.mY, frt.mZ);
 	ImGui::Text("Player Rot (%.2f, %.2f, %.2f)", pRot.mX, pRot.mY, pRot.mZ);
 	ImGui::End();
-
-	/*ImGui::Begin("Arm Offset", 0, ImGuiWindowFlags_AlwaysAutoResize);
-	ImGui::SliderFloat("X Offset", &translationOffset.mX, -2.0f, 2.0f);
-	ImGui::SliderFloat("Y Offset", &translationOffset.mY, -2.0f, 2.0f);
-	ImGui::SliderFloat("Z Offset", &translationOffset.mZ, -2.0f, 2.0f);
-	ImGui::End();
-
-
-	mPtrAnimRenderComp->SetTranslateOffset(translationOffset);*/
-
 }
 
 void Player::CrouchTimeline(float alpha)
