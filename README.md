@@ -29,6 +29,7 @@ or at least, "it's working!"
 - Gameplay Actions
 - Movement States (Crouch, Sprint)
 - Weapon
+- Object Interaction
 
 ### Phyiscs
 - Raycast Query (Against Sphere, AABB)
@@ -40,6 +41,9 @@ or at least, "it's working!"
 - UI and Text Rendering
 - Skeletal Animation
 
+### Audio
+- Sound Effects
+
 ## Planned Features
 ### Engine
 - Lua Scripting
@@ -48,7 +52,6 @@ or at least, "it's working!"
 ### Gameplay
 - Movement States (Prone, Ladder Climbing, Rapple Down)
 - Gadgets
-- Object Interaction
 
 ### Physics
 - Gravity
@@ -58,9 +61,6 @@ or at least, "it's working!"
 ### Visual
 - Particle Effect
 - Decal Rendering
-
-### Audio
-- Sound Effects
 
 ## Libraries Used
 - SDL2
