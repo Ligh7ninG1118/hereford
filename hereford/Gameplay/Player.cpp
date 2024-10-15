@@ -1,6 +1,7 @@
 #include "Gameplay/Player.h"
 #include "Gameplay/CameraComponent.h"
 #include "Gameplay/WeaponComponent.h"
+#include "Gameplay/Weapon.h"
 #include "Gameplay/IInteractable.h"
 #include "Core/GameContext.h"
 #include <SDL2/SDL.h>
@@ -16,6 +17,7 @@
 #include "Util/GameplayTagContainer.h"
 
 #include "Graphics/AnimatedRenderComponent.h"
+#include "Gameplay/WeaponPistol.h"
 
 #include "UI/UIAmmoIndicator.h"
 #include "UI/UICrosshair.h"
@@ -28,50 +30,25 @@ Player::Player(GameContext* gameCtx)
 {
 	mPtrCameraComp = std::make_unique<CameraComponent>(static_cast<Actor*>(this));
 
-	
-	mPtrAnimRenderComp = std::make_unique<AnimatedRenderComponent>(this, mGameCtx->GetRenderer(), ERenderLayer::Weapon);
-	mPtrAnimRenderComp->SetModel(AssetManager::LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v3.fbx")));
+	mPtrActiveWeapon = new WeaponPistol(gameCtx);
+	mPtrActiveWeapon->Init(this);
 
-	mPtrAnimRenderComp->SetShader(AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_phong_frag.glsl")));
-	currentArmTranslationOffset = hipArmTranslationOffset;
-	currentArmRotationOffset = hipArmRotationOffset;
-	mPtrAnimRenderComp->SetTranslateOffset(currentArmTranslationOffset);
-	mPtrAnimRenderComp->SetScaleOffset(Vec3(0.02f));
-	mPtrAnimRenderComp->SetRotateOffset(currentArmRotationOffset);
+	//std::shared_ptr<Texture> ammoTex = AssetManager::LoadAsset<Texture>(std::string("LocalResources/rifle-round-silhouette.png"));
+	//std::shared_ptr<Shader> ammoShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_image_ammo_count_vert.glsl*Shaders/ui_image_ammo_count_frag.glsl"));
 
-	mPtrAnimRenderComp->SetCamera(mPtrCameraComp.get());
+	//Renderer* renderer = &mGameCtx->GetRenderer();
+	//Vec2 screenDimension = renderer->GetScreenDimension();
 
-	std::unique_ptr<Animator> animator = std::make_unique<Animator>(
-		Animator(Animation::LoadAnimations("LocalResources/mark23/source/Mark23v3.fbx", mPtrAnimRenderComp->GetModel())));
+	////TODO: Separate HUD Actor class to handle all HUD elements?
+	//mPtrUIAmmo = new UIAmmoIndicator(renderer, ammoShader.get(), ammoTex, mPtrActiveWeaponComp);
+	//Mat4 uiProj = mPtrCameraComp->GetOrthoMatrix(0.0f, screenDimension.mX, 0.0f, screenDimension.mY);
+	//mPtrUIAmmo->Initialize();
+	//mPtrUIAmmo->SetUIProjection(uiProj);
 
-	// 0: Draw, 1: Hide, 2: Static, 3: Reload, 4: Fire
-	// Construct shared ptr in place to avoid copying unique ptr inside ASM class
-	mPtrAnimStateMachine = std::shared_ptr<AnimationStateMachine>(new AnimationStateMachine(this, std::move(animator)));
-	mPtrAnimStateMachine->AddTransitionRule(0, AnimState(2, false));
-	mPtrAnimStateMachine->AddTransitionRule(3, AnimState(2, false));
-	mPtrAnimStateMachine->AddTransitionRule(4, AnimState(2, false));
+	//std::shared_ptr<Shader> crosshairShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_crosshair_vert.glsl*Shaders/ui_crosshair_frag.glsl"));
 
-	mPtrAnimRenderComp->SetAnimator(mPtrAnimStateMachine->GetAnimator());
-
-	mPtrActiveWeaponComp = new WeaponComponent(static_cast<Actor*>(this), mPtrAnimStateMachine);
-	mPtrWeaponFiredEvent = GameEvent::Subscribe<EventOnPlayerWeaponFired>(std::bind(&Player::WeaponFiredEventListener, this, std::placeholders::_1));
-
-	std::shared_ptr<Texture> ammoTex = AssetManager::LoadAsset<Texture>(std::string("LocalResources/rifle-round-silhouette.png"));
-	std::shared_ptr<Shader> ammoShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_image_ammo_count_vert.glsl*Shaders/ui_image_ammo_count_frag.glsl"));
-
-	Renderer* renderer = &mGameCtx->GetRenderer();
-	Vec2 screenDimension = renderer->GetScreenDimension();
-
-	//TODO: Separate HUD Actor class to handle all HUD elements?
-	mPtrUIAmmo = new UIAmmoIndicator(renderer, ammoShader.get(), ammoTex, mPtrActiveWeaponComp);
-	Mat4 uiProj = mPtrCameraComp->GetOrthoMatrix(0.0f, screenDimension.mX, 0.0f, screenDimension.mY);
-	mPtrUIAmmo->Initialize();
-	mPtrUIAmmo->SetUIProjection(uiProj);
-
-	std::shared_ptr<Shader> crosshairShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_crosshair_vert.glsl*Shaders/ui_crosshair_frag.glsl"));
-
-	mPtrUICrosshair = new UICrosshair(renderer, crosshairShader.get(), mPtrActiveWeaponComp);
-	mPtrUICrosshair->Initialize();
+	//mPtrUICrosshair = new UICrosshair(renderer, crosshairShader.get(), mPtrActiveWeaponComp);
+	//mPtrUICrosshair->Initialize();
 
 	mPtrActionComp = std::make_unique<ActionComponent>(this);
 
@@ -92,9 +69,6 @@ Player::Player(GameContext* gameCtx)
 
 	totalRuntime = 0.0f;
 	currentTopSpeed = topWalkingSpeed;
-
-	mPtrAudioComponent = std::make_unique<AudioComponent>(this, gameCtx->GetAudioManager());
-	mPtrAudioComponent->InitAsset("USP_SingleFire.wav");
 
 	mPtrAudioComponent2 = std::make_unique<AudioComponent>(this, gameCtx->GetAudioManager());
 	mPtrAudioComponent2->InitAsset("Walk-Gravel.wav");
@@ -121,14 +95,14 @@ void Player::OnUpdate(float deltaTime)
 	Vec3 offset = currentArmTranslationOffset;
 	offset.mY += yD;
 	offset.mZ += zD;
-	mPtrAnimRenderComp->SetTranslateOffset(offset);
+	//mPtrAnimRenderComp->SetTranslateOffset(offset);
 
 	if (hasMovementInput)
 	{
-		if (mPtrActionComp->GetActiveGameplayTags().HasTag(GameplayTag(EActionType::CROUCHING)))
+		/*if (mPtrActionComp->GetActiveGameplayTags().HasTag(GameplayTag(EActionType::CROUCHING)))
 			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.125f);
 		else
-			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.5f);
+			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.5f);*/
 
 
 		if (mPtrAudioComponent2->GetSoundState() == ESoundState::Paused)
@@ -142,10 +116,10 @@ void Player::OnUpdate(float deltaTime)
 	}
 	else
 	{
-		if (mPtrActionComp->GetActiveGameplayTags().HasTag(GameplayTag(EActionType::CROUCHING)))
+		/*if (mPtrActionComp->GetActiveGameplayTags().HasTag(GameplayTag(EActionType::CROUCHING)))
 			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(0.75f);
 		else
-			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.0f);
+			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.0f);*/
 
 		
 	}
@@ -174,7 +148,7 @@ void Player::OnUpdate(float deltaTime)
 
 	currentArmRotationOffset.mZ = Math::Lerp(currentArmRotationOffset.mZ, 90.0f, 0.2f);
 
-	mPtrAnimRenderComp->SetRotateOffset(currentArmRotationOffset);
+	//mPtrAnimRenderComp->SetRotateOffset(currentArmRotationOffset);
 
 
 	ShowDebugInfo();
@@ -273,16 +247,6 @@ void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 	}
 }
 
-void Player::SetArmRotateOffset(Vec3 offset)
-{
-	mPtrAnimRenderComp->SetRotateOffset(offset);
-}
-
-void Player::SetArmTranslateOffset(Vec3 offset)
-{
-	currentArmTranslationOffset = offset;
-	mPtrAnimRenderComp->SetTranslateOffset(currentArmTranslationOffset);
-}
 
 void Player::ProcessMovement(float deltaTime)
 {
@@ -384,12 +348,6 @@ void Player::ShowDebugInfo()
 
 	mPtrAnimRenderComp->SetTranslateOffset(translationOffset);*/
 
-}
-
-void Player::WeaponFiredEventListener(EventOnPlayerWeaponFired inEvent)
-{
-	mPtrCameraComp->RotateCamera(inEvent.mRecoilDeviation * 5.0f);
-	mPtrAudioComponent->Play();
 }
 
 void Player::CrouchTimeline(float alpha)

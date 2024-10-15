@@ -22,28 +22,21 @@ public:
 
 	class ActionComponent* GetActionComp() const { return mPtrActionComp.get(); }
 
-	void SetArmRotateOffset(Vec3 offset);
-	void SetArmTranslateOffset(Vec3 offset);
-
 private:
 	void ProcessMovement(float deltaTime);
 	void Jump();
 	void ProcessInteractionPrompt();
 	void Interaction();
 	void ShowDebugInfo();
-	void WeaponFiredEventListener(EventOnPlayerWeaponFired inEvent);
 
 	void CrouchTimeline(float alpha);
 
 	std::unique_ptr<class CameraComponent> mPtrCameraComp;
-	std::unique_ptr<class AnimatedRenderComponent> mPtrAnimRenderComp;
-	std::shared_ptr<class AnimationStateMachine> mPtrAnimStateMachine;
-	std::unique_ptr<class AudioComponent> mPtrAudioComponent;
 	std::unique_ptr<class AudioComponent> mPtrAudioComponent2;
-
 	std::unique_ptr<class ActionComponent> mPtrActionComp;
 
-	class WeaponComponent* mPtrActiveWeaponComp;
+	class Weapon* mPtrActiveWeapon;
+
 	class UIAmmoIndicator* mPtrUIAmmo;
 	class UICrosshair* mPtrUICrosshair;
 
