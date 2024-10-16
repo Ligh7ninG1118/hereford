@@ -379,7 +379,7 @@ void GameContext::UpdateGame()
 	for (Actor* actor : actorVector)
 	{
 		actor->Update(mDeltaTime);
-		if (actor->GetState() == ActorState::Destroy)
+		if (actor->GetState() == EActorState::Destroy)
 			disabledActorVector.push_back(actor);
 	}
 

@@ -5,10 +5,10 @@
 #include "Math/Math.h"
 #include "Util/Enums.h"
 
-enum class ActorState
+enum class EActorState
 {
-	Active,
-	Paused,
+	Enabled,
+	Disabled,
 	Destroy
 };
 
@@ -38,8 +38,8 @@ public:
 			sin(DEG2RAD * mRotation.mY)* cos(DEG2RAD * mRotation.mX)).normalized();
 	}
 
-	ActorState GetState() const { return mState; }
-	void SetState(ActorState state) { mState = state; }
+	EActorState GetState() const { return mState; }
+	void SetState(EActorState state, bool setComponents = false);
 
 	class GameContext* GetGameContext() { return mGameCtx; }
 
@@ -63,7 +63,7 @@ protected:
 	virtual void OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY);
 
 	class GameContext* mGameCtx;
-	ActorState mState;
+	EActorState mState;
 
 	// Transform
 	Vector3 mPosition;
