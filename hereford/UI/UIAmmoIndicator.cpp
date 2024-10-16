@@ -24,7 +24,7 @@ void UIAmmoIndicator::Initialize(WeaponComponent* inPtrWeaponComp)
 	SetAnchor(EUIAnchorPreset::BOTTOM_RIGHT);
 	SetPosition(Vec2(-300.0f, 100.0f));
 	SetAlignment(Vec2(1.0f, 0.5f));
-	SetDimension(Vec2(66.0f, 32.0f));
+	SetDimension(Vec2(5.5f * mCurrentMax, 32.0f));
 	SetTiling(Vec2(static_cast<float>(mCurrentMax), 1.0f));
 
 	mPtrShader->Use();
