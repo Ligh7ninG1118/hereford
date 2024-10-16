@@ -221,6 +221,7 @@ void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 			mouseState & EMouseState::SCROLL_UP ||
 			mouseState & EMouseState::SCROLL_DOWN)
 		{
+			//TODO: Handle double swapping
 			mPtrActiveWeapon->Holster();
 			DelayedActionManager::AddAction(mHWeaponSwitch, std::bind(&Player::WeaponSwitchCallback, this), mPtrActiveWeapon->mHolsterTime, false);
 		}
