@@ -8,6 +8,7 @@
 
 #include "Audio/AudioComponent.h"
 #include "Actions/ActionComponent.h"
+#include "Asset/AssetManager.h"
 #include "Actions/Action.h"
 #include "Util/GameplayTagContainer.h"
 
@@ -25,27 +26,27 @@ Player::Player(GameContext* gameCtx)
 {
 	mPtrCameraComp = std::make_unique<CameraComponent>(static_cast<Actor*>(this));
 
-	mPtrActiveWeapon = new WeaponPistol(gameCtx);
-	//mPtrActiveWeapon = new WeaponSMG(gameCtx);
+	//mPtrActiveWeapon = new WeaponPistol(gameCtx);
+	mPtrActiveWeapon = new WeaponSMG(gameCtx);
 
 	mPtrActiveWeapon->Init(this);
 
-	//std::shared_ptr<Texture> ammoTex = AssetManager::LoadAsset<Texture>(std::string("LocalResources/rifle-round-silhouette.png"));
-	//std::shared_ptr<Shader> ammoShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_image_ammo_count_vert.glsl*Shaders/ui_image_ammo_count_frag.glsl"));
+	std::shared_ptr<Texture> ammoTex = AssetManager::LoadAsset<Texture>(std::string("LocalResources/rifle-round-silhouette.png"));
+	std::shared_ptr<Shader> ammoShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_image_ammo_count_vert.glsl*Shaders/ui_image_ammo_count_frag.glsl"));
 
-	//Renderer* renderer = &mGameCtx->GetRenderer();
-	//Vec2 screenDimension = renderer->GetScreenDimension();
+	Renderer* renderer = &mGameCtx->GetRenderer();
+	Vec2 screenDimension = renderer->GetScreenDimension();
 
-	////TODO: Separate HUD Actor class to handle all HUD elements?
-	//mPtrUIAmmo = new UIAmmoIndicator(renderer, ammoShader.get(), ammoTex, mPtrActiveWeaponComp);
-	//Mat4 uiProj = mPtrCameraComp->GetOrthoMatrix(0.0f, screenDimension.mX, 0.0f, screenDimension.mY);
-	//mPtrUIAmmo->Initialize();
-	//mPtrUIAmmo->SetUIProjection(uiProj);
+	//TODO: Separate HUD Actor class to handle all HUD elements?
+	mPtrUIAmmo = new UIAmmoIndicator(renderer, ammoShader.get(), ammoTex, mPtrActiveWeapon->GetWeaponComponent());
+	Mat4 uiProj = mPtrCameraComp->GetOrthoMatrix(0.0f, screenDimension.mX, 0.0f, screenDimension.mY);
+	mPtrUIAmmo->Initialize();
+	mPtrUIAmmo->SetUIProjection(uiProj);
 
-	//std::shared_ptr<Shader> crosshairShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_crosshair_vert.glsl*Shaders/ui_crosshair_frag.glsl"));
+	std::shared_ptr<Shader> crosshairShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_crosshair_vert.glsl*Shaders/ui_crosshair_frag.glsl"));
 
-	//mPtrUICrosshair = new UICrosshair(renderer, crosshairShader.get(), mPtrActiveWeaponComp);
-	//mPtrUICrosshair->Initialize();
+	mPtrUICrosshair = new UICrosshair(renderer, crosshairShader.get(), mPtrActiveWeapon->GetWeaponComponent());
+	mPtrUICrosshair->Initialize();
 
 	mPtrActionComp = std::make_unique<ActionComponent>(this);
 
