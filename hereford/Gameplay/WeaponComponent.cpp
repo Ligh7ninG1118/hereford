@@ -5,7 +5,6 @@
 #include "Graphics/Renderer.h"
 #include "Gameplay/Player.h"
 #include "Gameplay/CameraComponent.h"
-#include "Gameplay/IHittable.h"
 #include "Gameplay/Actions/ActionComponent.h"
 #include "Gameplay/CameraComponent.h"
 #include "Physics/PhysicsManager.h"
@@ -67,82 +66,42 @@ void WeaponComponent::Update(float deltaTime)
 		mAccuracySpreadFactor = Math::Lerp(mAccuracySpreadFactor, mTargetAccuracySpreadFactor, 0.3f);
 }
 
-void WeaponComponent::ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
+bool WeaponComponent::CanFire()
 {
-	EMouseState targetFlag = mIsSemiAuto ? LMB_DOWN : LMB_HOLD;
-	if (mouseState & targetFlag)
-		Fire();
+	if (mFireRateTimer > 0.0f)
+		return false;
 
-	if (mouseState & RMB_DOWN)
-	{
-		TimelineActionManager::PlayFromStart(mHAimingTimeline, std::bind(&WeaponComponent::AimingTimeline, this, std::placeholders::_1), 0.2f);
-		Player* player = static_cast<Player*>(mOwner);
-		player->GetMainCamera().mAimingSensMultiplier = 0.85f;
-	}
-	else if (mouseState & RMB_UP)
-	{
-		TimelineActionManager::ReverseFromEnd(mHAimingTimeline, std::bind(&WeaponComponent::AimingTimeline, this, std::placeholders::_1), 0.2f);
-		Player* player = static_cast<Player*>(mOwner);
-		player->GetMainCamera().mAimingSensMultiplier = 1.0f;
-	}
+	if (mCurrentMagazineAmmo <= 0)
+		return false;
 
-	if (keyState[SDL_SCANCODE_R] == EInputState::KEY_DOWN)
-	{
-		Player* player = static_cast<Player*>(mOwner);
-		if(player->GetActionComp()->StartActionByName("Reload"))
-		{
-			Reload();
-		}
-	}
+	if (mCurrentState != EWeaponState::READY)
+		return false;
+
+	return true;
 }
 
 void WeaponComponent::Fire()
 {
-	if (TryFire() && mCurrentState == EWeaponState::READY)
-	{
-		auto lock = mAnimStateMachine.lock();
-		if(lock)
-			lock->PlayAnimation(4, false, 0.2f);
+	mCurrentHeat += 1.0f;
+	mHeatReduceDelayTimer = mHeatReduceDelayCooldown;
 
-		Player* player = static_cast<Player*>(GetOwner());
-		const CameraComponent& cam = player->GetMainCamera();
-
-		Vec3 origin = cam.GetCameraPosition();
-		Vec3 dir = cam.GetFrontVector().normalized();
-		
-		dir.mX += Random::Range(-mAccuracySpreadFactor, mAccuracySpreadFactor);
-		dir.mZ += Random::Range(-mAccuracySpreadFactor, mAccuracySpreadFactor);
-
-		dir.Normalize();
-
-		HitInfo hitInfo;
-		player->GetGameContext()->GetPhysicsManager().RaycastQuery(origin, dir, 1000.0f, hitInfo);
-
-		if (hitInfo.hitActor != nullptr)
-			if (auto hittable = dynamic_cast<IHittable*>(hitInfo.hitActor); hittable != nullptr)
-			{
-				//TODO: make this a var
-				hitInfo.hitPower = 1.0f;
-				hittable->Hit(hitInfo);
-			}
-		
-
-		//GetOwner()->GetGameContext()->GetRenderer().AddDebugLines(origin, origin + dir * 50.0f);
-
-		GameEvent::Publish<EventOnPlayerWeaponFired>(EventOnPlayerWeaponFired(CalculateRecoilDeviation()));
-	}
+	mCurrentMagazineAmmo -= 1;
+	mFireRateTimer = mFireRateCooldown;
 }
 
-void WeaponComponent::Reload()
+bool WeaponComponent::CanReload()
 {
-	if (TryReload() && mCurrentState == EWeaponState::READY)
-	{
-		mCurrentState = EWeaponState::RELOADING;
-		auto lock = mAnimStateMachine.lock();
-		if (lock)
-			lock->PlayAnimation(3, false, mReloadAnimDuration);
-		DelayedActionManager::AddAction(mHReloadCallback, std::bind(&WeaponComponent::FinishedReload, this), mReloadAnimDuration, false);
-	}
+	if (mCurrentReserveAmmo <= 0)
+		return false;
+
+	int maxCapacity = mIsOpenBolt ? mMaxMagazineCapacity : mMaxMagazineCapacity + 1;
+	if (mCurrentMagazineAmmo >= maxCapacity)
+		return false;
+
+	if (mCurrentState != EWeaponState::READY)
+		return false;
+
+	return true;
 }
 
 void WeaponComponent::FinishedReload()
@@ -158,42 +117,7 @@ void WeaponComponent::FinishedReload()
 
 	printf("Current Ammo: %d/%d\n", mCurrentMagazineAmmo, mCurrentReserveAmmo);
 
-	Player* player = static_cast<Player*>(mOwner);
-	player->GetActionComp()->StopActionByName("Reload");
-
 	mCurrentState = EWeaponState::READY;
-}
-
-
-bool WeaponComponent::TryFire(bool checkOnly)
-{
-	if (mFireRateTimer > 0.0f)
-		return false;
-
-	if (mCurrentMagazineAmmo <= 0)
-		return false;
-
-	if (checkOnly)
-		return true;
-
-	mCurrentHeat += 1.0f;
-	mHeatReduceDelayTimer = mHeatReduceDelayCooldown;
-
-	mCurrentMagazineAmmo -= 1;
-	mFireRateTimer = mFireRateCooldown;
-	return true;
-}
-
-bool WeaponComponent::TryReload()
-{
-	if (mCurrentReserveAmmo <= 0)
-		return false;
-
-	int maxCapacity = mIsOpenBolt ? mMaxMagazineCapacity : mMaxMagazineCapacity + 1;
-	if (mCurrentMagazineAmmo >= maxCapacity)
-		return false;
-
-	return true;
 }
 
 Vec2 WeaponComponent::CalculateRecoilDeviation() const
@@ -214,13 +138,5 @@ Vec2 WeaponComponent::CalculateRecoilDeviation() const
 	{
 		return Vec2(0.0f, 0.0f);
 	}
-}
-
-void WeaponComponent::AimingTimeline(float alpha)
-{
-	Player* player = static_cast<Player*>(mOwner);
-	player->GetMainCamera().SetHorFOV(Math::Lerp(80.0f, 50.0f, alpha));
-	//TODO: parameterize this
-	player->SetArmTranslateOffset(Math::Lerp(Vec3(-0.2f, -0.4f, 0.0f), Vec3(-0.5f, -0.275f, 0.215f), alpha));
 }
 

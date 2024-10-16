@@ -22,28 +22,21 @@ public:
 
 	class ActionComponent* GetActionComp() const { return mPtrActionComp.get(); }
 
-	void SetArmRotateOffset(Vec3 offset);
-	void SetArmTranslateOffset(Vec3 offset);
-
 private:
 	void ProcessMovement(float deltaTime);
 	void Jump();
 	void ProcessInteractionPrompt();
 	void Interaction();
 	void ShowDebugInfo();
-	void WeaponFiredEventListener(EventOnPlayerWeaponFired inEvent);
 
 	void CrouchTimeline(float alpha);
 
 	std::unique_ptr<class CameraComponent> mPtrCameraComp;
-	std::unique_ptr<class AnimatedRenderComponent> mPtrAnimRenderComp;
-	std::shared_ptr<class AnimationStateMachine> mPtrAnimStateMachine;
-	std::unique_ptr<class AudioComponent> mPtrAudioComponent;
 	std::unique_ptr<class AudioComponent> mPtrAudioComponent2;
-
 	std::unique_ptr<class ActionComponent> mPtrActionComp;
 
-	class WeaponComponent* mPtrActiveWeaponComp;
+	class Weapon* mPtrActiveWeapon;
+
 	class UIAmmoIndicator* mPtrUIAmmo;
 	class UICrosshair* mPtrUICrosshair;
 
@@ -70,11 +63,7 @@ private:
 	const float OVERRIDE_GRAVITY_CONSTANT = -20.0f;
 	const float JUMP_HEIGHT_CONSTANT = 1.5f;
 
-	const Vec3 hipArmTranslationOffset = Vec3(-0.2f, -0.4f, 0.0f);
-	const Vec3 hipArmRotationOffset = Vec3(0.0f, 0.0f, 90.0f);
-
-	Vec3 currentArmTranslationOffset;
-	Vec3 currentArmRotationOffset;
+	
 
 
 	GameEvent::Subscription<EventOnPlayerWeaponFired>* mPtrWeaponFiredEvent;

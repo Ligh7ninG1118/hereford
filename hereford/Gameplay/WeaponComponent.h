@@ -2,7 +2,6 @@
 #include "Core/Component.h"
 #include "Math/Math.h"
 #include "Util/DelayedAction.h"
-#include "Util/TimelineAction.h"
 
 
 enum class EWeaponState
@@ -23,16 +22,20 @@ enum class ERecoilType
 class WeaponComponent : public Component
 {
 	friend class Weapon;
+	friend class WeaponPistol;
+	friend class WeaponSMG;
+
 
 public:
 	WeaponComponent(class Actor* owner, std::weak_ptr<class AnimationStateMachine> inASM);
 	~WeaponComponent();
 
 	void Update(float deltaTime) override;
-	void ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY) override;
 
+	bool CanFire();
 	void Fire();
-	void Reload();
+	bool CanReload();
+	void FinishedReload();
 
 	inline uint16 GetCurrentMagazineAmmo() const { return mCurrentMagazineAmmo; }
 	inline uint16 GetCurrentReserveAmmo() const { return mCurrentReserveAmmo; }
@@ -45,21 +48,14 @@ public:
 	inline float GetAccuracyDeviation() const { return mAccuracySpreadFactor; }
 	
 private:
-	void FinishedReload();
-
-	bool TryFire(bool checkOnly = false);
-	bool TryReload();
-
 	Vec2 CalculateRecoilDeviation() const;
 
-	void AimingTimeline(float alpha);
-
+	DAHandle mHReloadCallback;
 
 	std::weak_ptr<class AnimationStateMachine> mAnimStateMachine;
 
 	EWeaponState mCurrentState;
-	DAHandle mHReloadCallback;
-	TAHandle mHAimingTimeline;
+	
 
 	// General
 	float mReloadAnimDuration;
