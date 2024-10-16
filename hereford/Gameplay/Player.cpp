@@ -25,8 +25,8 @@ Player::Player(GameContext* gameCtx)
 {
 	mPtrCameraComp = std::make_unique<CameraComponent>(static_cast<Actor*>(this));
 
-	//mPtrActiveWeapon = new WeaponPistol(gameCtx);
-	mPtrActiveWeapon = new WeaponSMG(gameCtx);
+	mPtrActiveWeapon = new WeaponPistol(gameCtx);
+	//mPtrActiveWeapon = new WeaponSMG(gameCtx);
 
 	mPtrActiveWeapon->Init(this);
 

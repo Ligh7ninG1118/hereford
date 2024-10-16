@@ -44,7 +44,7 @@ void Weapon::OnUpdate(float deltaTime)
 		else
 			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.0f);*/
 
-	static float scaleOffset = 0.01f;
+	/*static float scaleOffset = 0.01f;
 
 	ImGui::Begin("Arm Offset", 0, ImGuiWindowFlags_AlwaysAutoResize);
 	ImGui::SliderFloat("X Offset", &currentArmTranslationOffset.mX, -10.0f, 10.0f);
@@ -61,7 +61,7 @@ void Weapon::OnUpdate(float deltaTime)
 
 	mPtrAnimRenderComp->SetTranslateOffset(currentArmTranslationOffset);
 	mPtrAnimRenderComp->SetRotateOffset(currentArmRotationOffset);
-	mPtrAnimRenderComp->SetScaleOffset(Vec3(scaleOffset));
+	mPtrAnimRenderComp->SetScaleOffset(Vec3(scaleOffset));*/
 }
 
 void Weapon::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
@@ -99,12 +99,12 @@ void Weapon::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 
 void Weapon::SetArmOffset(Vec3 translationOffset)
 {
-	/*Vec3 newTransOffset = currentArmTranslationOffset + translationOffset;
+	Vec3 newTransOffset = currentArmTranslationOffset + translationOffset;
 	mPtrAnimRenderComp->SetTranslateOffset(newTransOffset);
 
 	currentArmRotationOffset.mX = Math::Lerp(currentArmRotationOffset.mX, hipArmRotationOffset.mX, 0.2f);
 	currentArmRotationOffset.mZ = Math::Lerp(currentArmRotationOffset.mZ, hipArmRotationOffset.mZ, 0.2f);
-	mPtrAnimRenderComp->SetRotateOffset(currentArmRotationOffset);*/
+	mPtrAnimRenderComp->SetRotateOffset(currentArmRotationOffset);
 }
 
 void Weapon::Fire()
