@@ -26,13 +26,15 @@ void WeaponPistol::Init(Player* playerPtr)
 	mPtrAnimRenderComp->SetModel(AssetManager::LoadAsset<Model>(std::string("LocalResources/mark23/source/Mark23v5.fbx")));
 
 	mPtrAnimRenderComp->SetShader(AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_phong_frag.glsl")));
-	hipArmTranslationOffset = Vec3(-0.2f, -0.4f, 0.0f);
-	currentArmTranslationOffset = hipArmTranslationOffset;
-	hipArmRotationOffset = Vec3(0.0f, 0.0f, 90.0f);
-	currentArmRotationOffset = hipArmRotationOffset;
-	mPtrAnimRenderComp->SetTranslateOffset(currentArmTranslationOffset);
+	mHipArmTranslationOffset = Vec3(-0.2f, -0.4f, 0.0f);
+	mHipArmRotationOffset = Vec3(0.0f, 0.0f, 90.0f);
+	mADSArmTranslationOffset = Vec3(-0.5f, -0.275f, 0.215f);
+
+	mCurrentArmTranslationOffset = mHipArmTranslationOffset;
+	mCurrentArmRotationOffset = mHipArmRotationOffset;
+	mPtrAnimRenderComp->SetTranslateOffset(mCurrentArmTranslationOffset);
 	mPtrAnimRenderComp->SetScaleOffset(Vec3(0.02f));
-	mPtrAnimRenderComp->SetRotateOffset(currentArmRotationOffset);
+	mPtrAnimRenderComp->SetRotateOffset(mCurrentArmRotationOffset);
 
 
 	mPtrAnimRenderComp->SetCamera(&(mPtrPlayer->GetMainCamera()));
@@ -43,10 +45,12 @@ void WeaponPistol::Init(Player* playerPtr)
 	// 0: Hide, 1: Static, 2: Reload, 3: Fire, 4: Equip
 	// Construct shared ptr in place to avoid copying unique ptr inside ASM class
 	mPtrAnimStateMachine = std::shared_ptr<AnimationStateMachine>(new AnimationStateMachine(this, std::move(animator)));
-	mPtrAnimStateMachine->AddTransitionRule(0, AnimState(1, false));
 	mPtrAnimStateMachine->AddTransitionRule(2, AnimState(1, false));
 	mPtrAnimStateMachine->AddTransitionRule(3, AnimState(1, false));
 	mPtrAnimStateMachine->AddTransitionRule(4, AnimState(1, false));
+
+	mFireAnimIndex = 3;
+	mReloadAnimIndex = 2;
 
 	mPtrAnimRenderComp->SetAnimator(mPtrAnimStateMachine->GetAnimator());
 

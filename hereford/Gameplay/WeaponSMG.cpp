@@ -26,14 +26,15 @@ void WeaponSMG::Init(Player* playerPtr)
 	mPtrAnimRenderComp->SetModel(AssetManager::LoadAsset<Model>(std::string("LocalResources/mp5sd/MP5SDv4.fbx")));
 
 	mPtrAnimRenderComp->SetShader(AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_phong_frag.glsl")));
-	hipArmTranslationOffset = Vec3(-0.2f, -0.4f, 0.0f);
+	mHipArmTranslationOffset = Vec3(0.15f, -0.54f, 0.0f);
+	mHipArmRotationOffset = Vec3(0.0f, 0.0f, 90.0f);
+	mADSArmTranslationOffset = Vec3(0.0f, -0.467f, 0.11f);
 
-	currentArmTranslationOffset = hipArmTranslationOffset;
-	hipArmRotationOffset = Vec3(0.0f, 0.0f, 90.0f);
-	currentArmRotationOffset = hipArmRotationOffset;
-	mPtrAnimRenderComp->SetTranslateOffset(currentArmTranslationOffset);
+	mCurrentArmTranslationOffset = mHipArmTranslationOffset;
+	mCurrentArmRotationOffset = mHipArmRotationOffset;
+	mPtrAnimRenderComp->SetTranslateOffset(mCurrentArmTranslationOffset);
 	mPtrAnimRenderComp->SetScaleOffset(Vec3(0.02f));
-	mPtrAnimRenderComp->SetRotateOffset(currentArmRotationOffset);
+	mPtrAnimRenderComp->SetRotateOffset(mCurrentArmRotationOffset);
 
 
 	mPtrAnimRenderComp->SetCamera(&(mPtrPlayer->GetMainCamera()));
@@ -41,12 +42,15 @@ void WeaponSMG::Init(Player* playerPtr)
 	std::unique_ptr<Animator> animator = std::make_unique<Animator>(
 		Animator(Animation::LoadAnimations("LocalResources/mp5sd/MP5SDv4.fbx", mPtrAnimRenderComp->GetModel())));
 
-	// 0: Draw, 1: Hide, 2: Static, 3: Reload, 4: Fire
+	// 0: Draw, 1: Unequip, 2: Static, 3: Reload, 4: Fire
 	// Construct shared ptr in place to avoid copying unique ptr inside ASM class
 	mPtrAnimStateMachine = std::shared_ptr<AnimationStateMachine>(new AnimationStateMachine(this, std::move(animator)));
 	mPtrAnimStateMachine->AddTransitionRule(0, AnimState(2, false));
 	mPtrAnimStateMachine->AddTransitionRule(3, AnimState(2, false));
 	mPtrAnimStateMachine->AddTransitionRule(4, AnimState(2, false));
+
+	mFireAnimIndex = 4;
+	mReloadAnimIndex = 3;
 
 	mPtrAnimRenderComp->SetAnimator(mPtrAnimStateMachine->GetAnimator());
 
@@ -58,6 +62,7 @@ void WeaponSMG::Init(Player* playerPtr)
 	mPtrWeaponComp->mMaxMagazineCapacity = 30;
 	mPtrWeaponComp->mMaxReserveCapacity = 5 * mPtrWeaponComp->mMaxMagazineCapacity;
 	mPtrWeaponComp->mIsOpenBolt = true;
+	mPtrWeaponComp->mReloadAnimDuration = 3.0f;
 
 	mPtrWeaponComp->mCurrentMagazineAmmo = mPtrWeaponComp->mMaxMagazineCapacity;
 	mPtrWeaponComp->mCurrentReserveAmmo = mPtrWeaponComp->mMaxReserveCapacity;

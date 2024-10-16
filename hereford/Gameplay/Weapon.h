@@ -32,11 +32,15 @@ protected:
 	DAHandle mHReloadCallback;
 	TAHandle mHAimingTimeline;
 
-	Vec3 hipArmTranslationOffset = Vec3(-0.2f, -0.4f, 0.0f);
-	Vec3 hipArmRotationOffset = Vec3(0.0f, 0.0f, 90.0f);
+	Vec3 mHipArmTranslationOffset;
+	Vec3 mHipArmRotationOffset;
+	Vec3 mADSArmTranslationOffset;
 
-	Vec3 currentArmTranslationOffset;
-	Vec3 currentArmRotationOffset;
+	Vec3 mCurrentArmTranslationOffset;
+	Vec3 mCurrentArmRotationOffset;
+
+	int mFireAnimIndex;
+	int mReloadAnimIndex;
 
 	std::unique_ptr<class AnimatedRenderComponent> mPtrAnimRenderComp;
 	std::shared_ptr<class AnimationStateMachine> mPtrAnimStateMachine;
