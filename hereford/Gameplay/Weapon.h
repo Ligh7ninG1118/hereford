@@ -20,7 +20,14 @@ public:
 
 	void SetArmOffset(Vec3 translationOffset);
 
+	void Draw();
+	void Holster();
+
 	class WeaponComponent* GetWeaponComponent() const { return mPtrWeaponComp.get(); }
+
+	float mReloadTime;
+	float mDrawTime;
+	float mHolsterTime;
 
 protected:
 	virtual void Fire();
@@ -47,9 +54,11 @@ protected:
 
 	int mFireAnimIndex;
 	int mReloadAnimIndex;
+	int mDrawAnimIndex;
+	int mHolsterAnimIndex;
 
 	std::unique_ptr<class AnimatedRenderComponent> mPtrAnimRenderComp;
-	std::shared_ptr<class AnimationStateMachine> mPtrAnimStateMachine;
+	std::unique_ptr<class AnimationStateMachine> mPtrAnimStateMachine;
 	std::unique_ptr<class WeaponComponent> mPtrWeaponComp;
 	std::unique_ptr<class AudioComponent> mPtrAudioComponent;
 };

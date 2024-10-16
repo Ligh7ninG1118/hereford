@@ -27,7 +27,7 @@ class WeaponComponent : public Component
 
 
 public:
-	WeaponComponent(class Actor* owner, std::weak_ptr<class AnimationStateMachine> inASM);
+	WeaponComponent(class Actor* owner, class AnimationStateMachine* inASM);
 	~WeaponComponent();
 
 	void Update(float deltaTime) override;
@@ -52,13 +52,13 @@ private:
 
 	DAHandle mHReloadCallback;
 
-	std::weak_ptr<class AnimationStateMachine> mAnimStateMachine;
+	class AnimationStateMachine* mAnimStateMachine;
 
 	EWeaponState mCurrentState;
 	
 
 	// General
-	float mReloadAnimDuration;
+	
 
 	// Fire Rate Parameters
 	bool mIsSemiAuto;

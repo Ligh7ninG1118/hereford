@@ -109,6 +109,16 @@ void Weapon::SetArmOffset(Vec3 translationOffset)
 	mPtrAnimRenderComp->SetRotateOffset(mCurrentArmRotationOffset);
 }
 
+void Weapon::Draw()
+{
+	mPtrAnimStateMachine->PlayAnimation(mDrawAnimIndex, false, mDrawTime);
+}
+
+void Weapon::Holster()
+{
+	mPtrAnimStateMachine->PlayAnimation(mHolsterAnimIndex, false, mHolsterTime);
+}
+
 void Weapon::Fire()
 {
 	if (mPtrWeaponComp->CanFire())
@@ -147,8 +157,8 @@ void Weapon::Reload()
 {
 	if (mPtrWeaponComp->CanReload())
 	{
-		mPtrAnimStateMachine->PlayAnimation(mReloadAnimIndex, false, mPtrWeaponComp->mReloadAnimDuration);
-		DelayedActionManager::AddAction(mHReloadCallback, std::bind(&Weapon::FinishedReload, this), mPtrWeaponComp->mReloadAnimDuration, false);
+		mPtrAnimStateMachine->PlayAnimation(mReloadAnimIndex, false, mReloadTime);
+		DelayedActionManager::AddAction(mHReloadCallback, std::bind(&Weapon::FinishedReload, this), mReloadTime, false);
 	}
 }
 

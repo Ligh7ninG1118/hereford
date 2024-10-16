@@ -45,17 +45,19 @@ void WeaponSMG::Init(Player* playerPtr)
 
 	// 0: Draw, 1: Unequip, 2: Static, 3: Reload, 4: Fire
 	// Construct shared ptr in place to avoid copying unique ptr inside ASM class
-	mPtrAnimStateMachine = std::shared_ptr<AnimationStateMachine>(new AnimationStateMachine(this, std::move(animator)));
+	mPtrAnimStateMachine = std::unique_ptr<AnimationStateMachine>(new AnimationStateMachine(this, std::move(animator)));
 	mPtrAnimStateMachine->AddTransitionRule(0, AnimState(2, false));
 	mPtrAnimStateMachine->AddTransitionRule(3, AnimState(2, false));
 	mPtrAnimStateMachine->AddTransitionRule(4, AnimState(2, false));
 
 	mFireAnimIndex = 4;
 	mReloadAnimIndex = 3;
+	mDrawAnimIndex = 0;
+	mHolsterAnimIndex = 1;
 
 	mPtrAnimRenderComp->SetAnimator(mPtrAnimStateMachine->GetAnimator());
 
-	mPtrWeaponComp = std::make_unique<WeaponComponent>(static_cast<Actor*>(this), mPtrAnimStateMachine);
+	mPtrWeaponComp = std::make_unique<WeaponComponent>(static_cast<Actor*>(this), mPtrAnimStateMachine.get());
 	mPtrWeaponComp->mIsSemiAuto = false;
 	mPtrWeaponComp->mFireRatePerMin = 700.0f;
 	mPtrWeaponComp->mFireRateCooldown = 60.0f / 700.0f;
@@ -63,7 +65,9 @@ void WeaponSMG::Init(Player* playerPtr)
 	mPtrWeaponComp->mMaxMagazineCapacity = 30;
 	mPtrWeaponComp->mMaxReserveCapacity = 5 * mPtrWeaponComp->mMaxMagazineCapacity;
 	mPtrWeaponComp->mIsOpenBolt = true;
-	mPtrWeaponComp->mReloadAnimDuration = 3.0f;
+	mReloadTime = 3.0f;
+	mDrawTime = 0.8f;
+	mHolsterTime = 0.5f;
 
 	mPtrWeaponComp->mCurrentMagazineAmmo = mPtrWeaponComp->mMaxMagazineCapacity;
 	mPtrWeaponComp->mCurrentReserveAmmo = mPtrWeaponComp->mMaxReserveCapacity;

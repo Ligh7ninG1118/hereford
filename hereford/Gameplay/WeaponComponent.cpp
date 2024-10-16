@@ -13,13 +13,11 @@
 
 #include <SDL2/SDL.h>
 
-WeaponComponent::WeaponComponent(Actor* owner, std::weak_ptr<AnimationStateMachine> inASM)
+WeaponComponent::WeaponComponent(Actor* owner, AnimationStateMachine* inASM)
 	: Component(owner),
 	mAnimStateMachine(inASM)
 {
 	mCurrentState = EWeaponState::READY;
-
-	mReloadAnimDuration = 2.0f;
 
 	mIsSemiAuto = true;
 	mFireRatePerMin = 300.0f;

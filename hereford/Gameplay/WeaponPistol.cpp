@@ -45,17 +45,22 @@ void WeaponPistol::Init(Player* playerPtr)
 
 	// 0: Hide, 1: Static, 2: Reload, 3: Fire, 4: Equip
 	// Construct shared ptr in place to avoid copying unique ptr inside ASM class
-	mPtrAnimStateMachine = std::shared_ptr<AnimationStateMachine>(new AnimationStateMachine(this, std::move(animator)));
+	mPtrAnimStateMachine = std::unique_ptr<AnimationStateMachine>(new AnimationStateMachine(this, std::move(animator)));
 	mPtrAnimStateMachine->AddTransitionRule(2, AnimState(1, false));
 	mPtrAnimStateMachine->AddTransitionRule(3, AnimState(1, false));
 	mPtrAnimStateMachine->AddTransitionRule(4, AnimState(1, false));
 
 	mFireAnimIndex = 3;
 	mReloadAnimIndex = 2;
+	mDrawAnimIndex = 4;
+	mHolsterAnimIndex = 0;
 
 	mPtrAnimRenderComp->SetAnimator(mPtrAnimStateMachine->GetAnimator());
 
-	mPtrWeaponComp = std::make_unique<WeaponComponent>(static_cast<Actor*>(this), mPtrAnimStateMachine);
+	mPtrWeaponComp = std::make_unique<WeaponComponent>(static_cast<Actor*>(this), mPtrAnimStateMachine.get());
+	mReloadTime = 2.0f;
+	mDrawTime = 0.5f;
+	mHolsterTime = 0.3f;
 
 	mPtrAudioComponent = std::make_unique<AudioComponent>(this, GetGameContext()->GetAudioManager());
 	mPtrAudioComponent->InitAsset("USP_SingleFire.wav");
