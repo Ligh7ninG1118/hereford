@@ -32,7 +32,7 @@ GameContext::GameContext()
 {
 	// Enough for most input key usage
 	mPrevKeyStates.resize(232);
-	mPrevMouseStates = EMouseState::LMB_NOT_PRESSED | EMouseState::MMB_NOT_PRESSED | EMouseState::RMB_NOT_PRESSED;
+	mPrevMouseStates = EMouseState::LMB_NOT_PRESSED | EMouseState::MMB_NOT_PRESSED | EMouseState::RMB_NOT_PRESSED | EMouseState::SCROLL_IDLE;
 
 	mTelemetryUpdateInterval = 1.0f;
 	mTelemetryUpdateTimer = 0.0f;
@@ -279,11 +279,15 @@ void GameContext::SaveScene(const std::string& sceneFilePath)
 void GameContext::ProcessInput()
 {
 	SDL_Event pollEvent;
+	int mouseWheel = 0;
 	while (SDL_PollEvent(&pollEvent))
 	{
 		ImGui_ImplSDL2_ProcessEvent(&pollEvent);
 		switch (pollEvent.type)
 		{
+		case SDL_MOUSEWHEEL:
+			mouseWheel = pollEvent.wheel.y;
+			break;
 		case SDL_QUIT:
 			mIsRunning = false;
 			break;
@@ -333,6 +337,19 @@ void GameContext::ProcessInput()
 			newMouseState |= (rawMouseState & SDL_BUTTON_MMASK) ? EMouseState::MMB_HOLD : EMouseState::MMB_UP;
 		else if ((mPrevMouseStates & EMouseState::MMB_NOT_PRESSED) || (mPrevMouseStates & EMouseState::MMB_UP))
 			newMouseState |= (rawMouseState & SDL_BUTTON_MMASK) ? EMouseState::MMB_DOWN : EMouseState::MMB_NOT_PRESSED;
+
+		switch (mouseWheel)
+		{
+		case 0:
+			newMouseState |= EMouseState::SCROLL_IDLE;
+			break;
+		case 1:
+			newMouseState |= EMouseState::SCROLL_UP;
+			break;
+		case -1:
+			newMouseState |= EMouseState::SCROLL_DOWN;
+			break;
+		}
 
 		mPrevMouseStates = newMouseState;
 	}
