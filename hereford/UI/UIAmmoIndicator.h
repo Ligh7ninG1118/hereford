@@ -3,10 +3,10 @@
 class UIAmmoIndicator : public UIImage
 {
 public:
-	UIAmmoIndicator(class Renderer* inPtrRenderer, class Shader* inPtrShader, std::shared_ptr<class Texture> inPtrUITex, class WeaponComponent* inPtrWeaponComp);
+	UIAmmoIndicator(class Renderer* inPtrRenderer, class Shader* inPtrShader, std::shared_ptr<class Texture> inPtrUITex);
 	~UIAmmoIndicator();
 
-	void Initialize() override;
+	void Initialize(class WeaponComponent* inPtrWeaponComp);
 	void UpdateContent() override;
 
 protected:

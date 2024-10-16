@@ -4,9 +4,9 @@
 #include "Graphics/Renderer.h"
 #include "Gameplay/WeaponComponent.h"
 
-UIAmmoIndicator::UIAmmoIndicator(Renderer* inPtrRenderer, Shader* inPtrShader, std::shared_ptr<Texture> inPtrUITex, WeaponComponent* inPtrWeaponComp)
+UIAmmoIndicator::UIAmmoIndicator(Renderer* inPtrRenderer, Shader* inPtrShader, std::shared_ptr<Texture> inPtrUITex)
 	: UIImage(inPtrRenderer, inPtrShader, inPtrUITex),
-	mPtrWeaponComp(inPtrWeaponComp),
+	mPtrWeaponComp(nullptr),
 	mCurrentMax(0)
 {
 }
@@ -15,8 +15,10 @@ UIAmmoIndicator::~UIAmmoIndicator()
 {
 }
 
-void UIAmmoIndicator::Initialize()
+void UIAmmoIndicator::Initialize(WeaponComponent* inPtrWeaponComp)
 {
+	mPtrWeaponComp = inPtrWeaponComp;
+
 	mCurrentMax = mPtrWeaponComp->GetMaxMagazineCapacity();
 
 	SetAnchor(EUIAnchorPreset::BOTTOM_RIGHT);

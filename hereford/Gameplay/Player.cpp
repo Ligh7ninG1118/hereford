@@ -48,15 +48,15 @@ Player::Player(GameContext* gameCtx)
 	Vec2 screenDimension = renderer->GetScreenDimension();
 
 	//TODO: Separate HUD Actor class to handle all HUD elements?
-	mPtrUIAmmo = new UIAmmoIndicator(renderer, ammoShader.get(), ammoTex, mPtrActiveWeapon->GetWeaponComponent());
+	mPtrUIAmmo = new UIAmmoIndicator(renderer, ammoShader.get(), ammoTex);
 	Mat4 uiProj = mPtrCameraComp->GetOrthoMatrix(0.0f, screenDimension.mX, 0.0f, screenDimension.mY);
-	mPtrUIAmmo->Initialize();
+	mPtrUIAmmo->Initialize(mPtrActiveWeapon->GetWeaponComponent());
 	mPtrUIAmmo->SetUIProjection(uiProj);
 
 	std::shared_ptr<Shader> crosshairShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_crosshair_vert.glsl*Shaders/ui_crosshair_frag.glsl"));
 
-	mPtrUICrosshair = new UICrosshair(renderer, crosshairShader.get(), mPtrActiveWeapon->GetWeaponComponent());
-	mPtrUICrosshair->Initialize();
+	mPtrUICrosshair = new UICrosshair(renderer, crosshairShader.get());
+	mPtrUICrosshair->Initialize(mPtrActiveWeapon->GetWeaponComponent());
 
 	mPtrActionComp = std::make_unique<ActionComponent>(this);
 
@@ -330,6 +330,9 @@ void Player::WeaponSwitchCallback()
 	mPtrActiveWeapon = mWeaponList[mCurrentWeaponIndex];
 	mPtrActiveWeapon->SetState(EActorState::Enabled, true);
 	mPtrActiveWeapon->Draw();
+
+	mPtrUIAmmo->Initialize(mPtrActiveWeapon->GetWeaponComponent());
+	mPtrUICrosshair->Initialize(mPtrActiveWeapon->GetWeaponComponent());
 }
 
 void Player::CrouchTimeline(float alpha)

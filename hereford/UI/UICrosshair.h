@@ -3,10 +3,10 @@
 class UICrosshair : public UIElement
 {
 public:
-	UICrosshair(class Renderer* inPtrRenderer, class Shader* inPtrShader, class WeaponComponent* inPtrWeaponComp);
+	UICrosshair(class Renderer* inPtrRenderer, class Shader* inPtrShader);
 	~UICrosshair();
 
-	void Initialize() override;
+	void Initialize(class WeaponComponent* inPtrWeaponComp);
 	void UpdateContent() override;
 
 protected:

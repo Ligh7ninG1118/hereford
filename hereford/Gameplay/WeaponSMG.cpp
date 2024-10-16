@@ -65,6 +65,9 @@ void WeaponSMG::Init(Player* playerPtr)
 	mPtrWeaponComp->mMaxMagazineCapacity = 30;
 	mPtrWeaponComp->mMaxReserveCapacity = 5 * mPtrWeaponComp->mMaxMagazineCapacity;
 	mPtrWeaponComp->mIsOpenBolt = true;
+	mPtrWeaponComp->mDefaultAccuracySpreadFactor = 0.05f;
+	mPtrWeaponComp->mTargetAccuracySpreadFactor = mPtrWeaponComp->mDefaultAccuracySpreadFactor;
+	mPtrWeaponComp->mAccuracySpreadFactor = mPtrWeaponComp->mDefaultAccuracySpreadFactor;
 	mReloadTime = 3.0f;
 	mDrawTime = 0.8f;
 	mHolsterTime = 0.5f;

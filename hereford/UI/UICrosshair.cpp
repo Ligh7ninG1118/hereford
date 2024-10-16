@@ -4,9 +4,9 @@
 #include "Gameplay/WeaponComponent.h"
 #include <glad/glad.h>
 
-UICrosshair::UICrosshair(Renderer* inPtrRenderer, Shader* inPtrShader, WeaponComponent* inPtrWeaponComp)
+UICrosshair::UICrosshair(Renderer* inPtrRenderer, Shader* inPtrShader)
 	: UIElement(inPtrRenderer, inPtrShader),
-	mPtrWeaponComp(inPtrWeaponComp)
+	mPtrWeaponComp(nullptr)
 {
 }
 
@@ -14,8 +14,15 @@ UICrosshair::~UICrosshair()
 {
 }
 
-void UICrosshair::Initialize()
+void UICrosshair::Initialize(WeaponComponent* inPtrWeaponComp)
 {
+	mPtrWeaponComp = inPtrWeaponComp;
+
+	if (mVAO != 0)
+		glDeleteVertexArrays(1, &mVAO);
+	if (mVBO != 0)
+		glDeleteBuffers(1, &mVBO);
+
 	float quadVertices[] = {
 		-1.0f,  1.0f,    // Top-left
 		-1.0f, -1.0f,    // Bottom-left
