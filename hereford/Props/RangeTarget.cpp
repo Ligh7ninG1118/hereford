@@ -70,8 +70,8 @@ void RangeTarget::Hit(const HitInfo& info)
 	{
 		TimelineActionManager::PlayFromStart(mHHitTimeline, std::bind(&RangeTarget::HitTimeline, this, std::placeholders::_1), 0.15f);
 		hasHit = true;
-
-		//TODO: Deactive phys component
+		mPtrPhysicsCompBody->SetState(EComponentState::Disabled);
+		mPtrPhysicsCompHead->SetState(EComponentState::Disabled);
 	}
 	/*else
 	{
@@ -82,6 +82,8 @@ void RangeTarget::Hit(const HitInfo& info)
 void RangeTarget::ResetTarget()
 {
 	hasHit = false;
+	mPtrPhysicsCompBody->SetState(EComponentState::Enabled);
+	mPtrPhysicsCompHead->SetState(EComponentState::Enabled);
 	Vec3 rot = GetRotation();
 	rot.mY = 0.0f;
 	SetRotation(rot);

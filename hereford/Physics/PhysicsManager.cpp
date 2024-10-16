@@ -108,6 +108,9 @@ bool PhysicsManager::RaycastQuery(const struct Vector3& origin, const struct Vec
 
 	for (auto collider : mPhysicsComponents)
 	{
+		if (collider->GetState() == EComponentState::Disabled)
+			continue;
+
 		PhysicsPrimitive primitive = collider->mPhyPrimitive;
 		HitInfo tempInfo;
 
