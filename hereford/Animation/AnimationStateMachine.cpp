@@ -11,6 +11,11 @@ AnimationStateMachine::AnimationStateMachine(Actor* owner, std::unique_ptr<Anima
 	mPtrAnimEvent = GameEvent::Subscribe<EventOnAnimFinished>(std::bind(&AnimationStateMachine::AnimFinishedListener, this, std::placeholders::_1));
 }
 
+AnimationStateMachine::~AnimationStateMachine()
+{
+	GameEvent::Unsubscribe(mPtrAnimEvent);
+}
+
 void AnimationStateMachine::Update(float deltaTime)
 {
 	if (mPtrAnimator != nullptr)
@@ -34,7 +39,7 @@ std::vector<Mat4> AnimationStateMachine::GetFinalBoneMatrices() const
 
 void AnimationStateMachine::AnimFinishedListener(EventOnAnimFinished inEvent)
 {
-	if (mTransitionMap.find(inEvent.mAnimIndex) != mTransitionMap.end())
+ 	if (mTransitionMap.find(inEvent.mAnimIndex) != mTransitionMap.end())
 	{
 		auto nextAnimState = mTransitionMap[inEvent.mAnimIndex];
 		mPtrAnimator->PlayAnimation(nextAnimState.mAnimIndex, nextAnimState.mShouldLoop);

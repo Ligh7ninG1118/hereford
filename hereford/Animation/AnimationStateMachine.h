@@ -15,7 +15,7 @@ class AnimationStateMachine : public Component
 {
 public:
 	AnimationStateMachine(class Actor* owner, std::unique_ptr<class Animator> inAnimator);
-	virtual ~AnimationStateMachine() = default;
+	~AnimationStateMachine();
 
 	void Update(float deltaTime) override;
 
