@@ -1,6 +1,8 @@
 #include "Gameplay/Player.h"
 #include "Gameplay/CameraComponent.h"
 #include "Gameplay/Weapon.h"
+#include "Gameplay/WeaponComponent.h"
+
 #include "Gameplay/IInteractable.h"
 #include "Core/GameContext.h"
 #include <SDL2/SDL.h>
@@ -8,6 +10,7 @@
 
 #include "Audio/AudioComponent.h"
 #include "Actions/ActionComponent.h"
+#include "Asset/AssetManager.h"
 #include "Actions/Action.h"
 #include "Util/GameplayTagContainer.h"
 
@@ -25,27 +28,35 @@ Player::Player(GameContext* gameCtx)
 {
 	mPtrCameraComp = std::make_unique<CameraComponent>(static_cast<Actor*>(this));
 
-	mPtrActiveWeapon = new WeaponPistol(gameCtx);
-	//mPtrActiveWeapon = new WeaponSMG(gameCtx);
+	mWeaponList.push_back(new WeaponSMG(gameCtx));
+	mWeaponList.push_back(new WeaponPistol(gameCtx));
 
-	mPtrActiveWeapon->Init(this);
+	for (auto& w : mWeaponList)
+	{
+		w->Init(this);
+		w->SetState(EActorState::Disabled, true);
+	}
 
-	//std::shared_ptr<Texture> ammoTex = AssetManager::LoadAsset<Texture>(std::string("LocalResources/rifle-round-silhouette.png"));
-	//std::shared_ptr<Shader> ammoShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_image_ammo_count_vert.glsl*Shaders/ui_image_ammo_count_frag.glsl"));
+	mCurrentWeaponIndex = 0;
+	mPtrActiveWeapon = mWeaponList[mCurrentWeaponIndex];
+	mPtrActiveWeapon->SetState(EActorState::Enabled, true);
 
-	//Renderer* renderer = &mGameCtx->GetRenderer();
-	//Vec2 screenDimension = renderer->GetScreenDimension();
+	std::shared_ptr<Texture> ammoTex = AssetManager::LoadAsset<Texture>(std::string("LocalResources/rifle-round-silhouette.png"));
+	std::shared_ptr<Shader> ammoShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_image_ammo_count_vert.glsl*Shaders/ui_image_ammo_count_frag.glsl"));
 
-	////TODO: Separate HUD Actor class to handle all HUD elements?
-	//mPtrUIAmmo = new UIAmmoIndicator(renderer, ammoShader.get(), ammoTex, mPtrActiveWeaponComp);
-	//Mat4 uiProj = mPtrCameraComp->GetOrthoMatrix(0.0f, screenDimension.mX, 0.0f, screenDimension.mY);
-	//mPtrUIAmmo->Initialize();
-	//mPtrUIAmmo->SetUIProjection(uiProj);
+	Renderer* renderer = &mGameCtx->GetRenderer();
+	Vec2 screenDimension = renderer->GetScreenDimension();
 
-	//std::shared_ptr<Shader> crosshairShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_crosshair_vert.glsl*Shaders/ui_crosshair_frag.glsl"));
+	//TODO: Separate HUD Actor class to handle all HUD elements?
+	mPtrUIAmmo = new UIAmmoIndicator(renderer, ammoShader.get(), ammoTex, mPtrActiveWeapon->GetWeaponComponent());
+	Mat4 uiProj = mPtrCameraComp->GetOrthoMatrix(0.0f, screenDimension.mX, 0.0f, screenDimension.mY);
+	mPtrUIAmmo->Initialize();
+	mPtrUIAmmo->SetUIProjection(uiProj);
 
-	//mPtrUICrosshair = new UICrosshair(renderer, crosshairShader.get(), mPtrActiveWeaponComp);
-	//mPtrUICrosshair->Initialize();
+	std::shared_ptr<Shader> crosshairShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_crosshair_vert.glsl*Shaders/ui_crosshair_frag.glsl"));
+
+	mPtrUICrosshair = new UICrosshair(renderer, crosshairShader.get(), mPtrActiveWeapon->GetWeaponComponent());
+	mPtrUICrosshair->Initialize();
 
 	mPtrActionComp = std::make_unique<ActionComponent>(this);
 
@@ -67,8 +78,8 @@ Player::Player(GameContext* gameCtx)
 	totalRuntime = 0.0f;
 	currentTopSpeed = topWalkingSpeed;
 
-	mPtrAudioComponent2 = std::make_unique<AudioComponent>(this, gameCtx->GetAudioManager());
-	mPtrAudioComponent2->InitAsset("Walk-Gravel.wav");
+	mPtrAudioComponent = std::make_unique<AudioComponent>(this, gameCtx->GetAudioManager());
+	mPtrAudioComponent->InitAsset("Walk-Gravel.wav");
 
 	mIsGrounded = true;
 }
@@ -93,20 +104,20 @@ void Player::OnUpdate(float deltaTime)
 
 	if (hasMovementInput && mIsGrounded)
 	{
-		if (mPtrAudioComponent2->GetSoundState() == ESoundState::Paused)
+		if (mPtrAudioComponent->GetSoundState() == ESoundState::Paused)
 		{
-			mPtrAudioComponent2->Resume();
+			mPtrAudioComponent->Resume();
 		}
-		else if (mPtrAudioComponent2->GetSoundState() == ESoundState::Stopped)
+		else if (mPtrAudioComponent->GetSoundState() == ESoundState::Stopped)
 		{
-			mPtrAudioComponent2->Play(true);
+			mPtrAudioComponent->Play(true);
 		}
 	}
 	else
 	{
-		if (mPtrAudioComponent2->GetSoundState() == ESoundState::Playing)
+		if (mPtrAudioComponent->GetSoundState() == ESoundState::Playing)
 		{
-			mPtrAudioComponent2->Pause();
+			mPtrAudioComponent->Pause();
 		}
 	}
 
@@ -195,9 +206,25 @@ void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 		}
 	}
 
-	if (keyState[SDL_SCANCODE_F] == EInputState::KEY_DOWN)
+	// Object Interaction
 	{
-		Interaction();
+		if (keyState[SDL_SCANCODE_F] == EInputState::KEY_DOWN)
+		{
+			Interaction();
+		}
+	}
+
+	// Weapon & Gadget
+	{
+		if (keyState[SDL_SCANCODE_1] == EInputState::KEY_DOWN ||
+			keyState[SDL_SCANCODE_2] == EInputState::KEY_DOWN ||
+			mouseState & EMouseState::SCROLL_UP ||
+			mouseState & EMouseState::SCROLL_DOWN)
+		{
+			//TODO: Handle double swapping
+			mPtrActiveWeapon->Holster();
+			DelayedActionManager::AddAction(mHWeaponSwitch, std::bind(&Player::WeaponSwitchCallback, this), mPtrActiveWeapon->mHolsterTime, false);
+		}
 	}
 }
 
@@ -292,6 +319,17 @@ void Player::ShowDebugInfo()
 	ImGui::Text("Cam Front (%.2f, %.2f, %.2f)", frt.mX, frt.mY, frt.mZ);
 	ImGui::Text("Player Rot (%.2f, %.2f, %.2f)", pRot.mX, pRot.mY, pRot.mZ);
 	ImGui::End();
+}
+
+void Player::WeaponSwitchCallback()
+{
+	mPtrActiveWeapon->SetState(EActorState::Disabled, true);
+	mCurrentWeaponIndex++;
+	mCurrentWeaponIndex %= mWeaponList.size();
+	
+	mPtrActiveWeapon = mWeaponList[mCurrentWeaponIndex];
+	mPtrActiveWeapon->SetState(EActorState::Enabled, true);
+	mPtrActiveWeapon->Draw();
 }
 
 void Player::CrouchTimeline(float alpha)

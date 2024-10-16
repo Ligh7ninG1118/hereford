@@ -470,6 +470,9 @@ void Renderer::Render(float deltaTime)
 
 		for (const auto& renderComp : renderCompInLayer.second)
 		{
+			if (renderComp->GetState() == EComponentState::Disabled)
+				continue;
+
 			unsigned int VAO, VBO;
 			VAO = renderComp->GetVAOID();
 			glBindVertexArray(VAO);

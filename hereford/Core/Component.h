@@ -5,6 +5,12 @@
 #include <vector>
 #include <memory>
 
+enum class EComponentState
+{
+	Enabled = 0,
+	Disabled,
+};
+
 class Component
 {
 public:
@@ -21,10 +27,14 @@ public:
 	class Actor* GetOwner() const { return mOwner; }
 	class Game* GetGame() const;
 
+	EComponentState GetState() const { return mState; }
+	void SetState(EComponentState state) { mState = state; }
+
 protected:
 	// Owning actor
 	class Actor* mOwner;
 	// Update order
 	int mUpdateOrder;
+	EComponentState mState;
 };
 

@@ -7,7 +7,7 @@
 Actor::Actor(GameContext* game)
 	: 
 	mGameCtx(game),
-	mState(ActorState::Active),
+	mState(EActorState::Enabled),
 	mPosition(Vector3::Zero),
 	mScale(Vector3::One),
 	mRotation(Vector3::Zero)
@@ -31,7 +31,8 @@ void Actor::Update(float deltaTime)
 {
 	for (Component* pCom : mComponents)
 	{
-		pCom->Update(deltaTime);
+		if(pCom->GetState() == EComponentState::Enabled)
+			pCom->Update(deltaTime);
 	}
 
 	OnUpdate(deltaTime);
@@ -39,15 +40,30 @@ void Actor::Update(float deltaTime)
 
 void Actor::ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
 {
-	if (mState != ActorState::Active)
+	if (mState != EActorState::Enabled)
 		return;
 
 	for (Component* pCom : mComponents)
 	{
-		pCom->ProcessInput(keyState, mouseState, mouseDeltaX, mouseDeltaY);
+		if (pCom->GetState() == EComponentState::Enabled)
+			pCom->ProcessInput(keyState, mouseState, mouseDeltaX, mouseDeltaY);
 	}
 
 	OnProcessInput(keyState, mouseState, mouseDeltaX, mouseDeltaY);
+}
+
+void Actor::SetState(EActorState state, bool setComponents)
+{
+	mState = state;
+	
+	if (setComponents)
+	{
+		EComponentState cState = state == EActorState::Enabled ? EComponentState::Enabled : EComponentState::Disabled;
+		for (Component* pCom : mComponents)
+		{
+			pCom->SetState(cState);
+		}
+	}
 }
 
 void Actor::OnUpdate(float deltaTime)

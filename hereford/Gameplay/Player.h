@@ -29,18 +29,23 @@ private:
 	void Interaction();
 	void ShowDebugInfo();
 
+
+	void WeaponSwitchCallback();
 	void CrouchTimeline(float alpha);
 
 	std::unique_ptr<class CameraComponent> mPtrCameraComp;
-	std::unique_ptr<class AudioComponent> mPtrAudioComponent2;
+	std::unique_ptr<class AudioComponent> mPtrAudioComponent;
 	std::unique_ptr<class ActionComponent> mPtrActionComp;
 
 	class Weapon* mPtrActiveWeapon;
+	std::vector<Weapon*> mWeaponList;
+	int mCurrentWeaponIndex = 0;
 
 	class UIAmmoIndicator* mPtrUIAmmo;
 	class UICrosshair* mPtrUICrosshair;
 
 	TAHandle mHCrouchTimeline;
+	DAHandle mHWeaponSwitch;
 
 	class IInteractable* mInteractCandidate;
 

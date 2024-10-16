@@ -20,6 +20,15 @@ public:
 
 	void SetArmOffset(Vec3 translationOffset);
 
+	void Draw();
+	void Holster();
+
+	class WeaponComponent* GetWeaponComponent() const { return mPtrWeaponComp.get(); }
+
+	float mReloadTime;
+	float mDrawTime;
+	float mHolsterTime;
+
 protected:
 	virtual void Fire();
 	virtual void Reload();
@@ -32,14 +41,24 @@ protected:
 	DAHandle mHReloadCallback;
 	TAHandle mHAimingTimeline;
 
-	Vec3 hipArmTranslationOffset = Vec3(-0.2f, -0.4f, 0.0f);
-	Vec3 hipArmRotationOffset = Vec3(0.0f, 0.0f, 90.0f);
+	Vec3 mHipArmTranslationOffset;
+	Vec3 mHipArmRotationOffset;
+	Vec3 mADSArmTranslationOffset;
+	Vec3 mADSArmRotationOffset;
 
-	Vec3 currentArmTranslationOffset;
-	Vec3 currentArmRotationOffset;
+	Vec3 mCurrentArmTranslationOffset;
+	Vec3 mCurrentArmRotationOffset;
+
+	//TODO: Change to state/flag later
+	bool mIsADSing;
+
+	int mFireAnimIndex;
+	int mReloadAnimIndex;
+	int mDrawAnimIndex;
+	int mHolsterAnimIndex;
 
 	std::unique_ptr<class AnimatedRenderComponent> mPtrAnimRenderComp;
-	std::shared_ptr<class AnimationStateMachine> mPtrAnimStateMachine;
+	std::unique_ptr<class AnimationStateMachine> mPtrAnimStateMachine;
 	std::unique_ptr<class WeaponComponent> mPtrWeaponComp;
 	std::unique_ptr<class AudioComponent> mPtrAudioComponent;
 };

@@ -45,6 +45,7 @@ void Animator::UpdateAnimation(float dt)
 	CalculateBoneTransform(&mAnimationList[mCurrentIndex].GetRootNode(), Mat4::Identity);
 }
 
+//TODO: Rewind
 void Animator::PlayAnimation(uint32 index, bool shouldLoop, float duration)
 {
 	assert(index < mAnimationList.size());
