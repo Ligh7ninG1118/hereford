@@ -29,6 +29,7 @@ void WeaponPistol::Init(Player* playerPtr)
 	mHipArmTranslationOffset = Vec3(-0.2f, -0.4f, 0.0f);
 	mHipArmRotationOffset = Vec3(0.0f, 0.0f, 90.0f);
 	mADSArmTranslationOffset = Vec3(-0.5f, -0.275f, 0.215f);
+	mADSArmRotationOffset = Vec3(0.0f, 0.0f, 90.0f);
 
 	mCurrentArmTranslationOffset = mHipArmTranslationOffset;
 	mCurrentArmRotationOffset = mHipArmRotationOffset;

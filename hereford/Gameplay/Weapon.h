@@ -20,6 +20,8 @@ public:
 
 	void SetArmOffset(Vec3 translationOffset);
 
+	class WeaponComponent* GetWeaponComponent() const { return mPtrWeaponComp.get(); }
+
 protected:
 	virtual void Fire();
 	virtual void Reload();
@@ -35,9 +37,13 @@ protected:
 	Vec3 mHipArmTranslationOffset;
 	Vec3 mHipArmRotationOffset;
 	Vec3 mADSArmTranslationOffset;
+	Vec3 mADSArmRotationOffset;
 
 	Vec3 mCurrentArmTranslationOffset;
 	Vec3 mCurrentArmRotationOffset;
+
+	//TODO: Change to state/flag later
+	bool mIsADSing;
 
 	int mFireAnimIndex;
 	int mReloadAnimIndex;

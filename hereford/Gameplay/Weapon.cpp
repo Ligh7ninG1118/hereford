@@ -44,23 +44,22 @@ void Weapon::OnUpdate(float deltaTime)
 		else
 			mPtrActiveWeaponComp->SetAccuracySpreadMultiplier(1.0f);*/
 
-	/*static float scaleOffset = 0.01f;
+	/*static float scaleOffset = 0.02f;
 
 	ImGui::Begin("Arm Offset", 0, ImGuiWindowFlags_AlwaysAutoResize);
-	ImGui::SliderFloat("X Offset", &currentArmTranslationOffset.mX, -10.0f, 10.0f);
-	ImGui::SliderFloat("Y Offset", &currentArmTranslationOffset.mY, -10.0f, 10.0f);
-	ImGui::SliderFloat("Z Offset", &currentArmTranslationOffset.mZ, -10.0f, 10.0f);
-	ImGui::SliderFloat("RX Offset", &currentArmRotationOffset.mX, -360.0f, 360.0f);
-	ImGui::SliderFloat("RY Offset", &currentArmRotationOffset.mY, -360.0f, 360.0f);
-	ImGui::SliderFloat("RZ Offset", &currentArmRotationOffset.mZ, -360.0f, 360.0f);
+	ImGui::SliderFloat("X Offset", &mCurrentArmTranslationOffset.mX, -10.0f, 10.0f);
+	ImGui::SliderFloat("Y Offset", &mCurrentArmTranslationOffset.mY, -10.0f, 10.0f);
+	ImGui::SliderFloat("Z Offset", &mCurrentArmTranslationOffset.mZ, -10.0f, 10.0f);
+	ImGui::SliderFloat("RX Offset", &mCurrentArmRotationOffset.mX, -360.0f, 360.0f);
+	ImGui::SliderFloat("RY Offset", &mCurrentArmRotationOffset.mY, -360.0f, 360.0f);
+	ImGui::SliderFloat("RZ Offset", &mCurrentArmRotationOffset.mZ, -360.0f, 360.0f);
 	ImGui::SliderFloat("Scale Offset", &scaleOffset, -5.0f, 5.0f);
 
 
 	ImGui::End();
 
-
-	mPtrAnimRenderComp->SetTranslateOffset(currentArmTranslationOffset);
-	mPtrAnimRenderComp->SetRotateOffset(currentArmRotationOffset);
+	mPtrAnimRenderComp->SetTranslateOffset(mCurrentArmTranslationOffset);
+	mPtrAnimRenderComp->SetRotateOffset(mCurrentArmRotationOffset);
 	mPtrAnimRenderComp->SetScaleOffset(Vec3(scaleOffset));*/
 }
 
@@ -76,11 +75,14 @@ void Weapon::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mou
 	{
 		TimelineActionManager::PlayFromStart(mHAimingTimeline, std::bind(&Weapon::AimingTimeline, this, std::placeholders::_1), 0.2f);
 		mPtrPlayer->GetMainCamera().mAimingSensMultiplier = 0.85f;
+		mIsADSing = true;
 	}
 	else if (mouseState & RMB_UP)
 	{
 		TimelineActionManager::ReverseFromEnd(mHAimingTimeline, std::bind(&Weapon::AimingTimeline, this, std::placeholders::_1), 0.2f);
 		mPtrPlayer->GetMainCamera().mAimingSensMultiplier = 1.0f;
+		mIsADSing = false;
+
 	}
 
 	if (keyState[SDL_SCANCODE_R] == EInputState::KEY_DOWN)
@@ -102,8 +104,8 @@ void Weapon::SetArmOffset(Vec3 translationOffset)
 	Vec3 newTransOffset = mCurrentArmTranslationOffset + translationOffset;
 	mPtrAnimRenderComp->SetTranslateOffset(newTransOffset);
 
-	mCurrentArmRotationOffset.mX = Math::Lerp(mCurrentArmRotationOffset.mX, mHipArmRotationOffset.mX, 0.2f);
-	mCurrentArmRotationOffset.mZ = Math::Lerp(mCurrentArmRotationOffset.mZ, mHipArmRotationOffset.mZ, 0.2f);
+	Vec3 targetRotationOffset = mIsADSing ? mADSArmRotationOffset : mHipArmRotationOffset;
+	mCurrentArmRotationOffset = Math::Lerp(mCurrentArmRotationOffset, targetRotationOffset, 0.2f);
 	mPtrAnimRenderComp->SetRotateOffset(mCurrentArmRotationOffset);
 }
 
@@ -155,6 +157,8 @@ void Weapon::AimingTimeline(float alpha)
 	mPtrPlayer->GetMainCamera().SetHorFOV(Math::Lerp(80.0f, 50.0f, alpha));
 	mCurrentArmTranslationOffset = Math::Lerp(mHipArmTranslationOffset, mADSArmTranslationOffset, alpha);
 	mPtrAnimRenderComp->SetTranslateOffset(mCurrentArmTranslationOffset);
+	mCurrentArmRotationOffset = Math::Lerp(mHipArmRotationOffset, mADSArmRotationOffset, alpha);
+	mPtrAnimRenderComp->SetRotateOffset(mCurrentArmRotationOffset);
 }
 
 void Weapon::FinishedReload()

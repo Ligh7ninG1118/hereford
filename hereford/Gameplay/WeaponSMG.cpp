@@ -28,7 +28,8 @@ void WeaponSMG::Init(Player* playerPtr)
 	mPtrAnimRenderComp->SetShader(AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_phong_frag.glsl")));
 	mHipArmTranslationOffset = Vec3(0.15f, -0.54f, 0.0f);
 	mHipArmRotationOffset = Vec3(0.0f, 0.0f, 90.0f);
-	mADSArmTranslationOffset = Vec3(0.0f, -0.467f, 0.11f);
+	mADSArmTranslationOffset = Vec3(0.0f, -0.4665f, 0.11f);
+	mADSArmRotationOffset = Vec3(0.0f, 0.0f, 89.6f);
 
 	mCurrentArmTranslationOffset = mHipArmTranslationOffset;
 	mCurrentArmRotationOffset = mHipArmRotationOffset;
