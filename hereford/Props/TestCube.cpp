@@ -10,8 +10,8 @@ TestCube::TestCube(GameContext* gameCtx)
 	:
 	Actor(gameCtx)
 {
-	mPtrRenderComp = new RenderComponent(static_cast<Actor*>(this), gameCtx->GetRenderer());
-	mPtrPhysicsComp = new PhysicsComponent(static_cast<Actor*>(this), gameCtx->GetPhysicsManager());
+	mPtrRenderComp = std::make_unique<RenderComponent>(static_cast<Actor*>(this), gameCtx->GetRenderer());
+	mPtrPhysicsComp = std::make_unique<PhysicsComponent>(static_cast<Actor*>(this), gameCtx->GetPhysicsManager());
 
 	PrimitiveInfo cubeInfo;
 	Primitive::GenerateCube(cubeInfo);

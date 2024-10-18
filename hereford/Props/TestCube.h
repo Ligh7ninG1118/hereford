@@ -3,6 +3,8 @@
 #include "Gameplay/IHittable.h"
 #include "Gameplay/IInteractable.h"
 #include "Util/Reflection.h"
+#include <memory>
+
 
 class TestCube : public Actor, public IHittable, public IInteractable
 {
@@ -16,12 +18,12 @@ public:
 	void Hit(const struct HitInfo& info) override;
 	void Interact() override;
 
-	class RenderComponent* GetRenderComponent() const { return mPtrRenderComp; }
-	class PhysicsComponent* GetPhysicsComponent() const { return mPtrPhysicsComp; }
+	class RenderComponent* GetRenderComponent() const { return mPtrRenderComp.get(); }
+	class PhysicsComponent* GetPhysicsComponent() const { return mPtrPhysicsComp.get(); }
 
 private:
 	float multiplier = 1.0f;
 	Vec3 mColor;
-	class RenderComponent* mPtrRenderComp;
-	class PhysicsComponent* mPtrPhysicsComp;
+	std::unique_ptr<class RenderComponent> mPtrRenderComp;
+	std::unique_ptr<class PhysicsComponent> mPtrPhysicsComp;
 };
