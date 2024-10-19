@@ -72,7 +72,28 @@ or at least, "it's working!"
 - ImGUI
 
 ## Assets Used
-WIP
+#### BarcodeGames (https://sketchfab.com/barcodegames)
+- Mark 23 (Mesh and Animations)
+- MP5SD (Mesh and Animations)
+
+#### Tauffiq Abdllah (https://sketchfab.com/3d-models/shooting-range-target-7ab89185712c4d5c97f99fb1f5b2d530)
+- Shooting Range Target
+
+#### 3D Content Online (https://sketchfab.com/3d-models/pine-and-ply-site-3-401b1b4d9d3e4ece9862d3719ae0db7d)
+- Plywood Walls
+
+#### Mixamo (https://www.mixamo.com)
+- SWAT Guy (Mesh)
+- Silly Dancing (Animation)
+
+#### Soundsnap (https://www.soundsnap.com/)
+- Sound Effects
+
+#### Free PBR (https://freepbr.com/)
+- PBR Textures
+
+#### rpgwhitelock (https://assetstore.unity.com/packages/2d/textures-materials/sky/allsky-220-sky-skybox-set-10109)
+- Skyboxes
 
 ## References
 - LearnOpenGL by Joey De Vries (https://learnopengl.com/)
