@@ -23,6 +23,7 @@ Ground::Ground(GameContext* gameCtx)
 	mPtrRenderComp->LoadTexture("LocalResources/gravel/gravel_metallic.png", ETextureType::METALLIC);
 	mPtrRenderComp->LoadTexture("LocalResources/gravel/gravel_normal-ogl.png", ETextureType::NORMALS);
 	mPtrRenderComp->LoadTexture("LocalResources/gravel/gravel_roughness.png", ETextureType::ROUGHNESS);
+	mPtrRenderComp->SetRenderModeFlag(RM_DIFFUSETEX | RM_STATIC | RM_PBR | RM_SIMPLEMESH);
 
 	std::shared_ptr<Shader> shader = AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_pbr_frag.glsl"));
 	mPtrRenderComp->SetShader(shader);

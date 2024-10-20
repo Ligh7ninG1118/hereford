@@ -25,10 +25,13 @@ TestCube::TestCube(GameContext* gameCtx)
 	mPtrRenderComp->LoadTexture("LocalResources/used-stainless-steel2/used-stainless-steel2_roughness.png", ETextureType::ROUGHNESS);
 
 
+
 	std::shared_ptr<Shader> shader = AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_pbr_frag.glsl"));
 	mPtrRenderComp->SetShader(shader);
 
 	mPtrRenderComp->SetColor(Vec3(Random::Range(0.1f, 0.9f), Random::Range(0.1f, 0.9f), Random::Range(0.1f, 0.9f)));
+
+	mPtrRenderComp->SetRenderModeFlag(RM_DIFFUSETEX | RM_STATIC | RM_PBR | RM_SIMPLEMESH);
 }
 
 TestCube::~TestCube()
