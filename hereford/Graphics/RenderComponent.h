@@ -7,6 +7,18 @@
 #include "Asset/Texture.h"
 #include "Asset/Model.h"
 
+const uint16 RM_PURECOLOR		= 0x0001u;
+const uint16 RM_DIFFUSETEX		= 0x0002u;
+
+const uint16 RM_ANIMATED		= 0x0010u;
+const uint16 RM_STATIC			= 0x0020u;
+
+const uint16 RM_PHONG			= 0x0100u;
+const uint16 RM_PBR				= 0x0200u;
+
+const uint16 RM_MODELMESH		= 0x1000u;
+const uint16 RM_SIMPLEMESH		= 0x2000u;
+
 
 enum class ERenderLayer : uint8
 {
@@ -46,6 +58,8 @@ public:
 	inline Vec3 GetScaleOffset() const { return mScaleOffset; }
 	inline void SetScaleOffset(Vec3 inOffset) { mScaleOffset = inOffset; }
 
+	inline uint16 GetRenderModeFlag() const { return mRenderModeFlag; }
+	inline void SetRenderModeFlag(uint16 flag) { mRenderModeFlag = flag; }
 
 	inline std::weak_ptr<Model> GetModel() const { return mPtrModel; }
 	inline const std::vector<Mesh>& GetMeshes() const { return mPtrModel->mMeshes; }
@@ -59,6 +73,7 @@ protected:
 	class Renderer& m_Renderer;
 
 	ERenderLayer mRenderLayer;
+	uint16 mRenderModeFlag;
 
 	std::shared_ptr<Model> mPtrModel;
 	std::vector<std::shared_ptr<class Texture>> mTextures;
