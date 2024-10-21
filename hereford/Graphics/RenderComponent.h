@@ -8,7 +8,7 @@
 #include "Asset/Model.h"
 
 const uint16 RM_PURECOLOR		= 0x0001u;
-const uint16 RM_DIFFUSETEX		= 0x0002u;
+const uint16 RM_TEXTURED		= 0x0002u;
 
 const uint16 RM_ANIMATED		= 0x0010u;
 const uint16 RM_STATIC			= 0x0020u;

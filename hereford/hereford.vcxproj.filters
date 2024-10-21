@@ -431,6 +431,7 @@
     <None Include="Shaders\skybox_prefilter_frag.glsl" />
     <None Include="Shaders\brdf_vert.glsl" />
     <None Include="Shaders\brdf_frag.glsl" />
+    <None Include="Shaders\model_simple_frag.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="imgui\imgui.natvis" />
