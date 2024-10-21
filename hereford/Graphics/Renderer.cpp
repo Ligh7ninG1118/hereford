@@ -510,8 +510,12 @@ void Renderer::Render(float deltaTime)
 			shader->SetInt("tex_metallic_1", 30);
 			shader->SetInt("tex_ao_1", 30);
 
-			if (auto animRenderComp = dynamic_cast<AnimatedRenderComponent*>(renderComp); animRenderComp != nullptr)
+			uint16 renderFlag = renderComp->GetRenderModeFlag();
+			int texChannel = 0;
+
+			if (renderFlag & RM_ANIMATED)
 			{
+				auto animRenderComp = dynamic_cast<AnimatedRenderComponent*>(renderComp);
 				Mat4 model = animRenderComp->GetModelMatrix();
 
 				shader->SetMat4("model", model);
@@ -521,9 +525,33 @@ void Renderer::Render(float deltaTime)
 				{
 					shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 				}
+
 			}
 
-			if (renderComp->GetModel().lock())
+			if (renderFlag & RM_PBR)
+			{
+				shader->SetInt("skybox", texChannel);
+				glActiveTexture(GL_TEXTURE0 + texChannel);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, irraTexID);
+				texChannel++;
+
+				shader->SetInt("prefilter", texChannel);
+				glActiveTexture(GL_TEXTURE0 + texChannel);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterTexID);
+				texChannel++;
+
+				shader->SetInt("brdfLUT", texChannel);
+				glActiveTexture(GL_TEXTURE0 + texChannel);
+				glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+				texChannel++;
+			}
+
+			if (renderFlag & RM_PURECOLOR)
+			{
+				shader->SetVec3("inColor", renderComp->GetColor());
+			}
+
+			if (renderFlag & RM_MODELMESH)
 			{
 				auto meshes = renderComp->GetMeshes();
 				for (unsigned int i = 0; i < meshes.size(); i++)
@@ -536,7 +564,7 @@ void Renderer::Render(float deltaTime)
 					unsigned int heightNr = 1;
 					for (unsigned int j = 0; j < mesh->mTextures.size(); j++)
 					{
-						glActiveTexture(GL_TEXTURE0 + j);
+						glActiveTexture(GL_TEXTURE0 + texChannel);
 
 						std::string texStr;
 						switch (mesh->mTextures[j].GetType())
@@ -568,41 +596,25 @@ void Renderer::Render(float deltaTime)
 						default:
 							break;
 						}
-						shader->SetInt(texStr.c_str(), j);
+						shader->SetInt(texStr.c_str(), texChannel++);
 						glBindTexture(GL_TEXTURE_2D, mesh->mTextures[j].GetID());
-
-						texChannel++;
 					}
-					shader->SetInt("skybox", texChannel);
-					glActiveTexture(GL_TEXTURE0 + texChannel);
-					glBindTexture(GL_TEXTURE_CUBE_MAP, irraTexID);
-
-					shader->SetInt("prefilter", texChannel + 1);
-					glActiveTexture(GL_TEXTURE0 + texChannel + 1);
-					glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterTexID);
-
-					shader->SetInt("brdfLUT", texChannel + 2);
-					glActiveTexture(GL_TEXTURE0 + texChannel + 2);
-					glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
 
 					glBindVertexArray(mesh->mVAOID);
 					glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(mesh->mIndices.size()), GL_UNSIGNED_INT, 0);
-
-					glBindVertexArray(0);
-					glActiveTexture(GL_TEXTURE0);
-					glBindTexture(GL_TEXTURE_2D, 0);
 				}
 			}
-			else
+
+
+			if (renderFlag & RM_SIMPLEMESH)
 			{
 				auto textures = renderComp->GetTextures();
 
 				if (textures.size() > 0)
 				{
-					texChannel = 0;
 					for (unsigned int j = 0; j < textures.size(); j++)
 					{
-						glActiveTexture(GL_TEXTURE0 + j);
+						glActiveTexture(GL_TEXTURE0 + texChannel);
 
 						std::string texStr;
 						switch (textures[j]->GetType())
@@ -634,39 +646,21 @@ void Renderer::Render(float deltaTime)
 						default:
 							break;
 						}
-						shader->SetInt(texStr.c_str(), j);
+						shader->SetInt(texStr.c_str(), texChannel++);
 						glBindTexture(GL_TEXTURE_2D, textures[j]->GetID());
-
-						texChannel++;
 					}
-					shader->SetInt("skybox", texChannel);
-					glActiveTexture(GL_TEXTURE0 + texChannel);
-					glBindTexture(GL_TEXTURE_CUBE_MAP, irraTexID);
 
-					shader->SetInt("prefilter", texChannel + 1);
-					glActiveTexture(GL_TEXTURE0 + texChannel + 1);
-					glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterTexID);
+					//TODO: Change size based on simple mesh
+					glDrawArrays(GL_TRIANGLES, 0, 36);
 
-					shader->SetInt("brdfLUT", texChannel + 2);
-					glActiveTexture(GL_TEXTURE0 + texChannel + 2);
-					glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+					
 				}
-				else
-				{
-					shader->SetVec3("inColor", renderComp->GetColor());
-				}
-
-				glDrawArrays(GL_TRIANGLES, 0, 36);
-
-
-
-				glBindVertexArray(0);
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, 0);
 			}
 
+			glBindVertexArray(0);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, 0);
 		}
-
 
 	}
 

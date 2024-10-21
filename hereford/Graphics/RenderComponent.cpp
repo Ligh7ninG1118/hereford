@@ -17,10 +17,13 @@
 #include <SDL2/SDL_opengl.h>
 
 RenderComponent::RenderComponent(Actor* owner, Renderer& rendererRef, ERenderLayer renderLayer)
-	: 
+	:
 	Component(owner),
 	m_Renderer(rendererRef),
 	mRenderLayer(renderLayer),
+	mRenderModeFlag(0u),
+	mVAO(0),
+	mVBO(0),
 	mTranslateOffset(Vec3::Zero),
 	mRotateOffset(Vec3::Zero),
 	mScaleOffset(Vec3::One)

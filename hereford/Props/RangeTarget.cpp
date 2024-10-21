@@ -19,6 +19,8 @@ RangeTarget::RangeTarget(GameContext* gameCtx)
 	mPtrRenderComp->SetRotateOffset(Vec3(-90.0f, 0.0f, 90.0f));
 	mPtrRenderComp->SetTranslateOffset(Vec3(0.0f, 0.0f, -0.05f));
 
+	mPtrRenderComp->SetRenderModeFlag(RM_DIFFUSETEX | RM_STATIC | RM_PBR | RM_MODELMESH);
+
 	auto model = mPtrRenderComp->GetModel();
 	
 	Texture diffuseTex("LocalResources/rangedummy/01 - Default_albedo.jpg");
