@@ -68,9 +68,5 @@ private:
 	const float OVERRIDE_GRAVITY_CONSTANT = -20.0f;
 	const float JUMP_HEIGHT_CONSTANT = 1.5f;
 
-	
-
-
-	GameEvent::Subscription<EventOnPlayerWeaponFired>* mPtrWeaponFiredEvent;
 };
 

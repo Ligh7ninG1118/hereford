@@ -55,13 +55,20 @@ void UICrosshair::Initialize(WeaponComponent* inPtrWeaponComp)
 	mPtrShader->SetVec4("crosshairColor", 1.0f, 1.0f, 1.0f, 0.9f);
 	mPtrShader->SetVec4("outlineColor", 0.25f, 0.25f, 0.25f, 0.9f);
 
+	mWeaponAimingEvent = GameEvent::Subscribe<EventOnWeaponAiming>(std::bind(&UICrosshair::UpdateCrosshair, this, std::placeholders::_1));
+
 }
 
-void UICrosshair::UpdateContent()
+void UICrosshair::UpdateCrosshair(EventOnWeaponAiming inEvent)
 {
-	float accDev = mPtrWeaponComp->GetAccuracyDeviation();
+	float adjustedProgress = 1.0f - inEvent.aimingProgress;
+
+	float accDev = mPtrWeaponComp->GetAccuracyDeviation() * adjustedProgress;
 	float gap = accDev * mPtrRenderer->GetScreenDimension().mX / (0.9f * 2.0f);
 
 	mPtrShader->Use();
 	mPtrShader->SetFloat("crosshairGap", gap);
+
+	mPtrShader->SetVec4("crosshairColor", 1.0f, 1.0f, 1.0f, adjustedProgress);
+	mPtrShader->SetVec4("outlineColor", 0.25f, 0.25f, 0.25f, adjustedProgress);
 }

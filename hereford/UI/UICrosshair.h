@@ -1,5 +1,7 @@
 #pragma once
 #include "UIImage.h"
+#include "Util/GameEvent.h"
+
 class UICrosshair : public UIElement
 {
 public:
@@ -7,9 +9,11 @@ public:
 	~UICrosshair();
 
 	void Initialize(class WeaponComponent* inPtrWeaponComp);
-	void UpdateContent() override;
+	void UpdateCrosshair(EventOnWeaponAiming inEvent);
 
 protected:
 	class WeaponComponent* mPtrWeaponComp;
+
+	GameEvent::Subscription<EventOnWeaponAiming>* mWeaponAimingEvent;
 };
 

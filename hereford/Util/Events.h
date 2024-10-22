@@ -18,3 +18,12 @@ struct EventOnPlayerWeaponFired
 		: mRecoilDeviation(recoilDev)
 	{}
 };
+
+struct EventOnWeaponAiming
+{
+	float aimingProgress;
+
+	EventOnWeaponAiming(float progress)
+		: aimingProgress(progress)
+	{}
+};

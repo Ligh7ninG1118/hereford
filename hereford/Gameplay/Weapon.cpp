@@ -169,6 +169,7 @@ void Weapon::AimingTimeline(float alpha)
 	mPtrAnimRenderComp->SetTranslateOffset(mCurrentArmTranslationOffset);
 	mCurrentArmRotationOffset = Math::Lerp(mHipArmRotationOffset, mADSArmRotationOffset, alpha);
 	mPtrAnimRenderComp->SetRotateOffset(mCurrentArmRotationOffset);
+	GameEvent::Publish<EventOnWeaponAiming>(EventOnWeaponAiming(alpha));
 }
 
 void Weapon::FinishedReload()
