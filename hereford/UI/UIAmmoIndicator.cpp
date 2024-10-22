@@ -82,7 +82,6 @@ void UIAmmoIndicator::UpdateAmmoIndicator(int ammoLeft)
 
 	float leftX = actualPos.mX - mDimension.mX * mAlignment.mX * mScale.mX;
 
-	//TODO: need a solution to deal with one in the chamber scenario
 	float threshold = leftX + (mCurrentMax - currentMag) * GetDimension().mX / static_cast<float>(mCurrentMax);
 
 	mPtrShader->Use();
