@@ -39,7 +39,7 @@ WeaponComponent::WeaponComponent(Actor* owner, AnimationStateMachine* inASM)
 	
 	mMaxMagazineCapacity = 12;
 	mMaxReserveCapacity = 5 * mMaxMagazineCapacity;
-	mIsOpenBolt = true;
+	mIsOpenBolt = false;
 
 	mCurrentMagazineAmmo = mMaxMagazineCapacity;
 	mCurrentReserveAmmo = mMaxReserveCapacity;
