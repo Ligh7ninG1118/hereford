@@ -14,6 +14,7 @@ AnimationStateMachine::AnimationStateMachine(Actor* owner, std::unique_ptr<Anima
 AnimationStateMachine::~AnimationStateMachine()
 {
 	GameEvent::Unsubscribe(mPtrAnimEvent);
+	delete mPtrAnimEvent;
 }
 
 void AnimationStateMachine::Update(float deltaTime)
