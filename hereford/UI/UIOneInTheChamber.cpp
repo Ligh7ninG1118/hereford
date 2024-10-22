@@ -20,7 +20,7 @@ void UIOneInTheChamber::Initialize(float xPos)
 	SetTiling(Vec2(1.0f, 1.0f));
 
 	mPtrShader->Use();
-	mPtrShader->SetVec4("uiColor", 1.0f, 1.0f, 1.0f, 0.9f);
+	mPtrShader->SetVec4("uiColor", 1.0f, 0.93f, 0.5f, 0.9f);
 	mPtrShader->SetInt("uiTex", 0);
 
 	UIImage::Initialize();
