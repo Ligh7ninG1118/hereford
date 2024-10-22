@@ -38,6 +38,8 @@ public:
 	inline uint32 GetVAO() const { return mVAO; }
 	inline uint32 GetVBO() const { return mVBO; }
 
+	inline bool GetIsActive() const { return mIsActive; }
+
 
 	inline class Shader* GetShader() const { return mPtrShader; }
 
@@ -49,6 +51,8 @@ public:
 
 	inline void SetShader(class Shader* inPtrShader) { mPtrShader = inPtrShader; }
 
+	inline void SetIsActive(bool active) { mIsActive = active; }
+
 protected:
 	virtual void GenerateGLAsset();
 	virtual void UpdateGLAsset();
@@ -59,6 +63,8 @@ protected:
 	Vec2 mAlignment;
 	Vec2 mDimension;
 	EUIAnchorPreset mAnchor;
+
+	bool mIsActive;
 
 	class Shader* mPtrShader;
 	Renderer* mPtrRenderer;

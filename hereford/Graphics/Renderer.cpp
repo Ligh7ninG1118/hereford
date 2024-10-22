@@ -732,8 +732,13 @@ void Renderer::Render(float deltaTime)
 
 	for (auto uiElement : mUIElements)
 	{
+		if (!uiElement->GetIsActive())
+			continue;
+
 		glBindVertexArray(uiElement->GetVAO());
 		uiElement->GetShader()->Use();
+		uiElement->GetShader()->SetMat4("projection", uiProj);
+
 		if(auto uiImage = dynamic_cast<UIImage*>(uiElement);uiImage != nullptr)
 			glBindTexture(GL_TEXTURE_2D, uiImage->GetTexture()->GetID());
 		glDrawArrays(GL_TRIANGLES, 0, 6);

@@ -10,6 +10,7 @@ UIElement::UIElement(Renderer* inPtrRenderer, Shader* inPtrShader)
 	mAlignment(Vec2(0.5f, 0.5f)),
 	mDimension(Vec2(0.0f, 0.0f)),
 	mAnchor(EUIAnchorPreset::BOTTOM_LEFT),
+	mIsActive(true),
 	mPtrShader(inPtrShader),
 	mPtrRenderer(inPtrRenderer),
 	mVAO(0),
