@@ -1,5 +1,7 @@
 #pragma once
 #include "UIImage.h"
+#include "Util/GameEvent.h"
+
 class UIAmmoIndicator : public UIImage
 {
 public:
@@ -7,12 +9,14 @@ public:
 	~UIAmmoIndicator();
 
 	void Initialize(class WeaponComponent* inPtrWeaponComp);
-	void UpdateContent() override;
+	void UpdateAmmoIndicatorEventHandler(EventOnWeaponAmmoChanged inEvent);
+	void UpdateAmmoIndicator(int ammoLeft);
 
 protected:
 	uint16 mCurrentMax;
 	
 	class WeaponComponent* mPtrWeaponComp;
+	class GameEvent::Subscription<EventOnWeaponAmmoChanged>* mWeaponAmmoChangedEvent;
 
 };
 

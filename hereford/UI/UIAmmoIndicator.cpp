@@ -13,6 +13,8 @@ UIAmmoIndicator::UIAmmoIndicator(Renderer* inPtrRenderer, Shader* inPtrShader, s
 
 UIAmmoIndicator::~UIAmmoIndicator()
 {
+	GameEvent::Unsubscribe(mWeaponAmmoChangedEvent);
+	delete mWeaponAmmoChangedEvent;
 }
 
 void UIAmmoIndicator::Initialize(WeaponComponent* inPtrWeaponComp)
@@ -32,15 +34,21 @@ void UIAmmoIndicator::Initialize(WeaponComponent* inPtrWeaponComp)
 	mPtrShader->SetVec4("uiColor1", 0.2f, 0.2f, 0.2f, 0.4f);
 	mPtrShader->SetInt("uiTex", 0);
 
+	mWeaponAmmoChangedEvent = GameEvent::Subscribe<EventOnWeaponAmmoChanged>(std::bind(&UIAmmoIndicator::UpdateAmmoIndicatorEventHandler, this, std::placeholders::_1));
+
 	UIImage::Initialize();
+
+	UpdateAmmoIndicator(mPtrWeaponComp->GetCurrentMagazineAmmo());
 }
 
-void UIAmmoIndicator::UpdateContent()
+void UIAmmoIndicator::UpdateAmmoIndicatorEventHandler(EventOnWeaponAmmoChanged inEvent)
 {	
-	//TODO: Wrong! Since we r holding ptr to a single weapon instance, its magazine capacity wont change
-	//		If it indeed was changed, then it means a diff weapon instance, should do this in SetPtrWeapon or somewhere
-	
-	uint16 currentMag = mPtrWeaponComp->GetCurrentMagazineAmmo();
+	UpdateAmmoIndicator(inEvent.ammoLeft);
+}
+
+void UIAmmoIndicator::UpdateAmmoIndicator(int ammoLeft)
+{
+	uint16 currentMag = ammoLeft;
 
 	Vec2 screenDimension;
 	Vec2 actualPos = mPosition;
@@ -65,11 +73,13 @@ void UIAmmoIndicator::UpdateContent()
 
 	float leftX = actualPos.mX - mDimension.mX * mAlignment.mX * mScale.mX;
 
-	//Okay...But how do we deal with one in the chamber sceneario?
-	float threshold = leftX + (mCurrentMax - currentMag) * GetDimension().mX / static_cast<float>(mCurrentMax);	
+	//TODO: need a solution to deal with one in the chamber scenario
+	float threshold = leftX + (mCurrentMax - currentMag) * GetDimension().mX / static_cast<float>(mCurrentMax);
 
 	mPtrShader->Use();
 	mPtrShader->SetFloat("threshold", threshold);
 
 	UIElement::UpdateContent();
 }
+
+

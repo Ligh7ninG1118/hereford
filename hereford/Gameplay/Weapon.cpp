@@ -124,6 +124,8 @@ void Weapon::Fire()
 	if (mPtrWeaponComp->CanFire())
 	{
 		mPtrWeaponComp->Fire();
+		GameEvent::Publish<EventOnWeaponAmmoChanged>(EventOnWeaponAmmoChanged(mPtrWeaponComp->mCurrentMagazineAmmo, mPtrWeaponComp->mMaxMagazineCapacity));
+
 		mPtrAnimStateMachine->PlayAnimation(mFireAnimIndex, false, 0.2f);
 		CameraComponent& cam = mPtrPlayer->GetMainCamera();
 
@@ -162,6 +164,7 @@ void Weapon::Reload()
 	}
 }
 
+//TODO: Resume previous progress if play from back
 void Weapon::AimingTimeline(float alpha)
 {
 	mPtrPlayer->GetMainCamera().SetHorFOV(Math::Lerp(80.0f, 50.0f, alpha));
@@ -175,5 +178,6 @@ void Weapon::AimingTimeline(float alpha)
 void Weapon::FinishedReload()
 {
 	mPtrWeaponComp->FinishedReload();
+	GameEvent::Publish<EventOnWeaponAmmoChanged>(EventOnWeaponAmmoChanged(mPtrWeaponComp->mCurrentMagazineAmmo, mPtrWeaponComp->mMaxMagazineCapacity));
 	mPtrPlayer->GetActionComp()->StopActionByName("Reload");
 }

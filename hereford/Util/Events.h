@@ -10,12 +10,13 @@ struct EventOnAnimFinished
 	{}
 };
 
-struct EventOnPlayerWeaponFired
+struct EventOnWeaponAmmoChanged
 {
-	Vec2 mRecoilDeviation;
+	int ammoLeft;
+	int ammoMax;
 
-	EventOnPlayerWeaponFired(Vec2 recoilDev)
-		: mRecoilDeviation(recoilDev)
+	EventOnWeaponAmmoChanged(int left, int max)
+		: ammoLeft(left), ammoMax(max)
 	{}
 };
 
