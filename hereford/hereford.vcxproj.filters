@@ -189,6 +189,9 @@
     <ClCompile Include="Audio\AudioComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UI\UIOneInTheChamber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asset\Shader.h">
@@ -398,6 +401,9 @@
     <ClInclude Include="Audio\AudioComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UI\UIOneInTheChamber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Graphics\Shaders\standard_vert.glsl" />
@@ -431,6 +437,7 @@
     <None Include="Shaders\skybox_prefilter_frag.glsl" />
     <None Include="Shaders\brdf_vert.glsl" />
     <None Include="Shaders\brdf_frag.glsl" />
+    <None Include="Shaders\ui_image_frag.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="imgui\imgui.natvis" />

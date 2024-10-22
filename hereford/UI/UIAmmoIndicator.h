@@ -11,12 +11,14 @@ public:
 	void Initialize(class WeaponComponent* inPtrWeaponComp);
 	void UpdateAmmoIndicatorEventHandler(EventOnWeaponAmmoChanged inEvent);
 	void UpdateAmmoIndicator(int ammoLeft);
+	void UpdateChamberIndicator(int ammoLeft);
 
 protected:
 	uint16 mCurrentMax;
 	
 	class WeaponComponent* mPtrWeaponComp;
 	class GameEvent::Subscription<EventOnWeaponAmmoChanged>* mWeaponAmmoChangedEvent;
+	class UIOneInTheChamber* mChamberIndicator;
 
 };
 

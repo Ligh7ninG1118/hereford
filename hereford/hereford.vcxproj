@@ -183,6 +183,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="Props\NPC.cpp" />
     <ClCompile Include="Props\RangeTarget.cpp" />
+    <ClCompile Include="UI\UIOneInTheChamber.cpp" />
     <ClCompile Include="Util\TimelineAction.cpp" />
     <ClCompile Include="UI\UICrosshair.cpp" />
     <ClCompile Include="UI\UIAmmoIndicator.cpp" />
@@ -248,6 +249,7 @@
     <ClInclude Include="Physics\PhysicsPrimitive.h" />
     <ClInclude Include="Props\NPC.h" />
     <ClInclude Include="Props\RangeTarget.h" />
+    <ClInclude Include="UI\UIOneInTheChamber.h" />
     <ClInclude Include="Util\TimelineAction.h" />
     <ClInclude Include="UI\UICrosshair.h" />
     <ClInclude Include="UI\UIAmmoIndicator.h" />
@@ -315,6 +317,7 @@
     <None Include="Shaders\ui_crosshair_vert.glsl" />
     <None Include="Shaders\ui_image_ammo_count_frag.glsl" />
     <None Include="Shaders\ui_image_ammo_count_vert.glsl" />
+    <None Include="Shaders\ui_image_frag.glsl" />
     <None Include="Shaders\ui_text_frag.glsl" />
     <None Include="Shaders\ui_text_vert.glsl" />
   </ItemGroup>

@@ -1,14 +1,20 @@
 #include "UIAmmoIndicator.h"
+#include "UIOneInTheChamber.h"
 #include "Asset/Shader.h"
 #include "Asset/Texture.h"
+#include "Asset/AssetManager.h"
 #include "Graphics/Renderer.h"
 #include "Gameplay/WeaponComponent.h"
 
 UIAmmoIndicator::UIAmmoIndicator(Renderer* inPtrRenderer, Shader* inPtrShader, std::shared_ptr<Texture> inPtrUITex)
 	: UIImage(inPtrRenderer, inPtrShader, inPtrUITex),
 	mPtrWeaponComp(nullptr),
+	mWeaponAmmoChangedEvent(nullptr),
 	mCurrentMax(0)
 {
+	std::shared_ptr<Shader> chamberShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_image_ammo_count_vert.glsl*Shaders/ui_image_frag.glsl"));
+
+	mChamberIndicator = new UIOneInTheChamber(inPtrRenderer, chamberShader.get(), inPtrUITex);
 }
 
 UIAmmoIndicator::~UIAmmoIndicator()
@@ -37,6 +43,9 @@ void UIAmmoIndicator::Initialize(WeaponComponent* inPtrWeaponComp)
 	mWeaponAmmoChangedEvent = GameEvent::Subscribe<EventOnWeaponAmmoChanged>(std::bind(&UIAmmoIndicator::UpdateAmmoIndicatorEventHandler, this, std::placeholders::_1));
 
 	UIImage::Initialize();
+
+	float xPosChamberUI = -300.0f - 5.5f * mCurrentMax - 5.0f;
+	mChamberIndicator->Initialize(xPosChamberUI);
 
 	UpdateAmmoIndicator(mPtrWeaponComp->GetCurrentMagazineAmmo());
 }
@@ -77,9 +86,26 @@ void UIAmmoIndicator::UpdateAmmoIndicator(int ammoLeft)
 	float threshold = leftX + (mCurrentMax - currentMag) * GetDimension().mX / static_cast<float>(mCurrentMax);
 
 	mPtrShader->Use();
+	mPtrShader->SetVec4("uiColor2", 1.0f, 1.0f, 1.0f, 0.9f);
+	mPtrShader->SetVec4("uiColor1", 0.2f, 0.2f, 0.2f, 0.4f);
 	mPtrShader->SetFloat("threshold", threshold);
 
+	
 	UIElement::UpdateContent();
+
+	UpdateChamberIndicator(ammoLeft);
+}
+
+void UIAmmoIndicator::UpdateChamberIndicator(int ammoLeft)
+{
+	if (ammoLeft <= mCurrentMax)
+	{
+		mChamberIndicator->SetIsActive(false);
+	}
+	else
+	{
+		mChamberIndicator->SetIsActive(true);
+	}
 }
 
 
