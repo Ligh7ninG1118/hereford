@@ -732,8 +732,6 @@ void Renderer::Render(float deltaTime)
 
 	for (auto uiElement : mUIElements)
 	{
-		//TODO: Costly! Update UI content using event
-		uiElement->UpdateContent();
 		glBindVertexArray(uiElement->GetVAO());
 		uiElement->GetShader()->Use();
 		if(auto uiImage = dynamic_cast<UIImage*>(uiElement);uiImage != nullptr)

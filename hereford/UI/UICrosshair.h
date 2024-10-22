@@ -9,11 +9,16 @@ public:
 	~UICrosshair();
 
 	void Initialize(class WeaponComponent* inPtrWeaponComp);
-	void UpdateCrosshair(EventOnWeaponAiming inEvent);
+	void UpdateCrosshairEventHandler(EventOnWeaponAiming inEvent);
+	void UpdateCrosshair(float progress);
 
 protected:
+	Vec3 mCrosshairColor;
+	Vec3 mOutlineColor;
+	float mCrosshairTransparency;
+
 	class WeaponComponent* mPtrWeaponComp;
 
-	GameEvent::Subscription<EventOnWeaponAiming>* mWeaponAimingEvent;
+	class GameEvent::Subscription<EventOnWeaponAiming>* mWeaponAimingEvent;
 };
 

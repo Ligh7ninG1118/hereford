@@ -6,12 +6,17 @@
 
 UICrosshair::UICrosshair(Renderer* inPtrRenderer, Shader* inPtrShader)
 	: UIElement(inPtrRenderer, inPtrShader),
+	mCrosshairColor(Vec3(1.0f)),
+	mOutlineColor(Vec3(0.25f)),
+	mCrosshairTransparency(0.9f),
 	mPtrWeaponComp(nullptr)
 {
 }
 
 UICrosshair::~UICrosshair()
 {
+	GameEvent::Unsubscribe(mWeaponAimingEvent);
+	delete mWeaponAimingEvent;
 }
 
 void UICrosshair::Initialize(WeaponComponent* inPtrWeaponComp)
@@ -52,23 +57,29 @@ void UICrosshair::Initialize(WeaponComponent* inPtrWeaponComp)
 	mPtrShader->SetFloat("crosshairGap", 10.0f);
 	mPtrShader->SetFloat("outlineThickness", 1.0f);
 
-	mPtrShader->SetVec4("crosshairColor", 1.0f, 1.0f, 1.0f, 0.9f);
-	mPtrShader->SetVec4("outlineColor", 0.25f, 0.25f, 0.25f, 0.9f);
+	mPtrShader->SetVec4("crosshairColor", mCrosshairColor.mX, mCrosshairColor.mY, mCrosshairColor.mZ, mCrosshairTransparency);
+	mPtrShader->SetVec4("outlineColor", mOutlineColor.mX, mOutlineColor.mY, mOutlineColor.mZ, mCrosshairTransparency);
 
-	mWeaponAimingEvent = GameEvent::Subscribe<EventOnWeaponAiming>(std::bind(&UICrosshair::UpdateCrosshair, this, std::placeholders::_1));
+	mWeaponAimingEvent = GameEvent::Subscribe<EventOnWeaponAiming>(std::bind(&UICrosshair::UpdateCrosshairEventHandler, this, std::placeholders::_1));
 
+	UpdateCrosshair(0.0f);
 }
 
-void UICrosshair::UpdateCrosshair(EventOnWeaponAiming inEvent)
+void UICrosshair::UpdateCrosshairEventHandler(EventOnWeaponAiming inEvent)
 {
-	float adjustedProgress = 1.0f - inEvent.aimingProgress;
+	UpdateCrosshair(inEvent.aimingProgress);
+}
 
-	float accDev = mPtrWeaponComp->GetAccuracyDeviation() * adjustedProgress;
+void UICrosshair::UpdateCrosshair(float progress)
+{
+	float lerpTransparency = (1.0f - progress) * mCrosshairTransparency;
+
+	float accDev = mPtrWeaponComp->GetAccuracyDeviation() * lerpTransparency;
 	float gap = accDev * mPtrRenderer->GetScreenDimension().mX / (0.9f * 2.0f);
 
 	mPtrShader->Use();
 	mPtrShader->SetFloat("crosshairGap", gap);
 
-	mPtrShader->SetVec4("crosshairColor", 1.0f, 1.0f, 1.0f, adjustedProgress);
-	mPtrShader->SetVec4("outlineColor", 0.25f, 0.25f, 0.25f, adjustedProgress);
+	mPtrShader->SetVec4("crosshairColor", mCrosshairColor.mX, mCrosshairColor.mY, mCrosshairColor.mZ, lerpTransparency);
+	mPtrShader->SetVec4("outlineColor", mOutlineColor.mX, mOutlineColor.mY, mOutlineColor.mZ, lerpTransparency);
 }
