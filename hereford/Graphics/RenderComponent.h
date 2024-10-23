@@ -43,7 +43,7 @@ public:
 	inline ERenderLayer GetRenderLayer() const { return mRenderLayer; }
 	inline void SetRenderLayer(ERenderLayer inOrder) { mRenderLayer = inOrder; }
 
-	inline uint32 GetVAOID() const { return mVAO; }
+	inline uint32 GetVAOID() const { return mVAO == 0 ? mPtrModel->mMeshes[0].mVAOID : mVAO; }
 	inline void SetVAOID(uint32 id) { mVAO = id; }
 
 	inline uint32 GetVBOID() const { return mVBO; }

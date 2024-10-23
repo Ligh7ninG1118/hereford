@@ -467,6 +467,8 @@ void Renderer::Render(float deltaTime)
 		glClear(GL_DEPTH_BUFFER_BIT);
 
 		int texChannel = 0;
+		uint32 lastVAO = 0;
+		uint32 lastShaderID = 0;
 
 		for (const auto& renderComp : renderCompInLayer.second)
 		{
@@ -475,9 +477,9 @@ void Renderer::Render(float deltaTime)
 
 			unsigned int VAO, VBO;
 			VAO = renderComp->GetVAOID();
-			glBindVertexArray(VAO);
 
 			auto shader = renderComp->GetShader().get();
+			uint16 renderFlag = renderComp->GetRenderModeFlag();
 			shader->Use();
 
 			shader->SetVec3("eyePos", mPtrMainCamera->GetCameraPosition());
@@ -487,16 +489,6 @@ void Renderer::Render(float deltaTime)
 			shader->SetMat4("projection", projection);
 			shader->SetMat4("view", view);
 
-			shader->SetInt("tex_specular_1", 30);
-			shader->SetInt("tex_diffuse_1", 30);
-			shader->SetInt("tex_height_1", 30);
-			shader->SetInt("tex_normals_1", 30);
-			shader->SetInt("tex_emissive_1", 30);
-			shader->SetInt("tex_roughness_1", 30);
-			shader->SetInt("tex_metallic_1", 30);
-			shader->SetInt("tex_ao_1", 30);
-
-			uint16 renderFlag = renderComp->GetRenderModeFlag();
 			int texChannel = 0;
 
 			if (renderFlag & RM_ANIMATED)
@@ -511,8 +503,54 @@ void Renderer::Render(float deltaTime)
 				{
 					shader->SetMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
 				}
-
 			}
+
+			if (lastVAO == VAO && lastShaderID == shader->GetID())
+			{
+				if (renderFlag & RM_MODELMESH)
+				{
+					auto meshes = renderComp->GetMeshes();
+					for (unsigned int i = 0; i < meshes.size(); i++)
+					{
+						Mesh* mesh = &meshes[i];
+
+						if (renderFlag & RM_PURECOLOR)
+						{
+							shader->SetVec3("inColor", renderComp->GetColor());
+						}
+
+						glBindVertexArray(mesh->mVAOID);
+						glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(mesh->mIndices.size()), GL_UNSIGNED_INT, 0);
+					}
+				}
+
+
+				if (renderFlag & RM_SIMPLEMESH)
+				{
+					if (renderFlag & RM_PURECOLOR)
+					{
+						shader->SetVec3("inColor", renderComp->GetColor());
+					}
+					glBindVertexArray(VAO);
+					glDrawArrays(GL_TRIANGLES, 0, 36);
+				}
+
+				continue;
+			}
+			else
+			{
+				lastVAO = VAO;
+				lastShaderID = shader->GetID();
+			}
+
+			shader->SetInt("tex_specular_1", 30);
+			shader->SetInt("tex_diffuse_1", 30);
+			shader->SetInt("tex_height_1", 30);
+			shader->SetInt("tex_normals_1", 30);
+			shader->SetInt("tex_emissive_1", 30);
+			shader->SetInt("tex_roughness_1", 30);
+			shader->SetInt("tex_metallic_1", 30);
+			shader->SetInt("tex_ao_1", 30);
 
 			if (renderFlag & RM_IBL)
 			{
@@ -697,7 +735,7 @@ void Renderer::Render(float deltaTime)
 				{
 					shader->SetVec3("inColor", renderComp->GetColor());
 				}
-
+				glBindVertexArray(VAO);
 				glDrawArrays(GL_TRIANGLES, 0, 36);
 			}
 
