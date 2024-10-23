@@ -183,6 +183,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="Props\NPC.cpp" />
     <ClCompile Include="Props\RangeTarget.cpp" />
+    <ClCompile Include="Props\ShowcaseModel.cpp" />
     <ClCompile Include="UI\UIOneInTheChamber.cpp" />
     <ClCompile Include="Util\TimelineAction.cpp" />
     <ClCompile Include="UI\UICrosshair.cpp" />
@@ -249,6 +250,7 @@
     <ClInclude Include="Physics\PhysicsPrimitive.h" />
     <ClInclude Include="Props\NPC.h" />
     <ClInclude Include="Props\RangeTarget.h" />
+    <ClInclude Include="Props\ShowcaseModel.h" />
     <ClInclude Include="UI\UIOneInTheChamber.h" />
     <ClInclude Include="Util\TimelineAction.h" />
     <ClInclude Include="UI\UICrosshair.h" />
