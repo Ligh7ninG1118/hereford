@@ -19,7 +19,7 @@ RangeTarget::RangeTarget(GameContext* gameCtx)
 	mPtrRenderComp->SetRotateOffset(Vec3(-90.0f, 0.0f, 90.0f));
 	mPtrRenderComp->SetTranslateOffset(Vec3(0.0f, 0.0f, -0.05f));
 
-	mPtrRenderComp->SetRenderModeFlag(RM_DIFFUSETEX | RM_STATIC | RM_PBR | RM_MODELMESH);
+	mPtrRenderComp->SetRenderModeFlag(RM_EMBEDDEDTEX | RM_STATIC | RM_LIGHTINGANDIBL | RM_MODELMESH);
 
 	auto model = mPtrRenderComp->GetModel();
 	

@@ -480,20 +480,6 @@ void Renderer::Render(float deltaTime)
 			auto shader = renderComp->GetShader().get();
 			shader->Use();
 
-			shader->SetInt("lightNum", 1);
-
-			shader->SetVec3("pointLights[0].position", Vec3(5.0f, 5.0f, 2.0f));
-
-			shader->SetVec3("pointLights[0].ambient", Vec3(0.5f, 0.5f, 0.5f));
-			shader->SetVec3("pointLights[0].diffuse", Vec3(0.6f, 0.6f, 0.6f));
-			shader->SetVec3("pointLights[0].specular", Vec3(1.0f, 1.0f, 1.0f));
-			shader->SetVec3("pointLights[0].color", Vec3(150.0f, 150.0f, 150.0f));
-
-			shader->SetFloat("pointLights[0].constant", 1.0f);
-			shader->SetFloat("pointLights[0].linear", 0.007f);
-			shader->SetFloat("pointLights[0].quadratic", 0.0002f);
-
-
 			shader->SetVec3("eyePos", mPtrMainCamera->GetCameraPosition());
 
 			Mat4 model = renderComp->GetModelMatrix();
@@ -528,7 +514,7 @@ void Renderer::Render(float deltaTime)
 
 			}
 
-			if (renderFlag & RM_PBR)
+			if (renderFlag & RM_IBL)
 			{
 				shader->SetInt("skybox", texChannel);
 				glActiveTexture(GL_TEXTURE0 + texChannel);
@@ -546,9 +532,20 @@ void Renderer::Render(float deltaTime)
 				texChannel++;
 			}
 
-			if (renderFlag & RM_PURECOLOR)
+			if (renderFlag & RM_LIGHTING)
 			{
-				shader->SetVec3("inColor", renderComp->GetColor());
+				shader->SetInt("lightNum", 1);
+
+				shader->SetVec3("pointLights[0].position", Vec3(5.0f, 5.0f, 2.0f));
+
+				shader->SetVec3("pointLights[0].ambient", Vec3(0.5f, 0.5f, 0.5f));
+				shader->SetVec3("pointLights[0].diffuse", Vec3(0.6f, 0.6f, 0.6f));
+				shader->SetVec3("pointLights[0].specular", Vec3(1.0f, 1.0f, 1.0f));
+				shader->SetVec3("pointLights[0].color", Vec3(150.0f, 150.0f, 150.0f));
+
+				shader->SetFloat("pointLights[0].constant", 1.0f);
+				shader->SetFloat("pointLights[0].linear", 0.007f);
+				shader->SetFloat("pointLights[0].quadratic", 0.0002f);
 			}
 
 			if (renderFlag & RM_MODELMESH)
@@ -558,46 +555,92 @@ void Renderer::Render(float deltaTime)
 				{
 					Mesh* mesh = &meshes[i];
 
-					unsigned int diffuseNr = 1;
-					unsigned int specularNr = 1;
-					unsigned int normalNr = 1;
-					unsigned int heightNr = 1;
-					for (unsigned int j = 0; j < mesh->mTextures.size(); j++)
+					if (renderFlag & RM_EMBEDDEDTEX)
 					{
-						glActiveTexture(GL_TEXTURE0 + texChannel);
-
-						std::string texStr;
-						switch (mesh->mTextures[j].GetType())
+						for (unsigned int j = 0; j < mesh->mTextures.size(); j++)
 						{
-						case ETextureType::DIFFUSE:
-							texStr = "tex_diffuse_1";
-							break;
-						case ETextureType::SPECULAR:
-							texStr = "tex_specular_1";
-							break;
-						case ETextureType::NORMALS:
-							texStr = "tex_normals_1";
-							break;
-						case ETextureType::HEIGHT:
-							texStr = "tex_height_1";
-							break;
-						case ETextureType::EMISSIVE:
-							texStr = "tex_emissive_1";
-							break;
-						case ETextureType::ROUGHNESS:
-							texStr = "tex_roughness_1";
-							break;
-						case ETextureType::METALLIC:
-							texStr = "tex_metallic_1";
-							break;
-						case ETextureType::AMBIENT:
-							texStr = "tex_ao_1";
-							break;
-						default:
-							break;
+							glActiveTexture(GL_TEXTURE0 + texChannel);
+
+							std::string texStr;
+							switch (mesh->mTextures[j].GetType())
+							{
+							case ETextureType::DIFFUSE:
+								texStr = "tex_diffuse_1";
+								break;
+							case ETextureType::SPECULAR:
+								texStr = "tex_specular_1";
+								break;
+							case ETextureType::NORMALS:
+								texStr = "tex_normals_1";
+								break;
+							case ETextureType::HEIGHT:
+								texStr = "tex_height_1";
+								break;
+							case ETextureType::EMISSIVE:
+								texStr = "tex_emissive_1";
+								break;
+							case ETextureType::ROUGHNESS:
+								texStr = "tex_roughness_1";
+								break;
+							case ETextureType::METALLIC:
+								texStr = "tex_metallic_1";
+								break;
+							case ETextureType::AMBIENT:
+								texStr = "tex_ao_1";
+								break;
+							default:
+								break;
+							}
+							shader->SetInt(texStr.c_str(), texChannel++);
+							glBindTexture(GL_TEXTURE_2D, mesh->mTextures[j].GetID());
 						}
-						shader->SetInt(texStr.c_str(), texChannel++);
-						glBindTexture(GL_TEXTURE_2D, mesh->mTextures[j].GetID());
+					}
+
+					if (renderFlag & RM_EXPLICITTEX)
+					{
+						auto textures = renderComp->GetTextures();
+						for (unsigned int j = 0; j < textures.size(); j++)
+						{
+							glActiveTexture(GL_TEXTURE0 + texChannel);
+
+							std::string texStr;
+							switch (textures[j]->GetType())
+							{
+							case ETextureType::DIFFUSE:
+								texStr = "tex_diffuse_1";
+								break;
+							case ETextureType::SPECULAR:
+								texStr = "tex_specular_1";
+								break;
+							case ETextureType::NORMALS:
+								texStr = "tex_normals_1";
+								break;
+							case ETextureType::HEIGHT:
+								texStr = "tex_height_1";
+								break;
+							case ETextureType::EMISSIVE:
+								texStr = "tex_emissive_1";
+								break;
+							case ETextureType::ROUGHNESS:
+								texStr = "tex_roughness_1";
+								break;
+							case ETextureType::METALLIC:
+								texStr = "tex_metallic_1";
+								break;
+							case ETextureType::AMBIENT:
+								texStr = "tex_ao_1";
+								break;
+							default:
+								break;
+							}
+							shader->SetInt(texStr.c_str(), texChannel++);
+							glBindTexture(GL_TEXTURE_2D, textures[j]->GetID());
+						}
+					}
+
+					if (renderFlag & RM_PURECOLOR)
+					{
+						shader->SetVec3("inColor", renderComp->GetColor());
 					}
 
 					glBindVertexArray(mesh->mVAOID);
@@ -608,10 +651,9 @@ void Renderer::Render(float deltaTime)
 
 			if (renderFlag & RM_SIMPLEMESH)
 			{
-				auto textures = renderComp->GetTextures();
-
-				if (textures.size() > 0)
+				if (renderFlag & RM_EXPLICITTEX)
 				{
+					auto textures = renderComp->GetTextures();
 					for (unsigned int j = 0; j < textures.size(); j++)
 					{
 						glActiveTexture(GL_TEXTURE0 + texChannel);
@@ -649,12 +691,14 @@ void Renderer::Render(float deltaTime)
 						shader->SetInt(texStr.c_str(), texChannel++);
 						glBindTexture(GL_TEXTURE_2D, textures[j]->GetID());
 					}
-
-					//TODO: Change size based on simple mesh
-					glDrawArrays(GL_TRIANGLES, 0, 36);
-
-					
 				}
+
+				if (renderFlag & RM_PURECOLOR)
+				{
+					shader->SetVec3("inColor", renderComp->GetColor());
+				}
+
+				glDrawArrays(GL_TRIANGLES, 0, 36);
 			}
 
 			glBindVertexArray(0);

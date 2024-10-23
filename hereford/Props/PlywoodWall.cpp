@@ -33,7 +33,7 @@ PlywoodWall::PlywoodWall(GameContext* gameCtx, int type)
 
 	std::shared_ptr<Shader> shader = AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_phong_vert.glsl*Shaders/model_simple_frag.glsl"));
 	mPtrRenderComp->SetShader(shader);
-	mPtrRenderComp->SetRenderModeFlag(RM_DIFFUSETEX | RM_STATIC | RM_PBR | RM_MODELMESH);
+	mPtrRenderComp->SetRenderModeFlag(RM_EMBEDDEDTEX | RM_STATIC | RM_FLAT | RM_MODELMESH);
 
 
 	auto model = mPtrRenderComp->GetModel();

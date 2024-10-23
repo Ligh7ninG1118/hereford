@@ -31,7 +31,7 @@ TestCube::TestCube(GameContext* gameCtx)
 
 	mPtrRenderComp->SetColor(Vec3(Random::Range(0.1f, 0.9f), Random::Range(0.1f, 0.9f), Random::Range(0.1f, 0.9f)));
 
-	mPtrRenderComp->SetRenderModeFlag(RM_DIFFUSETEX | RM_STATIC | RM_PBR | RM_SIMPLEMESH);
+	mPtrRenderComp->SetRenderModeFlag(RM_EXPLICITTEX | RM_STATIC | RM_LIGHTINGANDIBL | RM_SIMPLEMESH);
 }
 
 TestCube::~TestCube()

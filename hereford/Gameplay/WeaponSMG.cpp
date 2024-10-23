@@ -25,7 +25,7 @@ void WeaponSMG::Init(Player* playerPtr)
 	mPtrAnimRenderComp = std::make_unique<AnimatedRenderComponent>(this, mGameCtx->GetRenderer(), ERenderLayer::Weapon);
 	mPtrAnimRenderComp->SetModel(AssetManager::LoadAsset<Model>(std::string("LocalResources/mp5sd/MP5SDv4.fbx")));
 	mPtrAnimRenderComp->SetShader(AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_simple_frag.glsl")));
-	mPtrAnimRenderComp->SetRenderModeFlag(RM_DIFFUSETEX | RM_ANIMATED | RM_PBR | RM_MODELMESH);
+	mPtrAnimRenderComp->SetRenderModeFlag(RM_EMBEDDEDTEX | RM_ANIMATED | RM_FLAT | RM_MODELMESH);
 
 	mHipArmTranslationOffset = Vec3(0.15f, -0.54f, 0.0f);
 	mHipArmRotationOffset = Vec3(0.0f, 0.0f, 90.0f);

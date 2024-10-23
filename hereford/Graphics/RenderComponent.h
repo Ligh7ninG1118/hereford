@@ -8,13 +8,16 @@
 #include "Asset/Model.h"
 
 const uint16 RM_PURECOLOR		= 0x0001u;
-const uint16 RM_DIFFUSETEX		= 0x0002u;
+const uint16 RM_EMBEDDEDTEX		= 0x0002u;
+const uint16 RM_EXPLICITTEX		= 0x0004u;
 
 const uint16 RM_ANIMATED		= 0x0010u;
 const uint16 RM_STATIC			= 0x0020u;
 
-const uint16 RM_PHONG			= 0x0100u;
-const uint16 RM_PBR				= 0x0200u;
+const uint16 RM_FLAT			= 0x0100u;
+const uint16 RM_LIGHTING		= 0x0200u;
+const uint16 RM_IBL				= 0x0400u;
+const uint16 RM_LIGHTINGANDIBL	= 0x0600u;
 
 const uint16 RM_MODELMESH		= 0x1000u;
 const uint16 RM_SIMPLEMESH		= 0x2000u;
