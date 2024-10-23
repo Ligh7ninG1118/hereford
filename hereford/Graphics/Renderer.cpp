@@ -547,6 +547,7 @@ void Renderer::Render(float deltaTime)
 			shader->SetInt("tex_diffuse_1", 30);
 			shader->SetInt("tex_height_1", 30);
 			shader->SetInt("tex_normals_1", 30);
+			//TODO: plywood tex leaking, temp fix is comment this line
 			shader->SetInt("tex_emissive_1", 30);
 			shader->SetInt("tex_roughness_1", 30);
 			shader->SetInt("tex_metallic_1", 30);
