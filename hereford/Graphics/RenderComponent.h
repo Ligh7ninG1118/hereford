@@ -72,6 +72,9 @@ public:
 
 	virtual Mat4 GetModelMatrix() const;
 
+	inline bool GetIsCombinedMRTex() const { return mCombinedMRTex; }
+	inline void SetIsCombinedMRTex(bool value) { mCombinedMRTex = value; }
+
 protected:
 	class Renderer& m_Renderer;
 
@@ -86,6 +89,7 @@ protected:
 	uint32 mVBO;
 
 	Vec3 mAlbedoColor;
+	bool mCombinedMRTex;
 
 	Vec3 mTranslateOffset;
 	Vec3 mRotateOffset;

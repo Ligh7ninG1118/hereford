@@ -580,12 +580,13 @@ void Renderer::Render(float deltaTime)
 				shader->SetVec3("pointLights[0].ambient", Vec3(0.5f, 0.5f, 0.5f));
 				shader->SetVec3("pointLights[0].diffuse", Vec3(0.6f, 0.6f, 0.6f));
 				shader->SetVec3("pointLights[0].specular", Vec3(1.0f, 1.0f, 1.0f));
-				shader->SetVec3("pointLights[0].color", Vec3(150.0f, 150.0f, 150.0f));
+				shader->SetVec3("pointLights[0].color", Vec3(300.0f, 300.0f, 300.0f));
 
 				shader->SetFloat("pointLights[0].constant", 1.0f);
 				shader->SetFloat("pointLights[0].linear", 0.007f);
 				shader->SetFloat("pointLights[0].quadratic", 0.0002f);
 			}
+
 
 			if (renderFlag & RM_MODELMESH)
 			{
@@ -619,12 +620,13 @@ void Renderer::Render(float deltaTime)
 								texStr = "tex_emissive_1";
 								break;
 							case ETextureType::ROUGHNESS:
-								texStr = "tex_roughness_1";
+								texStr = renderComp->GetIsCombinedMRTex() ? "tex_metallic_1" :"tex_roughness_1";
 								break;
 							case ETextureType::METALLIC:
 								texStr = "tex_metallic_1";
 								break;
 							case ETextureType::AMBIENT:
+							case ETextureType::AMBIENT_OCCLUSION:
 								texStr = "tex_ao_1";
 								break;
 							default:

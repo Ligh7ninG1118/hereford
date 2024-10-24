@@ -24,6 +24,7 @@ RenderComponent::RenderComponent(Actor* owner, Renderer& rendererRef, ERenderLay
 	mRenderModeFlag(0u),
 	mVAO(0),
 	mVBO(0),
+	mCombinedMRTex(false),
 	mTranslateOffset(Vec3::Zero),
 	mRotateOffset(Vec3::Zero),
 	mScaleOffset(Vec3::One)
