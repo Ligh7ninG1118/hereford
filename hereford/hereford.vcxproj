@@ -157,6 +157,7 @@
   <ItemGroup>
     <ClCompile Include="Audio\AudioComponent.cpp" />
     <ClCompile Include="Audio\AudioManager.cpp" />
+    <ClCompile Include="Gameplay\FlyCamera.cpp" />
     <ClCompile Include="Gameplay\Actions\Action.cpp" />
     <ClCompile Include="Gameplay\Actions\ActionComponent.cpp" />
     <ClCompile Include="Graphics\AnimatedRenderComponent.cpp" />
@@ -219,6 +220,7 @@
   <ItemGroup>
     <ClInclude Include="Audio\AudioComponent.h" />
     <ClInclude Include="Audio\AudioManager.h" />
+    <ClInclude Include="Gameplay\FlyCamera.h" />
     <ClInclude Include="Gameplay\Actions\Action.h" />
     <ClInclude Include="Gameplay\Actions\ActionComponent.h" />
     <ClInclude Include="Gameplay\IHittable.h" />

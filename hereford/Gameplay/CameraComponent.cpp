@@ -21,10 +21,10 @@ CameraComponent::~CameraComponent()
 
 void CameraComponent::Update(float deltaTime)
 {
-	ImGui::Begin("Recoil");
+	/*ImGui::Begin("Recoil");
 	ImGui::Text("Deferred (%.2f, %.2f)", mDeferredRecoilDir.mX, mDeferredRecoilDir.mY);
 	ImGui::Text("Recenter Target (%.2f)", mVerticalRecenteringTarget);
-	ImGui::End();
+	ImGui::End();*/
 
 	if (mDeferredRecoilDir.Magnitude() > EPSILON)
 	{

@@ -1,17 +1,10 @@
 #include "Core/GameContext.h"
 #include "Core/Actor.h"
 #include "Gameplay/Player.h"
-#include "Props/TestCube.h"
-#include "Props/Ground.h"
-#include "Props/LightBulb.h"
-#include "Props/NPC.h"
+#include "Gameplay/FlyCamera.h"
 #include "Props/PlywoodWall.h"
-#include "Util/Random.h"
 #include "Util/DelayedAction.h"
 #include "Util/TimelineAction.h"
-#include "Asset/Shader.h"
-
-#include "Asset/Model.h"
 
 #include <glad/glad.h>
 
@@ -97,7 +90,7 @@ bool GameContext::Initialize()
 
 	mIsRunning = true;
 	LoadStarterData();
-	LoadScene("Scenes/playground-target.json");
+	LoadScene("Scenes/showcase.json");
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -170,6 +163,11 @@ void GameContext::LoadStarterData()
 	mPtrRenderer->SetMainCamera(&mPtrPlayer->GetMainCamera());
 
 	mPtrAudioManager->SetPlayerReference(mPtrPlayer);
+
+	/*FlyCamera* flyCamera = new FlyCamera(this);
+	mPtrRenderer->SetMainCamera(&flyCamera->GetMainCamera());
+
+	mPtrAudioManager->SetPlayerReference(flyCamera);*/
 }
 
 void GameContext::LoadScene(const std::string& sceneFilePath)
