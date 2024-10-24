@@ -97,7 +97,6 @@ void main()
         vec3 F = FresnelComponent(max(dot(H, V), 0.0f), F0, roughness);
 
         vec3 num = NDF * G * F;
-        //TODO: need a helper function for this
         //adding small number to prevent divide by zero
         float denom = 4.0f * max(dot(N, V), 0.0f) * max(dot(N, L),0.0f) + 0.0001f;
         vec3 specular = num / denom;
@@ -115,6 +114,7 @@ void main()
     vec3 kD = 1.0f - kS;
     kD *= 1.0f - metallic;
 
+    //TODO: reflection upside down?
     vec3 irradiance = texture(skybox, N).rgb;
     vec3 diffuse = irradiance * albedo;
 
@@ -128,7 +128,7 @@ void main()
     vec3 color = ambient + Lo;
 
     color = color / (color + vec3(1.0f));
-    color = pow(color, vec3(1.0f/2.2f));
+    //color = pow(color, vec3(1.0f/2.2f));
     color += emissive;
 
     FragColor = vec4(color, 1.0f) ;

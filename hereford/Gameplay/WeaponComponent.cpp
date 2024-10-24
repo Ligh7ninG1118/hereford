@@ -66,6 +66,8 @@ void WeaponComponent::Update(float deltaTime)
 
 bool WeaponComponent::CanFire()
 {
+	//Prevent fire when reloading
+
 	if (mFireRateTimer > 0.0f)
 		return false;
 
