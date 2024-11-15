@@ -159,15 +159,20 @@ void GameContext::RunLoop()
 
 void GameContext::LoadStarterData()
 {
-	mPtrPlayer = new Player(this);
-	mPtrRenderer->SetMainCamera(&mPtrPlayer->GetMainCamera());
+	if (false)
+	{
+		mPtrPlayer = new Player(this);
+		mPtrRenderer->SetMainCamera(&mPtrPlayer->GetMainCamera());
 
-	mPtrAudioManager->SetPlayerReference(mPtrPlayer);
+		mPtrAudioManager->SetPlayerReference(mPtrPlayer);
+	}
+	else
+	{
+		FlyCamera* flyCamera = new FlyCamera(this);
+		mPtrRenderer->SetMainCamera(&flyCamera->GetMainCamera());
 
-	/*FlyCamera* flyCamera = new FlyCamera(this);
-	mPtrRenderer->SetMainCamera(&flyCamera->GetMainCamera());
-
-	mPtrAudioManager->SetPlayerReference(flyCamera);*/
+		mPtrAudioManager->SetPlayerReference(flyCamera);
+	}
 }
 
 void GameContext::LoadScene(const std::string& sceneFilePath)
