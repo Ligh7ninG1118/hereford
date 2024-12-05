@@ -90,7 +90,7 @@ bool GameContext::Initialize()
 
 	mIsRunning = true;
 	LoadStarterData();
-	LoadScene("Scenes/showcase.json");
+	LoadScene("Scenes/killhouse.json");
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -159,7 +159,7 @@ void GameContext::RunLoop()
 
 void GameContext::LoadStarterData()
 {
-	if (false)
+	if (true)
 	{
 		mPtrPlayer = new Player(this);
 		mPtrRenderer->SetMainCamera(&mPtrPlayer->GetMainCamera());
