@@ -46,10 +46,10 @@ RangeTarget::RangeTarget(GameContext* gameCtx)
 	std::shared_ptr<Shader> shader = AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_pbr_frag.glsl"));
 	mPtrRenderComp->SetShader(shader);
 
-	PhysicsPrimitive bodyPrimitive = PhysicsPrimitive{ AABBPrimitive{Vec3(0.05f, 0.4f, 0.4f)}, Vec3(0.0f, 1.3f, 0.0f) };
+	PhysicsPrimitive bodyPrimitive = PhysicsPrimitive{ AABBPrimitive{Vec3(0.4f, 0.4f, 0.4f)}, Vec3(0.0f, 1.3f, 0.0f) };
 	mPtrPhysicsCompBody = new PhysicsComponent(static_cast<Actor*>(this), gameCtx->GetPhysicsManager(), bodyPrimitive);
 
-	PhysicsPrimitive headPrimitive = PhysicsPrimitive{ AABBPrimitive{Vec3(0.05f, 0.225f, 0.15f)}, Vec3(0.0f, 1.95f, 0.0f) };
+	PhysicsPrimitive headPrimitive = PhysicsPrimitive{ AABBPrimitive{Vec3(0.15f, 0.225f, 0.15f)}, Vec3(0.0f, 1.95f, 0.0f) };
 	mPtrPhysicsCompHead = new PhysicsComponent(static_cast<Actor*>(this), gameCtx->GetPhysicsManager(), headPrimitive);
 
 	mPtrAudioComponent = std::make_unique<AudioComponent>(this, gameCtx->GetAudioManager(), true);
@@ -86,16 +86,15 @@ void RangeTarget::ResetTarget()
 	hasHit = false;
 	mPtrPhysicsCompBody->SetState(EComponentState::Enabled);
 	mPtrPhysicsCompHead->SetState(EComponentState::Enabled);
-	Vec3 rot = GetRotation();
-	rot.mY = 0.0f;
-	SetRotation(rot);
+	Vec3 pos = GetPosition();
+	pos.mY = 0.0f;
+	SetPosition(pos);
 }
 
 void RangeTarget::HitTimeline(float alpha)
 {
-	Vec3 rot = GetRotation();
-	rot.mY = Math::Lerp(rot.mY, 80.0f, alpha);
-
-	SetRotation(rot);
+	Vec3 pos = GetPosition();
+	pos.mY = Math::Lerp(pos.mY, -3.0f, alpha);
+	SetPosition(pos);
 }
 
