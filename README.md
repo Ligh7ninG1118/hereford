@@ -7,9 +7,9 @@ The project's main purpose is for me to learn more about game engine development
 
 >Note: Due to different license requirements, assets used aren't included in this repo
 
-## Progress Showcase (Updated 10/04/2024)
+## Progress Showcase (Updated 12/10/2024)
 ### General Showcase (Gameplay, Audio, Animation, UI)
-[![Hereford Progress Showcase](http://img.youtube.com/vi/3NIVXB-3Icc/0.jpg)](https://youtu.be/3NIVXB-3Icc)
+[![Hereford Progress Showcase](http://img.youtube.com/vi/SV0PGrmKE3c/0.jpg)](https://youtu.be/SV0PGrmKE3c)
 ### Render Sample
 ![HelmetShowcase](https://github.com/user-attachments/assets/57863f86-3471-45aa-9e32-ddc32cf1d53d)
 
@@ -47,24 +47,6 @@ or at least, "it's working!"
 
 ### Audio
 - Sound Effects
-
-## Planned Features
-### Engine
-- Lua Scripting
-- Scripted Level Sequence
-
-### Gameplay
-- Movement States (Prone, Ladder Climbing, Rapple Down)
-- Gadgets
-
-### Physics
-- Gravity
-- Collision Response
-- Collision Detection (Broad/Narrow Phase)
-
-### Visual
-- Particle Effect
-- Decal Rendering
 
 ## Libraries Used
 - SDL2
