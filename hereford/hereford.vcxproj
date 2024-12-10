@@ -172,6 +172,7 @@
     <ClCompile Include="Core\Component.cpp" />
     <ClCompile Include="Core\GameContext.cpp" />
     <ClCompile Include="Asset\Primitive.cpp" />
+    <ClCompile Include="Props\InteractButton.cpp" />
     <ClCompile Include="Props\PlywoodWall.cpp" />
     <ClCompile Include="Props\Ground.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -185,6 +186,7 @@
     <ClCompile Include="Props\NPC.cpp" />
     <ClCompile Include="Props\RangeTarget.cpp" />
     <ClCompile Include="Props\ShowcaseModel.cpp" />
+    <ClCompile Include="Gameplay\TestMaster.cpp" />
     <ClCompile Include="UI\UIOneInTheChamber.cpp" />
     <ClCompile Include="Util\TimelineAction.cpp" />
     <ClCompile Include="UI\UICrosshair.cpp" />
@@ -237,6 +239,7 @@
     <ClInclude Include="Core\Component.h" />
     <ClInclude Include="Core\GameContext.h" />
     <ClInclude Include="Asset\Primitive.h" />
+    <ClInclude Include="Props\InteractButton.h" />
     <ClInclude Include="Props\PlywoodWall.h" />
     <ClInclude Include="Props\Ground.h" />
     <ClInclude Include="imgui\imconfig.h" />
@@ -253,6 +256,7 @@
     <ClInclude Include="Props\NPC.h" />
     <ClInclude Include="Props\RangeTarget.h" />
     <ClInclude Include="Props\ShowcaseModel.h" />
+    <ClInclude Include="Gameplay\TestMaster.h" />
     <ClInclude Include="UI\UIOneInTheChamber.h" />
     <ClInclude Include="Util\TimelineAction.h" />
     <ClInclude Include="UI\UICrosshair.h" />

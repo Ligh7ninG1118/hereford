@@ -142,12 +142,13 @@ void Weapon::Fire()
 		GetGameContext()->GetPhysicsManager().RaycastQuery(origin, dir, 1000.0f, hitInfo);
 
 		if (hitInfo.hitActor != nullptr)
+		{
 			if (auto hittable = dynamic_cast<IHittable*>(hitInfo.hitActor); hittable != nullptr)
 			{
-				//TODO: make this a var
 				hitInfo.hitPower = 1.0f;
 				hittable->Hit(hitInfo);
 			}
+		}
 
 		cam.RotateCamera(mPtrWeaponComp->CalculateRecoilDeviation() * 5.0f);
 

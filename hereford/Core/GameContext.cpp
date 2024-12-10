@@ -2,6 +2,7 @@
 #include "Core/Actor.h"
 #include "Gameplay/Player.h"
 #include "Gameplay/FlyCamera.h"
+#include "Gameplay/TestMaster.h"
 #include "Props/PlywoodWall.h"
 #include "Util/DelayedAction.h"
 #include "Util/TimelineAction.h"
@@ -139,7 +140,7 @@ void GameContext::RunLoop()
 		UpdateGame();
 		UpdateAudio();
 		CalculatePhysics();
-		DebugSceneObjects();
+		//DebugSceneObjects();
 		DelayedActionManager::UpdateTimers(mDeltaTime);
 		TimelineActionManager::UpdateTimers(mDeltaTime);
 		Uint32 timestampUpdate = SDL_GetTicks();
@@ -162,6 +163,7 @@ void GameContext::LoadStarterData()
 	if (true)
 	{
 		mPtrPlayer = new Player(this);
+		mPtrPlayer->SetPosition(Vector3(4.0f, 0.0f, 4.0f));
 		mPtrRenderer->SetMainCamera(&mPtrPlayer->GetMainCamera());
 
 		mPtrAudioManager->SetPlayerReference(mPtrPlayer);
@@ -173,6 +175,9 @@ void GameContext::LoadStarterData()
 
 		mPtrAudioManager->SetPlayerReference(flyCamera);
 	}
+
+	mPtrTestMaster = new TestMaster(this);
+	mPtrRenderer->SetTestMaster(mPtrTestMaster);
 }
 
 void GameContext::LoadScene(const std::string& sceneFilePath)

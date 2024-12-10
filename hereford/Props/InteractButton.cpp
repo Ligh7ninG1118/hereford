@@ -1,14 +1,16 @@
-#include "ShowcaseModel.h"
+#include "InteractButton.h"
 #include "Core/GameContext.h"
 #include "Graphics/RenderComponent.h"
 #include "Asset/AssetManager.h"
+#include "Physics/PhysicsComponent.h"
+#include "Audio/AudioComponent.h"
 
 
-ShowcaseModel::ShowcaseModel(GameContext* gameCtx) 
+InteractButton::InteractButton(GameContext* gameCtx)
 	:
 	Actor(gameCtx)
 {
-	mPtrRenderComp = new RenderComponent(static_cast<Actor*>(this), gameCtx->GetRenderer());
+	mPtrRenderComp = std::make_unique<RenderComponent>(static_cast<Actor*>(this), gameCtx->GetRenderer());
 	mPtrRenderComp->SetShader(AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_pbr_frag.glsl")));
 	mPtrRenderComp->SetModel(AssetManager::LoadAsset<Model>(std::string("LocalResources/red button/redbutton.dae")));
 	mPtrRenderComp->SetRenderModeFlag(RM_EMBEDDEDTEX | RM_STATIC | RM_LIGHTINGANDIBL | RM_MODELMESH);
@@ -37,4 +39,21 @@ ShowcaseModel::ShowcaseModel(GameContext* gameCtx)
 	Texture roughnessTex("LocalResources/red button/Material_roughness.jpg");
 	roughnessTex.SetType(ETextureType::ROUGHNESS);
 	model.lock()->ManualLoadTexture(roughnessTex);
+
+
+	mPtrPhysicsComp = std::make_unique<PhysicsComponent>(static_cast<Actor*>(this), gameCtx->GetPhysicsManager());
+
+	mPtrAudioComp = std::make_unique<AudioComponent>(this, gameCtx->GetAudioManager(), true);
+	mPtrAudioComp->InitAsset("buzzer.wav");
+
+}
+
+InteractButton::~InteractButton()
+{
+}
+
+void InteractButton::Interact()
+{
+	mPtrAudioComp->Play();
+	GameEvent::Publish<EventOnInteractButtonPressed>(EventOnInteractButtonPressed());
 }

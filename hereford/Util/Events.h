@@ -28,3 +28,9 @@ struct EventOnWeaponAiming
 		: aimingProgress(progress)
 	{}
 };
+
+struct EventOnInteractButtonPressed
+{
+	EventOnInteractButtonPressed()
+	{ }
+};

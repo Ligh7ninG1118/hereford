@@ -12,6 +12,7 @@
 #include "UI/UIElement.h"
 #include "UI/UIAmmoIndicator.h"
 #include "Gameplay/WeaponComponent.h"
+#include "Gameplay/TestMaster.h"
 
 #include <stb_image.h>
 
@@ -96,13 +97,9 @@ bool Renderer::Initialize()
 	glGenTextures(1, &skyboxTexID);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);
 
-	/*std::vector<std::string> textures_faces{ "LocalResources/skybox/AboveDay_Right.png", "LocalResources/skybox/AboveDay_Left.png", 
+	std::vector<std::string> textures_faces{ "LocalResources/skybox/AboveDay_Right.png", "LocalResources/skybox/AboveDay_Left.png", 
 	"LocalResources/skybox/AboveDay_Up.png", "LocalResources/skybox/AboveDay_Down.png", "LocalResources/skybox/AboveDay_Back.png", 
-	"LocalResources/skybox/AboveDay_Front.png"};*/
-
-	std::vector<std::string> textures_faces{ "LocalResources/skybox/CartoonSunset_Right.png", "LocalResources/skybox/CartoonSunset_Left.png",
-	"LocalResources/skybox/CartoonSunset_Up.png", "LocalResources/skybox/CartoonSunset_Down.png", "LocalResources/skybox/CartoonSunset_Back.png",
-	"LocalResources/skybox/CartoonSunset_Front.png" };
+	"LocalResources/skybox/AboveDay_Front.png"};
 
 	int width, height, channelNum;
 	unsigned char* data;
@@ -349,7 +346,7 @@ bool Renderer::Initialize()
 
 
 
-	/*FT_Library ft;
+	FT_Library ft;
 	if (FT_Init_FreeType(&ft))
 	{
 		printf("ERROR::FREETYPE: Could not init Freetype Libaray\n");
@@ -410,7 +407,7 @@ bool Renderer::Initialize()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);*/
+	glBindVertexArray(0);
 
 	
 
@@ -779,11 +776,10 @@ void Renderer::Render(float deltaTime)
 	const uint32 cpuTime = mPtrGameContext->cpuTime;
 	const uint32 gpuTime = mPtrGameContext->gpuTime;
 
-	/*std::string text = std::format("Pos: ({:.2f}, {:.2f}, {:.2f}) Rot:  ({:.2f}, {:.2f}, {:.2f}) CPU Frame Time: {:d} GPU Frame Time: {:d}"
-		, pos.mX, pos.mY, pos.mZ, rot.mX, rot.mY, rot.mZ, cpuTime, gpuTime);
+	std::string text = mTestMaster->GetOutputString();
 	float x = 100.0f;
 	float y = mScreenHeight - 100.0f;
-	float scale = 0.5f;
+	float scale = 0.8f;
 	for (c = text.begin(); c != text.end(); c++)
 	{
 		Character ch = Characters[*c];
@@ -812,7 +808,7 @@ void Renderer::Render(float deltaTime)
 		x += (ch.mAdvance >> 6) * scale;
 	}
 	glBindVertexArray(0);
-	glBindTexture(GL_TEXTURE_2D, 0); */
+	glBindTexture(GL_TEXTURE_2D, 0); 
 	
 
 	for (auto uiElement : mUIElements)

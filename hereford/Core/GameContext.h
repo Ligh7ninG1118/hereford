@@ -57,6 +57,8 @@ private:
 	std::unique_ptr<AudioManager> mPtrAudioManager;
 
 	class Player* mPtrPlayer;
+	class TestMaster* mPtrTestMaster;
+
 
 	// separate asset manager to manage this
 	std::unordered_map<std::string, Uint32> mShaderMap;

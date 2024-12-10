@@ -43,6 +43,8 @@ public:
 
 	void AddDebugLines(Vec3 startPos, Vec3 endPos);
 
+	void SetTestMaster(class TestMaster* pMaster) { mTestMaster = pMaster; }
+
 private:
 	SDL_Window* mPtrSDLWindowContext;
 	SDL_GLContext mGLContext;
@@ -69,6 +71,8 @@ private:
 	Uint32 textVAO;
 	Uint32 textVBO;
 	std::map<char, Character> Characters;
+
+	class TestMaster* mTestMaster;
 
 	std::map<ERenderLayer, std::vector<class RenderComponent*>> mRenderComponentMap;
 

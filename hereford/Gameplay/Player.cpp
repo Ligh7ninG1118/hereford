@@ -121,7 +121,7 @@ void Player::OnUpdate(float deltaTime)
 		}
 	}
 
-	ShowDebugInfo();
+	//ShowDebugInfo();
 }
 
 void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
@@ -276,10 +276,6 @@ void Player::ProcessInteractionPrompt()
 	static float interactRadius = 0.5f;
 	static float interactDis = 0.5f;
 
-	ImGui::Begin("Interaction", 0, ImGuiWindowFlags_AlwaysAutoResize);
-	ImGui::SliderFloat("Radius", &interactRadius, 0.0f, 2.0f);
-	ImGui::SliderFloat("Distance", &interactDis, 0.0f, 2.0f);
-
 	HitInfo hitInfo;
 	mInteractCandidate = nullptr;
 
@@ -289,14 +285,8 @@ void Player::ProcessInteractionPrompt()
 			if (auto interactable = dynamic_cast<IInteractable*>(hitInfo.hitActor); interactable != nullptr)
 			{
 				mInteractCandidate = interactable;
-				ImGui::Text("Result: %s", interactable->GetInteractPrompt().c_str());
 			}
 	}
-	else
-	{
-		ImGui::Text("Result: No");
-	}
-	ImGui::End();
 }
 
 void Player::Interaction()
