@@ -86,3 +86,5 @@ or at least, "it's working!"
 - ITP 380 (USC) by Sanjay Madhav (https://itp380.org/)
 - 3D Collisions by Gabor Szauer (https://gdbooks.gitbooks.io/3dcollisions/content/)
 
+## Trivia
+- The project name *hereford* comes from Herefordshire, the real-life location of the Special Air Service headquarters, and the location of the F.N.G. level from *Call of Duty 4: Modern Warfare*.
