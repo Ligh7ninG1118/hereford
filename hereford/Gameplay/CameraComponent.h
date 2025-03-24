@@ -3,7 +3,7 @@
 #include "../Core/Component.h"
 #include "../Math/Math.h"
 
-class CameraComponent : public Component
+class CameraComponent : public OldComponent
 {
 public:
 	CameraComponent(class Actor* owner, float eyeHeight = 1.8f);

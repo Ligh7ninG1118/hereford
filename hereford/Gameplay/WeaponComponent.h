@@ -19,7 +19,7 @@ enum class ERecoilType
 };
 
 
-class WeaponComponent : public Component
+class WeaponComponent : public OldComponent
 {
 	friend class Weapon;
 	friend class WeaponPistol;

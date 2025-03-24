@@ -11,7 +11,7 @@ struct AnimState
 };
 
 
-class AnimationStateMachine : public Component
+class AnimationStateMachine : public OldComponent
 {
 public:
 	AnimationStateMachine(class Actor* owner, std::unique_ptr<class Animator> inAnimator);

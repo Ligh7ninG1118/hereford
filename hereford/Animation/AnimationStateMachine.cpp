@@ -4,7 +4,7 @@
 
 AnimationStateMachine::AnimationStateMachine(Actor* owner, std::unique_ptr<Animator> inAnimator)
 	:
-	Component(owner),
+	OldComponent(owner),
 	mPtrAnimator(std::move(inAnimator))
 {
 	//TODO: problem! this is essentially broadcast. How do i make it more "direct"?

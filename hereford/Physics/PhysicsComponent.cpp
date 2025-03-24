@@ -4,7 +4,7 @@
 #include "PhysicsPrimitive.h"
 
 PhysicsComponent::PhysicsComponent(Actor* owner, class PhysicsManager& phyMgrRef, PhysicsPrimitive primitive)
-	: Component(owner),
+	: OldComponent(owner),
 	m_PhysicsManager(phyMgrRef),
 	mPhyPrimitive(primitive),
 	mUseGravity(false),

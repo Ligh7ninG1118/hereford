@@ -1,25 +1,25 @@
 #include "Component.h"
 #include "Actor.h"
 
-Component::Component(Actor* owner, int updateOrder)
+OldComponent::OldComponent(Actor* owner, int updateOrder)
 	: mOwner(owner), mUpdateOrder(updateOrder)
 {
 	mOwner->AddComponent(this);
 }
 
-Component::~Component()
+OldComponent::~OldComponent()
 {
 }
 
-void Component::Update(float deltaTime)
+void OldComponent::Update(float deltaTime)
 {
 }
 
-void Component::ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
+void OldComponent::ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
 {
 }
 
-Game* Component::GetGame() const
+Game* OldComponent::GetGame() const
 {
 	return nullptr;
 }

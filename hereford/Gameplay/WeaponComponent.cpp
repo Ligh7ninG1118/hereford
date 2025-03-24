@@ -14,7 +14,7 @@
 #include <SDL2/SDL.h>
 
 WeaponComponent::WeaponComponent(Actor* owner, AnimationStateMachine* inASM)
-	: Component(owner),
+	: OldComponent(owner),
 	mAnimStateMachine(inASM)
 {
 	mCurrentState = EWeaponState::READY;

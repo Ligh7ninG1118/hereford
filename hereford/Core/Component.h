@@ -11,13 +11,13 @@ enum class EComponentState
 	Disabled,
 };
 
-class Component
+class OldComponent
 {
 public:
 	// Constructor
-	Component(class Actor* owner, int updateOrder = 100);
+	OldComponent(class Actor* owner, int updateOrder = 100);
 	// Destructor
-	virtual ~Component();
+	virtual ~OldComponent();
 	// Update this component by delta time
 	virtual void Update(float deltaTime);
 	// Process input for this component (if needed)

@@ -3,7 +3,7 @@
 #include "Core/Component.h"
 #include "Graphics/LightStructs.h"
 
-class LightComponent : public Component
+class LightComponent : public OldComponent
 {
 public:
 	LightComponent(class Actor* owner, class Renderer& rendererRef);

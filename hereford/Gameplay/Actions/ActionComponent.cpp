@@ -2,7 +2,7 @@
 #include "Core/Actor.h"
 
 ActionComponent::ActionComponent(Actor* owner)
-	: Component(owner)
+	: OldComponent(owner)
 {
 }
 

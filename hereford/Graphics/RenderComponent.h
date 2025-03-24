@@ -30,7 +30,7 @@ enum class ERenderLayer : uint8
 };
 
 
-class RenderComponent : public Component
+class RenderComponent : public OldComponent
 {
 public:
 	RenderComponent(class Actor* owner, class Renderer& rendererRef, ERenderLayer renderLayer = ERenderLayer::Default);

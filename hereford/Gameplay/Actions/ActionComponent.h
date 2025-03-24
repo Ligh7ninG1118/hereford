@@ -6,7 +6,7 @@
 #include <string>
 
 
-class ActionComponent : public Component
+class ActionComponent : public OldComponent
 {
 public:
 	ActionComponent(class Actor* owner);

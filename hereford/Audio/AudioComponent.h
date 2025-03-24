@@ -3,7 +3,7 @@
 #include <string>
 #include "AudioManager.h"
 
-class AudioComponent : public Component
+class AudioComponent : public OldComponent
 {
 public:
 	AudioComponent(class Actor* owner, class AudioManager& audioManagerRef, bool is3D = false);

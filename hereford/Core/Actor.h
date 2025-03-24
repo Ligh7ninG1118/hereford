@@ -70,10 +70,10 @@ protected:
 	Vector3 mScale;
 	Vector3 mRotation;
 
-	std::vector<class Component*> mComponents;
+	std::vector<class OldComponent*> mComponents;
 
 private:
-	friend class Component;
-	void AddComponent(class Component* c);
+	friend class OldComponent;
+	void AddComponent(class OldComponent* c);
 };
 

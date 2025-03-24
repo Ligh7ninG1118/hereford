@@ -4,7 +4,7 @@
 #include "imgui/imgui.h"
 
 CameraComponent::CameraComponent(Actor* owner, float eyeHeight)
-	: Component(owner),
+	: OldComponent(owner),
 	mDeferredRecoilDir(Vec2(0.0f,0.0f)),
 	mPositionOffset(Vector3(0.0f, eyeHeight, 0.0f)),
 	mRotation(Vector3(0.0f, 0.0f, 0.0f)),
