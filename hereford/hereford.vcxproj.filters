@@ -27,7 +27,7 @@
     <ClCompile Include="Core\Actor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Component.cpp">
+    <ClCompile Include="Core\OldComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\GameContext.cpp">
@@ -204,6 +204,15 @@
     <ClCompile Include="Gameplay\TestMaster.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Component.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\System.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asset\Shader.h">
@@ -215,7 +224,7 @@
     <ClInclude Include="Core\Actor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Component.h">
+    <ClInclude Include="Core\OldComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\GameContext.h">
@@ -426,6 +435,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Gameplay\TestMaster.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\System.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
