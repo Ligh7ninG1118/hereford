@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Component.h"
+#include "Core/OldComponent.h"
 #include "Math/Math.h"
 #include <string>
 #include <vector>

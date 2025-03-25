@@ -1,6 +1,6 @@
 #pragma once
 #include "Action.h"
-#include "Core/Component.h"
+#include "Core/OldComponent.h"
 #include "Util/GameplayTagContainer.h"
 #include <set>
 #include <string>

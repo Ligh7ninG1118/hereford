@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/Component.h"
+#include "Core/OldComponent.h"
 #include <string>
 #include "AudioManager.h"
 

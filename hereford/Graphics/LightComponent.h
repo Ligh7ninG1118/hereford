@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Component.h"
+#include "Core/OldComponent.h"
 #include "Graphics/LightStructs.h"
 
 class LightComponent : public OldComponent
