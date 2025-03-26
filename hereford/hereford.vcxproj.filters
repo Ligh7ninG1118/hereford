@@ -213,6 +213,9 @@
     <ClCompile Include="Core\System.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Audio\AudioSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asset\Shader.h">
@@ -444,6 +447,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\System.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\AudioSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HerefordCommon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

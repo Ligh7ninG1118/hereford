@@ -155,6 +155,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Audio\AudioSystem.cpp" />
     <ClCompile Include="Audio\AudioComponent.cpp" />
     <ClCompile Include="Audio\AudioManager.cpp" />
     <ClCompile Include="Core\Component.cpp" />
@@ -223,6 +224,7 @@
     <ClCompile Include="Gameplay\WeaponSMG.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Audio\AudioSystem.h" />
     <ClInclude Include="Audio\AudioComponent.h" />
     <ClInclude Include="Audio\AudioManager.h" />
     <ClInclude Include="Core\Component.h" />
@@ -244,6 +246,7 @@
     <ClInclude Include="Core\OldComponent.h" />
     <ClInclude Include="Core\GameContext.h" />
     <ClInclude Include="Asset\Primitive.h" />
+    <ClInclude Include="HerefordCommon.h" />
     <ClInclude Include="Props\InteractButton.h" />
     <ClInclude Include="Props\PlywoodWall.h" />
     <ClInclude Include="Props\Ground.h" />
