@@ -18,7 +18,7 @@
 
 RenderComponent::RenderComponent(Actor* owner, Renderer& rendererRef, ERenderLayer renderLayer)
 	:
-	Component(owner),
+	OldComponent(owner),
 	m_Renderer(rendererRef),
 	mRenderLayer(renderLayer),
 	mRenderModeFlag(0u),

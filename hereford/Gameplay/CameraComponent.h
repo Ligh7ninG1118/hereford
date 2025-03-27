@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../Core/Component.h"
+#include "../Core/OldComponent.h"
 #include "../Math/Math.h"
 
-class CameraComponent : public Component
+class CameraComponent : public OldComponent
 {
 public:
 	CameraComponent(class Actor* owner, float eyeHeight = 1.8f);

@@ -3,7 +3,7 @@
 #include "Core/Actor.h"
 
 AudioComponent::AudioComponent(Actor* owner, AudioManager& audioManagerRef, bool is3D)
-	: Component(owner),
+	: OldComponent(owner),
 	mAudioManager(audioManagerRef),
 	mIs3D(is3D),
 	mHandle(0)

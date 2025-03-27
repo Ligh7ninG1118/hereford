@@ -5,7 +5,7 @@
 
 LightComponent::LightComponent(Actor* owner, Renderer& rendererRef)
 	:
-	Component(owner),
+	OldComponent(owner),
 	m_Renderer(rendererRef)
 {
 	m_Renderer.AddLightComponent(this);

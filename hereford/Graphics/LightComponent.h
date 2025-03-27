@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Core/Component.h"
+#include "Core/OldComponent.h"
 #include "Graphics/LightStructs.h"
 
-class LightComponent : public Component
+class LightComponent : public OldComponent
 {
 public:
 	LightComponent(class Actor* owner, class Renderer& rendererRef);

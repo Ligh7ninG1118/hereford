@@ -1,25 +1,14 @@
 #include "Component.h"
-#include "Actor.h"
 
-Component::Component(Actor* owner, int updateOrder)
-	: mOwner(owner), mUpdateOrder(updateOrder)
+Component::Component(uint32_t ownerID)
+	: mOwnerEntityID(ownerID)
 {
-	mOwner->AddComponent(this);
+}
+
+void Component::Create()
+{
 }
 
 Component::~Component()
 {
-}
-
-void Component::Update(float deltaTime)
-{
-}
-
-void Component::ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
-{
-}
-
-Game* Component::GetGame() const
-{
-	return nullptr;
 }

@@ -1,12 +1,12 @@
 #pragma once
 #include "Action.h"
-#include "Core/Component.h"
+#include "Core/OldComponent.h"
 #include "Util/GameplayTagContainer.h"
 #include <set>
 #include <string>
 
 
-class ActionComponent : public Component
+class ActionComponent : public OldComponent
 {
 public:
 	ActionComponent(class Actor* owner);

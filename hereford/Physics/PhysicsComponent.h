@@ -1,10 +1,10 @@
 #pragma once
-#include "Core/Component.h"
+#include "Core/OldComponent.h"
 #include "Math/Math.h"
 #include "PhysicsPrimitive.h"
 
 
-class PhysicsComponent : public Component
+class PhysicsComponent : public OldComponent
 {
 public:
 	PhysicsComponent(class Actor* owner, class PhysicsManager& phyMgrRef, PhysicsPrimitive primitive = PhysicsPrimitive{ AABBPrimitive{Vec3(0.1f)}, Vec3::Zero});

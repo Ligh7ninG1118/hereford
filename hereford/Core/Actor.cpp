@@ -29,7 +29,7 @@ Actor::~Actor()
 
 void Actor::Update(float deltaTime)
 {
-	for (Component* pCom : mComponents)
+	for (OldComponent* pCom : mComponents)
 	{
 		if(pCom->GetState() == EComponentState::Enabled)
 			pCom->Update(deltaTime);
@@ -43,7 +43,7 @@ void Actor::ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseS
 	if (mState != EActorState::Enabled)
 		return;
 
-	for (Component* pCom : mComponents)
+	for (OldComponent* pCom : mComponents)
 	{
 		if (pCom->GetState() == EComponentState::Enabled)
 			pCom->ProcessInput(keyState, mouseState, mouseDeltaX, mouseDeltaY);
@@ -59,7 +59,7 @@ void Actor::SetState(EActorState state, bool setComponents)
 	if (setComponents)
 	{
 		EComponentState cState = state == EActorState::Enabled ? EComponentState::Enabled : EComponentState::Disabled;
-		for (Component* pCom : mComponents)
+		for (OldComponent* pCom : mComponents)
 		{
 			pCom->SetState(cState);
 		}
@@ -74,10 +74,10 @@ void Actor::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mous
 {
 }
 
-void Actor::AddComponent(Component* c)
+void Actor::AddComponent(OldComponent* c)
 {
 	mComponents.emplace_back(c);
-	std::sort(mComponents.begin(), mComponents.end(), [](Component* a, Component* b) {
+	std::sort(mComponents.begin(), mComponents.end(), [](OldComponent* a, OldComponent* b) {
 		return a->GetUpdateOrder() < b->GetUpdateOrder();
 		});
 }

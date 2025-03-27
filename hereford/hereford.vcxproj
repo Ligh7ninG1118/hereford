@@ -155,8 +155,11 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Audio\AudioSystem.cpp" />
     <ClCompile Include="Audio\AudioComponent.cpp" />
     <ClCompile Include="Audio\AudioManager.cpp" />
+    <ClCompile Include="Core\Component.cpp" />
+    <ClCompile Include="Core\Entity.cpp" />
     <ClCompile Include="Gameplay\FlyCamera.cpp" />
     <ClCompile Include="Gameplay\Actions\Action.cpp" />
     <ClCompile Include="Gameplay\Actions\ActionComponent.cpp" />
@@ -169,7 +172,7 @@
     <ClCompile Include="Asset\Model.cpp" />
     <ClCompile Include="Animation\Bone.cpp" />
     <ClCompile Include="Core\Actor.cpp" />
-    <ClCompile Include="Core\Component.cpp" />
+    <ClCompile Include="Core\OldComponent.cpp" />
     <ClCompile Include="Core\GameContext.cpp" />
     <ClCompile Include="Asset\Primitive.cpp" />
     <ClCompile Include="Props\InteractButton.cpp" />
@@ -187,6 +190,7 @@
     <ClCompile Include="Props\RangeTarget.cpp" />
     <ClCompile Include="Props\ShowcaseModel.cpp" />
     <ClCompile Include="Gameplay\TestMaster.cpp" />
+    <ClCompile Include="Core\System.cpp" />
     <ClCompile Include="UI\UIOneInTheChamber.cpp" />
     <ClCompile Include="Util\TimelineAction.cpp" />
     <ClCompile Include="UI\UICrosshair.cpp" />
@@ -220,8 +224,11 @@
     <ClCompile Include="Gameplay\WeaponSMG.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Audio\AudioSystem.h" />
     <ClInclude Include="Audio\AudioComponent.h" />
     <ClInclude Include="Audio\AudioManager.h" />
+    <ClInclude Include="Core\Component.h" />
+    <ClInclude Include="Core\Entity.h" />
     <ClInclude Include="Gameplay\FlyCamera.h" />
     <ClInclude Include="Gameplay\Actions\Action.h" />
     <ClInclude Include="Gameplay\Actions\ActionComponent.h" />
@@ -236,9 +243,10 @@
     <ClInclude Include="Asset\Model.h" />
     <ClInclude Include="Animation\Bone.h" />
     <ClInclude Include="Core\Actor.h" />
-    <ClInclude Include="Core\Component.h" />
+    <ClInclude Include="Core\OldComponent.h" />
     <ClInclude Include="Core\GameContext.h" />
     <ClInclude Include="Asset\Primitive.h" />
+    <ClInclude Include="HerefordCommon.h" />
     <ClInclude Include="Props\InteractButton.h" />
     <ClInclude Include="Props\PlywoodWall.h" />
     <ClInclude Include="Props\Ground.h" />
@@ -257,6 +265,7 @@
     <ClInclude Include="Props\RangeTarget.h" />
     <ClInclude Include="Props\ShowcaseModel.h" />
     <ClInclude Include="Gameplay\TestMaster.h" />
+    <ClInclude Include="Core\System.h" />
     <ClInclude Include="UI\UIOneInTheChamber.h" />
     <ClInclude Include="Util\TimelineAction.h" />
     <ClInclude Include="UI\UICrosshair.h" />

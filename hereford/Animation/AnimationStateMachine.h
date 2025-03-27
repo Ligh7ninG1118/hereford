@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/Component.h"
+#include "Core/OldComponent.h"
 #include "Util/GameEvent.h"
 #include <unordered_map>
 #include <memory>
@@ -11,7 +11,7 @@ struct AnimState
 };
 
 
-class AnimationStateMachine : public Component
+class AnimationStateMachine : public OldComponent
 {
 public:
 	AnimationStateMachine(class Actor* owner, std::unique_ptr<class Animator> inAnimator);

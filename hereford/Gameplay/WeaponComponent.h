@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/Component.h"
+#include "Core/OldComponent.h"
 #include "Math/Math.h"
 #include "Util/DelayedAction.h"
 
@@ -19,7 +19,7 @@ enum class ERecoilType
 };
 
 
-class WeaponComponent : public Component
+class WeaponComponent : public OldComponent
 {
 	friend class Weapon;
 	friend class WeaponPistol;

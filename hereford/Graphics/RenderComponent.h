@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Component.h"
+#include "Core/OldComponent.h"
 #include "Math/Math.h"
 #include <string>
 #include <vector>
@@ -30,7 +30,7 @@ enum class ERenderLayer : uint8
 };
 
 
-class RenderComponent : public Component
+class RenderComponent : public OldComponent
 {
 public:
 	RenderComponent(class Actor* owner, class Renderer& rendererRef, ERenderLayer renderLayer = ERenderLayer::Default);
