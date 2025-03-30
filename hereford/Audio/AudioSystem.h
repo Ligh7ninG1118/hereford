@@ -8,7 +8,7 @@ using SoundHandle = uint32_t;
 class AudioComponent;
 class ListenerComponent;
 
-enum class EAudioState
+enum class EAudioState :uint8_t
 {
 	Stopped = 0,
 	Paused,

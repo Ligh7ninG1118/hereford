@@ -25,8 +25,8 @@ private:
 
 	friend class AudioSystem;
 
-	EAudioState mCurrentState;
-	EAudioState mPendingState;
+	EAudioState mCurrentState : 2;
+	EAudioState mPendingState : 2;
 
 	bool mShouldLoop :1;
 	bool mShouldFade :1;
