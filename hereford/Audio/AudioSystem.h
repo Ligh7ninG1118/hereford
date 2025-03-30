@@ -2,11 +2,13 @@
 
 #include "HerefordCommon.h"
 
-#include "Audio/AudioComponent.h"
 
 using SoundHandle = uint32_t;
 
-enum class EAudioState : uint8_t
+class AudioComponent;
+class ListenerComponent;
+
+enum class EAudioState
 {
 	Stopped = 0,
 	Paused,
@@ -21,10 +23,10 @@ public:
 
 	virtual void Update(float deltaTime) override;
 
-	SoundHandle PlaySound(const std::string& soundName, bool shouldLooping = false, bool is3D = false, Vec3 soundPos = Vec3::Zero);
-	bool StopSound(SoundHandle sound, bool fadeOut = false, float fadeOutDuration = 0.0f);
-	bool PauseSound(SoundHandle sound, bool fadeOut = false, float fadeOutDuration = 0.0f);
-	bool ResumeSound(SoundHandle sound, bool fadeIn = false, float fadeInDuration = 0.0f);
+	SoundHandle PlaySound(AudioComponent* audioComp);
+	bool StopSound(AudioComponent* audioComp);
+	bool PauseSound(AudioComponent* audioComp);
+	bool ResumeSound(AudioComponent* audioComp);
 
 	EAudioState GetSoundState(SoundHandle sound);
 	void StopAllSounds();
@@ -51,7 +53,9 @@ private:
 	void Stop(SoundHandle sound);
 
 
+	ListenerComponent* mMainListener;
 	std::vector<AudioComponent*> mAudioComponents;
+	
 	std::vector<SoundHandle> mChannels;
 	std::map<SoundHandle, HandleInfo> mHandleMap;
 	std::unordered_map<std::string, struct Mix_Chunk*> mSoundAssets;

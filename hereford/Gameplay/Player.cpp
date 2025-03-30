@@ -78,8 +78,8 @@ Player::Player(GameContext* gameCtx)
 	totalRuntime = 0.0f;
 	currentTopSpeed = topWalkingSpeed;
 
-	mPtrAudioComponent = std::make_unique<AudioComponent>(this, gameCtx->GetAudioManager());
-	mPtrAudioComponent->InitAsset("Walk-Gravel.wav");
+	/*mPtrAudioComponent = std::make_unique<AudioComponent>(this, gameCtx->GetAudioManager());
+	mPtrAudioComponent->InitAsset("Walk-Gravel.wav");*/
 
 	mIsGrounded = true;
 }
@@ -102,7 +102,7 @@ void Player::OnUpdate(float deltaTime)
 
 	mPtrActiveWeapon->SetArmOffset(Vec3(0.0f, yD, zD));
 
-	if (hasMovementInput && mIsGrounded)
+	/*if (hasMovementInput && mIsGrounded)
 	{
 		if (mPtrAudioComponent->GetSoundState() == ESoundState::Paused)
 		{
@@ -119,7 +119,7 @@ void Player::OnUpdate(float deltaTime)
 		{
 			mPtrAudioComponent->Pause();
 		}
-	}
+	}*/
 
 	//ShowDebugInfo();
 }

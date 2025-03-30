@@ -43,8 +43,8 @@ InteractButton::InteractButton(GameContext* gameCtx)
 
 	mPtrPhysicsComp = std::make_unique<PhysicsComponent>(static_cast<Actor*>(this), gameCtx->GetPhysicsManager());
 
-	mPtrAudioComp = std::make_unique<AudioComponent>(this, gameCtx->GetAudioManager(), true);
-	mPtrAudioComp->InitAsset("buzzer.wav");
+	/*mPtrAudioComp = std::make_unique<AudioComponent>(this, gameCtx->GetAudioManager(), true);
+	mPtrAudioComp->InitAsset("buzzer.wav");*/
 
 }
 
@@ -54,6 +54,6 @@ InteractButton::~InteractButton()
 
 void InteractButton::Interact()
 {
-	mPtrAudioComp->Play();
+	//mPtrAudioComp->Play();
 	GameEvent::Publish<EventOnInteractButtonPressed>(EventOnInteractButtonPressed());
 }

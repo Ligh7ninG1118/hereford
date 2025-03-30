@@ -157,7 +157,6 @@
   <ItemGroup>
     <ClCompile Include="Audio\AudioSystem.cpp" />
     <ClCompile Include="Audio\AudioComponent.cpp" />
-    <ClCompile Include="Audio\AudioManager.cpp" />
     <ClCompile Include="Core\Component.cpp" />
     <ClCompile Include="Core\Entity.cpp" />
     <ClCompile Include="Gameplay\FlyCamera.cpp" />
@@ -175,6 +174,7 @@
     <ClCompile Include="Core\OldComponent.cpp" />
     <ClCompile Include="Core\GameContext.cpp" />
     <ClCompile Include="Asset\Primitive.cpp" />
+    <ClCompile Include="Audio\ListenerComponent.cpp" />
     <ClCompile Include="Props\InteractButton.cpp" />
     <ClCompile Include="Props\PlywoodWall.cpp" />
     <ClCompile Include="Props\Ground.cpp" />
@@ -226,7 +226,6 @@
   <ItemGroup>
     <ClInclude Include="Audio\AudioSystem.h" />
     <ClInclude Include="Audio\AudioComponent.h" />
-    <ClInclude Include="Audio\AudioManager.h" />
     <ClInclude Include="Core\Component.h" />
     <ClInclude Include="Core\Entity.h" />
     <ClInclude Include="Gameplay\FlyCamera.h" />
@@ -247,6 +246,7 @@
     <ClInclude Include="Core\GameContext.h" />
     <ClInclude Include="Asset\Primitive.h" />
     <ClInclude Include="HerefordCommon.h" />
+    <ClInclude Include="Audio\ListenerComponent.h" />
     <ClInclude Include="Props\InteractButton.h" />
     <ClInclude Include="Props\PlywoodWall.h" />
     <ClInclude Include="Props\Ground.h" />

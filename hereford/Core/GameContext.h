@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Core/Actor.h"
-
-#include "Audio/AudioManager.h"
 #include "Graphics/Renderer.h"
 #include "Physics/PhysicsManager.h"
 
@@ -29,7 +27,6 @@ public:
 
 	Renderer& GetRenderer() const { return *mPtrRenderer.get(); }
 	PhysicsManager& GetPhysicsManager() const { return *mPtrPhysicsManager.get(); }
-	AudioManager& GetAudioManager() const { return *mPtrAudioManager.get(); }
 
 	class Player* GetPlayer() const { return mPtrPlayer; }
 
@@ -45,7 +42,6 @@ private:
 
 	void ProcessInput();
 	void UpdateGame();
-	void UpdateAudio();
 	void CalculatePhysics();
 	void GenerateOutput();
 
@@ -54,7 +50,6 @@ private:
 	SDL_Window* mPtrSDLWindow;
 	std::unique_ptr<Renderer> mPtrRenderer;
 	std::unique_ptr<PhysicsManager> mPtrPhysicsManager;
-	std::unique_ptr<AudioManager> mPtrAudioManager;
 
 	class Player* mPtrPlayer;
 	class TestMaster* mPtrTestMaster;

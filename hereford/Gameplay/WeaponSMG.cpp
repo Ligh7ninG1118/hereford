@@ -76,7 +76,7 @@ void WeaponSMG::Init(Player* playerPtr)
 	mPtrWeaponComp->mCurrentReserveAmmo = mPtrWeaponComp->mMaxReserveCapacity;
 
 
-	mPtrAudioComponent = std::make_unique<AudioComponent>(this, GetGameContext()->GetAudioManager());
-	mPtrAudioComponent->InitAsset("MP5SD_SingleFire.wav");
+	/*mPtrAudioComponent = std::make_unique<AudioComponent>(this, GetGameContext()->GetAudioManager());
+	mPtrAudioComponent->InitAsset("MP5SD_SingleFire.wav");*/
 
 }

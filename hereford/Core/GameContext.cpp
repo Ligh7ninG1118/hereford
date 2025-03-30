@@ -82,10 +82,6 @@ bool GameContext::Initialize()
 
 	mPtrPhysicsManager = std::make_unique<PhysicsManager>();
 
-	mPtrAudioManager = std::make_unique<AudioManager>();
-	mPtrAudioManager->CacheSound("bootcamp_ambient.wav");
-
-
 	//SDL_SetWindowGrab(pSDLWindow, SDL_TRUE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 
@@ -100,8 +96,6 @@ bool GameContext::Initialize()
 	ImGui::StyleColorsDark();
 	ImGui_ImplSDL2_InitForOpenGL(mPtrSDLWindow, mPtrRenderer->GetGLContext());
 	ImGui_ImplOpenGL3_Init();
-
-	mPtrAudioManager->PlaySound("bootcamp_ambient.wav", true, false);
 
 	return true;
 }
@@ -138,7 +132,6 @@ void GameContext::RunLoop()
 		Uint32 timestampStart = SDL_GetTicks();
 		ProcessInput();
 		UpdateGame();
-		UpdateAudio();
 		CalculatePhysics();
 		//DebugSceneObjects();
 		DelayedActionManager::UpdateTimers(mDeltaTime);
@@ -165,15 +158,11 @@ void GameContext::LoadStarterData()
 		mPtrPlayer = new Player(this);
 		mPtrPlayer->SetPosition(Vector3(4.0f, 0.0f, 4.0f));
 		mPtrRenderer->SetMainCamera(&mPtrPlayer->GetMainCamera());
-
-		mPtrAudioManager->SetPlayerReference(mPtrPlayer);
 	}
 	else
 	{
 		FlyCamera* flyCamera = new FlyCamera(this);
 		mPtrRenderer->SetMainCamera(&flyCamera->GetMainCamera());
-
-		mPtrAudioManager->SetPlayerReference(flyCamera);
 	}
 
 	mPtrTestMaster = new TestMaster(this);
@@ -397,10 +386,6 @@ void GameContext::UpdateGame()
 	}
 }
 
-void GameContext::UpdateAudio()
-{
-	mPtrAudioManager->Update();
-}
 
 void GameContext::CalculatePhysics()
 {

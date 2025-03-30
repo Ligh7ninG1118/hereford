@@ -63,8 +63,8 @@ void WeaponPistol::Init(Player* playerPtr)
 	mDrawTime = 0.5f;
 	mHolsterTime = 0.3f;
 
-	mPtrAudioComponent = std::make_unique<AudioComponent>(this, GetGameContext()->GetAudioManager());
-	mPtrAudioComponent->InitAsset("USP_SingleFire.wav");
+	/*mPtrAudioComponent = std::make_unique<AudioComponent>(this, GetGameContext()->GetAudioManager());
+	mPtrAudioComponent->InitAsset("USP_SingleFire.wav");*/
 
 	//TODO: Specific weapon parameters
 

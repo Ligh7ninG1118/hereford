@@ -1,5 +1,4 @@
 #pragma once
-#include "Core/OldComponent.h"
 #include "HerefordCommon.h"
 
 #include "AudioSystem.h"
@@ -9,16 +8,25 @@
 class AudioComponent : public Component
 {
 public:
-	AudioComponent(class Actor* owner, class AudioManager& audioManagerRef, bool is3D = false);
+	AudioComponent(uint32_t ownerID, const std::string& assetName);
 	~AudioComponent();
 
-	void InitAsset(const std::string& assetName);
+	void Play() { SetState(EAudioState::Playing); }
+	void Pause() { SetState(EAudioState::Paused); }
+	void Stop() { SetState(EAudioState::Stopped); }
+
+	void SetShouldLoop(bool inVal) { mShouldLoop = inVal; }
+	void SetShouldFade(bool inVal) { mShouldFade = inVal; }
+	void SetIs3D(bool inVal) { mIs3D = true; }
+	void SetFadeDuration(float inDuration) { mFadeDuration = inDuration; }
 
 private:
+	void SetState(EAudioState inState) { mPendingState = inState; }
+
 	friend class AudioSystem;
 
-	EAudioState mCurrentState : 2;
-	EAudioState mPendingState : 2;
+	EAudioState mCurrentState;
+	EAudioState mPendingState;
 
 	bool mShouldLoop :1;
 	bool mShouldFade :1;

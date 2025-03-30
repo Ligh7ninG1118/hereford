@@ -152,7 +152,7 @@ void Weapon::Fire()
 
 		cam.RotateCamera(mPtrWeaponComp->CalculateRecoilDeviation() * 5.0f);
 
-		mPtrAudioComponent->Play();
+		//mPtrAudioComponent->Play();
 	}
 }
 
