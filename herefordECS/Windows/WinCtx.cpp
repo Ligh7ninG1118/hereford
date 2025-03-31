@@ -86,7 +86,7 @@ LRESULT WinCtx::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		case WM_MOUSEMOVE:
 
-		
+			return 0;
 		case WM_KEYUP:
 			if (pEngine)
 			{
