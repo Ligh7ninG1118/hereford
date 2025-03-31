@@ -143,6 +143,11 @@
     <ClCompile Include="Core\GameWorld.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Core\System.cpp" />
+    <ClCompile Include="Math\Math.cpp" />
+    <ClCompile Include="Math\Matrix4x4.cpp" />
+    <ClCompile Include="Math\Quaternion.cpp" />
+    <ClCompile Include="Math\Vector2.cpp" />
+    <ClCompile Include="Math\Vector3.cpp" />
     <ClCompile Include="Windows\WinCtx.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -151,6 +156,11 @@
     <ClInclude Include="Core\Entity.h" />
     <ClInclude Include="Core\GameWorld.h" />
     <ClInclude Include="Core\System.h" />
+    <ClInclude Include="Math\Math.h" />
+    <ClInclude Include="Math\Matrix4x4.h" />
+    <ClInclude Include="Math\Quaternion.h" />
+    <ClInclude Include="Math\Vector2.h" />
+    <ClInclude Include="Math\Vector3.h" />
     <ClInclude Include="Windows\stdafx.h" />
     <ClInclude Include="Windows\WinCtx.h" />
   </ItemGroup>
