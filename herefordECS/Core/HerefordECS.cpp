@@ -1,6 +1,6 @@
 #include "HerefordECS.h"
 
-HerefordECS::HerefordECS(unsigned int inWidth, unsigned int inHeight)
+HerefordECS::HerefordECS(uint16 inWidth, uint16 inHeight)
 	: mWidth(inWidth), mHeight(inHeight)
 {
 }

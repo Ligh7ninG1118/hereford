@@ -1,9 +1,13 @@
 #pragma once
 
+#include "Math/Math.h"
+
+class GameWorld;
+
 class HerefordECS
 {
 public:
-	HerefordECS(unsigned int inWidth = 1920, unsigned int inHeight = 1080);
+	HerefordECS(uint16 inWidth = 1920, uint16 inHeight = 1080);
 	~HerefordECS();
 
 	void OnInit();
@@ -13,14 +17,16 @@ public:
 	void OnKeyDown(unsigned char inKey);
 	void OnKeyUp(unsigned char inKey);
 
-	int GetWidth() const { return mWidth; }
-	int GetHeight() const { return mHeight; }
-	void SetWidth(int inWidth) { mWidth = inWidth; };
-	void SetHeight(int inHeight) { mHeight = inHeight; }
+	uint16 GetWidth() const { return mWidth; }
+	uint16 GetHeight() const { return mHeight; }
+	void SetWidth(uint16 inWidth) { mWidth = inWidth; };
+	void SetHeight(uint16 inHeight) { mHeight = inHeight; }
 
 private:
-	int mWidth;
-	int mHeight;
+	uint16 mWidth;
+	uint16 mHeight;
+
+
 
 };
 
