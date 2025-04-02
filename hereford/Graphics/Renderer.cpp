@@ -13,6 +13,7 @@
 #include "UI/UIAmmoIndicator.h"
 #include "Gameplay/WeaponComponent.h"
 #include "Gameplay/TestMaster.h"
+#include "Util/Profiler.h"
 
 #include <stb_image.h>
 
@@ -457,7 +458,6 @@ void Renderer::Render(float deltaTime)
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);
-
 	for (const auto& renderCompInLayer : mRenderComponentMap)
 	{
 		// Clear depth buffer across different layers
@@ -824,8 +824,6 @@ void Renderer::Render(float deltaTime)
 			glBindTexture(GL_TEXTURE_2D, uiImage->GetTexture()->GetID());
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 	}
-
-	
 
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);

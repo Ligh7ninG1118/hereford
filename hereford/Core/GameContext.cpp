@@ -6,6 +6,7 @@
 #include "Props/PlywoodWall.h"
 #include "Util/DelayedAction.h"
 #include "Util/TimelineAction.h"
+#include "Util/Profiler.h"
 
 #include <glad/glad.h>
 
@@ -124,18 +125,16 @@ void GameContext::Shutdown()
 
 void GameContext::RunLoop()
 {
+
 	while (mIsRunning)
 	{
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplSDL2_NewFrame();
 		ImGui::NewFrame();
-
-
-		ImGui::Begin("Telemetry");
-		ImGui::Text("CPU Frame Time %d ms \t GPU Frame Time %d ms \nFPS: %.2f", cpuTime, gpuTime, 1000.0f / (cpuTime+gpuTime));
-		ImGui::End();
-
-		Uint32 timestampStart = SDL_GetTicks();
+		
+		Profiler::UpdateImGuiView();
+		
+		Profiler::Start("CPU Frame Time");
 		ProcessInput();
 		UpdateGame();
 		UpdateAudio();
@@ -143,17 +142,10 @@ void GameContext::RunLoop()
 		//DebugSceneObjects();
 		DelayedActionManager::UpdateTimers(mDeltaTime);
 		TimelineActionManager::UpdateTimers(mDeltaTime);
-		Uint32 timestampUpdate = SDL_GetTicks();
+		Profiler::Mark("CPU Frame Time");
+		Profiler::Start("GPU Frame Time");
 		GenerateOutput();
-		Uint32 timestampRender = SDL_GetTicks();
-
-		mTelemetryUpdateTimer += mDeltaTime;
-		if (mTelemetryUpdateTimer >= mTelemetryUpdateInterval)
-		{
-			mTelemetryUpdateTimer = 0.0f;
-			cpuTime = timestampUpdate - timestampStart;
-			gpuTime = timestampRender - timestampUpdate;
-		}
+		Profiler::Mark("GPU Frame Time");
 	}
 	Shutdown();
 }
