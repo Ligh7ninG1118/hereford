@@ -11,6 +11,8 @@ struct WatchData
 	time_unit_t mTimeStamp;
 	float mLastDuration;
 	float mDisplayDuration;
+	float mTotalTaskTime;
+	uint32_t mTaskRep;
 };
 
 class Profiler

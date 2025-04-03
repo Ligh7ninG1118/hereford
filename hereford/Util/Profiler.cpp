@@ -14,13 +14,13 @@ void Profiler::UpdateImGuiView()
 	if (shouldUpdate)
 		mSelfUpdateTimer = steady_clock::now();
 
-	ImGui::Begin("Telemetry");
+	ImGui::Begin("Telemetry", 0, ImGuiWindowFlags_AlwaysAutoResize);
 	for (auto& itr : mWatchMap)
 	{
 		if(shouldUpdate)
 			itr.second.mDisplayDuration = itr.second.mLastDuration;
 
-		ImGui::Text("%s: %.2f ms\n", itr.first.c_str(), itr.second.mDisplayDuration * 1000.0f);
+		ImGui::Text("%s: %.2f ms Avg: %.2f ms\n", itr.first.c_str(), itr.second.mDisplayDuration * 1000.0f, itr.second.mTotalTaskTime * 1000.0f / itr.second.mTaskRep);
 	}
 	ImGui::End();
 }
@@ -34,12 +34,12 @@ void Profiler::Start(std::string watchName)
 	}
 	else
 	{
-		WatchData newData{ steady_clock::now() , 0.0f, 0.0f };
+		WatchData newData{ steady_clock::now() , 0.0f, 0.0f, 0.0f, 0 };
 		mWatchMap[watchName] = newData;
 	}
 }
 
-float Profiler::Peek(std::string watchName)
+float Profiler::Peek(std::string watchName) 
 {
 	auto itr = mWatchMap.find(watchName);
 	if (itr != mWatchMap.end())
@@ -60,6 +60,8 @@ void Profiler::Mark(std::string watchName)
 	{
 		mWatchMap[watchName].mLastDuration = duration<float>(steady_clock::now() - mWatchMap[watchName].mTimeStamp).count();
 		mWatchMap[watchName].mTimeStamp = steady_clock::now();
+		mWatchMap[watchName].mTotalTaskTime += mWatchMap[watchName].mLastDuration;
+		mWatchMap[watchName].mTaskRep++;
 	}
 	else
 	{
