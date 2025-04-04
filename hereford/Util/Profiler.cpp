@@ -20,14 +20,14 @@ void Profiler::UpdateImGuiView()
 
 	float totalFrameTime = duration<float>(steady_clock::now() - mFPSTimer).count();
 	mFPSTimer = steady_clock::now();
-	ImGui::Text("FPS: %.1f\tTotal Frame Time: %.2f ms\n", 1.0f / totalFrameTime, totalFrameTime * 1000.0f);
+	ImGui::Text("FPS: %.1f\t\t\tTotal Frame Time: %.2f ms\n", 1.0f / totalFrameTime, totalFrameTime * 1000.0f);
 
 	for (auto& itr : mWatchMap)
 	{
 		if(shouldUpdate)
 			itr.second.mDisplayDuration = itr.second.mLastDuration;
 
-		ImGui::Text("%s: Avg %.2f ms\tCurrent %.2f ms \n", itr.first.c_str(), itr.second.mTotalTaskTime * 1000.0f / itr.second.mTaskRep, itr.second.mDisplayDuration * 1000.0f);
+		ImGui::Text("%-20s: Avg %6.2f ms\tCurrent %6.2f ms \n", itr.first.c_str(), itr.second.mTotalTaskTime * 1000.0f / itr.second.mTaskRep, itr.second.mDisplayDuration * 1000.0f);
 	}
 	ImGui::End();
 }

@@ -863,6 +863,8 @@ std::map<ERenderLayer, std::vector<RenderComponent*>> Renderer::FrustumCullingPa
 	auto culledMap = mRenderComponentMap;
 	auto frustum = GenerateFrustum(*mPtrMainCamera);
 
+	Profiler::Start("Frustum Culling");
+
 	for (auto& renderComps : culledMap)
 	{
 		for (int i = renderComps.second.size() - 1; i >= 0; --i)
@@ -878,6 +880,8 @@ std::map<ERenderLayer, std::vector<RenderComponent*>> Renderer::FrustumCullingPa
 			}
 		}
 	}
+
+	Profiler::Mark("Frustum Culling");
 
 	return culledMap;
 }
