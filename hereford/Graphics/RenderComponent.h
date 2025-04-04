@@ -70,6 +70,9 @@ public:
 	inline const std::vector<std::shared_ptr<Texture>>& GetTextures() const { return mTextures; }
 	void LoadTexture(const std::string& texPath, ETextureType texType);
 
+	inline struct PhysicsPrimitive* GetBoundingPrimitive() const { return mBoundingPrimitive; }
+	inline void SetBoundingPrimitive(struct PhysicsPrimitive* primitive) { mBoundingPrimitive = primitive; }
+
 	virtual Mat4 GetModelMatrix() const;
 
 	inline bool GetIsCombinedMRTex() const { return mCombinedMRTex; }
@@ -84,6 +87,8 @@ protected:
 	std::shared_ptr<Model> mPtrModel;
 	std::vector<std::shared_ptr<class Texture>> mTextures;
 	std::shared_ptr<class Shader> mPtrShader;
+
+	struct PhysicsPrimitive* mBoundingPrimitive;
 
 	uint32 mVAO;
 	uint32 mVBO;

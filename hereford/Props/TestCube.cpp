@@ -2,6 +2,7 @@
 #include "Graphics/RenderComponent.h"
 #include "Core/GameContext.h"
 #include "Physics/PhysicsComponent.h"
+#include "Physics/PhysicsPrimitive.h"
 #include "Asset/Primitive.h"
 #include "Util/Random.h"
 #include "Asset/AssetManager.h"
@@ -12,6 +13,8 @@ TestCube::TestCube(GameContext* gameCtx)
 {
 	mPtrRenderComp = std::make_unique<RenderComponent>(static_cast<Actor*>(this), gameCtx->GetRenderer());
 	mPtrPhysicsComp = std::make_unique<PhysicsComponent>(static_cast<Actor*>(this), gameCtx->GetPhysicsManager());
+
+	mPtrPhysicsComp->SetBoundingPrimitive(PhysicsPrimitive{ AABBPrimitive{Vec3(0.5f)}, Vec3::Zero });
 
 	PrimitiveInfo cubeInfo;
 	Primitive::GenerateCube(cubeInfo);
@@ -24,7 +27,7 @@ TestCube::TestCube(GameContext* gameCtx)
 	mPtrRenderComp->LoadTexture("LocalResources/used-stainless-steel2/used-stainless-steel2_normal-ogl.png", ETextureType::NORMALS);
 	mPtrRenderComp->LoadTexture("LocalResources/used-stainless-steel2/used-stainless-steel2_roughness.png", ETextureType::ROUGHNESS);
 
-
+	mPtrRenderComp->SetBoundingPrimitive(mPtrPhysicsComp->GetBoundingPrimitive());
 
 	std::shared_ptr<Shader> shader = AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_pbr_frag.glsl"));
 	mPtrRenderComp->SetShader(shader);

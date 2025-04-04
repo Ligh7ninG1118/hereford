@@ -16,6 +16,8 @@ public:
 	Vec3 GetOwnerPosition() const;
 
 	void SetPhyPrimitive(const PhysicsPrimitive& primitive) { mPhyPrimitive = primitive; }
+	void SetBoundingPrimitive(const PhysicsPrimitive& primitive) { mBoundingPrimitive = primitive; }
+	PhysicsPrimitive* GetBoundingPrimitive() { return &mBoundingPrimitive; }
 
 	void AddImpulse(Vec3 impactPoint, float impulseForce);
 
@@ -31,6 +33,7 @@ private:
 	float mMass;
 	
 	PhysicsPrimitive mPhyPrimitive;
+	PhysicsPrimitive mBoundingPrimitive;
 
 	Vec3 mVelocity;
 	Vec3 mAngVelocity;
