@@ -5,22 +5,29 @@
 
 std::unordered_map<std::string, WatchData> Profiler::mWatchMap;
 time_unit_t Profiler::mSelfUpdateTimer = steady_clock::now();
+time_unit_t Profiler::mFPSTimer = steady_clock::now();
 float Profiler::mUpdatePeriod = 0.5f;
 
 
 void Profiler::UpdateImGuiView()
 {
+	// Controls ImGUIview update frequency
 	bool shouldUpdate = duration<float>(steady_clock::now() - mSelfUpdateTimer).count() >= mUpdatePeriod ? true : false;
 	if (shouldUpdate)
 		mSelfUpdateTimer = steady_clock::now();
 
 	ImGui::Begin("Telemetry", 0, ImGuiWindowFlags_AlwaysAutoResize);
+
+	float totalFrameTime = duration<float>(steady_clock::now() - mFPSTimer).count();
+	mFPSTimer = steady_clock::now();
+	ImGui::Text("FPS: %.1f\tTotal Frame Time: %.2f ms\n", 1.0f / totalFrameTime, totalFrameTime * 1000.0f);
+
 	for (auto& itr : mWatchMap)
 	{
 		if(shouldUpdate)
 			itr.second.mDisplayDuration = itr.second.mLastDuration;
 
-		ImGui::Text("%s: %.2f ms Avg: %.2f ms\n", itr.first.c_str(), itr.second.mDisplayDuration * 1000.0f, itr.second.mTotalTaskTime * 1000.0f / itr.second.mTaskRep);
+		ImGui::Text("%s: Avg %.2f ms\tCurrent %.2f ms \n", itr.first.c_str(), itr.second.mTotalTaskTime * 1000.0f / itr.second.mTaskRep, itr.second.mDisplayDuration * 1000.0f);
 	}
 	ImGui::End();
 }

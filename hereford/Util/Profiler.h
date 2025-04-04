@@ -29,6 +29,7 @@ public:
 private:
 	static float mUpdatePeriod;
 	static time_unit_t mSelfUpdateTimer;
+	static time_unit_t mFPSTimer;
 	static std::unordered_map<std::string, WatchData> mWatchMap;
 };
 
