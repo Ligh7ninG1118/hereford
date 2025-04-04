@@ -235,13 +235,12 @@ void GameContext::LoadScene(const std::string& sceneFilePath)
 
 void GameContext::LoadCubeTest()
 {
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 100; i++)
 	{
-		for (int j = 0; j < 1; j++)
+		for (int j = 0; j < 100; j++)
 		{
 			Actor* pActor = new TestCube(this);
-			pActor->SetPosition(Vec3(5, 0, 0));
-			//pActor->SetPosition(Vec3(i * 2, 0, j * 2));
+			pActor->SetPosition(Vec3(i * 2, 0, j * 2));
 
 		}
 	}
