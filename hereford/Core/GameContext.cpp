@@ -50,6 +50,8 @@ GameContext::~GameContext()
 
 bool GameContext::Initialize()
 {
+	SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
+
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
 	{
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
@@ -67,7 +69,8 @@ bool GameContext::Initialize()
 
 	mPtrSDLWindow = SDL_CreateWindow("Hereford",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, mScreenWidth, mScreenHeight,
-		SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+		SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI);
+
 	if (mPtrSDLWindow == nullptr)
 	{
 		printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
@@ -232,12 +235,14 @@ void GameContext::LoadScene(const std::string& sceneFilePath)
 
 void GameContext::LoadCubeTest()
 {
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 1; i++)
 	{
-		for (int j = 0; j < 100; j++)
+		for (int j = 0; j < 1; j++)
 		{
 			Actor* pActor = new TestCube(this);
-			pActor->SetPosition(Vec3(i * 2, 0, j * 2));
+			pActor->SetPosition(Vec3(5, 0, 0));
+			//pActor->SetPosition(Vec3(i * 2, 0, j * 2));
+
 		}
 	}
 }
