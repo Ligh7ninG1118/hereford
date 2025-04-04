@@ -4,6 +4,7 @@
 #include "Gameplay/FlyCamera.h"
 #include "Gameplay/TestMaster.h"
 #include "Props/PlywoodWall.h"
+#include "Props/TestCube.h"
 #include "Util/DelayedAction.h"
 #include "Util/TimelineAction.h"
 #include "Util/Profiler.h"
@@ -92,7 +93,8 @@ bool GameContext::Initialize()
 
 	mIsRunning = true;
 	LoadStarterData();
-	LoadScene("Scenes/killhouse.json");
+	//LoadScene("Scenes/killhouse.json");
+	LoadCubeTest();
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -134,7 +136,7 @@ void GameContext::RunLoop()
 		
 		Profiler::UpdateImGuiView();
 		
-		Profiler::Start("CPU Frame Time");
+		Profiler::Start("CPU");
 		ProcessInput();
 		UpdateGame();
 		UpdateAudio();
@@ -142,17 +144,17 @@ void GameContext::RunLoop()
 		//DebugSceneObjects();
 		DelayedActionManager::UpdateTimers(mDeltaTime);
 		TimelineActionManager::UpdateTimers(mDeltaTime);
-		Profiler::Mark("CPU Frame Time");
-		Profiler::Start("GPU Frame Time");
+		Profiler::Mark("CPU");
+		Profiler::Start("GPU");
 		GenerateOutput();
-		Profiler::Mark("GPU Frame Time");
+		Profiler::Mark("GPU");
 	}
 	Shutdown();
 }
 
 void GameContext::LoadStarterData()
 {
-	if (true)
+	if (false)
 	{
 		mPtrPlayer = new Player(this);
 		mPtrPlayer->SetPosition(Vector3(4.0f, 0.0f, 4.0f));
@@ -226,6 +228,18 @@ void GameContext::LoadScene(const std::string& sceneFilePath)
 
 	}
 
+}
+
+void GameContext::LoadCubeTest()
+{
+	for (int i = 0; i < 100; i++)
+	{
+		for (int j = 0; j < 100; j++)
+		{
+			Actor* pActor = new TestCube(this);
+			pActor->SetPosition(Vec3(i * 2, 0, j * 2));
+		}
+	}
 }
 
 void GameContext::ClearScene()

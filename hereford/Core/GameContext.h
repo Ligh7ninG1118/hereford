@@ -39,6 +39,7 @@ public:
 
 private:
 	void LoadStarterData();
+	void LoadCubeTest();
 	void SaveScene(const std::string& sceneFilePath);
 	void LoadScene(const std::string& sceneFilePath);
 	void ClearScene();
