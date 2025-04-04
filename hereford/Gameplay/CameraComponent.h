@@ -47,6 +47,7 @@ private:
 	float mVerticalRecenteringTarget;
 	Vec2 mDeferredRecoilDir;
 
+	//TODO: Is this vertical or horizontal FOV???
 	float mHorFOV;
 	float mNearPlane;
 	float mFarPlane;

@@ -98,9 +98,9 @@ bool Renderer::Initialize()
 	glGenTextures(1, &skyboxTexID);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);
 
-	std::vector<std::string> textures_faces{ "LocalResources/skybox/AboveDay_Right.png", "LocalResources/skybox/AboveDay_Left.png", 
-	"LocalResources/skybox/AboveDay_Up.png", "LocalResources/skybox/AboveDay_Down.png", "LocalResources/skybox/AboveDay_Back.png", 
-	"LocalResources/skybox/AboveDay_Front.png"};
+	std::vector<std::string> textures_faces{ "LocalResources/skybox/AboveDay_Right.png", "LocalResources/skybox/AboveDay_Left.png",
+	"LocalResources/skybox/AboveDay_Up.png", "LocalResources/skybox/AboveDay_Down.png", "LocalResources/skybox/AboveDay_Back.png",
+	"LocalResources/skybox/AboveDay_Front.png" };
 
 	int width, height, channelNum;
 	unsigned char* data;
@@ -126,7 +126,7 @@ bool Renderer::Initialize()
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-	
+
 	float skyboxVertices[] = {
 		// positions          
 		-1.0f,  1.0f, -1.0f,
@@ -211,7 +211,7 @@ bool Renderer::Initialize()
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	
+
 
 	Mat4 captureProjection = Mat4::CalculatePerspMatrix(90.0f, 1.0f, 0.1f, 10.0f);
 	Mat4 captureViews[] =
@@ -243,7 +243,7 @@ bool Renderer::Initialize()
 		glBindVertexArray(0);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glGenTextures(1, &prefilterTexID);
@@ -293,7 +293,7 @@ bool Renderer::Initialize()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
-	
+
 	glGenTextures(1, &brdfLUTTexture);
 
 	// pre-allocate enough memory for the LUT texture.
@@ -334,7 +334,7 @@ bool Renderer::Initialize()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	
+
 	glBindVertexArray(quadVAO);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	glBindVertexArray(0);
@@ -410,7 +410,7 @@ bool Renderer::Initialize()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	
+
 
 
 	return true;
@@ -434,7 +434,7 @@ void Renderer::Render(float deltaTime)
 
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	Mat4 projection = mPtrMainCamera->GetPerspMatrix((float)mScreenWidth/mScreenHeight);
+	Mat4 projection = mPtrMainCamera->GetPerspMatrix((float)mScreenWidth / mScreenHeight);
 	Mat4 view = mPtrMainCamera->GetViewMatrix();
 
 	Uint32 lastShaderID = 0;
@@ -620,7 +620,7 @@ void Renderer::Render(float deltaTime)
 								texStr = "tex_emissive_1";
 								break;
 							case ETextureType::ROUGHNESS:
-								texStr = renderComp->GetIsCombinedMRTex() ? "tex_metallic_1" :"tex_roughness_1";
+								texStr = renderComp->GetIsCombinedMRTex() ? "tex_metallic_1" : "tex_roughness_1";
 								break;
 							case ETextureType::METALLIC:
 								texStr = "tex_metallic_1";
@@ -762,7 +762,7 @@ void Renderer::Render(float deltaTime)
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	
+
 	textShader->Use();
 	Mat4 uiProj = mPtrMainCamera->GetOrthoMatrix(0.0f, static_cast<float>(mScreenWidth), 0.0f, static_cast<float>(mScreenHeight));
 
@@ -807,8 +807,8 @@ void Renderer::Render(float deltaTime)
 		x += (ch.mAdvance >> 6) * scale;
 	}
 	glBindVertexArray(0);
-	glBindTexture(GL_TEXTURE_2D, 0); 
-	
+	glBindTexture(GL_TEXTURE_2D, 0);
+
 
 	for (auto uiElement : mUIElements)
 	{
@@ -819,7 +819,7 @@ void Renderer::Render(float deltaTime)
 		uiElement->GetShader()->Use();
 		uiElement->GetShader()->SetMat4("projection", uiProj);
 
-		if(auto uiImage = dynamic_cast<UIImage*>(uiElement);uiImage != nullptr)
+		if (auto uiImage = dynamic_cast<UIImage*>(uiElement); uiImage != nullptr)
 			glBindTexture(GL_TEXTURE_2D, uiImage->GetTexture()->GetID());
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 	}
@@ -852,7 +852,7 @@ void Renderer::AddDebugLines(Vec3 startPos, Vec3 endPos)
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(3*sizeof(float)));
+	glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
 	mDebugLines.push_back(vaoID);
@@ -891,10 +891,10 @@ std::vector<Plane> Renderer::GenerateFrustum(const CameraComponent& cam) const
 	std::vector<Plane> planes;
 	planes.reserve(6);
 
-	const float farDis = cam.mFarPlane;
-	const float nearDis = cam.mNearPlane;
-	const float halfHSide = farDis * tanf(cam.mHorFOV * 0.5f);
-	const float halfVSide = halfHSide * static_cast<float>(mScreenWidth) / static_cast<float>(mScreenHeight);
+	const float farDis = fabs(cam.mFarPlane);
+	const float nearDis = fabs(cam.mNearPlane);
+	const float halfVSide = fabs(farDis * tan(cam.mHorFOV * 0.5f * DEG2RAD));
+	const float halfHSide = halfVSide * static_cast<float>(mScreenWidth) / static_cast<float>(mScreenHeight);
 	const Vec3 camPos = cam.GetCameraPosition();
 	const Vec3 fwd = cam.GetFrontVector();
 	const Vec3 rgt = cam.GetRightVector();
@@ -912,27 +912,26 @@ std::vector<Plane> Renderer::GenerateFrustum(const CameraComponent& cam) const
 	far.mDistance = (-(camPos + farDis * fwd)).Dot(far.mNormal);
 	planes.push_back(far);
 
-	//TODO: Check here, issues with all these planes
 	Plane right;
-	right.mNormal = (farDis * fwd + halfHSide * rgt).Cross(up);
+	right.mNormal = up.Cross(farDis * fwd + halfHSide * rgt);
 	right.mNormal.Normalize();
 	right.mDistance = (-camPos).Dot(right.mNormal);
 	planes.push_back(right);
 
 	Plane left;
-	left.mNormal = up.Cross(farDis * fwd - halfHSide * rgt);
+	left.mNormal = (farDis * fwd - halfHSide * rgt).Cross(up);
 	left.mNormal.Normalize();
 	left.mDistance = (-camPos).Dot(left.mNormal);
 	planes.push_back(left);
 
 	Plane bottom;
-	bottom.mNormal = (farDis * fwd - halfVSide * up).Cross(rgt);
+	bottom.mNormal = rgt.Cross(farDis * fwd - halfVSide * up);
 	bottom.mNormal.Normalize();
 	bottom.mDistance = (-camPos).Dot(bottom.mNormal);
 	planes.push_back(bottom);
 
 	Plane top;
-	top.mNormal = rgt.Cross(farDis * fwd + halfVSide * up);
+	top.mNormal = (farDis * fwd + halfVSide * up).Cross(rgt);
 	top.mNormal.Normalize();
 	top.mDistance = (-camPos).Dot(top.mNormal);
 	planes.push_back(top);
@@ -942,6 +941,7 @@ std::vector<Plane> Renderer::GenerateFrustum(const CameraComponent& cam) const
 
 bool Renderer::IsWithinFrustum(const struct PhysicsPrimitive& boundingVolume, const Mat4& modelMatrix, const std::vector<Plane>& planes)
 {
+
 	//TODO: How come I never wrote the operator overload for matrix vector multiplication
 	Vec3 centerWorld = Vec3::Zero;
 	centerWorld.mX = modelMatrix.m[0][0] * boundingVolume.mPosOffset.mX +
@@ -959,16 +959,15 @@ bool Renderer::IsWithinFrustum(const struct PhysicsPrimitive& boundingVolume, co
 
 	AABBPrimitive aabb = std::get<AABBPrimitive>(boundingVolume.mPrimitive);
 	Vec3 extentWorld = Vec3::Zero;
-	//TODO Probably need fix too (am i using row major or column major again)
-	extentWorld.mX = std::fabs(modelMatrix.m[0][0]) * aabb.mExtend.mX +
-		std::fabs(modelMatrix.m[0][1]) * aabb.mExtend.mY +
-		std::fabs(modelMatrix.m[0][2]) * aabb.mExtend.mZ;
-	extentWorld.mY = std::fabs(modelMatrix.m[1][0]) * aabb.mExtend.mX +
-		std::fabs(modelMatrix.m[1][1]) * aabb.mExtend.mY +
-		std::fabs(modelMatrix.m[1][2]) * aabb.mExtend.mZ;
-	extentWorld.mZ = std::fabs(modelMatrix.m[2][0]) * aabb.mExtend.mX +
-		std::fabs(modelMatrix.m[2][1]) * aabb.mExtend.mY +
-		std::fabs(modelMatrix.m[2][2]) * aabb.mExtend.mZ;
+	extentWorld.mX = std::fabs(modelMatrix.m[0][0]) * aabb.mExtent.mX +
+		std::fabs(modelMatrix.m[0][1]) * aabb.mExtent.mY +
+		std::fabs(modelMatrix.m[0][2]) * aabb.mExtent.mZ;
+	extentWorld.mY = std::fabs(modelMatrix.m[1][0]) * aabb.mExtent.mX +
+		std::fabs(modelMatrix.m[1][1]) * aabb.mExtent.mY +
+		std::fabs(modelMatrix.m[1][2]) * aabb.mExtent.mZ;
+	extentWorld.mZ = std::fabs(modelMatrix.m[2][0]) * aabb.mExtent.mX +
+		std::fabs(modelMatrix.m[2][1]) * aabb.mExtent.mY +
+		std::fabs(modelMatrix.m[2][2]) * aabb.mExtent.mZ;
 
 	for (const auto& plane : planes)
 	{
@@ -980,6 +979,7 @@ bool Renderer::IsWithinFrustum(const struct PhysicsPrimitive& boundingVolume, co
 		if (distance + radius < 0)
 			return false;
 	}
+
 
 	return true;
 }
