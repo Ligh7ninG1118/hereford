@@ -40,6 +40,8 @@ public:
 	float mAimingSensMultiplier = 1.0f;
 
 private:
+	friend class Renderer;
+
 	Vec3 mPositionOffset;
 	Vec3 mRotation;
 	float mVerticalRecenteringTarget;

@@ -14,7 +14,7 @@
 #include "Gameplay/WeaponComponent.h"
 #include "Gameplay/TestMaster.h"
 #include "Util/Profiler.h"
-
+#include "Physics/PhysicsPrimitive.h"
 #include <stb_image.h>
 
 #include <glad/glad.h>
@@ -458,7 +458,10 @@ void Renderer::Render(float deltaTime)
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);
-	for (const auto& renderCompInLayer : mRenderComponentMap)
+
+	auto culledRenderComponentMap = FrustumCullingPass();
+
+	for (const auto& renderCompInLayer : culledRenderComponentMap)
 	{
 		// Clear depth buffer across different layers
 		glClear(GL_DEPTH_BUFFER_BIT);
@@ -771,10 +774,6 @@ void Renderer::Render(float deltaTime)
 	glBindVertexArray(textVAO);
 	std::string::const_iterator c;
 	// TODO: toString for my math classes?
-	const Vec3 pos = mPtrMainCamera->GetOwner()->GetPosition();
-	const Vec3 rot = mPtrMainCamera->GetRotation();
-	const uint32 cpuTime = mPtrGameContext->cpuTime;
-	const uint32 gpuTime = mPtrGameContext->gpuTime;
 
 	std::string text = mTestMaster->GetOutputString();
 	float x = 100.0f;
@@ -858,6 +857,130 @@ void Renderer::AddDebugLines(Vec3 startPos, Vec3 endPos)
 
 	mDebugLines.push_back(vaoID);
 }
+
+std::map<ERenderLayer, std::vector<RenderComponent*>> Renderer::FrustumCullingPass()
+{
+	auto culledMap = mRenderComponentMap;
+	auto frustum = GenerateFrustum(*mPtrMainCamera);
+
+	for (auto& renderComps : culledMap)
+	{
+		for (int i = renderComps.second.size() - 1; i >= 0; --i)
+		{
+			const auto& renderComp = renderComps.second[i];
+
+			if (renderComp->GetBoundingPrimitive() == nullptr)
+				continue;
+
+			if (!IsWithinFrustum(*renderComp->GetBoundingPrimitive(), renderComp->GetModelMatrix(), frustum))
+			{
+				renderComps.second.erase(renderComps.second.begin() + i);
+			}
+		}
+	}
+
+	return culledMap;
+}
+
+std::vector<Plane> Renderer::GenerateFrustum(const CameraComponent& cam) const
+{
+	std::vector<Plane> planes;
+	planes.reserve(6);
+
+	const float farDis = cam.mFarPlane;
+	const float nearDis = cam.mNearPlane;
+	const float halfHSide = farDis * tanf(cam.mHorFOV * 0.5f);
+	const float halfVSide = halfHSide * static_cast<float>(mScreenWidth) / static_cast<float>(mScreenHeight);
+	const Vec3 camPos = cam.GetCameraPosition();
+	const Vec3 fwd = cam.GetFrontVector();
+	const Vec3 rgt = cam.GetRightVector();
+	const Vec3 up = rgt.Cross(fwd);
+
+	Plane near;
+	near.mNormal = fwd;
+	near.mNormal.Normalize();
+	near.mDistance = (-(camPos + nearDis * fwd)).Dot(near.mNormal);
+	planes.push_back(near);
+
+	Plane far;
+	far.mNormal = -fwd;
+	far.mNormal.Normalize();
+	far.mDistance = (-(camPos + farDis * fwd)).Dot(far.mNormal);
+	planes.push_back(far);
+
+	//TODO: Check here, issues with all these planes
+	Plane right;
+	right.mNormal = (farDis * fwd + halfHSide * rgt).Cross(up);
+	right.mNormal.Normalize();
+	right.mDistance = (-camPos).Dot(right.mNormal);
+	planes.push_back(right);
+
+	Plane left;
+	left.mNormal = up.Cross(farDis * fwd - halfHSide * rgt);
+	left.mNormal.Normalize();
+	left.mDistance = (-camPos).Dot(left.mNormal);
+	planes.push_back(left);
+
+	Plane bottom;
+	bottom.mNormal = (farDis * fwd - halfVSide * up).Cross(rgt);
+	bottom.mNormal.Normalize();
+	bottom.mDistance = (-camPos).Dot(bottom.mNormal);
+	planes.push_back(bottom);
+
+	Plane top;
+	top.mNormal = rgt.Cross(farDis * fwd + halfVSide * up);
+	top.mNormal.Normalize();
+	top.mDistance = (-camPos).Dot(top.mNormal);
+	planes.push_back(top);
+
+	return planes;
+}
+
+bool Renderer::IsWithinFrustum(const struct PhysicsPrimitive& boundingVolume, const Mat4& modelMatrix, const std::vector<Plane>& planes)
+{
+	//TODO: How come I never wrote the operator overload for matrix vector multiplication
+	Vec3 centerWorld = Vec3::Zero;
+	centerWorld.mX = modelMatrix.m[0][0] * boundingVolume.mPosOffset.mX +
+		modelMatrix.m[1][0] * boundingVolume.mPosOffset.mY +
+		modelMatrix.m[2][0] * boundingVolume.mPosOffset.mZ +
+		modelMatrix.m[3][0];
+	centerWorld.mY = modelMatrix.m[0][1] * boundingVolume.mPosOffset.mX +
+		modelMatrix.m[1][1] * boundingVolume.mPosOffset.mY +
+		modelMatrix.m[2][1] * boundingVolume.mPosOffset.mZ +
+		modelMatrix.m[3][1];
+	centerWorld.mZ = modelMatrix.m[0][2] * boundingVolume.mPosOffset.mX +
+		modelMatrix.m[1][2] * boundingVolume.mPosOffset.mY +
+		modelMatrix.m[2][2] * boundingVolume.mPosOffset.mZ +
+		modelMatrix.m[3][2];
+
+	AABBPrimitive aabb = std::get<AABBPrimitive>(boundingVolume.mPrimitive);
+	Vec3 extentWorld = Vec3::Zero;
+	//TODO Probably need fix too (am i using row major or column major again)
+	extentWorld.mX = std::fabs(modelMatrix.m[0][0]) * aabb.mExtend.mX +
+		std::fabs(modelMatrix.m[0][1]) * aabb.mExtend.mY +
+		std::fabs(modelMatrix.m[0][2]) * aabb.mExtend.mZ;
+	extentWorld.mY = std::fabs(modelMatrix.m[1][0]) * aabb.mExtend.mX +
+		std::fabs(modelMatrix.m[1][1]) * aabb.mExtend.mY +
+		std::fabs(modelMatrix.m[1][2]) * aabb.mExtend.mZ;
+	extentWorld.mZ = std::fabs(modelMatrix.m[2][0]) * aabb.mExtend.mX +
+		std::fabs(modelMatrix.m[2][1]) * aabb.mExtend.mY +
+		std::fabs(modelMatrix.m[2][2]) * aabb.mExtend.mZ;
+
+	for (const auto& plane : planes)
+	{
+		float distance = plane.mNormal.Dot(centerWorld) + plane.mDistance;
+		float radius = extentWorld.mX * std::fabs(plane.mNormal.mX) +
+			extentWorld.mY * std::fabs(plane.mNormal.mY) +
+			extentWorld.mZ * std::fabs(plane.mNormal.mZ);
+
+		if (distance + radius < 0)
+			return false;
+	}
+
+	return true;
+}
+
+
 
 void Renderer::AddRenderComponent(RenderComponent* c)
 {

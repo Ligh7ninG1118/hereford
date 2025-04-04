@@ -45,6 +45,11 @@ public:
 
 	void SetTestMaster(class TestMaster* pMaster) { mTestMaster = pMaster; }
 
+protected:
+	std::map<ERenderLayer, std::vector<class RenderComponent*>> FrustumCullingPass();
+	bool IsWithinFrustum(const struct PhysicsPrimitive& boundingVolume, const Mat4& modelMatrix, const std::vector<Plane>& planes);
+	std::vector<Plane> GenerateFrustum (const CameraComponent& cam) const;
+
 private:
 	SDL_Window* mPtrSDLWindowContext;
 	SDL_GLContext mGLContext;
