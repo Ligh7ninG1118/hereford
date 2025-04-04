@@ -9,7 +9,7 @@ struct SpherePrimitive
 
 struct AABBPrimitive
 {
-	Vec3 mExtend;
+	Vec3 mExtent;
 };
 
 struct PlanePrimitive
