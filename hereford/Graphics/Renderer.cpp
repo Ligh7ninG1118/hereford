@@ -893,7 +893,7 @@ std::vector<Plane> Renderer::GenerateFrustum(const CameraComponent& cam) const
 
 	const float farDis = fabs(cam.mFarPlane);
 	const float nearDis = fabs(cam.mNearPlane);
-	const float halfVSide = fabs(farDis * tan(cam.mHorFOV * 0.5f * DEG2RAD));
+	const float halfVSide = fabs(farDis * tan(cam.mVerFOV * 0.5f * DEG2RAD));
 	const float halfHSide = halfVSide * static_cast<float>(mScreenWidth) / static_cast<float>(mScreenHeight);
 	const Vec3 camPos = cam.GetCameraPosition();
 	const Vec3 fwd = cam.GetFrontVector();

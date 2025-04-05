@@ -166,15 +166,13 @@ Matrix4x4& Matrix4x4::Scale(float scale)
 	return *this;
 }
 
-
-//TODO: Why would I put this in the matrix class??? Move it to camera class later
-Matrix4x4 Matrix4x4::CalculatePerspMatrix(float horFOV, float screenRatio, float nearPlane, float farPlane)
+Matrix4x4 Matrix4x4::CalculatePerspMatrix(float verFOV, float screenRatio, float nearPlane, float farPlane)
 {
 	Mat4 projection = Mat4::Zero;
 
-	float tanHalfFOV = tan(DEG2RAD * horFOV / 2.0f);
-	projection.m[0][0] = 1.0f / (screenRatio * tanHalfFOV);
-	projection.m[1][1] = 1.0f / tanHalfFOV;
+	float tanHalfFOV = tan(DEG2RAD * verFOV / 2.0f);
+	projection.m[0][0] = 1.0f / tanHalfFOV;
+	projection.m[1][1] = 1.0f * screenRatio / tanHalfFOV;
 	projection.m[2][2] = -(farPlane + nearPlane) / (farPlane - nearPlane);
 	projection.m[2][3] = -1.0f;
 	projection.m[3][2] = -(2.0f * farPlane * nearPlane) / (farPlane - nearPlane);

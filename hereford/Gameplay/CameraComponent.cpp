@@ -8,7 +8,7 @@ CameraComponent::CameraComponent(Actor* owner, float eyeHeight)
 	mDeferredRecoilDir(Vec2(0.0f,0.0f)),
 	mPositionOffset(Vector3(0.0f, eyeHeight, 0.0f)),
 	mRotation(Vector3(0.0f, 0.0f, 0.0f)),
-	mHorFOV(80.0f),
+	mVerFOV(110.0f),
 	mNearPlane(0.03f),
 	mFarPlane(10000.0f),
 	mVerticalRecenteringTarget(0.0f)
@@ -95,7 +95,7 @@ Mat4 CameraComponent::GetViewMatrix() const
 
 Mat4 CameraComponent::GetPerspMatrix(float screenRatio) const
 {
-	return Mat4::CalculatePerspMatrix(mHorFOV, screenRatio, mNearPlane, mFarPlane);
+	return Mat4::CalculatePerspMatrix(mVerFOV, screenRatio, mNearPlane, mFarPlane);
 }
 
 Mat4 CameraComponent::GetOrthoMatrix(float left, float right, float bottom, float top) const

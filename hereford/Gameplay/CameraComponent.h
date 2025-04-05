@@ -15,7 +15,7 @@ public:
 	void RotateCamera(Vec2 dir);
 
 	void SetEyeHeight(float eyeHeight) { mPositionOffset.mY = eyeHeight; }
-	void SetHorFOV(float hov) { mHorFOV = hov; }
+	void SetHorFOV(float hov) { mVerFOV = hov; }
 
 	Mat4 GetViewMatrix() const;
 	Mat4 GetPerspMatrix(float screenRatio) const;
@@ -47,8 +47,7 @@ private:
 	float mVerticalRecenteringTarget;
 	Vec2 mDeferredRecoilDir;
 
-	//TODO: Is this vertical or horizontal FOV???
-	float mHorFOV;
+	float mVerFOV;
 	float mNearPlane;
 	float mFarPlane;
 	const float mMouseSens = 0.1f;
