@@ -7,7 +7,7 @@
 class PhysicsComponent : public Component
 {
 public:
-	PhysicsComponent(class Actor* owner, class PhysicsManager& phyMgrRef, PhysicsPrimitive primitive = PhysicsPrimitive{ AABBPrimitive{Vec3(0.1f)}, Vec3::Zero});
+	PhysicsComponent(class Actor* owner, class PhysicsManager& phyMgrRef, PhysicsPrimitive primitive = PhysicsPrimitive{ AABBPrimitive{Vec3(0.5f)}, Vec3::Zero});
 	~PhysicsComponent();
 
 	bool Initialize();
