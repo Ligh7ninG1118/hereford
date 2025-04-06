@@ -78,6 +78,8 @@ public:
 	inline bool GetIsCombinedMRTex() const { return mCombinedMRTex; }
 	inline void SetIsCombinedMRTex(bool value) { mCombinedMRTex = value; }
 
+	bool bInstancedDraw = false;
+
 protected:
 	class Renderer& m_Renderer;
 

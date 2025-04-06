@@ -459,7 +459,7 @@ void Renderer::Render(float deltaTime)
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);
 
-	auto culledRenderComponentMap = FrustumCullingPass();
+	auto culledRenderComponentMap = mRenderComponentMap;//FrustumCullingPass();
 
 	for (const auto& renderCompInLayer : culledRenderComponentMap)
 	{
@@ -739,7 +739,9 @@ void Renderer::Render(float deltaTime)
 					shader->SetVec3("inColor", renderComp->GetColor());
 				}
 				glBindVertexArray(VAO);
-				glDrawArrays(GL_TRIANGLES, 0, 36);
+				glDrawArraysInstanced(GL_TRIANGLES, 0, 36, 10000);
+				goto gtfo;
+				//glDrawArrays(GL_TRIANGLES, 0, 36);
 			}
 
 			glBindVertexArray(0);
@@ -748,6 +750,8 @@ void Renderer::Render(float deltaTime)
 		}
 
 	}
+
+	gtfo:
 
 	for (auto line : mDebugLines)
 	{
@@ -856,6 +860,47 @@ void Renderer::AddDebugLines(Vec3 startPos, Vec3 endPos)
 	glEnableVertexAttribArray(1);
 
 	mDebugLines.push_back(vaoID);
+}
+
+void Renderer::SetInstancedData()
+{
+	const int amount = 10000;
+
+	Mat4* modelMatrices = new Mat4[amount];
+	unsigned int VAO = 0;
+
+	
+	for (auto& comps : mRenderComponentMap)
+	{
+		VAO = comps.second[0]->GetVAOID();
+		for (int i = 0; i < amount; i++)
+		{
+			modelMatrices[i] = comps.second[i]->GetModelMatrix();
+		}
+	}
+
+	unsigned int buffer;
+	glGenBuffers(1, &buffer);
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);
+	glBufferData(GL_ARRAY_BUFFER, amount * sizeof(Mat4), &modelMatrices[0], GL_STATIC_DRAW);
+
+
+	glBindVertexArray(VAO);
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4), (void*)0);
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4), (void*)(sizeof(float) * 4));
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4), (void*)(sizeof(float) * 4 * 2));
+	glEnableVertexAttribArray(6);
+	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4), (void*)(sizeof(float) * 4 * 3));
+
+	glVertexAttribDivisor(3, 1);
+	glVertexAttribDivisor(4, 1);
+	glVertexAttribDivisor(5, 1);
+	glVertexAttribDivisor(6, 1);
+
+	glBindVertexArray(0);
 }
 
 std::map<ERenderLayer, std::vector<RenderComponent*>> Renderer::FrustumCullingPass()

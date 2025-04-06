@@ -45,6 +45,8 @@ public:
 
 	void SetTestMaster(class TestMaster* pMaster) { mTestMaster = pMaster; }
 
+	void SetInstancedData();
+
 protected:
 	std::map<ERenderLayer, std::vector<class RenderComponent*>> FrustumCullingPass();
 	bool IsWithinFrustum(const struct PhysicsPrimitive& boundingVolume, const Mat4& modelMatrix, const std::vector<Plane>& planes);

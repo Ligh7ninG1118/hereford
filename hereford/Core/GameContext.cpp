@@ -99,6 +99,8 @@ bool GameContext::Initialize()
 	//LoadScene("Scenes/killhouse.json");
 	LoadCubeTest();
 
+	mPtrRenderer->SetInstancedData();
+
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -241,6 +243,8 @@ void GameContext::LoadCubeTest()
 		{
 			Actor* pActor = new TestCube(this);
 			pActor->SetPosition(Vec3(i * 2, 0, j * 2));
+			/*pActor->SetPosition(Vec3(5, 1, 2));
+			pActor->SetRotation(Vec3(45.0f, 45.0f, 45.0f));*/
 
 		}
 	}

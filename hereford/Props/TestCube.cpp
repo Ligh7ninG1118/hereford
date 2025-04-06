@@ -11,10 +11,11 @@ TestCube::TestCube(GameContext* gameCtx)
 	:
 	Actor(gameCtx)
 {
-	mPtrRenderComp = std::make_unique<RenderComponent>(static_cast<Actor*>(this), gameCtx->GetRenderer());
 	mPtrPhysicsComp = std::make_unique<PhysicsComponent>(static_cast<Actor*>(this), gameCtx->GetPhysicsManager());
-
 	mPtrPhysicsComp->SetBoundingPrimitive(PhysicsPrimitive{ AABBPrimitive{Vec3(0.5f)}, Vec3::Zero });
+
+
+	mPtrRenderComp = std::make_unique<RenderComponent>(static_cast<Actor*>(this), gameCtx->GetRenderer());
 
 	PrimitiveInfo cubeInfo;
 	Primitive::GenerateCube(cubeInfo);
@@ -29,12 +30,15 @@ TestCube::TestCube(GameContext* gameCtx)
 
 	mPtrRenderComp->SetBoundingPrimitive(mPtrPhysicsComp->GetBoundingPrimitive());
 
-	std::shared_ptr<Shader> shader = AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_pbr_frag.glsl"));
+	std::shared_ptr<Shader> shader = AssetManager::LoadAsset<Shader>(std::string("Shaders/standard_instanced_vert.glsl*Shaders/model_tex_pbr_frag.glsl"));
 	mPtrRenderComp->SetShader(shader);
 
 	mPtrRenderComp->SetColor(Vec3(Random::Range(0.1f, 0.9f), Random::Range(0.1f, 0.9f), Random::Range(0.1f, 0.9f)));
 
 	mPtrRenderComp->SetRenderModeFlag(RM_EXPLICITTEX | RM_STATIC | RM_LIGHTINGANDIBL | RM_SIMPLEMESH);
+
+	mPtrRenderComp->bInstancedDraw = true;
+	
 }
 
 TestCube::~TestCube()

@@ -469,6 +469,7 @@
     <None Include="Shaders\brdf_frag.glsl" />
     <None Include="Shaders\ui_image_frag.glsl" />
     <None Include="Shaders\model_simple_frag.glsl" />
+    <None Include="Shaders\standard_instanced_vert.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="imgui\imgui.natvis" />

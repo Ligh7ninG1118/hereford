@@ -323,6 +323,7 @@
     <None Include="Shaders\skybox_prefilter_frag.glsl" />
     <None Include="Shaders\skybox_vert.glsl" />
     <None Include="Shaders\standard_frag.glsl" />
+    <None Include="Shaders\standard_instanced_vert.glsl" />
     <None Include="Shaders\standard_vert.glsl" />
     <None Include="Shaders\ui_crosshair_frag.glsl" />
     <None Include="Shaders\ui_crosshair_vert.glsl" />
