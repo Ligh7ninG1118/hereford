@@ -78,12 +78,15 @@ bool GameContext::Initialize()
 	}
 
 	mPtrRenderer = std::make_unique<Renderer>(mPtrSDLWindow, this, mScreenWidth, mScreenHeight);
-
+	mPtrRenderer->SetBackgroundClearColor(Vec3(0.2f, 0.3f, 0.3f));
+	mPtrRenderer->SetBackgroundClearMode(EBGClearMode::SKYBOX);
 	if (!mPtrRenderer->Initialize())
 	{
 		printf("Renderer could not be initialized! SDL_Error: %s\n", SDL_GetError());
 		return false;
 	}
+
+	
 
 	mPtrPhysicsManager = std::make_unique<PhysicsManager>();
 

@@ -44,13 +44,16 @@ public:
 	void AddDebugLines(Vec3 startPos, Vec3 endPos);
 
 	void SetTestMaster(class TestMaster* pMaster) { mTestMaster = pMaster; }
-
+	void SetBackgroundClearMode(EBGClearMode inMode) { mBGClearMode = inMode; }
+	void SetBackgroundClearColor(Vec3 inColor) { mClearColor = inColor; }
 	void SetInstancedData();
 
 protected:
 	std::map<ERenderLayer, std::vector<class RenderComponent*>> FrustumCullingPass();
 	bool IsWithinFrustum(const struct PhysicsPrimitive& boundingVolume, const Mat4& modelMatrix, const std::vector<Plane>& planes);
 	std::vector<Plane> GenerateFrustum (const CameraComponent& cam) const;
+	void LoadSkybox();
+	void DrawSkybox(const Mat4& proj, const Mat4& view);
 
 private:
 	SDL_Window* mPtrSDLWindowContext;
@@ -61,6 +64,8 @@ private:
 	int mScreenWidth;
 	int mScreenHeight;
 	std::shared_ptr<Shader> debugLineShader;
+	EBGClearMode mBGClearMode;
+	Vec3 mClearColor;
 
 	std::shared_ptr<Shader> skyboxShader;
 	Uint32 skyboxVAOID;
