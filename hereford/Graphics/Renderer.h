@@ -10,6 +10,8 @@
 #include <memory>
 #include <unordered_map>
 
+class RenderComponent;
+
 
 enum class EBGClearMode
 {
@@ -46,10 +48,12 @@ public:
 	void SetTestMaster(class TestMaster* pMaster) { mTestMaster = pMaster; }
 	void SetBackgroundClearMode(EBGClearMode inMode) { mBGClearMode = inMode; }
 	void SetBackgroundClearColor(Vec3 inColor) { mClearColor = inColor; }
-	void SetInstancedData();
+	void GroupInstancedData();
 
 protected:
-	std::map<ERenderLayer, std::vector<class RenderComponent*>> FrustumCullingPass();
+	//std::vector<RenderComponent*> GroupRenderComponents(std::vector<RenderComponent*> inComps);
+
+	std::map<ERenderLayer, std::vector<RenderComponent*>> FrustumCullingPass();
 	bool IsWithinFrustum(const struct PhysicsPrimitive& boundingVolume, const Mat4& modelMatrix, const std::vector<Plane>& planes);
 	std::vector<Plane> GenerateFrustum (const CameraComponent& cam) const;
 	void LoadSkybox();
@@ -86,7 +90,7 @@ private:
 
 	class TestMaster* mTestMaster;
 
-	std::map<ERenderLayer, std::vector<class RenderComponent*>> mRenderComponentMap;
+	std::map<ERenderLayer, std::unordered_map<unsigned int, std::vector<RenderComponent*>>> mRenderComponentMap;
 
 	std::vector<class LightComponent*> mLightComponents;
 
@@ -95,8 +99,8 @@ private:
 	std::vector<uint32> mDebugLines;
 
 	friend class RenderComponent;
-	void AddRenderComponent(class RenderComponent* c);
-	void RemoveRenderComponent(class RenderComponent* c);
+	void AddRenderComponent(RenderComponent* c);
+	void RemoveRenderComponent(RenderComponent* c);
 
 	friend class LightComponent;
 	void AddLightComponent(class LightComponent* c);

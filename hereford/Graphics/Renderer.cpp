@@ -47,11 +47,7 @@ Renderer::Renderer(SDL_Window* sdlWindow, class GameContext* gameContext, int wi
 	mScreenWidth(width),
 	mScreenHeight(height)
 {
-	/*for (int i = 0; i < 8; i++)
-	{
-		mRenderComponents.push_back
-
-	}*/
+	
 }
 
 Renderer::~Renderer()
@@ -233,9 +229,12 @@ void Renderer::Render(float deltaTime)
 	glDepthFunc(GL_LESS);
 	glDepthMask(GL_TRUE);
 
-	auto culledRenderComponentMap = mRenderComponentMap;//FrustumCullingPass();
+	//auto culledRenderComponentMap = FrustumCullingPass();
 
-	for (const auto& renderCompInLayer : culledRenderComponentMap)
+
+
+
+	for (auto& renderCompInLayer : mRenderComponentMap)
 	{
 		// Clear depth buffer across different layers
 		glClear(GL_DEPTH_BUFFER_BIT);
@@ -244,8 +243,11 @@ void Renderer::Render(float deltaTime)
 		uint32 lastVAO = 0;
 		uint32 lastShaderID = 0;
 
-		for (const auto& renderComp : renderCompInLayer.second)
+		for (auto& groupedComps : renderCompInLayer.second)
 		{
+			
+			auto& renderComp = groupedComps.second[0];
+
 			if (renderComp->GetState() == EComponentState::Disabled)
 				continue;
 
@@ -513,8 +515,7 @@ void Renderer::Render(float deltaTime)
 					shader->SetVec3("inColor", renderComp->GetColor());
 				}
 				glBindVertexArray(VAO);
-				glDrawArraysInstanced(GL_TRIANGLES, 0, 36, 10000);
-				goto gtfo;
+				glDrawArraysInstanced(GL_TRIANGLES, 0, 36, groupedComps.second.size());
 				//glDrawArrays(GL_TRIANGLES, 0, 36);
 			}
 
@@ -524,8 +525,6 @@ void Renderer::Render(float deltaTime)
 		}
 
 	}
-
-	gtfo:
 
 	for (auto line : mDebugLines)
 	{
@@ -636,74 +635,109 @@ void Renderer::AddDebugLines(Vec3 startPos, Vec3 endPos)
 	mDebugLines.push_back(vaoID);
 }
 
-void Renderer::SetInstancedData()
+void Renderer::GroupInstancedData()
 {
-	const int amount = 10000;
 
-	Mat4* modelMatrices = new Mat4[amount];
-	unsigned int VAO = 0;
-
-	
-	for (auto& comps : mRenderComponentMap)
+	for (auto& compsInLayer : mRenderComponentMap)
 	{
-		VAO = comps.second[0]->GetVAOID();
-		for (int i = 0; i < amount; i++)
+		auto ungroupedComps = compsInLayer.second[0];
+		for (int i = ungroupedComps.size() - 1; i >= 0;i--)
 		{
-			modelMatrices[i] = comps.second[i]->GetModelMatrix();
+			unsigned int VAOID = ungroupedComps[i]->GetVAOID();
+			compsInLayer.second[VAOID].push_back(ungroupedComps[i]);
+			ungroupedComps.erase(ungroupedComps.begin() + i);
 		}
 	}
 
-	unsigned int buffer;
-	glGenBuffers(1, &buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	glBufferData(GL_ARRAY_BUFFER, amount * sizeof(Mat4), &modelMatrices[0], GL_STATIC_DRAW);
-
-
-	glBindVertexArray(VAO);
-	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4), (void*)0);
-	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4), (void*)(sizeof(float) * 4));
-	glEnableVertexAttribArray(5);
-	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4), (void*)(sizeof(float) * 4 * 2));
-	glEnableVertexAttribArray(6);
-	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4), (void*)(sizeof(float) * 4 * 3));
-
-	glVertexAttribDivisor(3, 1);
-	glVertexAttribDivisor(4, 1);
-	glVertexAttribDivisor(5, 1);
-	glVertexAttribDivisor(6, 1);
-
-	glBindVertexArray(0);
-}
-
-std::map<ERenderLayer, std::vector<RenderComponent*>> Renderer::FrustumCullingPass()
-{
-	auto culledMap = mRenderComponentMap;
-	auto frustum = GenerateFrustum(*mPtrMainCamera);
-
-	Profiler::Start("Frustum Culling");
-
-	for (auto& renderComps : culledMap)
+	// pair<ERenderLayer, unordered_map>
+	for (const auto& compsInLayer : mRenderComponentMap)
 	{
-		for (int i = renderComps.second.size() - 1; i >= 0; --i)
+		// pair<unsigned int, std::vector<RenderComponent*>>
+		for (const auto& groupedComps : compsInLayer.second)
 		{
-			const auto& renderComp = renderComps.second[i];
-
-			if (renderComp->GetBoundingPrimitive() == nullptr)
-				continue;
-
-			if (!IsWithinFrustum(*renderComp->GetBoundingPrimitive(), renderComp->GetModelMatrix(), frustum))
+			std::vector<Mat4> modelMatrices;
+			modelMatrices.reserve(groupedComps.second.size());
+			// RenderComponent*
+			for (const auto& comp : groupedComps.second)
 			{
-				renderComps.second.erase(renderComps.second.begin() + i);
+				modelMatrices.push_back(comp->GetModelMatrix());
 			}
+
+			unsigned int buffer;
+			glGenBuffers(1, &buffer);
+			glBindBuffer(GL_ARRAY_BUFFER, buffer);
+			glBufferData(GL_ARRAY_BUFFER, modelMatrices.size() * sizeof(Mat4), &modelMatrices[0], GL_STATIC_DRAW);
+
+			//TODO: need to variablize the array starting slot. OpenGL native function or hand tracking
+			glBindVertexArray(groupedComps.first);
+			glEnableVertexAttribArray(3);
+			glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4), (void*)0);
+			glEnableVertexAttribArray(4);
+			glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4), (void*)(sizeof(float) * 4));
+			glEnableVertexAttribArray(5);
+			glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4), (void*)(sizeof(float) * 4 * 2));
+			glEnableVertexAttribArray(6);
+			glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4), (void*)(sizeof(float) * 4 * 3));
+
+			glVertexAttribDivisor(3, 1);
+			glVertexAttribDivisor(4, 1);
+			glVertexAttribDivisor(5, 1);
+			glVertexAttribDivisor(6, 1);
+
+			glBindVertexArray(0);
 		}
 	}
-
-	Profiler::Mark("Frustum Culling");
-
-	return culledMap;
 }
+
+//std::vector<RenderComponent*> Renderer::GroupRenderComponents(std::vector<RenderComponent*> inComps)
+//{
+//	// Group components by VAOID, for now
+//	std::unordered_map<unsigned int, std::vector<RenderComponent*>> groupedCompsMap;
+//
+//	for (const auto& comp : inComps)
+//	{
+//		groupedCompsMap[comp->GetVAOID()].push_back(comp);
+//	}
+//
+//	for (const auto& groupedComps : groupedCompsMap)
+//	{
+//		std::vector<Mat4> modelMatrices;
+//		modelMatrices.reserve(groupedComps.second.size());
+//		for (const auto& comp : groupedComps.second)
+//		{
+//			modelMatrices.push_back(comp->GetModelMatrix());
+//		}
+//	}
+//
+//}
+
+//std::map<ERenderLayer, std::vector<RenderComponent*>> Renderer::FrustumCullingPass()
+//{
+//	auto culledMap = mRenderComponentMap;
+//	auto frustum = GenerateFrustum(*mPtrMainCamera);
+//
+//	Profiler::Start("Frustum Culling");
+//
+//	for (auto& renderComps : culledMap)
+//	{
+//		for (int i = renderComps.second.size() - 1; i >= 0; --i)
+//		{
+//			const auto& renderComp = renderComps.second[i];
+//
+//			if (renderComp->GetBoundingPrimitive() == nullptr)
+//				continue;
+//
+//			if (!IsWithinFrustum(*renderComp->GetBoundingPrimitive(), renderComp->GetModelMatrix(), frustum))
+//			{
+//				renderComps.second.erase(renderComps.second.begin() + i);
+//			}
+//		}
+//	}
+//
+//	Profiler::Mark("Frustum Culling");
+//
+//	return culledMap;
+//}
 
 std::vector<Plane> Renderer::GenerateFrustum(const CameraComponent& cam) const
 {
@@ -1048,13 +1082,15 @@ bool Renderer::IsWithinFrustum(const struct PhysicsPrimitive& boundingVolume, co
 void Renderer::AddRenderComponent(RenderComponent* c)
 {
 	ERenderLayer renderLayer = c->GetRenderLayer();
-	mRenderComponentMap[renderLayer].push_back(c);
+	// Since render component hasn't been initialized yet, push to vector under default (0) VAOID;
+	mRenderComponentMap[renderLayer][0].push_back(c);
 }
 
 void Renderer::RemoveRenderComponent(RenderComponent* c)
 {
 	ERenderLayer renderLayer = c->GetRenderLayer();
-	mRenderComponentMap[renderLayer].erase(std::find(mRenderComponentMap[renderLayer].begin(), mRenderComponentMap[renderLayer].end(), c));
+	unsigned int VAOID = c->GetVAOID();
+	mRenderComponentMap[renderLayer][VAOID].erase(std::find(mRenderComponentMap[renderLayer][VAOID].begin(), mRenderComponentMap[renderLayer][VAOID].end(), c));
 }
 
 void Renderer::AddLightComponent(LightComponent* c)

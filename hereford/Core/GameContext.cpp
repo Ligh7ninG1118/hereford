@@ -102,7 +102,7 @@ bool GameContext::Initialize()
 	//LoadScene("Scenes/killhouse.json");
 	LoadCubeTest();
 
-	mPtrRenderer->SetInstancedData();
+	mPtrRenderer->GroupInstancedData();
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
