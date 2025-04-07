@@ -80,7 +80,7 @@ bool Renderer::Initialize()
 	printf("Renderer::Initialize(): Renderer: %s\n", glGetString(GL_RENDERER));
 	printf("Renderer::Initialize(): Version:  %s\n", glGetString(GL_VERSION));
 
-	SDL_GL_SetSwapInterval(1);
+	SDL_GL_SetSwapInterval(0);
 	glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_CULL_FACE);
 
@@ -764,69 +764,69 @@ void Renderer::Render(float deltaTime)
 		glDrawArrays(GL_LINES, 0, 2);
 	}
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	textShader->Use();
-	Mat4 uiProj = mPtrMainCamera->GetOrthoMatrix(0.0f, static_cast<float>(mScreenWidth), 0.0f, static_cast<float>(mScreenHeight));
+	//textShader->Use();
+	//Mat4 uiProj = mPtrMainCamera->GetOrthoMatrix(0.0f, static_cast<float>(mScreenWidth), 0.0f, static_cast<float>(mScreenHeight));
 
-	textShader->SetVec3("textColor", Vec3(0.1f, 0.1f, 0.1f));
-	textShader->SetMat4("projection", uiProj);
-	textShader->SetInt("text", 0);
-	glActiveTexture(GL_TEXTURE0);
+	//textShader->SetVec3("textColor", Vec3(0.1f, 0.1f, 0.1f));
+	//textShader->SetMat4("projection", uiProj);
+	//textShader->SetInt("text", 0);
+	//glActiveTexture(GL_TEXTURE0);
 
-	glBindVertexArray(textVAO);
-	std::string::const_iterator c;
-	// TODO: toString for my math classes?
+	//glBindVertexArray(textVAO);
+	//std::string::const_iterator c;
+	//// TODO: toString for my math classes?
 
-	std::string text = mTestMaster->GetOutputString();
-	float x = 100.0f;
-	float y = mScreenHeight - 100.0f;
-	float scale = 0.8f;
-	for (c = text.begin(); c != text.end(); c++)
-	{
-		Character ch = Characters[*c];
-		float xpos = x + ch.mBearing.mX * scale;
-		float ypos = y - (ch.mSize.mY - ch.mBearing.mY) * scale;
+	//std::string text = mTestMaster->GetOutputString();
+	//float x = 100.0f;
+	//float y = mScreenHeight - 100.0f;
+	//float scale = 0.8f;
+	//for (c = text.begin(); c != text.end(); c++)
+	//{
+	//	Character ch = Characters[*c];
+	//	float xpos = x + ch.mBearing.mX * scale;
+	//	float ypos = y - (ch.mSize.mY - ch.mBearing.mY) * scale;
 
-		float w = ch.mSize.mX * scale;
-		float h = ch.mSize.mY * scale;
+	//	float w = ch.mSize.mX * scale;
+	//	float h = ch.mSize.mY * scale;
 
-		float vertices[6][4] =
-		{
-			{ xpos,		ypos + h,	0.0f, 0.0f},
-			{ xpos,     ypos,       0.0f, 1.0f },
-			{ xpos + w, ypos,       1.0f, 1.0f },
+	//	float vertices[6][4] =
+	//	{
+	//		{ xpos,		ypos + h,	0.0f, 0.0f},
+	//		{ xpos,     ypos,       0.0f, 1.0f },
+	//		{ xpos + w, ypos,       1.0f, 1.0f },
 
-			{ xpos,     ypos + h,   0.0f, 0.0f },
-			{ xpos + w, ypos,       1.0f, 1.0f },
-			{ xpos + w, ypos + h,   1.0f, 0.0f }
-		};
+	//		{ xpos,     ypos + h,   0.0f, 0.0f },
+	//		{ xpos + w, ypos,       1.0f, 1.0f },
+	//		{ xpos + w, ypos + h,   1.0f, 0.0f }
+	//	};
 
-		glBindTexture(GL_TEXTURE_2D, ch.mTextureID);
-		glBindBuffer(GL_ARRAY_BUFFER, textVBO);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		x += (ch.mAdvance >> 6) * scale;
-	}
-	glBindVertexArray(0);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	//	glBindTexture(GL_TEXTURE_2D, ch.mTextureID);
+	//	glBindBuffer(GL_ARRAY_BUFFER, textVBO);
+	//	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+	//	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//	glDrawArrays(GL_TRIANGLES, 0, 6);
+	//	x += (ch.mAdvance >> 6) * scale;
+	//}
+	//glBindVertexArray(0);
+	//glBindTexture(GL_TEXTURE_2D, 0);
 
 
-	for (auto uiElement : mUIElements)
-	{
-		if (!uiElement->GetIsActive())
-			continue;
+	//for (auto uiElement : mUIElements)
+	//{
+	//	if (!uiElement->GetIsActive())
+	//		continue;
 
-		glBindVertexArray(uiElement->GetVAO());
-		uiElement->GetShader()->Use();
-		uiElement->GetShader()->SetMat4("projection", uiProj);
+	//	glBindVertexArray(uiElement->GetVAO());
+	//	uiElement->GetShader()->Use();
+	//	uiElement->GetShader()->SetMat4("projection", uiProj);
 
-		if (auto uiImage = dynamic_cast<UIImage*>(uiElement); uiImage != nullptr)
-			glBindTexture(GL_TEXTURE_2D, uiImage->GetTexture()->GetID());
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-	}
+	//	if (auto uiImage = dynamic_cast<UIImage*>(uiElement); uiImage != nullptr)
+	//		glBindTexture(GL_TEXTURE_2D, uiImage->GetTexture()->GetID());
+	//	glDrawArrays(GL_TRIANGLES, 0, 6);
+	//}
 
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
