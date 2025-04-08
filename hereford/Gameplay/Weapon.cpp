@@ -5,6 +5,7 @@
 #include "Gameplay/Player.h"
 #include "Gameplay/IHittable.h"
 #include "Core/GameContext.h"
+#include "Physics/PhysicsManager.h"
 #include "Animation/AnimationStateMachine.h"
 #include "Graphics/AnimatedRenderComponent.h"
 #include "imgui/imgui.h"

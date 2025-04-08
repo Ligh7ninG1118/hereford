@@ -1,5 +1,6 @@
 #include "ShowcaseModel.h"
 #include "Core/GameContext.h"
+#include "Graphics/Renderer.h"
 #include "Graphics/RenderComponent.h"
 #include "Asset/AssetManager.h"
 

@@ -1,4 +1,5 @@
 #include "PlywoodWall.h"
+#include "Graphics/Renderer.h"
 #include "Graphics/RenderComponent.h"
 #include "Core/GameContext.h"
 #include "Asset/AssetManager.h"

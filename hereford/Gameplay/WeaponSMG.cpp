@@ -7,6 +7,7 @@
 #include "Gameplay/Player.h"
 #include "Gameplay/WeaponComponent.h"
 #include "Graphics/AnimatedRenderComponent.h"
+#include "Graphics/Renderer.h"
 #include "Audio/AudioComponent.h"
 
 WeaponSMG::WeaponSMG(GameContext* gameCtx)

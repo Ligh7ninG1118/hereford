@@ -1,5 +1,8 @@
 #include "Core/GameContext.h"
 #include "Core/Actor.h"
+#include "Graphics/Renderer.h"
+#include "Audio/AudioManager.h"
+#include "Physics/PhysicsManager.h"
 #include "Gameplay/Player.h"
 #include "Gameplay/FlyCamera.h"
 #include "Gameplay/TestMaster.h"
@@ -52,7 +55,7 @@ bool GameContext::Initialize()
 {
 	SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
 
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_GAMECONTROLLER) < 0)
 	{
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
 		return false;

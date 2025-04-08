@@ -6,6 +6,7 @@
 #include "Core/GameContext.h"
 #include "Gameplay/Player.h"
 #include "Gameplay/WeaponComponent.h"
+#include "Graphics/Renderer.h"
 #include "Graphics/AnimatedRenderComponent.h"
 #include "Audio/AudioComponent.h"
 

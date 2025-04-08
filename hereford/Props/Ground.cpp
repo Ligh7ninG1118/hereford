@@ -1,6 +1,7 @@
 #include "Ground.h"
 
 #include "Core/GameContext.h"
+#include "Graphics/Renderer.h"
 #include "Graphics/RenderComponent.h"
 #include "Physics/PhysicsComponent.h"
 #include "Asset/Primitive.h"

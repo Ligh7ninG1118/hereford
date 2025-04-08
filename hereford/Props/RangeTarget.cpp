@@ -1,6 +1,8 @@
 #include "Props/RangeTarget.h"
+#include "Graphics/Renderer.h"
 #include "Graphics/RenderComponent.h"
 #include "Core/GameContext.h"
+#include "Physics/PhysicsManager.h"
 #include "Physics/PhysicsComponent.h"
 #include "Audio/AudioComponent.h"
 #include "Asset/Primitive.h"

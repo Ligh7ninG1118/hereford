@@ -1,17 +1,16 @@
 #pragma once
 
 #include "Core/Actor.h"
-
-#include "Audio/AudioManager.h"
-#include "Graphics/Renderer.h"
-#include "Physics/PhysicsManager.h"
-
 #include <SDL2/SDL.h>
 #include <vector>
 #include <memory>
 #include <unordered_map>
-
 #include "Util/GameEvent.h"
+
+class Renderer;
+class AudioManager;
+class PhysicsManager;
+
 
 class GameContext
 {
@@ -56,6 +55,7 @@ private:
 	std::unique_ptr<Renderer> mPtrRenderer;
 	std::unique_ptr<PhysicsManager> mPtrPhysicsManager;
 	std::unique_ptr<AudioManager> mPtrAudioManager;
+
 
 	class Player* mPtrPlayer;
 	class TestMaster* mPtrTestMaster;

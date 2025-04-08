@@ -2,12 +2,12 @@
 #include "Gameplay/CameraComponent.h"
 #include "Gameplay/Weapon.h"
 #include "Gameplay/WeaponComponent.h"
-
 #include "Gameplay/IInteractable.h"
+#include "Graphics/Renderer.h"
 #include "Core/GameContext.h"
 #include <SDL2/SDL.h>
 #include "imgui/imgui.h"
-
+#include "Physics/PhysicsManager.h"
 #include "Audio/AudioComponent.h"
 #include "Actions/ActionComponent.h"
 #include "Asset/AssetManager.h"
