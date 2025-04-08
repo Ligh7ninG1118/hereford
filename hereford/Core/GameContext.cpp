@@ -8,6 +8,7 @@
 #include "Gameplay/TestMaster.h"
 #include "Props/PlywoodWall.h"
 #include "Props/TestCube.h"
+#include "Input/InputManager.h"
 #include "Util/DelayedAction.h"
 #include "Util/TimelineAction.h"
 #include "Util/Profiler.h"
@@ -117,6 +118,8 @@ bool GameContext::Initialize()
 
 	mPtrAudioManager->PlaySound("bootcamp_ambient.wav", true, false);
 
+	mPtrInputManager = std::make_unique<InputManager>();
+
 	return true;
 }
 
@@ -147,16 +150,20 @@ void GameContext::RunLoop()
 		
 		Profiler::UpdateImGuiView();
 		
-		Profiler::Start("CPU");
+		Profiler::Start("CPU", 100);
+		Profiler::Start("Input", 105);
 		ProcessInput();
+		Profiler::Mark("Input");
+		Profiler::Start("Game Logic", 110);
 		UpdateGame();
+		Profiler::Mark("Game Logic");
 		UpdateAudio();
 		CalculatePhysics();
 		//DebugSceneObjects();
 		DelayedActionManager::UpdateTimers(mDeltaTime);
 		TimelineActionManager::UpdateTimers(mDeltaTime);
 		Profiler::Mark("CPU");
-		Profiler::Start("GPU");
+		Profiler::Start("GPU", 200);
 		GenerateOutput();
 		Profiler::Mark("GPU");
 	}

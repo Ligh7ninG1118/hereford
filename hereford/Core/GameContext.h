@@ -10,6 +10,7 @@
 class Renderer;
 class AudioManager;
 class PhysicsManager;
+class InputManager;
 
 
 class GameContext
@@ -55,6 +56,7 @@ private:
 	std::unique_ptr<Renderer> mPtrRenderer;
 	std::unique_ptr<PhysicsManager> mPtrPhysicsManager;
 	std::unique_ptr<AudioManager> mPtrAudioManager;
+	std::unique_ptr<InputManager> mPtrInputManager;
 
 
 	class Player* mPtrPlayer;
