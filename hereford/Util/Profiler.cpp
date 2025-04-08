@@ -7,7 +7,7 @@
 std::unordered_map<std::string, WatchData> Profiler::mWatchMap;
 time_unit_t Profiler::mSelfUpdateTimer = steady_clock::now();
 time_unit_t Profiler::mFPSTimer = steady_clock::now();
-float Profiler::mUpdatePeriod = 0.5f;
+float Profiler::mUpdatePeriod = 1.0f;
 float Profiler::mTotalFrameTime = 0.0f;
 
 void Profiler::UpdateImGuiView()
@@ -19,8 +19,8 @@ void Profiler::UpdateImGuiView()
 	mFPSTimer = steady_clock::now();
 	ImGui::Text("FPS: %.1f\t\t\tTotal Frame Time: %.2f ms\n", 1.0f / mTotalFrameTime, mTotalFrameTime * 1000.0f);
 
+	// Sort using display order
 	std::vector<std::pair<std::string, WatchData>> watchVec(mWatchMap.begin(), mWatchMap.end());
-
 	std::sort(watchVec.begin(), watchVec.end(), [](const auto& a, const auto& b) {
 		return a.second.mDisplayOrder < b.second.mDisplayOrder;
 		});
