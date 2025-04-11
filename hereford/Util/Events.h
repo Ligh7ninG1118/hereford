@@ -1,5 +1,6 @@
 #pragma once
 #include "Math/Math.h"
+#include "Enums.h"
 
 struct EventOnAnimFinished
 {
@@ -33,4 +34,17 @@ struct EventOnInteractButtonPressed
 {
 	EventOnInteractButtonPressed()
 	{ }
+};
+
+struct EventOnKeyInput
+{
+	EInputState inputState;
+	EventOnKeyInput(EInputState state)
+		: inputState(state)
+	{ }
+};
+
+struct EventOnMouseInput
+{
+
 };
