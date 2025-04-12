@@ -34,10 +34,6 @@ public:
 
 	class Player* GetPlayer() const { return mPtrPlayer; }
 
-	//TODO: Move to Telemetry Class
-	uint32 cpuTime;
-	uint32 gpuTime;
-
 private:
 	void LoadStarterData();
 	void LoadCubeTest();
@@ -80,9 +76,6 @@ private:
 	Uint32 prevTimestamp;
 	Uint32 currTimestamp;
 	float mDeltaTime;
-
-	float mTelemetryUpdateInterval;
-	float mTelemetryUpdateTimer;
 
 	int mScreenWidth;
 	int mScreenHeight;

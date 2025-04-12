@@ -34,9 +34,6 @@ GameContext::GameContext()
 	mPrevKeyStates.resize(232);
 	mPrevMouseStates = EMouseState::LMB_NOT_PRESSED | EMouseState::MMB_NOT_PRESSED | EMouseState::RMB_NOT_PRESSED | EMouseState::SCROLL_IDLE;
 
-	mTelemetryUpdateInterval = 1.0f;
-	mTelemetryUpdateTimer = 0.0f;
-
 	mCursorMode = false;
 }
 
