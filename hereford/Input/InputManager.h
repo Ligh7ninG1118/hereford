@@ -1,4 +1,5 @@
 #pragma once
+#include "Math/Math.h"
 #include <unordered_map>
 #include <vector>
 #include <variant>
@@ -8,7 +9,8 @@ enum class EInputAction
 {
 	RESERVED_DEFAULT = 0,
 
-	MOVEMENT,
+	PLAYER_MOVEMENT,
+	FLY_MOVEMENT,
 };
 
 struct SwizzledInput
@@ -16,7 +18,8 @@ struct SwizzledInput
 	SDL_Scancode mScancode;
 	std::variant<bool,
 		float,
-		Vec2> mModifier;
+		Vec2,
+		Vec3> mModifier;
 };
 
 class InputManager
@@ -31,7 +34,32 @@ public:
 	template <typename T>
 	T ReadValue(EInputAction inputAction)
 	{
+		auto itr = mListenerMap.find(inputAction);
+		if (itr == mListenerMap.end())
+		{
+			//Log error message;
+			return T{};
+		}
 
+		T output{};
+
+		const Uint8* rawKeyState = SDL_GetKeyboardState(nullptr);
+
+		for (const auto& input : mListenerMap[inputAction])
+		{
+			int keyState = rawKeyState[input.mScancode];
+			if (std::holds_alternative<T>(input.mModifier))
+			{
+				T modifier = std::get<T>(input.mModifier);
+				output += modifier * keyState;
+			}
+			else
+			{
+				// Log error message, function call type and input type not compatible
+			}
+		}
+
+		return output;
 	}
 
 private:

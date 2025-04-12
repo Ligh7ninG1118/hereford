@@ -119,6 +119,7 @@ bool GameContext::Initialize()
 	mPtrAudioManager->PlaySound("bootcamp_ambient.wav", true, false);
 
 	mPtrInputManager = std::make_unique<InputManager>();
+	mPtrInputManager->Initialize();
 
 	return true;
 }
