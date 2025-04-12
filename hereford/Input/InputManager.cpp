@@ -29,6 +29,18 @@ void InputManager::Shutdown()
 {
 }
 
-void InputManager::Update()
+void InputManager::Poll()
 {
+	const Uint8* rawKeyState = SDL_GetKeyboardState(nullptr);
+
+	for (const auto& inputPair : mInputMapping)
+	{
+		if (rawKeyState[inputPair.first])
+		{
+			for (const auto& inputAction : inputPair.second)
+			{
+				// notify event
+			}
+		}
+	}
 }

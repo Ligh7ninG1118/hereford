@@ -29,7 +29,7 @@ public:
 	~InputManager();
 	bool Initialize();
 	void Shutdown();
-	void Update();
+	void Poll();
 
 	template <typename T>
 	T ReadValue(EInputAction inputAction)
@@ -63,7 +63,7 @@ public:
 	}
 
 private:
-	std::unordered_map<SDL_Scancode, EInputAction> mInputMapping;
+	std::unordered_map<SDL_Scancode, std::vector<EInputAction>> mInputMapping;
 	std::unordered_map<EInputAction, std::vector<SwizzledInput>> mListenerMap;
 
 };
