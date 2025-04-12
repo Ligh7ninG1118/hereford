@@ -25,7 +25,7 @@ public:
 
 	int GetUpdateOrder() const { return mUpdateOrder; }
 	class Actor* GetOwner() const { return mOwner; }
-	class Game* GetGame() const;
+	class GameContext* GetGameContext() const;
 
 	EComponentState GetState() const { return mState; }
 	void SetState(EComponentState state) { mState = state; }

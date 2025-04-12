@@ -41,7 +41,7 @@ public:
 	EActorState GetState() const { return mState; }
 	void SetState(EActorState state, bool setComponents = false);
 
-	class GameContext* GetGameContext() { return mGameCtx; }
+	class GameContext* GetGameContext() const { return mGameCtx; }
 
 	template <typename T>
 	T* GetComponent() const

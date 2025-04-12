@@ -1,5 +1,6 @@
 #include "Component.h"
 #include "Actor.h"
+#include "GameContext.h"
 
 Component::Component(Actor* owner, int updateOrder)
 	: mOwner(owner), mUpdateOrder(updateOrder)
@@ -19,7 +20,7 @@ void Component::ProcessInput(const std::vector<EInputState>& keyState, Uint32 mo
 {
 }
 
-Game* Component::GetGame() const
+GameContext* Component::GetGameContext() const
 {
-	return nullptr;
+	return GetOwner()->GetGameContext();
 }
