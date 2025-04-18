@@ -10,7 +10,6 @@ public:
 	~CameraComponent();
 
 	void Update(float deltaTime) override;
-	void ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY) override;
 
 	void RotateCamera(Vec2 dir);
 
@@ -40,6 +39,8 @@ public:
 	float mAimingSensMultiplier = 1.0f;
 
 private:
+	void UpdateViewFromInput(Vec2 mouseDelta);
+
 	friend class Renderer;
 
 	Vec3 mPositionOffset;

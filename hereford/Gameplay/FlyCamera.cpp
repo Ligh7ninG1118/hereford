@@ -39,19 +39,19 @@ void FlyCamera::ProcessMovement(float deltaTime)
 	SetPosition(updatedPos);
 }
 
-void FlyCamera::OnInteracInput(EInputS state)
+void FlyCamera::OnInteracInput(EInputState state)
 {
 	switch (state)
 	{
-	case EInputS::IDLE:
+	case EInputState::IDLE:
 		break;
-	case EInputS::PRESSED:
+	case EInputState::PRESSED:
 		printf("F pressed.\n");
 		break;
-	case EInputS::RELEASED:
+	case EInputState::RELEASED:
 		printf("F released.\n");
 		break;
-	case EInputS::HOLD:
+	case EInputState::HOLD:
 		printf("F held.\n");
 		break;
 	default:

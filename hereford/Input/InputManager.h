@@ -20,8 +20,8 @@ struct InputSub
 {
 	hInputSub mSubHandle;
 	EInputAction mInputAction;
-	EInputS mListenedState;
-	std::function<void(EInputS)> mCallback;
+	EInputState mListenedState;
+	std::function<void(EInputState)> mCallback;
 };
 
 
@@ -35,11 +35,11 @@ public:
 	void Poll();
 
 	// Subscribe to IDLE state means invoke callback for all states (Pressed, Released, Hold)
-	[[nodiscard]] hInputSub Subscribe(EInputAction IA, std::function<void(EInputS)> callback, EInputS listenedState = EInputS::IDLE);
+	[[nodiscard]] hInputSub Subscribe(EInputAction IA, std::function<void(EInputState)> callback, EInputState listenedState = EInputState::IDLE);
 	void Unsubscribe(EInputAction IA, hInputSub hSub);
 
 	template <typename T>
-	T ReadValue(EInputAction IA)
+	T ReadValue(EInputAction IA) const
 	{
 		auto itr = mIASwizzledMap.find(IA);
 		if (itr == mIASwizzledMap.end())
@@ -69,16 +69,23 @@ public:
 		return output;
 	}
 
+	Vec2 ReadMouseDelta() const;
+
 
 private:
 	void AddKeyMappingToInputAction(EInputAction IA, SDL_Scancode keyCode);
-	void CollectKeyStates();
+	void UpdateKeyStates();
+	void InvokeKeyEvents();
+	void UpdateMouseStates();
 
-	std::unordered_map<SDL_Scancode, EInputS> mKeyStateMap;
+
+	std::unordered_map<SDL_Scancode, EInputState> mKeyStateMap;
 
 	std::unordered_map<SDL_Scancode, std::vector<EInputAction>> mInputMapping;
 	std::unordered_map<EInputAction, std::vector<InputSub>> mIASubscriberMap;
 	std::unordered_map<EInputAction, std::vector<SwizzledInput>> mIASwizzledMap;
+
+	Vec2 mMouseDelta;
 
 	static hInputSub mInputSubCount;
 };

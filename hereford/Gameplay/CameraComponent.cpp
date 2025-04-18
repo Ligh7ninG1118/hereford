@@ -1,6 +1,7 @@
 #include "CameraComponent.h"
 #include "Core/Actor.h"
-
+#include "Core/GameContext.h"
+#include "Input/InputManager.h"
 #include "imgui/imgui.h"
 
 CameraComponent::CameraComponent(Actor* owner, float eyeHeight)
@@ -26,6 +27,8 @@ void CameraComponent::Update(float deltaTime)
 	ImGui::Text("Recenter Target (%.2f)", mVerticalRecenteringTarget);
 	ImGui::End();*/
 
+	UpdateViewFromInput(GetGameContext()->GetInputManager().ReadMouseDelta());
+
 	if (mDeferredRecoilDir.Magnitude() > EPSILON)
 	{
 		Vec2 stepDir = mDeferredRecoilDir * deltaTime * mCameraRecenteringRate;
@@ -46,22 +49,21 @@ void CameraComponent::Update(float deltaTime)
 	}
 }
 
-// use float delta for smoothing?
-void CameraComponent::ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
+void CameraComponent::UpdateViewFromInput(Vec2 mouseDelta)
 {
-	mRotation.mY += mouseDeltaX * mMouseSens * mAimingSensMultiplier;
-	mRotation.mX += mouseDeltaY * mMouseSens * mAimingSensMultiplier;
-	mVerticalRecenteringTarget += mouseDeltaY * mMouseSens * mAimingSensMultiplier;
+	mRotation.mY += mouseDelta.mX * mMouseSens * mAimingSensMultiplier;
+	mRotation.mX += mouseDelta.mY * mMouseSens * mAimingSensMultiplier;
+	mVerticalRecenteringTarget += mouseDelta.mY * mMouseSens * mAimingSensMultiplier;
 
 	if (mDeferredRecoilDir.Magnitude() > EPSILON)
 	{
 		// Mouse movement on vertical axis can offset deferred recoil changes
-		mDeferredRecoilDir.mY -= mouseDeltaY * mMouseSens * mAimingSensMultiplier;
+		mDeferredRecoilDir.mY -= mouseDelta.mY * mMouseSens * mAimingSensMultiplier;
 		mDeferredRecoilDir.mY = mDeferredRecoilDir.mX <= 0.0f ? 0.0f : mDeferredRecoilDir.mX;
 
 		//TODO
-		if (mouseDeltaY < 0.0f)
-			mVerticalRecenteringTarget -= mouseDeltaY * mMouseSens * mAimingSensMultiplier;
+		if (mouseDelta.mY < 0.0f)
+			mVerticalRecenteringTarget -= mouseDelta.mY * mMouseSens * mAimingSensMultiplier;
 	}
 
 

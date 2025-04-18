@@ -35,8 +35,14 @@ void InputManager::Shutdown()
 {
 }
 
+void InputManager::Poll()
+{
+	UpdateKeyStates();
+	InvokeKeyEvents();
+	UpdateMouseStates();
+}
 
-void InputManager::CollectKeyStates()
+void InputManager::UpdateKeyStates()
 {
 	const Uint8* rawKeyState = SDL_GetKeyboardState(nullptr);
 
@@ -44,32 +50,46 @@ void InputManager::CollectKeyStates()
 	{
 		SDL_Scancode keyCode = inputPair.first;
 		//TODO: Trigger hold state after set time
-		if (mKeyStateMap[keyCode] == EInputS::HOLD || mKeyStateMap[keyCode] == EInputS::PRESSED)
-			mKeyStateMap[keyCode] = rawKeyState[keyCode] ? EInputS::HOLD : EInputS::RELEASED;
+		if (mKeyStateMap[keyCode] == EInputState::HOLD || mKeyStateMap[keyCode] == EInputState::PRESSED)
+			mKeyStateMap[keyCode] = rawKeyState[keyCode] ? EInputState::HOLD : EInputState::RELEASED;
 		else
-			mKeyStateMap[keyCode] = rawKeyState[keyCode] ? EInputS::PRESSED : EInputS::IDLE;
+			mKeyStateMap[keyCode] = rawKeyState[keyCode] ? EInputState::PRESSED : EInputState::IDLE;
 	}
 
 }
 
-void InputManager::Poll()
+void InputManager::InvokeKeyEvents()
 {
-	CollectKeyStates();
-
 	for (const auto& keyState : mKeyStateMap)
 	{
-		if (keyState.second != EInputS::IDLE)
+		if (keyState.second != EInputState::IDLE)
 		{
 			for (const auto& inputAction : mInputMapping[keyState.first])
 			{
 				for (const auto& subscriber : mIASubscriberMap[inputAction])
 				{
-					if(subscriber.mListenedState == keyState.second || subscriber.mListenedState == EInputS::IDLE)
+					if (subscriber.mListenedState == keyState.second || subscriber.mListenedState == EInputState::IDLE)
 						subscriber.mCallback(keyState.second);
 				}
 			}
 		}
 	}
+}
+
+void InputManager::UpdateMouseStates()
+{
+	int mouseDeltaX = 0;
+	int mouseDeltaY = 0;
+	Uint32 rawMouseState = SDL_GetRelativeMouseState(&mouseDeltaX, &mouseDeltaY);
+	mMouseDelta.mX = static_cast<float>(mouseDeltaX);
+	mMouseDelta.mY = static_cast<float>(-mouseDeltaY);
+
+
+}
+
+Vec2 InputManager::ReadMouseDelta() const
+{
+	return mMouseDelta;
 }
 
 void InputManager::AddKeyMappingToInputAction(EInputAction IA, SDL_Scancode keyCode)
@@ -78,7 +98,9 @@ void InputManager::AddKeyMappingToInputAction(EInputAction IA, SDL_Scancode keyC
 }
 
 
-hInputSub InputManager::Subscribe(EInputAction IA, std::function<void(EInputS)> callback, EInputS listenedState)
+
+
+hInputSub InputManager::Subscribe(EInputAction IA, std::function<void(EInputState)> callback, EInputState listenedState)
 {
 	InputSub newSub{};
 	newSub.mSubHandle = mInputSubCount++;
