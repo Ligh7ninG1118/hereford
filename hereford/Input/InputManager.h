@@ -1,17 +1,11 @@
 #pragma once
 #include "Math/Math.h"
+#include "Input/InputCommons.h"
 #include <unordered_map>
 #include <vector>
 #include <variant>
+#include <functional>
 #include <SDL2/SDL.h>
-
-enum class EInputAction
-{
-	RESERVED_DEFAULT = 0,
-
-	PLAYER_MOVEMENT,
-	FLY_MOVEMENT,
-};
 
 struct SwizzledInput
 {
@@ -22,6 +16,15 @@ struct SwizzledInput
 		Vec3> mModifier;
 };
 
+struct InputSub
+{
+	hInputSub mSubHandle;
+	EInputAction mInputAction;
+	EInputS mListenedState;
+	std::function<void(EInputS)> mCallback;
+};
+
+
 class InputManager
 {
 public:
@@ -31,11 +34,15 @@ public:
 	void Shutdown();
 	void Poll();
 
+	// Subscribe to NOT_PRESSED state means invoke for all state updates (Pressed, Released, Hold)
+	[[nodiscard]] hInputSub Subscribe(EInputAction IA, std::function<void(EInputS)> callback, EInputS listenedState = EInputS::NOT_PRESSED);
+	void Unsubscribe(EInputAction IA, hInputSub hSub);
+
 	template <typename T>
-	T ReadValue(EInputAction inputAction)
+	T ReadValue(EInputAction IA)
 	{
-		auto itr = mListenerMap.find(inputAction);
-		if (itr == mListenerMap.end())
+		auto itr = mIASwizzledMap.find(IA);
+		if (itr == mIASwizzledMap.end())
 		{
 			//Log error message;
 			return T{};
@@ -45,7 +52,7 @@ public:
 
 		const Uint8* rawKeyState = SDL_GetKeyboardState(nullptr);
 
-		for (const auto& input : mListenerMap[inputAction])
+		for (const auto& input : mIASwizzledMap[IA])
 		{
 			int keyState = rawKeyState[input.mScancode];
 			if (std::holds_alternative<T>(input.mModifier))
@@ -62,8 +69,16 @@ public:
 		return output;
 	}
 
-private:
-	std::unordered_map<SDL_Scancode, std::vector<EInputAction>> mInputMapping;
-	std::unordered_map<EInputAction, std::vector<SwizzledInput>> mListenerMap;
 
+private:
+	void AddKeyMappingToInputAction(EInputAction IA, SDL_Scancode keyCode);
+	void CollectKeyStates();
+
+	std::unordered_map<SDL_Scancode, EInputS> mKeyStateMap;
+
+	std::unordered_map<SDL_Scancode, std::vector<EInputAction>> mInputMapping;
+	std::unordered_map<EInputAction, std::vector<InputSub>> mIASubscriberMap;
+	std::unordered_map<EInputAction, std::vector<SwizzledInput>> mIASwizzledMap;
+
+	static hInputSub mInputSubCount;
 };

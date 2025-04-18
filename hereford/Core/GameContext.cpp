@@ -94,6 +94,8 @@ bool GameContext::Initialize()
 	mPtrAudioManager = std::make_unique<AudioManager>();
 	mPtrAudioManager->CacheSound("bootcamp_ambient.wav");
 
+	mPtrInputManager = std::make_unique<InputManager>();
+	mPtrInputManager->Initialize();
 
 	//SDL_SetWindowGrab(pSDLWindow, SDL_TRUE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -115,8 +117,7 @@ bool GameContext::Initialize()
 
 	mPtrAudioManager->PlaySound("bootcamp_ambient.wav", true, false);
 
-	mPtrInputManager = std::make_unique<InputManager>();
-	mPtrInputManager->Initialize();
+	
 
 	return true;
 }
@@ -151,6 +152,7 @@ void GameContext::RunLoop()
 		Profiler::Start("CPU", 100);
 		Profiler::Start("Input", 105);
 		ProcessInput();
+		mPtrInputManager->Poll();
 		Profiler::Mark("Input");
 		Profiler::Start("Game Logic", 110);
 		UpdateGame();
