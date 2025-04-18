@@ -38,20 +38,6 @@ void Actor::Update(float deltaTime)
 	OnUpdate(deltaTime);
 }
 
-void Actor::ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
-{
-	if (mState != EActorState::Enabled)
-		return;
-
-	for (Component* pCom : mComponents)
-	{
-		if (pCom->GetState() == EComponentState::Enabled)
-			pCom->ProcessInput(keyState, mouseState, mouseDeltaX, mouseDeltaY);
-	}
-
-	OnProcessInput(keyState, mouseState, mouseDeltaX, mouseDeltaY);
-}
-
 void Actor::SetState(EActorState state, bool setComponents)
 {
 	mState = state;
@@ -67,10 +53,6 @@ void Actor::SetState(EActorState state, bool setComponents)
 }
 
 void Actor::OnUpdate(float deltaTime)
-{
-}
-
-void Actor::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
 {
 }
 

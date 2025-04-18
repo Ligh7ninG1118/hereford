@@ -64,9 +64,6 @@ private:
 	std::unordered_map<std::string, Uint32> mShaderMap;
 	std::unordered_map<std::string, Uint32> mMeshMap;
 
-
-	std::vector<EInputState> mPrevKeyStates;
-
 	Uint32 mPrevMouseStates;
 
 	bool mCursorMode;

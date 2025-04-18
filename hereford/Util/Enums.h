@@ -1,13 +1,5 @@
 #pragma once
 
-enum class EInputState
-{
-	NOT_PRESSED = 0,
-	KEY_HOLD,
-	KEY_DOWN,
-	KEY_UP
-};
-
 enum EMouseState
 {
 	LMB_NOT_PRESSED		= 1,

@@ -35,16 +35,3 @@ struct EventOnInteractButtonPressed
 	EventOnInteractButtonPressed()
 	{ }
 };
-
-struct EventOnKeyInput
-{
-	EInputState inputState;
-	EventOnKeyInput(EInputState state)
-		: inputState(state)
-	{ }
-};
-
-struct EventOnMouseInput
-{
-
-};

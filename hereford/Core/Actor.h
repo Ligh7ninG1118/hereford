@@ -20,7 +20,6 @@ public:
 	virtual const std::string& GetClassName() const = 0;
 
 	void Update(float deltaTime);
-	void ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY);
 
 	Vector3 GetPosition() const { return mPosition; };
 	Vector3 GetScale() const { return mScale; }
@@ -60,7 +59,6 @@ public:
 
 protected:
 	virtual void OnUpdate(float deltaTime);
-	virtual void OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY);
 
 	class GameContext* mGameCtx;
 	EActorState mState;

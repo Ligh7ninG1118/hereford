@@ -16,10 +16,6 @@ void Component::Update(float deltaTime)
 {
 }
 
-void Component::ProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
-{
-}
-
 GameContext* Component::GetGameContext() const
 {
 	return GetOwner()->GetGameContext();

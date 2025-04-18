@@ -30,8 +30,6 @@
 GameContext::GameContext()
 	: mScreenWidth(1920), mScreenHeight(1080)
 {
-	// Enough for most input key usage
-	mPrevKeyStates.resize(232);
 	mPrevMouseStates = EMouseState::LMB_NOT_PRESSED | EMouseState::MMB_NOT_PRESSED | EMouseState::RMB_NOT_PRESSED | EMouseState::SCROLL_IDLE;
 
 	mCursorMode = false;
@@ -331,28 +329,12 @@ void GameContext::ProcessInput()
 		}
 	}
 
-	const Uint8* rawKeyState = SDL_GetKeyboardState(nullptr);
+	/*const Uint8* rawKeyState = SDL_GetKeyboardState(nullptr);
 	int mouseDeltaX = 0, mouseDeltaY = 0;
 	Uint32 newMouseState = 0;
 
 	if (rawKeyState[SDL_SCANCODE_ESCAPE])
 		mIsRunning = false;
-
-	for (int i = 0; i < mPrevKeyStates.size(); i++)
-	{
-		if (mPrevKeyStates[i] == EInputState::KEY_HOLD || mPrevKeyStates[i] == EInputState::KEY_DOWN)
-			mPrevKeyStates[i] = rawKeyState[i] ? EInputState::KEY_HOLD : EInputState::KEY_UP;
-		else
-			mPrevKeyStates[i] = rawKeyState[i] ? EInputState::KEY_DOWN : EInputState::NOT_PRESSED;
-	}
-
-	if (mPrevKeyStates[SDL_SCANCODE_GRAVE] == EInputState::KEY_DOWN)
-	{
-		mCursorMode = !mCursorMode;
-		SDL_SetRelativeMouseMode(static_cast<SDL_bool>(!mCursorMode));
-		// Clear mouse state to avoid sudden view change
-		SDL_GetRelativeMouseState(nullptr, nullptr);
-	}
 
 	if (!mCursorMode)
 	{
@@ -387,19 +369,7 @@ void GameContext::ProcessInput()
 		}
 
 		mPrevMouseStates = newMouseState;
-	}
-	else
-	{
-		EInputState cacheState = mPrevKeyStates[SDL_SCANCODE_GRAVE];
-		mPrevKeyStates.assign(mPrevKeyStates.size(), EInputState::NOT_PRESSED);
-		mPrevKeyStates[SDL_SCANCODE_GRAVE] = cacheState;
-	}
-
-	std::vector<Actor*> actorVector = mActors;
-	for (Actor* actor : actorVector)
-	{
-		actor->ProcessInput(mPrevKeyStates, mPrevMouseStates, mouseDeltaX, -mouseDeltaY);
-	}
+	}*/
 }
 
 void GameContext::UpdateGame()
