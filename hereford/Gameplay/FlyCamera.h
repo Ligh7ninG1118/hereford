@@ -2,7 +2,7 @@
 #include "Core/Actor.h"
 #include "Util/Reflection.h"
 #include <memory>
-
+#include "Input/InputCommons.h"
 
 class FlyCamera : public Actor
 {
@@ -16,6 +16,10 @@ public:
 	class CameraComponent& GetMainCamera() const { return *mPtrCameraComp.get(); }
 private:
 	void ProcessMovement(float deltaTime);
+	void OnInteracInput(EInputS state);
+
 	std::unique_ptr<class CameraComponent> mPtrCameraComp;
+	hInputSub hInteractInput;
+
 };
 
