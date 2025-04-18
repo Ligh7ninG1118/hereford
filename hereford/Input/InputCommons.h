@@ -19,3 +19,13 @@ enum class EInputState
 	RELEASED,
 	HOLD,
 };
+
+//TODO: Could use a better way to unite SDL_Keycode and this
+enum class HF_MOUSECODE
+{
+	RESERVED_DEFAULT = 0,
+
+	LMB,
+	MMB,
+	RMB
+};

@@ -39,7 +39,7 @@ public:
 	void Unsubscribe(EInputAction IA, hInputSub hSub);
 
 	template <typename T>
-	T ReadValue(EInputAction IA) const
+	T ReadValue(EInputAction IA)
 	{
 		auto itr = mIASwizzledMap.find(IA);
 		if (itr == mIASwizzledMap.end())
@@ -74,14 +74,19 @@ public:
 
 private:
 	void AddKeyMappingToInputAction(EInputAction IA, SDL_Scancode keyCode);
+	void AddMouseMappingToInputAction(EInputAction IA, HF_MOUSECODE mouseCode);
 	void UpdateKeyStates();
 	void InvokeKeyEvents();
 	void UpdateMouseStates();
+	void InvokeMouseEvents();
 
 
 	std::unordered_map<SDL_Scancode, EInputState> mKeyStateMap;
+	std::unordered_map<HF_MOUSECODE, EInputState> mMouseStateMap;
 
-	std::unordered_map<SDL_Scancode, std::vector<EInputAction>> mInputMapping;
+	std::unordered_map<SDL_Scancode, std::vector<EInputAction>> mKeyInputMapping;
+	std::unordered_map<HF_MOUSECODE, std::vector<EInputAction>> mMouseInputMapping;
+
 	std::unordered_map<EInputAction, std::vector<InputSub>> mIASubscriberMap;
 	std::unordered_map<EInputAction, std::vector<SwizzledInput>> mIASwizzledMap;
 

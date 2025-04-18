@@ -27,6 +27,7 @@ bool InputManager::Initialize()
 	mIASwizzledMap[EInputAction::FLY_MOVEMENT].push_back(SwizzledInput{ SDL_SCANCODE_E, Vec3(0.0f, 1.0f, 0.0f) });
 
 	AddKeyMappingToInputAction(EInputAction::TEST_INPUT, SDL_SCANCODE_F);
+	AddMouseMappingToInputAction(EInputAction::TEST_INPUT, HF_MOUSECODE::LMB);
 
 	return true;
 }
@@ -40,13 +41,14 @@ void InputManager::Poll()
 	UpdateKeyStates();
 	InvokeKeyEvents();
 	UpdateMouseStates();
+	InvokeMouseEvents();
 }
 
 void InputManager::UpdateKeyStates()
 {
 	const Uint8* rawKeyState = SDL_GetKeyboardState(nullptr);
 
-	for (const auto& inputPair : mInputMapping)
+	for (const auto& inputPair : mKeyInputMapping)
 	{
 		SDL_Scancode keyCode = inputPair.first;
 		//TODO: Trigger hold state after set time
@@ -64,7 +66,7 @@ void InputManager::InvokeKeyEvents()
 	{
 		if (keyState.second != EInputState::IDLE)
 		{
-			for (const auto& inputAction : mInputMapping[keyState.first])
+			for (const auto& inputAction : mKeyInputMapping[keyState.first])
 			{
 				for (const auto& subscriber : mIASubscriberMap[inputAction])
 				{
@@ -84,7 +86,36 @@ void InputManager::UpdateMouseStates()
 	mMouseDelta.mX = static_cast<float>(mouseDeltaX);
 	mMouseDelta.mY = static_cast<float>(-mouseDeltaY);
 
+	for (int i = 1; i < 4; i++)
+	{
+		int mouseMask = SDL_BUTTON(i);
+		HF_MOUSECODE mouseCode = static_cast<HF_MOUSECODE>(i);
 
+		if (mMouseStateMap[mouseCode] == EInputState::HOLD || mMouseStateMap[mouseCode] == EInputState::PRESSED)
+			mMouseStateMap[mouseCode] = (rawMouseState & mouseMask) ? EInputState::HOLD : EInputState::RELEASED;
+		else
+			mMouseStateMap[mouseCode] = (rawMouseState & mouseMask) ? EInputState::PRESSED : EInputState::IDLE;
+	}
+
+	
+}
+
+void InputManager::InvokeMouseEvents()
+{
+	for (const auto& mouseState : mMouseStateMap)
+	{
+		if (mouseState.second != EInputState::IDLE)
+		{
+			for (const auto& inputAction : mMouseInputMapping[mouseState.first])
+			{
+				for (const auto& subscriber : mIASubscriberMap[inputAction])
+				{
+					if (subscriber.mListenedState == mouseState.second || subscriber.mListenedState == EInputState::IDLE)
+						subscriber.mCallback(mouseState.second);
+				}
+			}
+		}
+	}
 }
 
 Vec2 InputManager::ReadMouseDelta() const
@@ -94,7 +125,12 @@ Vec2 InputManager::ReadMouseDelta() const
 
 void InputManager::AddKeyMappingToInputAction(EInputAction IA, SDL_Scancode keyCode)
 {
-	mInputMapping[keyCode].push_back(IA);
+	mKeyInputMapping[keyCode].push_back(IA);
+}
+
+void InputManager::AddMouseMappingToInputAction(EInputAction IA, HF_MOUSECODE mouseCode)
+{
+	mMouseInputMapping[mouseCode].push_back(IA);
 }
 
 
