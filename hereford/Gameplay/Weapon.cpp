@@ -64,41 +64,42 @@ void Weapon::OnUpdate(float deltaTime)
 	mPtrAnimRenderComp->SetScaleOffset(Vec3(scaleOffset));*/
 }
 
-void Weapon::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
-{
-	EMouseState targetFlag = mPtrWeaponComp->mIsSemiAuto ? LMB_DOWN : LMB_HOLD;
-	if (mouseState & targetFlag)
-	{
-		Fire();
-	}
-
-	if (mouseState & RMB_DOWN)
-	{
-		TimelineActionManager::PlayFromStart(mHAimingTimeline, std::bind(&Weapon::AimingTimeline, this, std::placeholders::_1), 0.2f);
-		mPtrPlayer->GetMainCamera().mAimingSensMultiplier = 0.85f;
-		mIsADSing = true;
-	}
-	else if (mouseState & RMB_UP)
-	{
-		TimelineActionManager::ReverseFromEnd(mHAimingTimeline, std::bind(&Weapon::AimingTimeline, this, std::placeholders::_1), 0.2f);
-		mPtrPlayer->GetMainCamera().mAimingSensMultiplier = 1.0f;
-		mIsADSing = false;
-
-	}
-
-	if (keyState[SDL_SCANCODE_R] == EInputState::KEY_DOWN)
-	{
-		if (mPtrPlayer->GetActionComp()->StartActionByName("Reload"))
-		{
-			Reload();
-		}
-	}
-
-	{
-		mCurrentArmRotationOffset.mX -= mouseDeltaY * 0.1f;
-		mCurrentArmRotationOffset.mZ += mouseDeltaX * 0.1f;
-	}
-}
+//TODO: Refactor using new input system
+//void Weapon::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
+//{
+//	EMouseState targetFlag = mPtrWeaponComp->mIsSemiAuto ? LMB_DOWN : LMB_HOLD;
+//	if (mouseState & targetFlag)
+//	{
+//		Fire();
+//	}
+//
+//	if (mouseState & RMB_DOWN)
+//	{
+//		TimelineActionManager::PlayFromStart(mHAimingTimeline, std::bind(&Weapon::AimingTimeline, this, std::placeholders::_1), 0.2f);
+//		mPtrPlayer->GetMainCamera().mAimingSensMultiplier = 0.85f;
+//		mIsADSing = true;
+//	}
+//	else if (mouseState & RMB_UP)
+//	{
+//		TimelineActionManager::ReverseFromEnd(mHAimingTimeline, std::bind(&Weapon::AimingTimeline, this, std::placeholders::_1), 0.2f);
+//		mPtrPlayer->GetMainCamera().mAimingSensMultiplier = 1.0f;
+//		mIsADSing = false;
+//
+//	}
+//
+//	if (keyState[SDL_SCANCODE_R] == EInputState::KEY_DOWN)
+//	{
+//		if (mPtrPlayer->GetActionComp()->StartActionByName("Reload"))
+//		{
+//			Reload();
+//		}
+//	}
+//
+//	{
+//		mCurrentArmRotationOffset.mX -= mouseDeltaY * 0.1f;
+//		mCurrentArmRotationOffset.mZ += mouseDeltaX * 0.1f;
+//	}
+//}
 
 void Weapon::SetArmOffset(Vec3 translationOffset)
 {

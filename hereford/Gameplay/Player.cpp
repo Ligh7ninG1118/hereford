@@ -124,109 +124,111 @@ void Player::OnUpdate(float deltaTime)
 	//ShowDebugInfo();
 }
 
-void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
-{
-	// Horizontal Movement
-	{
-		inputMoveDir = Vector3::Zero;
-		hasMovementInput = false;
+//TODO: Refactor using new input system
 
-		if (keyState[SDL_SCANCODE_W] == EInputState::KEY_HOLD)
-		{
-			inputMoveDir += GetForward();
-			hasMovementInput = true;
-		}
-		if (keyState[SDL_SCANCODE_S] == EInputState::KEY_HOLD)
-		{
-			inputMoveDir -= GetForward();
-			hasMovementInput = true;
-		}
-		if (keyState[SDL_SCANCODE_A] == EInputState::KEY_HOLD)
-		{
-			// Cross with World Up to get Right vector;
-			inputMoveDir -= GetForward().Cross(Vector3(0.0f, 1.0f, 0.0f));
-			hasMovementInput = true;
-		}
-		if (keyState[SDL_SCANCODE_D] == EInputState::KEY_HOLD)
-		{
-			inputMoveDir += GetForward().Cross(Vector3(0.0f, 1.0f, 0.0f));
-			hasMovementInput = true;
-		}
-		if (keyState[SDL_SCANCODE_Q] == EInputState::KEY_HOLD)
-		{
-			inputMoveDir -= Vector3(0.0f, 1.0f, 0.0f);
-			hasMovementInput = true;
-		}
-		if (keyState[SDL_SCANCODE_E] == EInputState::KEY_HOLD)
-		{
-			inputMoveDir += Vector3(0.0f, 1.0f, 0.0f);
-			hasMovementInput = true;
-		}
-
-		//inputMoveDir.mY = 0.0f;
-		inputMoveDir.Normalize();
-	}
-
-	// Movement States (Crouching, Sprinting, etc.)
-	{
-		if (keyState[SDL_SCANCODE_C] == EInputState::KEY_DOWN)
-		{
-			//TODO: Block when already crouching (or add the buffer system)
-			//TODO: Creating additional copy here. Overload enum version
-			if (mPtrActionComp->GetActiveGameplayTags().HasTag(GameplayTag(EActionType::CROUCHING)))
-			{
-				mPtrActionComp->StopActionByName("Crouch");
-				TimelineActionManager::ReverseFromEnd(mHCrouchTimeline, std::bind(&Player::CrouchTimeline, this, std::placeholders::_1), 0.25f);
-				currentTopSpeed = topWalkingSpeed;
-
-			}
-			else
-			{
-				mPtrActionComp->StartActionByName("Crouch");
-				TimelineActionManager::PlayFromStart(mHCrouchTimeline, std::bind(&Player::CrouchTimeline, this, std::placeholders::_1), 0.25f);
-				currentTopSpeed = topCrouchSpeed;
-
-			}
-		}
-
-		if (keyState[SDL_SCANCODE_LSHIFT] == EInputState::KEY_DOWN)
-		{
-			mPtrActionComp->StartActionByName("Sprint");
-			currentTopSpeed = topSprintingSpeed;
-		}
-		if (keyState[SDL_SCANCODE_LSHIFT] == EInputState::KEY_UP)
-		{
-			mPtrActionComp->StopActionByName("Sprint");
-			currentTopSpeed = topWalkingSpeed;
-		}
-
-		if (keyState[SDL_SCANCODE_SPACE] == EInputState::KEY_DOWN)
-		{
-			Jump();
-		}
-	}
-
-	// Object Interaction
-	{
-		if (keyState[SDL_SCANCODE_F] == EInputState::KEY_DOWN)
-		{
-			Interaction();
-		}
-	}
-
-	// Weapon & Gadget
-	{
-		if (keyState[SDL_SCANCODE_1] == EInputState::KEY_DOWN ||
-			keyState[SDL_SCANCODE_2] == EInputState::KEY_DOWN ||
-			mouseState & EMouseState::SCROLL_UP ||
-			mouseState & EMouseState::SCROLL_DOWN)
-		{
-			//TODO: Handle double swapping
-			mPtrActiveWeapon->Holster();
-			DelayedActionManager::AddAction(mHWeaponSwitch, std::bind(&Player::WeaponSwitchCallback, this), mPtrActiveWeapon->mHolsterTime, false);
-		}
-	}
-}
+//void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
+//{
+//	// Horizontal Movement
+//	{
+//		inputMoveDir = Vector3::Zero;
+//		hasMovementInput = false;
+//
+//		if (keyState[SDL_SCANCODE_W] == EInputState::KEY_HOLD)
+//		{
+//			inputMoveDir += GetForward();
+//			hasMovementInput = true;
+//		}
+//		if (keyState[SDL_SCANCODE_S] == EInputState::KEY_HOLD)
+//		{
+//			inputMoveDir -= GetForward();
+//			hasMovementInput = true;
+//		}
+//		if (keyState[SDL_SCANCODE_A] == EInputState::KEY_HOLD)
+//		{
+//			// Cross with World Up to get Right vector;
+//			inputMoveDir -= GetForward().Cross(Vector3(0.0f, 1.0f, 0.0f));
+//			hasMovementInput = true;
+//		}
+//		if (keyState[SDL_SCANCODE_D] == EInputState::KEY_HOLD)
+//		{
+//			inputMoveDir += GetForward().Cross(Vector3(0.0f, 1.0f, 0.0f));
+//			hasMovementInput = true;
+//		}
+//		if (keyState[SDL_SCANCODE_Q] == EInputState::KEY_HOLD)
+//		{
+//			inputMoveDir -= Vector3(0.0f, 1.0f, 0.0f);
+//			hasMovementInput = true;
+//		}
+//		if (keyState[SDL_SCANCODE_E] == EInputState::KEY_HOLD)
+//		{
+//			inputMoveDir += Vector3(0.0f, 1.0f, 0.0f);
+//			hasMovementInput = true;
+//		}
+//
+//		//inputMoveDir.mY = 0.0f;
+//		inputMoveDir.Normalize();
+//	}
+//
+//	// Movement States (Crouching, Sprinting, etc.)
+//	{
+//		if (keyState[SDL_SCANCODE_C] == EInputState::KEY_DOWN)
+//		{
+//			//TODO: Block when already crouching (or add the buffer system)
+//			//TODO: Creating additional copy here. Overload enum version
+//			if (mPtrActionComp->GetActiveGameplayTags().HasTag(GameplayTag(EActionType::CROUCHING)))
+//			{
+//				mPtrActionComp->StopActionByName("Crouch");
+//				TimelineActionManager::ReverseFromEnd(mHCrouchTimeline, std::bind(&Player::CrouchTimeline, this, std::placeholders::_1), 0.25f);
+//				currentTopSpeed = topWalkingSpeed;
+//
+//			}
+//			else
+//			{
+//				mPtrActionComp->StartActionByName("Crouch");
+//				TimelineActionManager::PlayFromStart(mHCrouchTimeline, std::bind(&Player::CrouchTimeline, this, std::placeholders::_1), 0.25f);
+//				currentTopSpeed = topCrouchSpeed;
+//
+//			}
+//		}
+//
+//		if (keyState[SDL_SCANCODE_LSHIFT] == EInputState::KEY_DOWN)
+//		{
+//			mPtrActionComp->StartActionByName("Sprint");
+//			currentTopSpeed = topSprintingSpeed;
+//		}
+//		if (keyState[SDL_SCANCODE_LSHIFT] == EInputState::KEY_UP)
+//		{
+//			mPtrActionComp->StopActionByName("Sprint");
+//			currentTopSpeed = topWalkingSpeed;
+//		}
+//
+//		if (keyState[SDL_SCANCODE_SPACE] == EInputState::KEY_DOWN)
+//		{
+//			Jump();
+//		}
+//	}
+//
+//	// Object Interaction
+//	{
+//		if (keyState[SDL_SCANCODE_F] == EInputState::KEY_DOWN)
+//		{
+//			Interaction();
+//		}
+//	}
+//
+//	// Weapon & Gadget
+//	{
+//		if (keyState[SDL_SCANCODE_1] == EInputState::KEY_DOWN ||
+//			keyState[SDL_SCANCODE_2] == EInputState::KEY_DOWN ||
+//			mouseState & EMouseState::SCROLL_UP ||
+//			mouseState & EMouseState::SCROLL_DOWN)
+//		{
+//			//TODO: Handle double swapping
+//			mPtrActiveWeapon->Holster();
+//			DelayedActionManager::AddAction(mHWeaponSwitch, std::bind(&Player::WeaponSwitchCallback, this), mPtrActiveWeapon->mHolsterTime, false);
+//		}
+//	}
+//}
 
 
 void Player::ProcessMovement(float deltaTime)
