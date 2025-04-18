@@ -43,19 +43,11 @@ void InputManager::CollectKeyStates()
 	for (const auto& inputPair : mInputMapping)
 	{
 		SDL_Scancode keyCode = inputPair.first;
-		if (mKeyStateMap.find(keyCode) == mKeyStateMap.end())
-		{
-			//TODO: Will unordered_map's value initialized at 0? If yes then this branch can be omitted
-			mKeyStateMap[keyCode] = rawKeyState[keyCode] ? EInputS::PRESSED : EInputS::NOT_PRESSED;
-		}
+		//TODO: Trigger hold state after set time
+		if (mKeyStateMap[keyCode] == EInputS::HOLD || mKeyStateMap[keyCode] == EInputS::PRESSED)
+			mKeyStateMap[keyCode] = rawKeyState[keyCode] ? EInputS::HOLD : EInputS::RELEASED;
 		else
-		{
-			if (mKeyStateMap[keyCode] == EInputS::HOLD || mKeyStateMap[keyCode] == EInputS::PRESSED)
-				mKeyStateMap[keyCode] = rawKeyState[keyCode] ? EInputS::HOLD : EInputS::RELEASED;
-			else
-				mKeyStateMap[keyCode] = rawKeyState[keyCode] ? EInputS::PRESSED : EInputS::NOT_PRESSED;
-		}
-
+			mKeyStateMap[keyCode] = rawKeyState[keyCode] ? EInputS::PRESSED : EInputS::IDLE;
 	}
 
 }
@@ -66,13 +58,13 @@ void InputManager::Poll()
 
 	for (const auto& keyState : mKeyStateMap)
 	{
-		if (keyState.second != EInputS::NOT_PRESSED)
+		if (keyState.second != EInputS::IDLE)
 		{
 			for (const auto& inputAction : mInputMapping[keyState.first])
 			{
 				for (const auto& subscriber : mIASubscriberMap[inputAction])
 				{
-					if(subscriber.mListenedState == keyState.second || subscriber.mListenedState == EInputS::NOT_PRESSED)
+					if(subscriber.mListenedState == keyState.second || subscriber.mListenedState == EInputS::IDLE)
 						subscriber.mCallback(keyState.second);
 				}
 			}

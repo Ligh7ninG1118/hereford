@@ -34,8 +34,8 @@ public:
 	void Shutdown();
 	void Poll();
 
-	// Subscribe to NOT_PRESSED state means invoke for all state updates (Pressed, Released, Hold)
-	[[nodiscard]] hInputSub Subscribe(EInputAction IA, std::function<void(EInputS)> callback, EInputS listenedState = EInputS::NOT_PRESSED);
+	// Subscribe to IDLE state means invoke callback for all states (Pressed, Released, Hold)
+	[[nodiscard]] hInputSub Subscribe(EInputAction IA, std::function<void(EInputS)> callback, EInputS listenedState = EInputS::IDLE);
 	void Unsubscribe(EInputAction IA, hInputSub hSub);
 
 	template <typename T>

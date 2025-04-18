@@ -43,7 +43,7 @@ void FlyCamera::OnInteracInput(EInputS state)
 {
 	switch (state)
 	{
-	case EInputS::NOT_PRESSED:
+	case EInputS::IDLE:
 		break;
 	case EInputS::PRESSED:
 		printf("F pressed.\n");

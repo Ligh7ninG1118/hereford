@@ -13,7 +13,7 @@ enum class EInputAction
 
 enum class EInputS
 {
-	NOT_PRESSED = 0,
+	IDLE = 0,
 	PRESSED,
 	RELEASED,
 	HOLD,
