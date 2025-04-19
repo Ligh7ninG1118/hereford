@@ -10,7 +10,7 @@
 
 
 const float PI = 3.14159265358f;
-const float EPSILON = 0.00001f;
+const float EPISILON = 0.00001f;
 
 const float DEG2RAD = (PI * 2.0f) / 360.0f;
 const float RAD2DEG = 360.0f / (PI * 2.0f);
@@ -70,7 +70,7 @@ public:
 
 		float scaleA, scaleB;
 
-		if (1.0f - cosTheta > EPSILON)
+		if (1.0f - cosTheta > EPISILON)
 		{
 			float theta = acosf(cosTheta);
 			float sinTheta = sin(theta);

@@ -66,7 +66,7 @@ float Vector3::SqrMagnitude() const
 Vector3 Vector3::normalized() const
 {
 	float magnitude = this->Magnitude();
-	if (magnitude <= EPSILON)
+	if (magnitude <= EPISILON)
 		return *this;
 	return Vector3(mX / magnitude, mY / magnitude, mZ / magnitude);
 }
@@ -149,7 +149,7 @@ Vector3& Vector3::operator=(const Vector3& rhs)
 
 bool Vector3::operator==(const Vector3& rhs) const
 {
-	return abs(mX - rhs.mX) < EPSILON && abs(mY - rhs.mY) < EPSILON && abs(mZ - rhs.mZ) < EPSILON;
+	return abs(mX - rhs.mX) < EPISILON && abs(mY - rhs.mY) < EPISILON && abs(mZ - rhs.mZ) < EPISILON;
 }
 
 bool Vector3::operator!=(const Vector3& rhs) const

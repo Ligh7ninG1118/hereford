@@ -29,7 +29,7 @@ void CameraComponent::Update(float deltaTime)
 
 	UpdateViewFromInput(GetGameContext()->GetInputManager().ReadMouseDelta());
 
-	if (mDeferredRecoilDir.Magnitude() > EPSILON)
+	if (mDeferredRecoilDir.Magnitude() > EPISILON)
 	{
 		Vec2 stepDir = mDeferredRecoilDir * deltaTime * mCameraRecenteringRate;
 		mDeferredRecoilDir -= stepDir;
@@ -42,7 +42,7 @@ void CameraComponent::Update(float deltaTime)
 		//Set owner rotation as well
 		mOwner->SetRotation(Vec3(0.0f, mRotation.mY, 0.0f));
 	}
-	else if (abs(mRotation.mX - mVerticalRecenteringTarget) > EPSILON)
+	else if (abs(mRotation.mX - mVerticalRecenteringTarget) > EPISILON)
 	{
 		mRotation.mX = Math::Lerp(mRotation.mX, mVerticalRecenteringTarget, deltaTime * mCameraRecenteringRate);
 
@@ -55,7 +55,7 @@ void CameraComponent::UpdateViewFromInput(Vec2 mouseDelta)
 	mRotation.mX += mouseDelta.mY * mMouseSens * mAimingSensMultiplier;
 	mVerticalRecenteringTarget += mouseDelta.mY * mMouseSens * mAimingSensMultiplier;
 
-	if (mDeferredRecoilDir.Magnitude() > EPSILON)
+	if (mDeferredRecoilDir.Magnitude() > EPISILON)
 	{
 		// Mouse movement on vertical axis can offset deferred recoil changes
 		mDeferredRecoilDir.mY -= mouseDelta.mY * mMouseSens * mAimingSensMultiplier;

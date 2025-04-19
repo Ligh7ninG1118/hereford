@@ -40,7 +40,7 @@ float Vector2::SqrMagnitude() const
 Vector2 Vector2::normalized() const
 {
 	float magnitude = this->Magnitude();
-	if (magnitude <= EPSILON)
+	if (magnitude <= EPISILON)
 		return *this;
 	return Vector2(mX / magnitude, mY / magnitude);
 }
