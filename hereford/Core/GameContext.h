@@ -59,13 +59,6 @@ private:
 	class Player* mPtrPlayer;
 	class TestMaster* mPtrTestMaster;
 
-
-	// separate asset manager to manage this
-	std::unordered_map<std::string, Uint32> mShaderMap;
-	std::unordered_map<std::string, Uint32> mMeshMap;
-
-	Uint32 mPrevMouseStates;
-
 	bool mCursorMode;
 
 	bool mIsRunning;

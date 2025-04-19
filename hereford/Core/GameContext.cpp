@@ -30,8 +30,6 @@
 GameContext::GameContext()
 	: mScreenWidth(1920), mScreenHeight(1080)
 {
-	mPrevMouseStates = EMouseState::LMB_NOT_PRESSED | EMouseState::MMB_NOT_PRESSED | EMouseState::RMB_NOT_PRESSED | EMouseState::SCROLL_IDLE;
-
 	mCursorMode = false;
 }
 
@@ -150,7 +148,6 @@ void GameContext::RunLoop()
 		Profiler::Start("CPU", 100);
 		Profiler::Start("Input", 105);
 		ProcessInput();
-		mPtrInputManager->Poll();
 		Profiler::Mark("Input");
 		Profiler::Start("Game Logic", 110);
 		UpdateGame();
@@ -329,47 +326,8 @@ void GameContext::ProcessInput()
 		}
 	}
 
-	/*const Uint8* rawKeyState = SDL_GetKeyboardState(nullptr);
-	int mouseDeltaX = 0, mouseDeltaY = 0;
-	Uint32 newMouseState = 0;
+	mPtrInputManager->Poll();
 
-	if (rawKeyState[SDL_SCANCODE_ESCAPE])
-		mIsRunning = false;
-
-	if (!mCursorMode)
-	{
-		Uint32 rawMouseState = SDL_GetRelativeMouseState(&mouseDeltaX, &mouseDeltaY);
-
-		if ((mPrevMouseStates & EMouseState::LMB_HOLD) || (mPrevMouseStates & EMouseState::LMB_DOWN))
-			newMouseState |= (rawMouseState & SDL_BUTTON_LMASK) ? EMouseState::LMB_HOLD : EMouseState::LMB_UP;
-		else if ((mPrevMouseStates & EMouseState::LMB_NOT_PRESSED) || (mPrevMouseStates & EMouseState::LMB_UP))
-			newMouseState |= (rawMouseState & SDL_BUTTON_LMASK) ? EMouseState::LMB_DOWN : EMouseState::LMB_NOT_PRESSED;
-
-		if ((mPrevMouseStates & EMouseState::RMB_HOLD) || (mPrevMouseStates & EMouseState::RMB_DOWN))
-			newMouseState |= (rawMouseState & SDL_BUTTON_RMASK) ? EMouseState::RMB_HOLD : EMouseState::RMB_UP;
-		else if ((mPrevMouseStates & EMouseState::RMB_NOT_PRESSED) || (mPrevMouseStates & EMouseState::RMB_UP))
-			newMouseState |= (rawMouseState & SDL_BUTTON_RMASK) ? EMouseState::RMB_DOWN : EMouseState::RMB_NOT_PRESSED;
-
-		if ((mPrevMouseStates & EMouseState::MMB_HOLD) || (mPrevMouseStates & EMouseState::MMB_DOWN))
-			newMouseState |= (rawMouseState & SDL_BUTTON_MMASK) ? EMouseState::MMB_HOLD : EMouseState::MMB_UP;
-		else if ((mPrevMouseStates & EMouseState::MMB_NOT_PRESSED) || (mPrevMouseStates & EMouseState::MMB_UP))
-			newMouseState |= (rawMouseState & SDL_BUTTON_MMASK) ? EMouseState::MMB_DOWN : EMouseState::MMB_NOT_PRESSED;
-
-		switch (mouseWheel)
-		{
-		case 0:
-			newMouseState |= EMouseState::SCROLL_IDLE;
-			break;
-		case 1:
-			newMouseState |= EMouseState::SCROLL_UP;
-			break;
-		case -1:
-			newMouseState |= EMouseState::SCROLL_DOWN;
-			break;
-		}
-
-		mPrevMouseStates = newMouseState;
-	}*/
 }
 
 void GameContext::UpdateGame()
