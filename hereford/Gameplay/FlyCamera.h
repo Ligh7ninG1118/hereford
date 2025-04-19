@@ -16,10 +16,8 @@ public:
 	class CameraComponent& GetMainCamera() const { return *mPtrCameraComp.get(); }
 private:
 	void ProcessMovement(float deltaTime);
-	void OnInteracInput(EInputState state);
 
 	std::unique_ptr<class CameraComponent> mPtrCameraComp;
-	hInputSub hInteractInput;
 
 };
 
