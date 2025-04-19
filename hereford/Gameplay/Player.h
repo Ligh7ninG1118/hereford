@@ -1,5 +1,6 @@
 #pragma once
 #include "../Core/Actor.h"
+#include "Input/InputCommons.h"
 #include "Util/DelayedAction.h"
 #include "Util/GameEvent.h"
 #include "Util/Reflection.h"
@@ -23,9 +24,13 @@ public:
 
 private:
 	void ProcessMovement(float deltaTime);
-	void Jump();
+	void OnJumpInput(EInputState state);
+	void OnCrouchInput(EInputState state);
+	void OnSprintInput(EInputState state);
+	void OnWeaponSwapInput(EInputState state);
+	void OnInteractInput(EInputState state);
+
 	void ProcessInteractionPrompt();
-	void Interaction();
 	void ShowDebugInfo();
 
 
@@ -35,6 +40,15 @@ private:
 	std::unique_ptr<class CameraComponent> mPtrCameraComp;
 	std::unique_ptr<class AudioComponent> mPtrAudioComponent;
 	std::unique_ptr<class ActionComponent> mPtrActionComp;
+
+	class InputManager* mInputMgr;
+	hInputSub hJumpSub;
+	hInputSub hCrouchSub;
+	hInputSub hSprintSub;
+	hInputSub hInteractSub;
+	hInputSub hWeaponSwapUpSub;
+	hInputSub hWeaponSwapDownSub;
+
 
 	class Weapon* mPtrActiveWeapon;
 	std::vector<Weapon*> mWeaponList;
@@ -48,8 +62,6 @@ private:
 
 	class IInteractable* mInteractCandidate;
 
-	bool hasMovementInput = false;
-	Vector3 inputMoveDir;
 	Vector3 currentVelocity = Vector3::Zero;
 
 	bool lmbPressed = false;

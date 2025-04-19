@@ -26,8 +26,16 @@ bool InputManager::Initialize()
 	mIASwizzledMap[EInputAction::FLY_MOVEMENT].push_back(SwizzledInput{ SDL_SCANCODE_Q, Vec3(0.0f, -1.0f, 0.0f) });
 	mIASwizzledMap[EInputAction::FLY_MOVEMENT].push_back(SwizzledInput{ SDL_SCANCODE_E, Vec3(0.0f, 1.0f, 0.0f) });
 
-	AddKeyMappingToInputAction(EInputAction::TEST_INPUT, SDL_SCANCODE_F);
-	AddMouseMappingToInputAction(EInputAction::TEST_INPUT, HF_MOUSECODE::LMB);
+	AddKeyMappingToInputAction(EInputAction::PLAYER_JUMP, SDL_SCANCODE_SPACE);
+	AddKeyMappingToInputAction(EInputAction::PLAYER_CROUCH, SDL_SCANCODE_C);
+	AddKeyMappingToInputAction(EInputAction::PLAYER_SPRINT, SDL_SCANCODE_LSHIFT);
+	AddKeyMappingToInputAction(EInputAction::PLAYER_INTERACT, SDL_SCANCODE_F);
+
+	AddMouseMappingToInputAction(EInputAction::WEAPON_FIRE_PRIMARY, HF_MOUSECODE::LMB);
+	AddMouseMappingToInputAction(EInputAction::WEAPON_FIRE_SECONDARY, HF_MOUSECODE::RMB);
+	AddKeyMappingToInputAction(EInputAction::WEAPON_RELOAD, SDL_SCANCODE_R);
+	AddKeyMappingToInputAction(EInputAction::WEAPON_SWAP_UP, SDL_SCANCODE_1);
+	AddKeyMappingToInputAction(EInputAction::WEAPON_SWAP_DOWN, SDL_SCANCODE_2);
 
 	return true;
 }
@@ -97,7 +105,7 @@ void InputManager::UpdateMouseStates()
 			mMouseStateMap[mouseCode] = (rawMouseState & mouseMask) ? EInputState::PRESSED : EInputState::IDLE;
 	}
 
-	
+	//TODO: Mouse wheel
 }
 
 void InputManager::InvokeMouseEvents()

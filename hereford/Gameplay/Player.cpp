@@ -13,7 +13,7 @@
 #include "Asset/AssetManager.h"
 #include "Actions/Action.h"
 #include "Util/GameplayTagContainer.h"
-
+#include "Input/InputManager.h"
 #include "Gameplay/WeaponPistol.h"
 #include "Gameplay/WeaponSMG.h"
 
@@ -82,11 +82,25 @@ Player::Player(GameContext* gameCtx)
 	mPtrAudioComponent->InitAsset("Walk-Gravel.wav");
 
 	mIsGrounded = true;
+
+	mInputMgr = &gameCtx->GetInputManager();
+	hCrouchSub = mInputMgr->Subscribe(EInputAction::PLAYER_CROUCH, std::bind(&Player::OnCrouchInput, this, std::placeholders::_1), EInputState::PRESSED);
+	hJumpSub = mInputMgr->Subscribe(EInputAction::PLAYER_JUMP, std::bind(&Player::OnJumpInput, this, std::placeholders::_1), EInputState::PRESSED);
+	hSprintSub = mInputMgr->Subscribe(EInputAction::PLAYER_SPRINT, std::bind(&Player::OnSprintInput, this, std::placeholders::_1));
+	hInteractSub = mInputMgr->Subscribe(EInputAction::PLAYER_INTERACT, std::bind(&Player::OnInteractInput, this, std::placeholders::_1), EInputState::PRESSED);
+	hWeaponSwapUpSub = mInputMgr->Subscribe(EInputAction::WEAPON_SWAP_UP, std::bind(&Player::OnWeaponSwapInput, this, std::placeholders::_1), EInputState::PRESSED);
+	hWeaponSwapDownSub = mInputMgr->Subscribe(EInputAction::WEAPON_SWAP_DOWN, std::bind(&Player::OnWeaponSwapInput, this, std::placeholders::_1), EInputState::PRESSED);
 }
 
 Player::~Player()
 {
-	//printf("Player Destructor\n");
+	mInputMgr->Unsubscribe(EInputAction::PLAYER_CROUCH, hCrouchSub);
+	mInputMgr->Unsubscribe(EInputAction::PLAYER_JUMP, hJumpSub);
+	mInputMgr->Unsubscribe(EInputAction::PLAYER_SPRINT, hSprintSub);
+	mInputMgr->Unsubscribe(EInputAction::PLAYER_INTERACT, hInteractSub);
+	mInputMgr->Unsubscribe(EInputAction::WEAPON_SWAP_UP, hWeaponSwapUpSub);
+	mInputMgr->Unsubscribe(EInputAction::WEAPON_SWAP_DOWN, hWeaponSwapDownSub);
+
 }
 
 void Player::OnUpdate(float deltaTime)
@@ -102,7 +116,7 @@ void Player::OnUpdate(float deltaTime)
 
 	mPtrActiveWeapon->SetArmOffset(Vec3(0.0f, yD, zD));
 
-	if (hasMovementInput && mIsGrounded)
+	if ((currentVelocity.SqrMagnitude() > EPISILON) && mIsGrounded)
 	{
 		if (mPtrAudioComponent->GetSoundState() == ESoundState::Paused)
 		{
@@ -124,124 +138,25 @@ void Player::OnUpdate(float deltaTime)
 	//ShowDebugInfo();
 }
 
-//TODO: Refactor using new input system
-
-//void Player::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
-//{
-//	// Horizontal Movement
-//	{
-//		inputMoveDir = Vector3::Zero;
-//		hasMovementInput = false;
-//
-//		if (keyState[SDL_SCANCODE_W] == EInputState::KEY_HOLD)
-//		{
-//			inputMoveDir += GetForward();
-//			hasMovementInput = true;
-//		}
-//		if (keyState[SDL_SCANCODE_S] == EInputState::KEY_HOLD)
-//		{
-//			inputMoveDir -= GetForward();
-//			hasMovementInput = true;
-//		}
-//		if (keyState[SDL_SCANCODE_A] == EInputState::KEY_HOLD)
-//		{
-//			// Cross with World Up to get Right vector;
-//			inputMoveDir -= GetForward().Cross(Vector3(0.0f, 1.0f, 0.0f));
-//			hasMovementInput = true;
-//		}
-//		if (keyState[SDL_SCANCODE_D] == EInputState::KEY_HOLD)
-//		{
-//			inputMoveDir += GetForward().Cross(Vector3(0.0f, 1.0f, 0.0f));
-//			hasMovementInput = true;
-//		}
-//		if (keyState[SDL_SCANCODE_Q] == EInputState::KEY_HOLD)
-//		{
-//			inputMoveDir -= Vector3(0.0f, 1.0f, 0.0f);
-//			hasMovementInput = true;
-//		}
-//		if (keyState[SDL_SCANCODE_E] == EInputState::KEY_HOLD)
-//		{
-//			inputMoveDir += Vector3(0.0f, 1.0f, 0.0f);
-//			hasMovementInput = true;
-//		}
-//
-//		//inputMoveDir.mY = 0.0f;
-//		inputMoveDir.Normalize();
-//	}
-//
-//	// Movement States (Crouching, Sprinting, etc.)
-//	{
-//		if (keyState[SDL_SCANCODE_C] == EInputState::KEY_DOWN)
-//		{
-//			//TODO: Block when already crouching (or add the buffer system)
-//			//TODO: Creating additional copy here. Overload enum version
-//			if (mPtrActionComp->GetActiveGameplayTags().HasTag(GameplayTag(EActionType::CROUCHING)))
-//			{
-//				mPtrActionComp->StopActionByName("Crouch");
-//				TimelineActionManager::ReverseFromEnd(mHCrouchTimeline, std::bind(&Player::CrouchTimeline, this, std::placeholders::_1), 0.25f);
-//				currentTopSpeed = topWalkingSpeed;
-//
-//			}
-//			else
-//			{
-//				mPtrActionComp->StartActionByName("Crouch");
-//				TimelineActionManager::PlayFromStart(mHCrouchTimeline, std::bind(&Player::CrouchTimeline, this, std::placeholders::_1), 0.25f);
-//				currentTopSpeed = topCrouchSpeed;
-//
-//			}
-//		}
-//
-//		if (keyState[SDL_SCANCODE_LSHIFT] == EInputState::KEY_DOWN)
-//		{
-//			mPtrActionComp->StartActionByName("Sprint");
-//			currentTopSpeed = topSprintingSpeed;
-//		}
-//		if (keyState[SDL_SCANCODE_LSHIFT] == EInputState::KEY_UP)
-//		{
-//			mPtrActionComp->StopActionByName("Sprint");
-//			currentTopSpeed = topWalkingSpeed;
-//		}
-//
-//		if (keyState[SDL_SCANCODE_SPACE] == EInputState::KEY_DOWN)
-//		{
-//			Jump();
-//		}
-//	}
-//
-//	// Object Interaction
-//	{
-//		if (keyState[SDL_SCANCODE_F] == EInputState::KEY_DOWN)
-//		{
-//			Interaction();
-//		}
-//	}
-//
-//	// Weapon & Gadget
-//	{
-//		if (keyState[SDL_SCANCODE_1] == EInputState::KEY_DOWN ||
-//			keyState[SDL_SCANCODE_2] == EInputState::KEY_DOWN ||
-//			mouseState & EMouseState::SCROLL_UP ||
-//			mouseState & EMouseState::SCROLL_DOWN)
-//		{
-//			//TODO: Handle double swapping
-//			mPtrActiveWeapon->Holster();
-//			DelayedActionManager::AddAction(mHWeaponSwitch, std::bind(&Player::WeaponSwitchCallback, this), mPtrActiveWeapon->mHolsterTime, false);
-//		}
-//	}
-//}
-
 
 void Player::ProcessMovement(float deltaTime)
 {
+	Vec2 rawInputDir = mInputMgr->ReadValue<Vec2>(EInputAction::PLAYER_MOVEMENT);
+	rawInputDir.Normalize();
+
+	Vec3 moveDir = rawInputDir.mX * GetForward()
+		+ Vec3::Up
+		+ rawInputDir.mY * (GetForward().Cross(Vec3::Up));
+
 	//TODO: reduce control while in air
-    float targetSpeed = hasMovementInput ? currentTopSpeed : 0.0f;
+	float targetSpeed = (rawInputDir.SqrMagnitude() >= EPISILON) ? currentTopSpeed : 0.0f;
 	float currentHorSpeed = Vector3(currentVelocity.mX, 0.0f, currentVelocity.mZ).Magnitude();
 	float currentVerticalSpeed = currentVelocity.mY;
 
 	if (currentHorSpeed < targetSpeed - speedOffset || currentHorSpeed > targetSpeed + speedOffset)
-		currentVelocity = Math::Lerp(currentHorSpeed, targetSpeed, deltaTime * maxSpeedChangingRate) * inputMoveDir;
+		currentVelocity = Math::Lerp(currentHorSpeed, targetSpeed, deltaTime * maxSpeedChangingRate) * moveDir;
 	else
-		currentVelocity = targetSpeed * inputMoveDir;
+		currentVelocity = targetSpeed * moveDir;
 
 	if(!mIsGrounded)
 		currentVerticalSpeed += OVERRIDE_GRAVITY_CONSTANT * deltaTime;
@@ -261,13 +176,56 @@ void Player::ProcessMovement(float deltaTime)
 	SetPosition(updatedPos);
 }
 
-void Player::Jump()
+void Player::OnJumpInput(EInputState state)
 {
 	if (mIsGrounded)
 	{
 		currentVelocity.mY = std::sqrtf(JUMP_HEIGHT_CONSTANT * -2.0f * OVERRIDE_GRAVITY_CONSTANT);
 		mIsGrounded = false;
 	}
+}
+
+void Player::OnCrouchInput(EInputState state)
+{
+	//TODO: Block when already crouching (or add the buffer system)
+			//TODO: Creating additional copy here. Overload enum version
+	if (mPtrActionComp->GetActiveGameplayTags().HasTag(GameplayTag(EActionType::CROUCHING)))
+	{
+		mPtrActionComp->StopActionByName("Crouch");
+		TimelineActionManager::ReverseFromEnd(mHCrouchTimeline, std::bind(&Player::CrouchTimeline, this, std::placeholders::_1), 0.25f);
+		currentTopSpeed = topWalkingSpeed;
+	}
+	else
+	{
+		mPtrActionComp->StartActionByName("Crouch");
+		TimelineActionManager::PlayFromStart(mHCrouchTimeline, std::bind(&Player::CrouchTimeline, this, std::placeholders::_1), 0.25f);
+		currentTopSpeed = topCrouchSpeed;
+	}
+}
+
+void Player::OnSprintInput(EInputState state)
+{
+	switch (state)
+	{
+	case EInputState::PRESSED:
+		mPtrActionComp->StartActionByName("Sprint");
+		currentTopSpeed = topSprintingSpeed;
+		break;
+	case EInputState::RELEASED:
+		mPtrActionComp->StopActionByName("Sprint");
+		currentTopSpeed = topWalkingSpeed;
+		break;
+	default:
+		break;
+	}
+}
+
+void Player::OnWeaponSwapInput(EInputState state)
+{
+	//TODO: Check nullptr
+	//TODO: Handle double swapping
+	mPtrActiveWeapon->Holster();
+	DelayedActionManager::AddAction(mHWeaponSwitch, std::bind(&Player::WeaponSwitchCallback, this), mPtrActiveWeapon->mHolsterTime, false);
 }
 
 void Player::ProcessInteractionPrompt()
@@ -291,7 +249,7 @@ void Player::ProcessInteractionPrompt()
 	}
 }
 
-void Player::Interaction()
+void Player::OnInteractInput(EInputState state)
 {
 	if (mInteractCandidate != nullptr)
 	{
