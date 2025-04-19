@@ -9,7 +9,7 @@
 #include "Animation/AnimationStateMachine.h"
 #include "Graphics/AnimatedRenderComponent.h"
 #include "imgui/imgui.h"
-
+#include "Input/InputManager.h"
 #include "Audio/AudioComponent.h"
 #include <SDL2/SDL.h>
 #include <functional>
@@ -18,11 +18,17 @@
 Weapon::Weapon(GameContext* gameCtx)
 	: Actor(gameCtx), mPtrPlayer(nullptr)
 {
-	
+	mInputMgr = &gameCtx->GetInputManager();
+	hPriFireSub = mInputMgr->Subscribe(EInputAction::WEAPON_FIRE_PRIMARY, std::bind(&Weapon::OnPrimaryFireInput, this, std::placeholders::_1));
+	hSecFireSub = mInputMgr->Subscribe(EInputAction::WEAPON_FIRE_SECONDARY, std::bind(&Weapon::OnSecondaryFireInput, this, std::placeholders::_1));
+	hReloadSub = mInputMgr->Subscribe(EInputAction::WEAPON_RELOAD, std::bind(&Weapon::OnReloadInput, this, std::placeholders::_1), EInputState::PRESSED);
 }
 
 Weapon::~Weapon()
 {
+	mInputMgr->Unsubscribe(EInputAction::WEAPON_FIRE_PRIMARY, hPriFireSub);
+	mInputMgr->Unsubscribe(EInputAction::WEAPON_FIRE_SECONDARY, hSecFireSub);
+	mInputMgr->Unsubscribe(EInputAction::WEAPON_RELOAD, hReloadSub);
 }
 
 void Weapon::Init(Player* playerPtr)
@@ -64,45 +70,12 @@ void Weapon::OnUpdate(float deltaTime)
 	mPtrAnimRenderComp->SetScaleOffset(Vec3(scaleOffset));*/
 }
 
-//TODO: Refactor using new input system
-//void Weapon::OnProcessInput(const std::vector<EInputState>& keyState, Uint32 mouseState, int mouseDeltaX, int mouseDeltaY)
-//{
-//	EMouseState targetFlag = mPtrWeaponComp->mIsSemiAuto ? LMB_DOWN : LMB_HOLD;
-//	if (mouseState & targetFlag)
-//	{
-//		Fire();
-//	}
-//
-//	if (mouseState & RMB_DOWN)
-//	{
-//		TimelineActionManager::PlayFromStart(mHAimingTimeline, std::bind(&Weapon::AimingTimeline, this, std::placeholders::_1), 0.2f);
-//		mPtrPlayer->GetMainCamera().mAimingSensMultiplier = 0.85f;
-//		mIsADSing = true;
-//	}
-//	else if (mouseState & RMB_UP)
-//	{
-//		TimelineActionManager::ReverseFromEnd(mHAimingTimeline, std::bind(&Weapon::AimingTimeline, this, std::placeholders::_1), 0.2f);
-//		mPtrPlayer->GetMainCamera().mAimingSensMultiplier = 1.0f;
-//		mIsADSing = false;
-//
-//	}
-//
-//	if (keyState[SDL_SCANCODE_R] == EInputState::KEY_DOWN)
-//	{
-//		if (mPtrPlayer->GetActionComp()->StartActionByName("Reload"))
-//		{
-//			Reload();
-//		}
-//	}
-//
-//	{
-//		mCurrentArmRotationOffset.mX -= mouseDeltaY * 0.1f;
-//		mCurrentArmRotationOffset.mZ += mouseDeltaX * 0.1f;
-//	}
-//}
-
 void Weapon::SetArmOffset(Vec3 translationOffset)
 {
+	Vec2 mouseDelta = mInputMgr->ReadMouseDelta();
+	mCurrentArmRotationOffset.mX -= mouseDelta.mY * 0.1f;
+	mCurrentArmRotationOffset.mZ += mouseDelta.mX * 0.1f;
+
 	Vec3 newTransOffset = mCurrentArmTranslationOffset + translationOffset;
 	mPtrAnimRenderComp->SetTranslateOffset(newTransOffset);
 
@@ -121,56 +94,82 @@ void Weapon::Holster()
 	mPtrAnimStateMachine->PlayAnimation(mHolsterAnimIndex, false, mHolsterTime);
 }
 
-void Weapon::Fire()
+void Weapon::OnPrimaryFireInput(EInputState state)
 {
-	if (mPtrWeaponComp->CanFire())
+	if (!mPtrWeaponComp->CanFire())
+		return;
+
+	EInputState targetState = mPtrWeaponComp->mIsSemiAuto ? EInputState::PRESSED : EInputState::HOLD;
+
+	if (state != targetState)
+		return;
+
+	mPtrWeaponComp->Fire();
+	GameEvent::Publish<EventOnWeaponAmmoChanged>(EventOnWeaponAmmoChanged(mPtrWeaponComp->mCurrentMagazineAmmo, mPtrWeaponComp->mMaxMagazineCapacity));
+
+	mPtrAnimStateMachine->PlayAnimation(mFireAnimIndex, false, 0.2f);
+	CameraComponent& cam = mPtrPlayer->GetMainCamera();
+
+	Vec3 origin = cam.GetCameraPosition();
+	Vec3 dir = cam.GetFrontVector().normalized();
+
+	/*dir.mX += Random::Range(-mAccuracySpreadFactor, mAccuracySpreadFactor);
+	dir.mZ += Random::Range(-mAccuracySpreadFactor, mAccuracySpreadFactor);
+
+	dir.Normalize();*/
+
+
+	HitInfo hitInfo;
+	GetGameContext()->GetPhysicsManager().RaycastQuery(origin, dir, 1000.0f, hitInfo);
+
+	if (hitInfo.hitActor != nullptr)
 	{
-		mPtrWeaponComp->Fire();
-		GameEvent::Publish<EventOnWeaponAmmoChanged>(EventOnWeaponAmmoChanged(mPtrWeaponComp->mCurrentMagazineAmmo, mPtrWeaponComp->mMaxMagazineCapacity));
-
-		mPtrAnimStateMachine->PlayAnimation(mFireAnimIndex, false, 0.2f);
-		CameraComponent& cam = mPtrPlayer->GetMainCamera();
-
-		Vec3 origin = cam.GetCameraPosition();
-		Vec3 dir = cam.GetFrontVector().normalized();
-
-		/*dir.mX += Random::Range(-mAccuracySpreadFactor, mAccuracySpreadFactor);
-		dir.mZ += Random::Range(-mAccuracySpreadFactor, mAccuracySpreadFactor);
-
-		dir.Normalize();*/
-
-
-		HitInfo hitInfo;
-		GetGameContext()->GetPhysicsManager().RaycastQuery(origin, dir, 1000.0f, hitInfo);
-
-		if (hitInfo.hitActor != nullptr)
+		if (auto hittable = dynamic_cast<IHittable*>(hitInfo.hitActor); hittable != nullptr)
 		{
-			if (auto hittable = dynamic_cast<IHittable*>(hitInfo.hitActor); hittable != nullptr)
-			{
-				hitInfo.hitPower = 1.0f;
-				hittable->Hit(hitInfo);
-			}
+			hitInfo.hitPower = 1.0f;
+			hittable->Hit(hitInfo);
 		}
-
-		cam.RotateCamera(mPtrWeaponComp->CalculateRecoilDeviation() * 5.0f);
-
-		mPtrAudioComponent->Play();
 	}
+
+	cam.RotateCamera(mPtrWeaponComp->CalculateRecoilDeviation() * 5.0f);
+
+	mPtrAudioComponent->Play();
+	
 }
 
-void Weapon::Reload()
+void Weapon::OnReloadInput(EInputState state)
 {
-	if (mPtrWeaponComp->CanReload())
+	if (mPtrPlayer->GetActionComp()->StartActionByName("Reload") && mPtrWeaponComp->CanReload())
 	{
 		mPtrAnimStateMachine->PlayAnimation(mReloadAnimIndex, false, mReloadTime);
 		DelayedActionManager::AddAction(mHReloadCallback, std::bind(&Weapon::FinishedReload, this), mReloadTime, false);
 	}
 }
 
+void Weapon::OnSecondaryFireInput(EInputState state)
+{
+	// Default behavior is aiming
+	switch (state)
+	{
+	case EInputState::PRESSED:
+		TimelineActionManager::PlayFromStart(mHAimingTimeline, std::bind(&Weapon::AimingTimeline, this, std::placeholders::_1), 0.2f);
+		mPtrPlayer->GetMainCamera().mAimingSensMultiplier = 0.85f;
+		mIsADSing = true;
+		break;
+	case EInputState::RELEASED:
+		TimelineActionManager::ReverseFromEnd(mHAimingTimeline, std::bind(&Weapon::AimingTimeline, this, std::placeholders::_1), 0.2f);
+		mPtrPlayer->GetMainCamera().mAimingSensMultiplier = 1.0f;
+		mIsADSing = false;
+		break;
+	default:
+		break;
+	}
+}
+
 //TODO: Resume previous progress if play from back
 void Weapon::AimingTimeline(float alpha)
 {
-	mPtrPlayer->GetMainCamera().SetHorFOV(Math::Lerp(80.0f, 50.0f, alpha));
+	mPtrPlayer->GetMainCamera().SetVerFOV(Math::Lerp(110.0f, 80.0f, alpha));
 	mCurrentArmTranslationOffset = Math::Lerp(mHipArmTranslationOffset, mADSArmTranslationOffset, alpha);
 	mPtrAnimRenderComp->SetTranslateOffset(mCurrentArmTranslationOffset);
 	mCurrentArmRotationOffset = Math::Lerp(mHipArmRotationOffset, mADSArmRotationOffset, alpha);

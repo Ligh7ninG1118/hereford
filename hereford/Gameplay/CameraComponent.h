@@ -14,7 +14,7 @@ public:
 	void RotateCamera(Vec2 dir);
 
 	void SetEyeHeight(float eyeHeight) { mPositionOffset.mY = eyeHeight; }
-	void SetHorFOV(float hov) { mVerFOV = hov; }
+	void SetVerFOV(float hov) { mVerFOV = hov; }
 
 	Mat4 GetViewMatrix() const;
 	Mat4 GetPerspMatrix(float screenRatio) const;

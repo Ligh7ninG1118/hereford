@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/Actor.h"
+#include "Input/InputCommons.h"
 #include <memory>
 #include "Util/TimelineAction.h"
 #include "Util/DelayedAction.h"
@@ -29,13 +30,19 @@ public:
 	float mHolsterTime;
 
 protected:
-	virtual void Fire();
-	virtual void Reload();
+	virtual void OnPrimaryFireInput(EInputState state);
+	virtual void OnReloadInput(EInputState state);
+	virtual void OnSecondaryFireInput(EInputState state);
 	
 	virtual void AimingTimeline(float alpha);
 	virtual void FinishedReload();
 
 	class Player* mPtrPlayer;
+	class InputManager* mInputMgr;
+	hInputSub hPriFireSub;
+	hInputSub hSecFireSub;
+	hInputSub hReloadSub;
+
 
 	DAHandle mHReloadCallback;
 	TAHandle mHAimingTimeline;
