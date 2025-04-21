@@ -33,6 +33,7 @@ public:
 	bool Initialize();
 	void Shutdown();
 	void Poll();
+	void UpdateMouseScroll(int scroll) { mMouseScroll = scroll; }
 
 	// Subscribe to IDLE state means invoke callback for all states (Pressed, Released, Hold)
 	[[nodiscard]] hInputSub Subscribe(EInputAction IA, std::function<void(EInputState)> callback, EInputState listenedState = EInputState::IDLE);
@@ -91,6 +92,7 @@ private:
 	std::unordered_map<EInputAction, std::vector<SwizzledInput>> mIASwizzledMap;
 
 	Vec2 mMouseDelta;
+	int mMouseScroll;
 
 	static hInputSub mInputSubCount;
 };

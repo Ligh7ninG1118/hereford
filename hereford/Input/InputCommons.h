@@ -36,5 +36,7 @@ enum class HF_MOUSECODE
 
 	LMB,
 	MMB,
-	RMB
+	RMB,
+	SCROLL_UP,	//Scroll Wheel
+	SCROLL_DOWN,
 };

@@ -92,7 +92,7 @@ bool GameContext::Initialize()
 
 	mPtrInputManager = std::make_unique<InputManager>();
 	mPtrInputManager->Initialize();
-	mPtrInputManager->Subscribe(EInputAction::GAME_QUIT, std::bind(&GameContext::OnQuitInput, this, std::placeholders::_1), EInputState::PRESSED);
+	hQuitSub = mPtrInputManager->Subscribe(EInputAction::GAME_QUIT, std::bind(&GameContext::OnQuitInput, this, std::placeholders::_1), EInputState::PRESSED);
 
 	//SDL_SetWindowGrab(pSDLWindow, SDL_TRUE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -121,6 +121,9 @@ bool GameContext::Initialize()
 
 void GameContext::Shutdown()
 {
+	mPtrInputManager->Unsubscribe(EInputAction::GAME_QUIT, hQuitSub);
+
+
 	while (!mActors.empty())
 	{
 		delete mActors.back();
@@ -168,7 +171,7 @@ void GameContext::RunLoop()
 
 void GameContext::LoadStarterData()
 {
-	if (false)
+	if (true)
 	{
 		mPtrPlayer = new Player(this);
 		mPtrPlayer->SetPosition(Vector3(4.0f, 0.0f, 4.0f));
@@ -310,14 +313,14 @@ void GameContext::SaveScene(const std::string& sceneFilePath)
 void GameContext::ProcessInput()
 {
 	SDL_Event pollEvent;
-	int mouseWheel = 0;
 	while (SDL_PollEvent(&pollEvent))
 	{
 		ImGui_ImplSDL2_ProcessEvent(&pollEvent);
 		switch (pollEvent.type)
 		{
+			// The only one type of data cant be manually polled elsewhere
 		case SDL_MOUSEWHEEL:
-			mouseWheel = pollEvent.wheel.y;
+			mPtrInputManager->UpdateMouseScroll(pollEvent.wheel.y);
 			break;
 		default:
 			break;
@@ -325,7 +328,6 @@ void GameContext::ProcessInput()
 	}
 
 	mPtrInputManager->Poll();
-
 }
 
 void GameContext::UpdateGame()

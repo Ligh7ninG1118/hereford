@@ -39,6 +39,8 @@ bool InputManager::Initialize()
 	AddKeyMappingToInputAction(EInputAction::WEAPON_RELOAD, SDL_SCANCODE_R);
 	AddKeyMappingToInputAction(EInputAction::WEAPON_SWAP_UP, SDL_SCANCODE_1);
 	AddKeyMappingToInputAction(EInputAction::WEAPON_SWAP_DOWN, SDL_SCANCODE_2);
+	AddMouseMappingToInputAction(EInputAction::WEAPON_SWAP_UP, HF_MOUSECODE::SCROLL_UP);
+	AddMouseMappingToInputAction(EInputAction::WEAPON_SWAP_DOWN, HF_MOUSECODE::SCROLL_DOWN);
 
 	return true;
 }
@@ -97,6 +99,7 @@ void InputManager::UpdateMouseStates()
 	mMouseDelta.mX = static_cast<float>(mouseDeltaX);
 	mMouseDelta.mY = static_cast<float>(-mouseDeltaY);
 
+	// Update LMB, MMB, RMB states
 	for (int i = 1; i < 4; i++)
 	{
 		int mouseMask = SDL_BUTTON(i);
@@ -108,7 +111,24 @@ void InputManager::UpdateMouseStates()
 			mMouseStateMap[mouseCode] = (rawMouseState & mouseMask) ? EInputState::PRESSED : EInputState::IDLE;
 	}
 
-	//TODO: Mouse wheel
+	// Update scroll wheel state
+	if (mMouseScroll > 0)
+	{
+		mMouseStateMap[HF_MOUSECODE::SCROLL_UP] = EInputState::PRESSED;
+		mMouseStateMap[HF_MOUSECODE::SCROLL_DOWN] = EInputState::IDLE;
+	}
+	else if (mMouseScroll < 0)
+	{
+		mMouseStateMap[HF_MOUSECODE::SCROLL_DOWN] = EInputState::PRESSED;
+		mMouseStateMap[HF_MOUSECODE::SCROLL_UP] = EInputState::IDLE;
+	}
+	else
+	{
+		mMouseStateMap[HF_MOUSECODE::SCROLL_DOWN] = EInputState::IDLE;
+		mMouseStateMap[HF_MOUSECODE::SCROLL_UP] = EInputState::IDLE;
+	}
+	// Consume input
+	mMouseScroll = 0;
 }
 
 void InputManager::InvokeMouseEvents()

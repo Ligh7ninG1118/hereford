@@ -75,5 +75,7 @@ private:
 
 	std::vector<Actor*> mActors;
 
+	hInputSub hQuitSub;
+
 };
 
