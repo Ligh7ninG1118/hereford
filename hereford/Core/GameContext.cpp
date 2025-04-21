@@ -92,6 +92,7 @@ bool GameContext::Initialize()
 
 	mPtrInputManager = std::make_unique<InputManager>();
 	mPtrInputManager->Initialize();
+	mPtrInputManager->Subscribe(EInputAction::GAME_QUIT, std::bind(&GameContext::OnQuitInput, this, std::placeholders::_1), EInputState::PRESSED);
 
 	//SDL_SetWindowGrab(pSDLWindow, SDL_TRUE);
 	SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -318,9 +319,6 @@ void GameContext::ProcessInput()
 		case SDL_MOUSEWHEEL:
 			mouseWheel = pollEvent.wheel.y;
 			break;
-		case SDL_QUIT:
-			mIsRunning = false;
-			break;
 		default:
 			break;
 		}
@@ -447,6 +445,11 @@ void GameContext::DebugSceneObjects()
 	}
 	
 	ImGui::End();
+}
+
+void GameContext::OnQuitInput(EInputState state)
+{
+	mIsRunning = false;
 }
 
 

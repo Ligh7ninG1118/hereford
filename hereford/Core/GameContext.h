@@ -6,6 +6,7 @@
 #include <memory>
 #include <unordered_map>
 #include "Util/GameEvent.h"
+#include "Input/InputCommons.h"
 
 class Renderer;
 class AudioManager;
@@ -48,6 +49,8 @@ private:
 	void GenerateOutput();
 
 	void DebugSceneObjects();
+
+	void OnQuitInput(EInputState state);
 
 	SDL_Window* mPtrSDLWindow;
 	std::unique_ptr<Renderer> mPtrRenderer;

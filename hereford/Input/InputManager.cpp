@@ -12,8 +12,11 @@ InputManager::~InputManager()
 {
 }
 
+//TODO: serialize into config
 bool InputManager::Initialize()
 {
+	AddKeyMappingToInputAction(EInputAction::GAME_QUIT, SDL_SCANCODE_ESCAPE);
+
 	mIASwizzledMap[EInputAction::PLAYER_MOVEMENT].push_back(SwizzledInput{ SDL_SCANCODE_W, Vec2(1.0f, 0.0f) });
 	mIASwizzledMap[EInputAction::PLAYER_MOVEMENT].push_back(SwizzledInput{ SDL_SCANCODE_S, Vec2(-1.0f, 0.0f) });
 	mIASwizzledMap[EInputAction::PLAYER_MOVEMENT].push_back(SwizzledInput{ SDL_SCANCODE_D, Vec2(0.0f, 1.0f) });
