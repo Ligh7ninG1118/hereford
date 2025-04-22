@@ -14,38 +14,42 @@ InputManager::~InputManager()
 
 bool InputManager::Initialize()
 {
+
 	//TODO: serialize into config
 	// Add key mappings
-	AddKeyMappingToInputAction(EInputAction::GAME_QUIT, SDL_SCANCODE_ESCAPE);
+	AddMappingToInputAction(EInputAction::GAME_QUIT, HF_InputCode::KEYBOARD_ESCAPE);
+	AddMappingToInputAction(EInputAction::GAME_QUIT, HF_InputCode::CONTROLLER_BUTTON_START);
 
-	mIASwizzledMap[EInputAction::PLAYER_MOVEMENT].push_back(SwizzledInput{ SDL_SCANCODE_W, Vec2(1.0f, 0.0f) });
-	mIASwizzledMap[EInputAction::PLAYER_MOVEMENT].push_back(SwizzledInput{ SDL_SCANCODE_S, Vec2(-1.0f, 0.0f) });
-	mIASwizzledMap[EInputAction::PLAYER_MOVEMENT].push_back(SwizzledInput{ SDL_SCANCODE_D, Vec2(0.0f, 1.0f) });
-	mIASwizzledMap[EInputAction::PLAYER_MOVEMENT].push_back(SwizzledInput{ SDL_SCANCODE_A, Vec2(0.0f, -1.0f) });
+	mIASwizzledMap[EInputAction::PLAYER_MOVEMENT].push_back(SwizzledInput{ HF_InputCode::KEYBOARD_W, Vec2(1.0f, 0.0f) });
+	mIASwizzledMap[EInputAction::PLAYER_MOVEMENT].push_back(SwizzledInput{ HF_InputCode::KEYBOARD_S, Vec2(-1.0f, 0.0f) });
+	mIASwizzledMap[EInputAction::PLAYER_MOVEMENT].push_back(SwizzledInput{ HF_InputCode::KEYBOARD_D, Vec2(0.0f, 1.0f) });
+	mIASwizzledMap[EInputAction::PLAYER_MOVEMENT].push_back(SwizzledInput{ HF_InputCode::KEYBOARD_A, Vec2(0.0f, -1.0f) });
+	mIASwizzledMap[EInputAction::PLAYER_MOVEMENT].push_back(SwizzledInput{ HF_InputCode::CONTROLLER_AXIS_LEFTY, Vec2(-1.0f, 0.0f) });
+	mIASwizzledMap[EInputAction::PLAYER_MOVEMENT].push_back(SwizzledInput{ HF_InputCode::CONTROLLER_AXIS_LEFTX, Vec2(0.0f, 1.0f) });
 
-	mIASwizzledMap[EInputAction::FLY_MOVEMENT].push_back(SwizzledInput{ SDL_SCANCODE_W, Vec3(1.0f, 0.0f, 0.0f) });
-	mIASwizzledMap[EInputAction::FLY_MOVEMENT].push_back(SwizzledInput{ SDL_SCANCODE_S, Vec3(-1.0f, 0.0f, 0.0f) });
-	mIASwizzledMap[EInputAction::FLY_MOVEMENT].push_back(SwizzledInput{ SDL_SCANCODE_D, Vec3(0.0f, 0.0f, 1.0f) });
-	mIASwizzledMap[EInputAction::FLY_MOVEMENT].push_back(SwizzledInput{ SDL_SCANCODE_A, Vec3(0.0f, 0.0f, -1.0f)});
-	mIASwizzledMap[EInputAction::FLY_MOVEMENT].push_back(SwizzledInput{ SDL_SCANCODE_Q, Vec3(0.0f, -1.0f, 0.0f) });
-	mIASwizzledMap[EInputAction::FLY_MOVEMENT].push_back(SwizzledInput{ SDL_SCANCODE_E, Vec3(0.0f, 1.0f, 0.0f) });
+	mIASwizzledMap[EInputAction::FLY_MOVEMENT].push_back(SwizzledInput{ HF_InputCode::KEYBOARD_W, Vec3(1.0f, 0.0f, 0.0f) });
+	mIASwizzledMap[EInputAction::FLY_MOVEMENT].push_back(SwizzledInput{ HF_InputCode::KEYBOARD_S, Vec3(-1.0f, 0.0f, 0.0f) });
+	mIASwizzledMap[EInputAction::FLY_MOVEMENT].push_back(SwizzledInput{ HF_InputCode::KEYBOARD_D, Vec3(0.0f, 0.0f, 1.0f) });
+	mIASwizzledMap[EInputAction::FLY_MOVEMENT].push_back(SwizzledInput{ HF_InputCode::KEYBOARD_A, Vec3(0.0f, 0.0f, -1.0f)});
+	mIASwizzledMap[EInputAction::FLY_MOVEMENT].push_back(SwizzledInput{ HF_InputCode::KEYBOARD_Q, Vec3(0.0f, -1.0f, 0.0f) });
+	mIASwizzledMap[EInputAction::FLY_MOVEMENT].push_back(SwizzledInput{ HF_InputCode::KEYBOARD_E, Vec3(0.0f, 1.0f, 0.0f) });
 
-	AddKeyMappingToInputAction(EInputAction::PLAYER_JUMP, SDL_SCANCODE_SPACE);
-	AddKeyMappingToInputAction(EInputAction::PLAYER_CROUCH, SDL_SCANCODE_C);
-	AddKeyMappingToInputAction(EInputAction::PLAYER_SPRINT, SDL_SCANCODE_LSHIFT);
-	AddKeyMappingToInputAction(EInputAction::PLAYER_INTERACT, SDL_SCANCODE_F);
-	AddControllerMappingToInputAction(EInputAction::PLAYER_JUMP, SDL_CONTROLLER_BUTTON_A);
-	AddControllerMappingToInputAction(EInputAction::PLAYER_CROUCH, SDL_CONTROLLER_BUTTON_B);
+	AddMappingToInputAction(EInputAction::PLAYER_JUMP, HF_InputCode::KEYBOARD_SPACE);
+	AddMappingToInputAction(EInputAction::PLAYER_JUMP, HF_InputCode::CONTROLLER_BUTTON_A);
+	AddMappingToInputAction(EInputAction::PLAYER_CROUCH, HF_InputCode::KEYBOARD_C);
+	AddMappingToInputAction(EInputAction::PLAYER_CROUCH, HF_InputCode::CONTROLLER_BUTTON_B);
+	AddMappingToInputAction(EInputAction::PLAYER_SPRINT, HF_InputCode::KEYBOARD_LSHIFT);
+	AddMappingToInputAction(EInputAction::PLAYER_INTERACT, HF_InputCode::KEYBOARD_F);
 
-	AddMouseMappingToInputAction(EInputAction::WEAPON_FIRE_PRIMARY, HF_MOUSECODE::LMB);
-	AddMouseMappingToInputAction(EInputAction::WEAPON_FIRE_SECONDARY, HF_MOUSECODE::RMB);
-	AddKeyMappingToInputAction(EInputAction::WEAPON_RELOAD, SDL_SCANCODE_R);
-	AddKeyMappingToInputAction(EInputAction::WEAPON_SWAP_UP, SDL_SCANCODE_1);
-	AddKeyMappingToInputAction(EInputAction::WEAPON_SWAP_DOWN, SDL_SCANCODE_2);
-	AddMouseMappingToInputAction(EInputAction::WEAPON_SWAP_UP, HF_MOUSECODE::SCROLL_UP);
-	AddMouseMappingToInputAction(EInputAction::WEAPON_SWAP_DOWN, HF_MOUSECODE::SCROLL_DOWN);
+	AddMappingToInputAction(EInputAction::WEAPON_FIRE_PRIMARY, HF_InputCode::MOUSE_BUTTON_LEFT);
+	AddMappingToInputAction(EInputAction::WEAPON_FIRE_SECONDARY, HF_InputCode::MOUSE_BUTTON_RIGHT);
+	AddMappingToInputAction(EInputAction::WEAPON_RELOAD, HF_InputCode::KEYBOARD_R);
+	AddMappingToInputAction(EInputAction::WEAPON_SWAP_UP, HF_InputCode::KEYBOARD_1);
+	AddMappingToInputAction(EInputAction::WEAPON_SWAP_DOWN, HF_InputCode::KEYBOARD_2);
+	AddMappingToInputAction(EInputAction::WEAPON_SWAP_UP, HF_InputCode::MOUSE_SCROLL_UP);
+	AddMappingToInputAction(EInputAction::WEAPON_SWAP_DOWN, HF_InputCode::MOUSE_SCROLL_DOWN);
 
-	
+	mRawKeyStates = SDL_GetKeyboardState(nullptr);
 
 	// Find existing controller
 	mController = FindController();
@@ -59,12 +63,10 @@ void InputManager::Shutdown()
 
 void InputManager::Poll()
 {
-	UpdateKeyStates();
-	InvokeKeyEvents();
+	// Updating mouse states before other inputs
 	UpdateMouseStates();
-	InvokeMouseEvents();
-	UpdateControllerStates();
-	InvokeControllerEvents();
+	UpdateInputStates();
+	InvokeInputEvents();
 }
 
 void InputManager::HandleEvent(SDL_Event event)
@@ -90,37 +92,36 @@ void InputManager::HandleEvent(SDL_Event event)
 	}
 }
 
-void InputManager::UpdateKeyStates()
+void InputManager::UpdateInputStates()
 {
-	const Uint8* rawKeyState = SDL_GetKeyboardState(nullptr);
-
-	for (const auto& inputPair : mKeyInputMapping)
+	for (const auto& [inputCode, inputActionList] : mInputMapping)
 	{
-		SDL_Scancode keyCode = inputPair.first;
+		int8 rawState = GetStateFromInputCode(inputCode);
 		//TODO: Trigger hold state after set time
-		if (mKeyStateMap[keyCode] == EInputState::HOLD || mKeyStateMap[keyCode] == EInputState::PRESSED)
-			mKeyStateMap[keyCode] = rawKeyState[keyCode] ? EInputState::HOLD : EInputState::RELEASED;
+		if (mInputStateMap[inputCode] == EInputState::HOLD || mInputStateMap[inputCode] == EInputState::PRESSED)
+			mInputStateMap[inputCode] = rawState ? EInputState::HOLD : EInputState::RELEASED;
 		else
-			mKeyStateMap[keyCode] = rawKeyState[keyCode] ? EInputState::PRESSED : EInputState::IDLE;
+			mInputStateMap[inputCode] = rawState ? EInputState::PRESSED : EInputState::IDLE;
 	}
 
 }
 
-void InputManager::InvokeKeyEvents()
+void InputManager::InvokeInputEvents()
 {
-	for (const auto& keyState : mKeyStateMap)
+	for (const auto& [inputCode, inputState] : mInputStateMap)
 	{
-		if (keyState.second != EInputState::IDLE)
+		if (inputState == EInputState::IDLE)
+			continue;
+
+		for (const auto& inputAction : mInputMapping[inputCode])
 		{
-			for (const auto& inputAction : mKeyInputMapping[keyState.first])
+			for (const auto& subscriber : mIASubscriberMap[inputAction])
 			{
-				for (const auto& subscriber : mIASubscriberMap[inputAction])
-				{
-					if (subscriber.mListenedState == keyState.second || subscriber.mListenedState == EInputState::IDLE)
-						subscriber.mCallback(keyState.second);
-				}
+				if (subscriber.mListenedState == inputState || subscriber.mListenedState == EInputState::IDLE)
+					subscriber.mCallback(inputState);
 			}
 		}
+		
 	}
 }
 
@@ -128,88 +129,74 @@ void InputManager::UpdateMouseStates()
 {
 	int mouseDeltaX = 0;
 	int mouseDeltaY = 0;
-	Uint32 rawMouseState = SDL_GetRelativeMouseState(&mouseDeltaX, &mouseDeltaY);
+	mRawMouseState = SDL_GetRelativeMouseState(&mouseDeltaX, &mouseDeltaY);
 	mMouseDelta.mX = static_cast<float>(mouseDeltaX);
 	mMouseDelta.mY = static_cast<float>(-mouseDeltaY);
-
-	// Update LMB, MMB, RMB states
-	for (int i = 1; i < 4; i++)
-	{
-		int mouseMask = SDL_BUTTON(i);
-		HF_MOUSECODE mouseCode = static_cast<HF_MOUSECODE>(i);
-
-		if (mMouseStateMap[mouseCode] == EInputState::HOLD || mMouseStateMap[mouseCode] == EInputState::PRESSED)
-			mMouseStateMap[mouseCode] = (rawMouseState & mouseMask) ? EInputState::HOLD : EInputState::RELEASED;
-		else
-			mMouseStateMap[mouseCode] = (rawMouseState & mouseMask) ? EInputState::PRESSED : EInputState::IDLE;
-	}
 
 	// Update scroll wheel state
 	if (mMouseScroll > 0)
 	{
-		mMouseStateMap[HF_MOUSECODE::SCROLL_UP] = EInputState::PRESSED;
-		mMouseStateMap[HF_MOUSECODE::SCROLL_DOWN] = EInputState::IDLE;
+		mInputStateMap[HF_InputCode::MOUSE_SCROLL_UP] = EInputState::PRESSED;
+		mInputStateMap[HF_InputCode::MOUSE_SCROLL_DOWN] = EInputState::IDLE;
 	}
 	else if (mMouseScroll < 0)
 	{
-		mMouseStateMap[HF_MOUSECODE::SCROLL_DOWN] = EInputState::PRESSED;
-		mMouseStateMap[HF_MOUSECODE::SCROLL_UP] = EInputState::IDLE;
+		mInputStateMap[HF_InputCode::MOUSE_SCROLL_DOWN] = EInputState::PRESSED;
+		mInputStateMap[HF_InputCode::MOUSE_SCROLL_UP] = EInputState::IDLE;
 	}
 	else
 	{
-		mMouseStateMap[HF_MOUSECODE::SCROLL_DOWN] = EInputState::IDLE;
-		mMouseStateMap[HF_MOUSECODE::SCROLL_UP] = EInputState::IDLE;
+		mInputStateMap[HF_InputCode::MOUSE_SCROLL_DOWN] = EInputState::IDLE;
+		mInputStateMap[HF_InputCode::MOUSE_SCROLL_UP] = EInputState::IDLE;
 	}
 	// Consume input
 	mMouseScroll = 0;
 }
 
-void InputManager::InvokeMouseEvents()
+int8 InputManager::GetStateFromInputCode(HF_InputCode inputCode) const
 {
-	for (const auto& mouseState : mMouseStateMap)
-	{
-		if (mouseState.second != EInputState::IDLE)
-		{
-			for (const auto& inputAction : mMouseInputMapping[mouseState.first])
-			{
-				for (const auto& subscriber : mIASubscriberMap[inputAction])
-				{
-					if (subscriber.mListenedState == mouseState.second || subscriber.mListenedState == EInputState::IDLE)
-						subscriber.mCallback(mouseState.second);
-				}
-			}
-		}
-	}
-}
+	int8 result = 0;
 
-void InputManager::UpdateControllerStates()
-{
-	for (const auto& inputPair : mControllerButtonInputMapping)
+	if (inputCode < HF_InputCode::KEYBOARD_GUARD_START)
 	{
-		SDL_GameControllerButton buttonCode = inputPair.first;
-		Uint8 buttonState = SDL_GameControllerGetButton(mController, inputPair.first);
-		if (mControllerButtonStateMap[buttonCode] == EInputState::HOLD || mControllerButtonStateMap[buttonCode] == EInputState::PRESSED)
-			mControllerButtonStateMap[buttonCode] = buttonState ? EInputState::HOLD : EInputState::RELEASED;
-		else
-			mControllerButtonStateMap[buttonCode] = buttonState ? EInputState::PRESSED : EInputState::IDLE;
+		// Handle warning message
 	}
-}
-
-void InputManager::InvokeControllerEvents()
-{
-	for (const auto& buttonState : mControllerButtonStateMap)
+	// Keyboard
+	else if (inputCode < HF_InputCode::MOUSE_GUARD_START)
 	{
-		if (buttonState.second != EInputState::IDLE)
-		{
-			for (const auto& inputAction : mControllerButtonInputMapping[buttonState.first])
-			{
-				for (const auto& subscriber : mIASubscriberMap[inputAction])
-				{
-					if (subscriber.mListenedState == buttonState.second || subscriber.mListenedState == EInputState::IDLE)
-						subscriber.mCallback(buttonState.second);
-				}
-			}
-		}
+		return mRawKeyStates[static_cast<SDL_Scancode>(inputCode)];
+	}
+	// Mouse buttons
+	else if (inputCode < HF_InputCode::CONTROLLER_BUTTON_GUARD_START)
+	{
+		// Already handled, pass the value along
+		if (inputCode == HF_InputCode::MOUSE_SCROLL_UP || inputCode == HF_InputCode::MOUSE_SCROLL_DOWN)
+			return (mInputStateMap.at(inputCode) == EInputState::PRESSED) ? 1 : 0;
+
+		int translatedMouseMask = SDL_BUTTON((static_cast<int>(inputCode) - static_cast<int>(HF_InputCode::MOUSE_GUARD_START)));
+		return (mRawMouseState & translatedMouseMask);
+	}
+	// Controller buttons
+	else if (inputCode < HF_InputCode::CONTROLLER_AXIS_GUARD_START)
+	{
+		SDL_GameControllerButton translatedCode = static_cast<SDL_GameControllerButton>((static_cast<int>(inputCode) - static_cast<int>(HF_InputCode::CONTROLLER_BUTTON_GUARD_START) - 1));
+		if (mController == nullptr)
+			return 0;
+		return SDL_GameControllerGetButton(mController, translatedCode);
+	}
+	// Controller axes
+	else
+	{
+		SDL_GameControllerAxis translatedAxis = static_cast<SDL_GameControllerAxis>((static_cast<int>(inputCode) - static_cast<int>(HF_InputCode::CONTROLLER_AXIS_GUARD_START) - 1));
+		if (mController == nullptr)
+			return 0;
+		Sint16 value = SDL_GameControllerGetAxis(mController, translatedAxis);
+		printf("%d\n", value>>8);
+
+		if (abs(value >> 8) < CONTROLLER_AXIS_DEADZONE)
+			return 0;
+
+		return static_cast<int8>((value >> 8)/INT8_MAX);
 	}
 }
 
@@ -231,23 +218,10 @@ Vec2 InputManager::ReadMouseDelta() const
 	return mMouseDelta;
 }
 
-void InputManager::AddKeyMappingToInputAction(EInputAction IA, SDL_Scancode keyCode)
+void InputManager::AddMappingToInputAction(EInputAction IA, HF_InputCode inputCode)
 {
-	mKeyInputMapping[keyCode].push_back(IA);
+	mInputMapping[inputCode].push_back(IA);
 }
-
-void InputManager::AddMouseMappingToInputAction(EInputAction IA, HF_MOUSECODE mouseCode)
-{
-	mMouseInputMapping[mouseCode].push_back(IA);
-}
-
-void InputManager::AddControllerMappingToInputAction(EInputAction IA, SDL_GameControllerButton buttonCode)
-{
-	mControllerButtonInputMapping[buttonCode].push_back(IA);
-}
-
-
-
 
 hInputSub InputManager::Subscribe(EInputAction IA, std::function<void(EInputState)> callback, EInputState listenedState)
 {

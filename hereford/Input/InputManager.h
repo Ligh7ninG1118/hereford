@@ -1,6 +1,7 @@
 #pragma once
 #include "Math/Math.h"
 #include "Input/InputCommons.h"
+#include "Input/InputCode.h"
 #include <unordered_map>
 #include <vector>
 #include <variant>
@@ -9,7 +10,7 @@
 
 struct SwizzledInput
 {
-	SDL_Scancode mScancode;
+	HF_InputCode mInputCode;
 	std::variant<bool,
 		float,
 		Vec2,
@@ -51,15 +52,13 @@ public:
 
 		T output{};
 
-		const Uint8* rawKeyState = SDL_GetKeyboardState(nullptr);
-
 		for (const auto& input : mIASwizzledMap[IA])
 		{
-			int keyState = rawKeyState[input.mScancode];
+			int inputState = GetStateFromInputCode(input.mInputCode);
 			if (std::holds_alternative<T>(input.mModifier))
 			{
 				T modifier = std::get<T>(input.mModifier);
-				output += modifier * keyState;
+				output += modifier * inputState;
 			}
 			else
 			{
@@ -74,35 +73,31 @@ public:
 
 
 private:
-	void AddKeyMappingToInputAction(EInputAction IA, SDL_Scancode keyCode);
-	void AddMouseMappingToInputAction(EInputAction IA, HF_MOUSECODE mouseCode);
-	void AddControllerMappingToInputAction(EInputAction IA, SDL_GameControllerButton buttonCode);
+	void AddMappingToInputAction(EInputAction IA, HF_InputCode keyCode);
 
-	void UpdateKeyStates();
-	void InvokeKeyEvents();
+	void UpdateInputStates();
+	void InvokeInputEvents();
+	// Handling special cases: mouse delta, scroll wheel
 	void UpdateMouseStates();
-	void InvokeMouseEvents();
-	void UpdateControllerStates();
-	void InvokeControllerEvents();
+
+	int8 GetStateFromInputCode(HF_InputCode inputCode) const;
 
 	SDL_GameController* FindController() const;
 
-	std::unordered_map<SDL_Scancode, EInputState> mKeyStateMap;
-	std::unordered_map<HF_MOUSECODE, EInputState> mMouseStateMap;
-	std::unordered_map<SDL_GameControllerButton, EInputState> mControllerButtonStateMap;
-
-	std::unordered_map<SDL_Scancode, std::vector<EInputAction>> mKeyInputMapping;
-	std::unordered_map<HF_MOUSECODE, std::vector<EInputAction>> mMouseInputMapping;
-	std::unordered_map<SDL_GameControllerButton, std::vector<EInputAction>> mControllerButtonInputMapping;
-
+	std::unordered_map<HF_InputCode, EInputState> mInputStateMap;
+	std::unordered_map<HF_InputCode, std::vector<EInputAction>> mInputMapping;
 
 	std::unordered_map<EInputAction, std::vector<InputSub>> mIASubscriberMap;
 	std::unordered_map<EInputAction, std::vector<SwizzledInput>> mIASwizzledMap;
 
 	Vec2 mMouseDelta;
 	int mMouseScroll;
+	const Uint8* mRawKeyStates;
+	Uint32 mRawMouseState;
 
 	SDL_GameController* mController;
 
 	static hInputSub mInputSubCount;
+
+	const int8 CONTROLLER_AXIS_DEADZONE = 25;
 };
