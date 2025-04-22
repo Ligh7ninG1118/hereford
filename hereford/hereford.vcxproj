@@ -241,6 +241,7 @@
     <ClInclude Include="Core\Component.h" />
     <ClInclude Include="Core\GameContext.h" />
     <ClInclude Include="Asset\Primitive.h" />
+    <ClInclude Include="Input\InputCode.h" />
     <ClInclude Include="Input\InputCommons.h" />
     <ClInclude Include="Input\InputManager.h" />
     <ClInclude Include="Util\Profiler.h" />
