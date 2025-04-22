@@ -142,6 +142,10 @@ void Player::OnUpdate(float deltaTime)
 void Player::ProcessMovement(float deltaTime)
 {
 	Vec2 rawInputDir = mInputMgr->ReadValue<Vec2>(EInputAction::PLAYER_MOVEMENT);
+
+	float inputSpeedModifier = rawInputDir.Magnitude();
+	inputSpeedModifier = Math::Clamp(inputSpeedModifier, 0.0f, 1.0f);
+
 	rawInputDir.Normalize();
 
 	Vec3 moveDir = rawInputDir.mX * GetForward()
@@ -162,6 +166,8 @@ void Player::ProcessMovement(float deltaTime)
 		currentVerticalSpeed += OVERRIDE_GRAVITY_CONSTANT * deltaTime;
 
 	currentVelocity.mY = currentVerticalSpeed;
+
+	currentVelocity *= inputSpeedModifier;
 
 	Vector3 updatedPos = GetPosition();
 	updatedPos += currentVelocity * deltaTime;
