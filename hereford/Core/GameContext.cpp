@@ -171,7 +171,7 @@ void GameContext::RunLoop()
 
 void GameContext::LoadStarterData()
 {
-	if (true)
+	if (false)
 	{
 		mPtrPlayer = new Player(this);
 		mPtrPlayer->SetPosition(Vector3(4.0f, 0.0f, 4.0f));
@@ -318,15 +318,18 @@ void GameContext::ProcessInput()
 		ImGui_ImplSDL2_ProcessEvent(&pollEvent);
 		switch (pollEvent.type)
 		{
-			// The only one type of data cant be manually polled elsewhere
+			// Handle events on InputMgr's side
+		case SDL_CONTROLLERDEVICEADDED:
+		case SDL_CONTROLLERDEVICEREMOVED:
 		case SDL_MOUSEWHEEL:
-			mPtrInputManager->UpdateMouseScroll(pollEvent.wheel.y);
+			mPtrInputManager->HandleEvent(pollEvent);
 			break;
 		default:
 			break;
 		}
 	}
 
+	// Handle keyboard and mouse states
 	mPtrInputManager->Poll();
 }
 
