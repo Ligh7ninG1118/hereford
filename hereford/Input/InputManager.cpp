@@ -96,7 +96,7 @@ void InputManager::UpdateInputStates()
 {
 	for (const auto& [inputCode, inputActionList] : mInputMapping)
 	{
-		int8 rawState = GetStateFromInputCode(inputCode);
+		bool rawState = static_cast<bool>(GetStateFromInputCode(inputCode));
 		//TODO: Trigger hold state after set time
 		if (mInputStateMap[inputCode] == EInputState::HOLD || mInputStateMap[inputCode] == EInputState::PRESSED)
 			mInputStateMap[inputCode] = rawState ? EInputState::HOLD : EInputState::RELEASED;
@@ -153,10 +153,8 @@ void InputManager::UpdateMouseStates()
 	mMouseScroll = 0;
 }
 
-int8 InputManager::GetStateFromInputCode(HF_InputCode inputCode) const
+float InputManager::GetStateFromInputCode(HF_InputCode inputCode) const
 {
-	int8 result = 0;
-
 	if (inputCode < HF_InputCode::KEYBOARD_GUARD_START)
 	{
 		// Handle warning message
@@ -191,12 +189,12 @@ int8 InputManager::GetStateFromInputCode(HF_InputCode inputCode) const
 		if (mController == nullptr)
 			return 0;
 		Sint16 value = SDL_GameControllerGetAxis(mController, translatedAxis);
-		printf("%d\n", value>>8);
 
+		// Deadzone
 		if (abs(value >> 8) < CONTROLLER_AXIS_DEADZONE)
 			return 0;
 
-		return static_cast<int8>((value >> 8)/INT8_MAX);
+		return ((float)(value >> 8)/INT8_MAX);
 	}
 }
 

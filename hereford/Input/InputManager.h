@@ -54,7 +54,7 @@ public:
 
 		for (const auto& input : mIASwizzledMap[IA])
 		{
-			int inputState = GetStateFromInputCode(input.mInputCode);
+			float inputState = GetStateFromInputCode(input.mInputCode);
 			if (std::holds_alternative<T>(input.mModifier))
 			{
 				T modifier = std::get<T>(input.mModifier);
@@ -80,7 +80,7 @@ private:
 	// Handling special cases: mouse delta, scroll wheel
 	void UpdateMouseStates();
 
-	int8 GetStateFromInputCode(HF_InputCode inputCode) const;
+	float GetStateFromInputCode(HF_InputCode inputCode) const;
 
 	SDL_GameController* FindController() const;
 
