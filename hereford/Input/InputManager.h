@@ -33,7 +33,7 @@ public:
 	bool Initialize();
 	void Shutdown();
 	void Poll();
-	void UpdateMouseScroll(int scroll) { mMouseScroll = scroll; }
+	void HandleEvent(SDL_Event event);
 
 	// Subscribe to IDLE state means invoke callback for all states (Pressed, Released, Hold)
 	[[nodiscard]] hInputSub Subscribe(EInputAction IA, std::function<void(EInputState)> callback, EInputState listenedState = EInputState::IDLE);
@@ -76,23 +76,33 @@ public:
 private:
 	void AddKeyMappingToInputAction(EInputAction IA, SDL_Scancode keyCode);
 	void AddMouseMappingToInputAction(EInputAction IA, HF_MOUSECODE mouseCode);
+	void AddControllerMappingToInputAction(EInputAction IA, SDL_GameControllerButton buttonCode);
+
 	void UpdateKeyStates();
 	void InvokeKeyEvents();
 	void UpdateMouseStates();
 	void InvokeMouseEvents();
+	void UpdateControllerStates();
+	void InvokeControllerEvents();
 
+	SDL_GameController* FindController() const;
 
 	std::unordered_map<SDL_Scancode, EInputState> mKeyStateMap;
 	std::unordered_map<HF_MOUSECODE, EInputState> mMouseStateMap;
+	std::unordered_map<SDL_GameControllerButton, EInputState> mControllerButtonStateMap;
 
 	std::unordered_map<SDL_Scancode, std::vector<EInputAction>> mKeyInputMapping;
 	std::unordered_map<HF_MOUSECODE, std::vector<EInputAction>> mMouseInputMapping;
+	std::unordered_map<SDL_GameControllerButton, std::vector<EInputAction>> mControllerButtonInputMapping;
+
 
 	std::unordered_map<EInputAction, std::vector<InputSub>> mIASubscriberMap;
 	std::unordered_map<EInputAction, std::vector<SwizzledInput>> mIASwizzledMap;
 
 	Vec2 mMouseDelta;
 	int mMouseScroll;
+
+	SDL_GameController* mController;
 
 	static hInputSub mInputSubCount;
 };

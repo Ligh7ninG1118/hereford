@@ -12,9 +12,10 @@ InputManager::~InputManager()
 {
 }
 
-//TODO: serialize into config
 bool InputManager::Initialize()
 {
+	//TODO: serialize into config
+	// Add key mappings
 	AddKeyMappingToInputAction(EInputAction::GAME_QUIT, SDL_SCANCODE_ESCAPE);
 
 	mIASwizzledMap[EInputAction::PLAYER_MOVEMENT].push_back(SwizzledInput{ SDL_SCANCODE_W, Vec2(1.0f, 0.0f) });
@@ -33,6 +34,8 @@ bool InputManager::Initialize()
 	AddKeyMappingToInputAction(EInputAction::PLAYER_CROUCH, SDL_SCANCODE_C);
 	AddKeyMappingToInputAction(EInputAction::PLAYER_SPRINT, SDL_SCANCODE_LSHIFT);
 	AddKeyMappingToInputAction(EInputAction::PLAYER_INTERACT, SDL_SCANCODE_F);
+	AddControllerMappingToInputAction(EInputAction::PLAYER_JUMP, SDL_CONTROLLER_BUTTON_A);
+	AddControllerMappingToInputAction(EInputAction::PLAYER_CROUCH, SDL_CONTROLLER_BUTTON_B);
 
 	AddMouseMappingToInputAction(EInputAction::WEAPON_FIRE_PRIMARY, HF_MOUSECODE::LMB);
 	AddMouseMappingToInputAction(EInputAction::WEAPON_FIRE_SECONDARY, HF_MOUSECODE::RMB);
@@ -41,6 +44,11 @@ bool InputManager::Initialize()
 	AddKeyMappingToInputAction(EInputAction::WEAPON_SWAP_DOWN, SDL_SCANCODE_2);
 	AddMouseMappingToInputAction(EInputAction::WEAPON_SWAP_UP, HF_MOUSECODE::SCROLL_UP);
 	AddMouseMappingToInputAction(EInputAction::WEAPON_SWAP_DOWN, HF_MOUSECODE::SCROLL_DOWN);
+
+	
+
+	// Find existing controller
+	mController = FindController();
 
 	return true;
 }
@@ -55,6 +63,31 @@ void InputManager::Poll()
 	InvokeKeyEvents();
 	UpdateMouseStates();
 	InvokeMouseEvents();
+	UpdateControllerStates();
+	InvokeControllerEvents();
+}
+
+void InputManager::HandleEvent(SDL_Event event)
+{
+	switch (event.type)
+	{
+	case SDL_CONTROLLERDEVICEADDED:
+		if (mController == nullptr)
+			mController = SDL_GameControllerOpen(event.cdevice.which);
+		break;
+	case SDL_CONTROLLERDEVICEREMOVED:
+		if (mController != nullptr && event.cdevice.which == SDL_JoystickInstanceID(SDL_GameControllerGetJoystick(mController)))
+		{
+			SDL_GameControllerClose(mController);
+			mController = FindController();
+		}
+		break;
+	case SDL_MOUSEWHEEL:
+		mMouseScroll = event.wheel.y;
+		break;
+	default:
+		break;
+	}
 }
 
 void InputManager::UpdateKeyStates()
@@ -149,6 +182,50 @@ void InputManager::InvokeMouseEvents()
 	}
 }
 
+void InputManager::UpdateControllerStates()
+{
+	for (const auto& inputPair : mControllerButtonInputMapping)
+	{
+		SDL_GameControllerButton buttonCode = inputPair.first;
+		Uint8 buttonState = SDL_GameControllerGetButton(mController, inputPair.first);
+		if (mControllerButtonStateMap[buttonCode] == EInputState::HOLD || mControllerButtonStateMap[buttonCode] == EInputState::PRESSED)
+			mControllerButtonStateMap[buttonCode] = buttonState ? EInputState::HOLD : EInputState::RELEASED;
+		else
+			mControllerButtonStateMap[buttonCode] = buttonState ? EInputState::PRESSED : EInputState::IDLE;
+	}
+}
+
+void InputManager::InvokeControllerEvents()
+{
+	for (const auto& buttonState : mControllerButtonStateMap)
+	{
+		if (buttonState.second != EInputState::IDLE)
+		{
+			for (const auto& inputAction : mControllerButtonInputMapping[buttonState.first])
+			{
+				for (const auto& subscriber : mIASubscriberMap[inputAction])
+				{
+					if (subscriber.mListenedState == buttonState.second || subscriber.mListenedState == EInputState::IDLE)
+						subscriber.mCallback(buttonState.second);
+				}
+			}
+		}
+	}
+}
+
+SDL_GameController* InputManager::FindController() const
+{
+	int numJoysticks = SDL_NumJoysticks();
+	for (int i = 0; i < numJoysticks; i++)
+	{
+		if (SDL_IsGameController(i))
+		{
+			return SDL_GameControllerOpen(i);
+		}
+	}
+	return nullptr;
+}
+
 Vec2 InputManager::ReadMouseDelta() const
 {
 	return mMouseDelta;
@@ -162,6 +239,11 @@ void InputManager::AddKeyMappingToInputAction(EInputAction IA, SDL_Scancode keyC
 void InputManager::AddMouseMappingToInputAction(EInputAction IA, HF_MOUSECODE mouseCode)
 {
 	mMouseInputMapping[mouseCode].push_back(IA);
+}
+
+void InputManager::AddControllerMappingToInputAction(EInputAction IA, SDL_GameControllerButton buttonCode)
+{
+	mControllerButtonInputMapping[buttonCode].push_back(IA);
 }
 
 
