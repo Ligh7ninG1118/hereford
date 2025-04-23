@@ -27,7 +27,7 @@ void CameraComponent::Update(float deltaTime)
 	ImGui::Text("Recenter Target (%.2f)", mVerticalRecenteringTarget);
 	ImGui::End();*/
 
-	UpdateViewFromInput(GetGameContext()->GetInputManager().ReadMouseDelta());
+	UpdateViewFromInput(GetGameContext()->GetInputManager().ReadValue<Vec2>(EInputAction::PLAYER_VIEW));
 
 	if (mDeferredRecoilDir.Magnitude() > EPISILON)
 	{
@@ -49,21 +49,21 @@ void CameraComponent::Update(float deltaTime)
 	}
 }
 
-void CameraComponent::UpdateViewFromInput(Vec2 mouseDelta)
+void CameraComponent::UpdateViewFromInput(Vec2 viewDelta)
 {
-	mRotation.mY += mouseDelta.mX * mMouseSens * mAimingSensMultiplier;
-	mRotation.mX += mouseDelta.mY * mMouseSens * mAimingSensMultiplier;
-	mVerticalRecenteringTarget += mouseDelta.mY * mMouseSens * mAimingSensMultiplier;
+	mRotation.mY += viewDelta.mX * mMouseSens * mAimingSensMultiplier;
+	mRotation.mX += viewDelta.mY * mMouseSens * mAimingSensMultiplier;
+	mVerticalRecenteringTarget += viewDelta.mY * mMouseSens * mAimingSensMultiplier;
 
 	if (mDeferredRecoilDir.Magnitude() > EPISILON)
 	{
 		// Mouse movement on vertical axis can offset deferred recoil changes
-		mDeferredRecoilDir.mY -= mouseDelta.mY * mMouseSens * mAimingSensMultiplier;
+		mDeferredRecoilDir.mY -= viewDelta.mY * mMouseSens * mAimingSensMultiplier;
 		mDeferredRecoilDir.mY = mDeferredRecoilDir.mX <= 0.0f ? 0.0f : mDeferredRecoilDir.mX;
 
 		//TODO
-		if (mouseDelta.mY < 0.0f)
-			mVerticalRecenteringTarget -= mouseDelta.mY * mMouseSens * mAimingSensMultiplier;
+		if (viewDelta.mY < 0.0f)
+			mVerticalRecenteringTarget -= viewDelta.mY * mMouseSens * mAimingSensMultiplier;
 	}
 
 

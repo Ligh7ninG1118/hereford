@@ -69,8 +69,6 @@ public:
 		return output;
 	}
 
-	Vec2 ReadMouseDelta() const;
-
 
 private:
 	void AddMappingToInputAction(EInputAction IA, HF_InputCode keyCode);

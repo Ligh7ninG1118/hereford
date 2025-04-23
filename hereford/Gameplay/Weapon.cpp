@@ -72,9 +72,9 @@ void Weapon::OnUpdate(float deltaTime)
 
 void Weapon::SetArmOffset(Vec3 translationOffset)
 {
-	Vec2 mouseDelta = mInputMgr->ReadMouseDelta();
-	mCurrentArmRotationOffset.mX -= mouseDelta.mY * 0.1f;
-	mCurrentArmRotationOffset.mZ += mouseDelta.mX * 0.1f;
+	Vec2 viewDelta = mInputMgr->ReadValue<Vec2>(EInputAction::PLAYER_VIEW);
+	mCurrentArmRotationOffset.mX -= viewDelta.mY * 0.1f;
+	mCurrentArmRotationOffset.mZ += viewDelta.mX * 0.1f;
 
 	Vec3 newTransOffset = mCurrentArmTranslationOffset + translationOffset;
 	mPtrAnimRenderComp->SetTranslateOffset(newTransOffset);

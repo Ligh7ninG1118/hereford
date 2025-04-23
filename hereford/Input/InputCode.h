@@ -198,11 +198,11 @@ enum class HF_InputCode
     /*     KEYBOARD_LOCKINGCAPSLOCK = 130,  */
     /*     KEYBOARD_LOCKINGNUMLOCK = 131, */
     /*     KEYBOARD_LOCKINGSCROLLLOCK = 132, */
-    KEYBOARD_KP_COMMA = 133,
-    KEYBOARD_KP_EQUALSAS400 = 134,
+KEYBOARD_KP_COMMA = 133,
+KEYBOARD_KP_EQUALSAS400 = 134,
 
-    KEYBOARD_INTERNATIONAL1 = 135, /**< used on Asian keyboards, see
-                                            footnotes in USB doc */
+KEYBOARD_INTERNATIONAL1 = 135, /**< used on Asian keyboards, see
+                                        footnotes in USB doc */
     KEYBOARD_INTERNATIONAL2 = 136,
     KEYBOARD_INTERNATIONAL3 = 137, /**< Yen */
     KEYBOARD_INTERNATIONAL4 = 138,
@@ -297,6 +297,8 @@ enum class HF_InputCode
     MOUSE_BUTTON_RIGHT,
     MOUSE_SCROLL_UP,
     MOUSE_SCROLL_DOWN,
+    MOUSE_DELTA_X,
+    MOUSE_DELTA_Y,
 
     CONTROLLER_BUTTON_GUARD_START,
 

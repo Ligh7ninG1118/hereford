@@ -14,7 +14,6 @@ InputManager::~InputManager()
 
 bool InputManager::Initialize()
 {
-
 	//TODO: serialize into config
 	// Add key mappings
 	AddMappingToInputAction(EInputAction::GAME_QUIT, HF_InputCode::KEYBOARD_ESCAPE);
@@ -26,6 +25,12 @@ bool InputManager::Initialize()
 	mIASwizzledMap[EInputAction::PLAYER_MOVEMENT].push_back(SwizzledInput{ HF_InputCode::KEYBOARD_A, Vec2(0.0f, -1.0f) });
 	mIASwizzledMap[EInputAction::PLAYER_MOVEMENT].push_back(SwizzledInput{ HF_InputCode::CONTROLLER_AXIS_LEFTY, Vec2(-1.0f, 0.0f) });
 	mIASwizzledMap[EInputAction::PLAYER_MOVEMENT].push_back(SwizzledInput{ HF_InputCode::CONTROLLER_AXIS_LEFTX, Vec2(0.0f, 1.0f) });
+
+	mIASwizzledMap[EInputAction::PLAYER_VIEW].push_back(SwizzledInput{ HF_InputCode::MOUSE_DELTA_X, Vec2(1.0f, 0.0f) });
+	mIASwizzledMap[EInputAction::PLAYER_VIEW].push_back(SwizzledInput{ HF_InputCode::MOUSE_DELTA_Y, Vec2(0.0f, 1.0f) });
+	//TODO: Ramp up
+	mIASwizzledMap[EInputAction::PLAYER_VIEW].push_back(SwizzledInput{ HF_InputCode::CONTROLLER_AXIS_RIGHTX, Vec2(10.0f, 0.0f) });
+	mIASwizzledMap[EInputAction::PLAYER_VIEW].push_back(SwizzledInput{ HF_InputCode::CONTROLLER_AXIS_RIGHTY, Vec2(0.0f, -10.0f) });
 
 	mIASwizzledMap[EInputAction::FLY_MOVEMENT].push_back(SwizzledInput{ HF_InputCode::KEYBOARD_W, Vec3(1.0f, 0.0f, 0.0f) });
 	mIASwizzledMap[EInputAction::FLY_MOVEMENT].push_back(SwizzledInput{ HF_InputCode::KEYBOARD_S, Vec3(-1.0f, 0.0f, 0.0f) });
@@ -170,6 +175,10 @@ float InputManager::GetStateFromInputCode(HF_InputCode inputCode) const
 		// Already handled, pass the value along
 		if (inputCode == HF_InputCode::MOUSE_SCROLL_UP || inputCode == HF_InputCode::MOUSE_SCROLL_DOWN)
 			return (mInputStateMap.at(inputCode) == EInputState::PRESSED) ? 1 : 0;
+		if (inputCode == HF_InputCode::MOUSE_DELTA_X)
+			return mMouseDelta.mX;
+		if (inputCode == HF_InputCode::MOUSE_DELTA_Y)
+			return mMouseDelta.mY;
 
 		int translatedMouseMask = SDL_BUTTON((static_cast<int>(inputCode) - static_cast<int>(HF_InputCode::MOUSE_GUARD_START)));
 		return (mRawMouseState & translatedMouseMask);
@@ -209,11 +218,6 @@ SDL_GameController* InputManager::FindController() const
 		}
 	}
 	return nullptr;
-}
-
-Vec2 InputManager::ReadMouseDelta() const
-{
-	return mMouseDelta;
 }
 
 void InputManager::AddMappingToInputAction(EInputAction IA, HF_InputCode inputCode)
