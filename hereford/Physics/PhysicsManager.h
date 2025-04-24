@@ -11,6 +11,16 @@ struct HitInfo
 	float hitPower = 1.0f;
 };
 
+struct ContactInfo
+{
+	class PhysicsComponent* A;
+	class PhysicsComponent* B;
+
+	Vec3 point;
+	Vec3 normal;
+	float penetration;
+};
+
 class PhysicsManager
 {
 public:

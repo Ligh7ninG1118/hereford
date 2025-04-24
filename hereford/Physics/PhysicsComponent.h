@@ -45,6 +45,12 @@ private:
 	float mDrag;
 	float mAngDrag;
 
+	float restitution;
+	float friction;
+	Quat orientation;
+	float invMass;
+	Mat4 invInertia;
+
 	//drag, angleDrag
 };
 
