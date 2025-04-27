@@ -17,7 +17,7 @@ void Profiler::UpdateImGuiView()
 	if(ShouldUpdate())
 		mTotalFrameTime = duration<float>(steady_clock::now() - mFPSTimer).count();
 	mFPSTimer = steady_clock::now();
-	ImGui::Text("FPS: %.1f\t\t\tTotal Frame Time: %.2f ms\n", 1.0f / mTotalFrameTime, mTotalFrameTime * 1000.0f);
+	ImGui::Text("FPS: %.1f\t\t\tTotal Frame Time: %.4f ms\n", 1.0f / mTotalFrameTime, mTotalFrameTime * 1000.0f);
 
 	// Sort using display order
 	std::vector<std::pair<std::string, WatchData>> watchVec(mWatchMap.begin(), mWatchMap.end());
@@ -27,7 +27,7 @@ void Profiler::UpdateImGuiView()
 
 	for (auto& itr : watchVec)
 	{
-		ImGui::Text("%-20s: Avg %6.2f ms\tCurrent %6.2f ms \n", itr.first.c_str(), itr.second.mTotalTaskTime * 1000.0f / itr.second.mTaskRep, itr.second.mLastDuration * 1000.0f);
+		ImGui::Text("%-20s: Avg %6.4f ms\tCurrent %6.4f ms \n", itr.first.c_str(), itr.second.mTotalTaskTime * 1000.0f / itr.second.mTaskRep, itr.second.mLastDuration * 1000.0f);
 	}
 	ImGui::End();
 
