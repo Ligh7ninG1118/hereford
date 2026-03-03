@@ -28,3 +28,9 @@ enum class EInputState
 	RELEASED,
 	HOLD,
 };
+
+struct InputState
+{
+	EInputState mState;
+	float mValue;
+};

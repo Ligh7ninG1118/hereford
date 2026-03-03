@@ -49,7 +49,6 @@ TestCube::~TestCube()
 
 void TestCube::OnUpdate(float deltaTime)
 {
-
 }
 
 void TestCube::Hit(const HitInfo& info)

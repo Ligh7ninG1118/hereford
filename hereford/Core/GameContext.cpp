@@ -99,8 +99,8 @@ bool GameContext::Initialize()
 
 	mIsRunning = true;
 	LoadStarterData();
-	//LoadScene("Scenes/killhouse.json");
-	LoadCubeTest();
+	LoadScene("Scenes/showcase.json");
+	//LoadCubeTest();
 
 	mPtrRenderer->GroupInstancedData();
 

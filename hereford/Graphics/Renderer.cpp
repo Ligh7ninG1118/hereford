@@ -799,9 +799,13 @@ void Renderer::LoadSkybox()
 	glGenTextures(1, &skyboxTexID);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexID);
 
-	std::vector<std::string> textures_faces{ "LocalResources/skybox/AboveDay_Right.png", "LocalResources/skybox/AboveDay_Left.png",
+	/*std::vector<std::string> textures_faces{ "LocalResources/skybox/AboveDay_Right.png", "LocalResources/skybox/AboveDay_Left.png",
 	"LocalResources/skybox/AboveDay_Up.png", "LocalResources/skybox/AboveDay_Down.png", "LocalResources/skybox/AboveDay_Back.png",
-	"LocalResources/skybox/AboveDay_Front.png" };
+	"LocalResources/skybox/AboveDay_Front.png" };*/
+
+	std::vector<std::string> textures_faces{ "LocalResources/skybox/CartoonSunset_Right.png", "LocalResources/skybox/CartoonSunset_Left.png",
+	"LocalResources/skybox/CartoonSunset_Up.png", "LocalResources/skybox/CartoonSunset_Down.png", "LocalResources/skybox/CartoonSunset_Back.png",
+	"LocalResources/skybox/CartoonSunset_Front.png" };
 
 	int width, height, channelNum;
 	unsigned char* data;
