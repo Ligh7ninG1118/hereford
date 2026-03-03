@@ -7,8 +7,8 @@ LightBulb::LightBulb(GameContext* gameCtx)
 	:
 	Actor(gameCtx)
 {
-	m_pRenderComponent = new RenderComponent(static_cast<Actor*>(this), gameCtx->GetRenderer());
-	m_pLightComponent = new LightComponent(static_cast<Actor*>(this), gameCtx->GetRenderer());
+	mPtrRenderComponent = std::make_unique<RenderComponent>(static_cast<Actor*>(this), gameCtx->GetRenderer());
+	mPtrLightComponent = std::make_unique<LightComponent>(static_cast<Actor*>(this), gameCtx->GetRenderer());
 }
 
 LightBulb::~LightBulb()

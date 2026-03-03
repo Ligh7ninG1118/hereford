@@ -32,7 +32,7 @@ private:
 
 	std::unique_ptr<class Animator> mPtrAnimator;
 
-	GameEvent::Subscription<EventOnAnimFinished>* mPtrAnimEvent;
+	std::unique_ptr<GameEvent::Subscription<EventOnAnimFinished>> mPtrAnimEvent;
 
 	std::unordered_map<unsigned int, AnimState> mTransitionMap;
 };

@@ -1,5 +1,6 @@
 #pragma once
 #include "../Core/Actor.h"
+#include <memory>
 
 class LightBulb : public Actor
 {
@@ -7,13 +8,13 @@ public:
 	LightBulb(class GameContext* gameCtx);
 	~LightBulb();
 	void OnUpdate(float deltaTime) override;
-	class RenderComponent* GetRenderComponent() const { return m_pRenderComponent; }
-	class LightComponent* GetLightComponent() const { return m_pLightComponent; }
+	class RenderComponent* GetRenderComponent() const { return mPtrRenderComponent.get(); }
+	class LightComponent* GetLightComponent() const { return mPtrLightComponent.get(); }
 
 
 private:
-	class RenderComponent* m_pRenderComponent;
-	class LightComponent* m_pLightComponent;
+	std::unique_ptr<class RenderComponent> mPtrRenderComponent;
+	std::unique_ptr<class LightComponent> mPtrLightComponent;
 	float multiplier = 1.0f;
 };
 

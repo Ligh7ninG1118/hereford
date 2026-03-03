@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/Actor.h"
 #include "Util/Reflection.h"
+#include <memory>
 
 class PlywoodWall : public Actor
 {
@@ -12,6 +13,6 @@ public:
 
 private:
 	int mType;
-	class RenderComponent* mPtrRenderComp;
+	std::unique_ptr<class RenderComponent> mPtrRenderComp;
 
 };

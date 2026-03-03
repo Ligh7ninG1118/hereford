@@ -20,7 +20,7 @@
 #include "UI/UIAmmoIndicator.h"
 #include "UI/UICrosshair.h"
 
-#include "stdio.h"
+#include <cstdio>
 
 Player::Player(GameContext* gameCtx)
 	:
@@ -28,8 +28,8 @@ Player::Player(GameContext* gameCtx)
 {
 	mPtrCameraComp = std::make_unique<CameraComponent>(static_cast<Actor*>(this));
 
-	mWeaponList.push_back(new WeaponSMG(gameCtx));
-	mWeaponList.push_back(new WeaponPistol(gameCtx));
+	mWeaponList.push_back(std::make_unique<WeaponSMG>(gameCtx));
+	mWeaponList.push_back(std::make_unique<WeaponPistol>(gameCtx));
 
 	for (auto& w : mWeaponList)
 	{
@@ -38,7 +38,7 @@ Player::Player(GameContext* gameCtx)
 	}
 
 	mCurrentWeaponIndex = 0;
-	mPtrActiveWeapon = mWeaponList[mCurrentWeaponIndex];
+	mPtrActiveWeapon = mWeaponList[mCurrentWeaponIndex].get();
 	mPtrActiveWeapon->SetState(EActorState::Enabled, true);
 
 	std::shared_ptr<Texture> ammoTex = AssetManager::LoadAsset<Texture>(std::string("LocalResources/rifle-round-silhouette.png"));
@@ -48,14 +48,14 @@ Player::Player(GameContext* gameCtx)
 	Vec2 screenDimension = renderer->GetScreenDimension();
 
 	//TODO: Separate HUD Actor class to handle all HUD elements?
-	mPtrUIAmmo = new UIAmmoIndicator(renderer, ammoShader.get(), ammoTex);
+	mPtrUIAmmo = std::make_unique<UIAmmoIndicator>(renderer, ammoShader.get(), ammoTex);
 	Mat4 uiProj = mPtrCameraComp->GetOrthoMatrix(0.0f, screenDimension.mX, 0.0f, screenDimension.mY);
 	mPtrUIAmmo->Initialize(mPtrActiveWeapon->GetWeaponComponent());
 	mPtrUIAmmo->SetUIProjection(uiProj);
 
 	std::shared_ptr<Shader> crosshairShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_crosshair_vert.glsl*Shaders/ui_crosshair_frag.glsl"));
 
-	mPtrUICrosshair = new UICrosshair(renderer, crosshairShader.get());
+	mPtrUICrosshair = std::make_unique<UICrosshair>(renderer, crosshairShader.get());
 	mPtrUICrosshair->Initialize(mPtrActiveWeapon->GetWeaponComponent());
 
 	mPtrActionComp = std::make_unique<ActionComponent>(this);
@@ -116,7 +116,7 @@ void Player::OnUpdate(float deltaTime)
 
 	mPtrActiveWeapon->SetArmOffset(Vec3(0.0f, yD, zD));
 
-	if ((currentVelocity.SqrMagnitude() > EPISILON) && mIsGrounded)
+	if ((currentVelocity.SqrMagnitude() > EPSILON) && mIsGrounded)
 	{
 		if (mPtrAudioComponent->GetSoundState() == ESoundState::Paused)
 		{
@@ -153,7 +153,7 @@ void Player::ProcessMovement(float deltaTime)
 		+ rawInputDir.mY * (GetForward().Cross(Vec3::Up));
 
 	//TODO: reduce control while in air
-	float targetSpeed = (rawInputDir.SqrMagnitude() >= EPISILON) ? currentTopSpeed : 0.0f;
+	float targetSpeed = (rawInputDir.SqrMagnitude() >= EPSILON) ? currentTopSpeed : 0.0f;
 	float currentHorSpeed = Vector3(currentVelocity.mX, 0.0f, currentVelocity.mZ).Magnitude();
 	float currentVerticalSpeed = currentVelocity.mY;
 
@@ -283,7 +283,7 @@ void Player::WeaponSwitchCallback()
 	mCurrentWeaponIndex++;
 	mCurrentWeaponIndex %= mWeaponList.size();
 	
-	mPtrActiveWeapon = mWeaponList[mCurrentWeaponIndex];
+	mPtrActiveWeapon = mWeaponList[mCurrentWeaponIndex].get();
 	mPtrActiveWeapon->SetState(EActorState::Enabled, true);
 	mPtrActiveWeapon->Draw();
 

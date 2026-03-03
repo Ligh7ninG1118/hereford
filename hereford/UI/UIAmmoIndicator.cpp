@@ -14,14 +14,10 @@ UIAmmoIndicator::UIAmmoIndicator(Renderer* inPtrRenderer, Shader* inPtrShader, s
 {
 	std::shared_ptr<Shader> chamberShader = AssetManager::LoadAsset<Shader>(std::string("Shaders/ui_image_ammo_count_vert.glsl*Shaders/ui_image_frag.glsl"));
 
-	mChamberIndicator = new UIOneInTheChamber(inPtrRenderer, chamberShader.get(), inPtrUITex);
+	mChamberIndicator = std::make_unique<UIOneInTheChamber>(inPtrRenderer, chamberShader.get(), inPtrUITex);
 }
 
-UIAmmoIndicator::~UIAmmoIndicator()
-{
-	GameEvent::Unsubscribe(mWeaponAmmoChangedEvent);
-	delete mWeaponAmmoChangedEvent;
-}
+UIAmmoIndicator::~UIAmmoIndicator() = default;
 
 void UIAmmoIndicator::Initialize(WeaponComponent* inPtrWeaponComp)
 {

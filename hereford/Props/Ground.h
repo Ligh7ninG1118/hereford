@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/Actor.h"
 #include "Util/Reflection.h"
+#include <memory>
 
 
 class Ground : public Actor
@@ -9,14 +10,14 @@ class Ground : public Actor
 
 public:
 	Ground(class GameContext* gameCtx);
-	~Ground() {}
+	~Ground();
 
-	class RenderComponent* GetRenderComponent() const { return mPtrRenderComp; }
-	class PhysicsComponent* GetPhysicsComponent() const { return mPtrPhysicsComp; }
+	class RenderComponent* GetRenderComponent() const { return mPtrRenderComp.get(); }
+	class PhysicsComponent* GetPhysicsComponent() const { return mPtrPhysicsComp.get(); }
 
 private:
 	Vec3 mColor;
-	class RenderComponent* mPtrRenderComp;
-	class PhysicsComponent* mPtrPhysicsComp;
+	std::unique_ptr<class RenderComponent> mPtrRenderComp;
+	std::unique_ptr<class PhysicsComponent> mPtrPhysicsComp;
 };
 

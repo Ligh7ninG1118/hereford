@@ -46,8 +46,7 @@ void WeaponPistol::Init(Player* playerPtr)
 		Animator(Animation::LoadAnimations("LocalResources/mark23/source/Mark23v5.fbx", mPtrAnimRenderComp->GetModel())));
 
 	// 0: Hide, 1: Static, 2: Reload, 3: Fire, 4: Equip
-	// Construct shared ptr in place to avoid copying unique ptr inside ASM class
-	mPtrAnimStateMachine = std::unique_ptr<AnimationStateMachine>(new AnimationStateMachine(this, std::move(animator)));
+	mPtrAnimStateMachine = std::make_unique<AnimationStateMachine>(this, std::move(animator));
 	mPtrAnimStateMachine->AddTransitionRule(2, AnimState(1, false));
 	mPtrAnimStateMachine->AddTransitionRule(3, AnimState(1, false));
 	mPtrAnimStateMachine->AddTransitionRule(4, AnimState(1, false));

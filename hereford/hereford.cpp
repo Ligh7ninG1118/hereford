@@ -1,10 +1,11 @@
-#include <stdio.h>
+#include <cstdio>
 #include <string>
+#include <memory>
 #include "Core/GameContext.h"
 
 int main(int argc, char* args[])
 {
-	GameContext* gameCtx = new GameContext();
+	auto gameCtx = std::make_unique<GameContext>();
 
 	if (!gameCtx->Initialize())
 	{
@@ -14,6 +15,5 @@ int main(int argc, char* args[])
 
 	gameCtx->RunLoop();
 
-	delete gameCtx;
 	return 0;
 }

@@ -16,25 +16,12 @@ UIElement::UIElement(Renderer* inPtrRenderer, Shader* inPtrShader)
 	mVAO(0),
 	mVBO(0)
 {
-	/*auto lock = mPtrRenderer.lock();
-	if (lock)
-	{
-		lock->AddUIElement(shared_from_this());
-	}*/
-
 	mPtrRenderer->AddUIElement(this);
 }
 
 UIElement::~UIElement()
 {
-	//auto lock = mPtrRenderer.lock();
-	//if (lock)
-	//{
-	//	// TODO: Doesn't seem right? Is this going to create an additional copy?
-	//	lock->RemoveUIElement(shared_from_this());
-	//}
 	mPtrRenderer->RemoveUIElement(this);
-
 }
 
 void UIElement::Initialize()
@@ -80,20 +67,8 @@ void UIElement::UpdateGLAsset()
 
 std::vector<float> UIElement::GenerateQuad()
 {
-	Vec2 screenDimension;
+	Vec2 screenDimension = mPtrRenderer->GetScreenDimension();
 	Vec2 actualPos = mPosition;
-	screenDimension = mPtrRenderer->GetScreenDimension();
-
-	/*auto lock = mPtrRenderer.lock();
-	if (lock)
-	{
-		screenDimension = lock->GetScreenDimension();
-	}
-	else
-	{
-		printf("UIElement::GenerateQuad(): Referenced Renderer obj destroyed\n");
-		return nullptr;
-	}*/
 
 	switch (mAnchor)
 	{

@@ -8,7 +8,6 @@
 #include <functional>
 #include <typeindex>
 
-//TODO: Switch to use smart pointers
 class GameEvent
 {
 private:
@@ -67,11 +66,11 @@ public:
 	}
 
 	template <typename TEvent>
-	static Subscription<TEvent>* Subscribe(std::function<void(TEvent)> inCallback)
+	static std::unique_ptr<Subscription<TEvent>> Subscribe(std::function<void(TEvent)> inCallback)
 	{
 		auto t = std::type_index(typeid(TEvent)); 
-		auto newSub = new Subscription<TEvent>(inCallback);
-		auto subVoid = static_cast<SubscriptionBase*>(newSub);
+		auto newSub = std::make_unique<Subscription<TEvent>>(inCallback);
+		auto subVoid = static_cast<SubscriptionBase*>(newSub.get());
 		mListenerMap[t].push_back(subVoid);
 
 		return newSub;

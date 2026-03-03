@@ -46,8 +46,7 @@ void WeaponSMG::Init(Player* playerPtr)
 		Animator(Animation::LoadAnimations("LocalResources/mp5sd/MP5SDv4.fbx", mPtrAnimRenderComp->GetModel())));
 
 	// 0: Draw, 1: Unequip, 2: Static, 3: Reload, 4: Fire
-	// Construct shared ptr in place to avoid copying unique ptr inside ASM class
-	mPtrAnimStateMachine = std::unique_ptr<AnimationStateMachine>(new AnimationStateMachine(this, std::move(animator)));
+	mPtrAnimStateMachine = std::make_unique<AnimationStateMachine>(this, std::move(animator));
 	mPtrAnimStateMachine->AddTransitionRule(0, AnimState(2, false));
 	mPtrAnimStateMachine->AddTransitionRule(3, AnimState(2, false));
 	mPtrAnimStateMachine->AddTransitionRule(4, AnimState(2, false));

@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 #include <unordered_map>
+#include <memory>
 #include "Math/Math.h"
 
 
@@ -56,7 +57,9 @@ private:
 
 	std::vector<SoundHandle> mChannels;
 	std::map<SoundHandle, HandleInfo> mHandleMap;
-	std::unordered_map<std::string, struct Mix_Chunk*> mSoundAssets;
+	struct MixChunkDeleter { void operator()(struct Mix_Chunk* c) const; };
+	using MixChunkPtr = std::unique_ptr<struct Mix_Chunk, MixChunkDeleter>;
+	std::unordered_map<std::string, MixChunkPtr> mSoundAssets;
 
 	class Actor* mPlayerRef;
 

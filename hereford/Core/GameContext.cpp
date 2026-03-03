@@ -17,7 +17,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
-#include <stdio.h>
+#include <cstdio>
 #include <string>
 
 #include <nlohmann/json.hpp>
@@ -28,19 +28,35 @@
 #include "imgui/imgui_impl_opengl3.h"
 
 GameContext::GameContext()
-	: mScreenWidth(1920), mScreenHeight(1080)
+	: mScreenWidth(1920), mScreenHeight(1080),
+	mPtrPlayer(nullptr),
+	mPtrTestMaster(nullptr),
+	mCursorMode(false),
+	mIsRunning(false),
+	mUseVerticalSync(false),
+	mPrevTimestamp(0),
+	mCurrTimestamp(0),
+	mDeltaTime(0.0f),
+	hQuitSub(0)
 {
-	mCursorMode = false;
 }
 
 GameContext::GameContext(int width, int height)
-	: mScreenWidth(width), mScreenHeight(height)
+	: mScreenWidth(width), mScreenHeight(height),
+	mPtrPlayer(nullptr),
+	mPtrTestMaster(nullptr),
+	mCursorMode(false),
+	mIsRunning(false),
+	mUseVerticalSync(false),
+	mPrevTimestamp(0),
+	mCurrTimestamp(0),
+	mDeltaTime(0.0f),
+	hQuitSub(0)
 {
 }
 
 GameContext::~GameContext()
 {
-	//printf("GameContext Destructor\n");
 }
 
 
@@ -64,17 +80,17 @@ bool GameContext::Initialize()
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-	mPtrSDLWindow = SDL_CreateWindow("Hereford",
+	mPtrSDLWindow.reset(SDL_CreateWindow("Hereford",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, mScreenWidth, mScreenHeight,
-		SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI);
+		SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI));
 
-	if (mPtrSDLWindow == nullptr)
+	if (!mPtrSDLWindow)
 	{
 		printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
 		return false;
 	}
 
-	mPtrRenderer = std::make_unique<Renderer>(mPtrSDLWindow, this, mScreenWidth, mScreenHeight);
+	mPtrRenderer = std::make_unique<Renderer>(mPtrSDLWindow.get(), this, mScreenWidth, mScreenHeight);
 	mPtrRenderer->SetBackgroundClearColor(Vec3(0.2f, 0.3f, 0.3f));
 	mPtrRenderer->SetBackgroundClearMode(EBGClearMode::SKYBOX);
 	if (!mPtrRenderer->Initialize())
@@ -109,7 +125,7 @@ bool GameContext::Initialize()
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	ImGui::StyleColorsDark();
-	ImGui_ImplSDL2_InitForOpenGL(mPtrSDLWindow, mPtrRenderer->GetGLContext());
+	ImGui_ImplSDL2_InitForOpenGL(mPtrSDLWindow.get(), mPtrRenderer->GetGLContext());
 	ImGui_ImplOpenGL3_Init();
 
 	mPtrAudioManager->PlaySound("bootcamp_ambient.wav", true, false);
@@ -123,18 +139,13 @@ void GameContext::Shutdown()
 {
 	mPtrInputManager->Unsubscribe(EInputAction::GAME_QUIT, hQuitSub);
 
-
-	while (!mActors.empty())
-	{
-		delete mActors.back();
-	}
+	mActors.clear();
 
 	mPtrRenderer->Shutdown();
 	
 	ImGui::DestroyContext();
 
-	SDL_DestroyWindow(mPtrSDLWindow);
-	mPtrSDLWindow = nullptr;
+	mPtrSDLWindow.reset();
 	SDL_Quit();
 }
 
@@ -173,7 +184,7 @@ void GameContext::LoadStarterData()
 {
 	if (false)
 	{
-		mPtrPlayer = new Player(this);
+		mPtrPlayer = CreateActor<Player>(this);
 		mPtrPlayer->SetPosition(Vector3(4.0f, 0.0f, 4.0f));
 		mPtrRenderer->SetMainCamera(&mPtrPlayer->GetMainCamera());
 
@@ -181,13 +192,13 @@ void GameContext::LoadStarterData()
 	}
 	else
 	{
-		FlyCamera* flyCamera = new FlyCamera(this);
+		auto* flyCamera = CreateActor<FlyCamera>(this);
 		mPtrRenderer->SetMainCamera(&flyCamera->GetMainCamera());
 
 		mPtrAudioManager->SetPlayerReference(flyCamera);
 	}
 
-	mPtrTestMaster = new TestMaster(this);
+	mPtrTestMaster = CreateActor<TestMaster>(this);
 	mPtrRenderer->SetTestMaster(mPtrTestMaster);
 }
 
@@ -214,12 +225,12 @@ void GameContext::LoadScene(const std::string& sceneFilePath)
 		Actor* pActor = nullptr;
 		if (actor["className"] == "PlywoodWall")
 		{
-			pActor = new PlywoodWall(this, actor["type"]);
+			pActor = CreateActor<PlywoodWall>(this, actor["type"]);
 		}
 		else
 		{
-			pActor = ReflectionRegistry::Instance().CreateInstance(actor["className"], this);
-
+			auto created = ReflectionRegistry::Instance().CreateInstance(actor["className"], this);
+			pActor = AddActor(std::move(created));
 		}
 		if (pActor == nullptr)
 		{
@@ -253,24 +264,17 @@ void GameContext::LoadCubeTest()
 	{
 		for (int j = 0; j < 100; j++)
 		{
-			Actor* pActor = new TestCube(this);
+			auto* pActor = CreateActor<TestCube>(this);
 			pActor->SetPosition(Vec3(i * 2, 0, j * 2));
-			/*pActor->SetPosition(Vec3(5, 1, 2));
-			pActor->SetRotation(Vec3(45.0f, 45.0f, 45.0f));*/
-
 		}
 	}
 }
 
 void GameContext::ClearScene()
 {
-	while (!mActors.empty())
-	{
-		if (dynamic_cast<Player*>(mActors.back()))
-			break;
-
-		delete mActors.back();
-	}
+	std::erase_if(mActors, [](const auto& actor) {
+		return !dynamic_cast<Player*>(actor.get());
+	});
 }
 
 void GameContext::SaveScene(const std::string& sceneFilePath)
@@ -280,7 +284,7 @@ void GameContext::SaveScene(const std::string& sceneFilePath)
 
 	for (const auto& actor : mActors)
 	{
-		if (dynamic_cast<Player*>(actor))
+		if (dynamic_cast<Player*>(actor.get()))
 			continue;
 
 		json actorJson;
@@ -335,24 +339,19 @@ void GameContext::ProcessInput()
 
 void GameContext::UpdateGame()
 {
-	currTimestamp = SDL_GetTicks();
-	mDeltaTime = (currTimestamp - prevTimestamp) / 1000.0f;
-	prevTimestamp = currTimestamp;
+	mCurrTimestamp = SDL_GetTicks();
+	mDeltaTime = (mCurrTimestamp - mPrevTimestamp) / 1000.0f;
+	mPrevTimestamp = mCurrTimestamp;
 
-	std::vector<Actor*> actorVector = mActors;
-	std::vector<Actor*> disabledActorVector;
-
-	for (Actor* actor : actorVector)
+	size_t count = mActors.size();
+	for (size_t i = 0; i < count; i++)
 	{
-		actor->Update(mDeltaTime);
-		if (actor->GetState() == EActorState::Destroy)
-			disabledActorVector.push_back(actor);
+		mActors[i]->Update(mDeltaTime);
 	}
 
-	for (Actor* actor : disabledActorVector)
-	{
-		delete actor;
-	}
+	std::erase_if(mActors, [](const auto& actor) {
+		return actor->GetState() == EActorState::Destroy;
+	});
 }
 
 void GameContext::UpdateAudio()
@@ -444,7 +443,7 @@ void GameContext::DebugSceneObjects()
 
 		if (ImGui::Button("Add"))
 		{
-			ReflectionRegistry::Instance().CreateInstance(std::string(actorClass), this);
+			AddActor(ReflectionRegistry::Instance().CreateInstance(std::string(actorClass), this));
 		}
 		ImGui::TreePop();
 	}
@@ -459,13 +458,18 @@ void GameContext::OnQuitInput(EInputState state)
 
 
 
-void GameContext::AddActor(Actor* actor)
+Actor* GameContext::AddActor(std::unique_ptr<Actor> actor)
 {
-	mActors.push_back(actor);
+	if (!actor)
+		return nullptr;
+	Actor* raw = actor.get();
+	mActors.push_back(std::move(actor));
+	return raw;
 }
 
 void GameContext::RemoveActor(Actor* actor)
 {
-	mActors.erase(std::find(mActors.begin(), mActors.end(), actor));
-
+	std::erase_if(mActors, [actor](const auto& a) {
+		return a.get() == actor;
+	});
 }

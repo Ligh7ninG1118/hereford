@@ -1,6 +1,7 @@
 #pragma once
 #include "UIImage.h"
 #include "Util/GameEvent.h"
+#include <memory>
 
 class UICrosshair : public UIElement
 {
@@ -19,6 +20,6 @@ protected:
 
 	class WeaponComponent* mPtrWeaponComp;
 
-	class GameEvent::Subscription<EventOnWeaponAiming>* mWeaponAimingEvent;
+	std::unique_ptr<GameEvent::Subscription<EventOnWeaponAiming>> mWeaponAimingEvent;
 };
 

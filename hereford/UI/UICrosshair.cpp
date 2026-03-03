@@ -13,11 +13,7 @@ UICrosshair::UICrosshair(Renderer* inPtrRenderer, Shader* inPtrShader)
 {
 }
 
-UICrosshair::~UICrosshair()
-{
-	GameEvent::Unsubscribe(mWeaponAimingEvent);
-	delete mWeaponAimingEvent;
-}
+UICrosshair::~UICrosshair() = default;
 
 void UICrosshair::Initialize(WeaponComponent* inPtrWeaponComp)
 {

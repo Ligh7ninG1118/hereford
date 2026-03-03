@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/Actor.h"
 #include "Util/Reflection.h"
+#include <memory>
 
 class ShowcaseModel : public Actor
 {
@@ -8,11 +9,11 @@ class ShowcaseModel : public Actor
 
 public:
 	ShowcaseModel(class GameContext* gameCtx);
-	~ShowcaseModel() {}
+	~ShowcaseModel();
 
-	class RenderComponent* GetRenderComponent() const { return mPtrRenderComp; }
+	class RenderComponent* GetRenderComponent() const { return mPtrRenderComp.get(); }
 
 private:
-	class RenderComponent* mPtrRenderComp;
+	std::unique_ptr<class RenderComponent> mPtrRenderComp;
 };
 

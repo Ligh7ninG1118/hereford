@@ -25,7 +25,7 @@ public:
 
 private:
 	void InteractBtnListner(EventOnInteractButtonPressed inEvent);
-	GameEvent::Subscription<EventOnInteractButtonPressed>* mPtrBtnEvent;
+	std::unique_ptr<GameEvent::Subscription<EventOnInteractButtonPressed>> mPtrBtnEvent;
 
 	float mTimer;
 	ETestState mTestState;

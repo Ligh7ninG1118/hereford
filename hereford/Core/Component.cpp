@@ -3,7 +3,7 @@
 #include "GameContext.h"
 
 Component::Component(Actor* owner, int updateOrder)
-	: mOwner(owner), mUpdateOrder(updateOrder)
+	: mOwner(owner), mUpdateOrder(updateOrder), mState(EComponentState::Enabled)
 {
 	mOwner->AddComponent(this);
 }

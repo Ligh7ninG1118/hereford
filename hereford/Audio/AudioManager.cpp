@@ -14,12 +14,10 @@ AudioManager::AudioManager(int channelNum)
 	mChannels.resize(channelNum);
 }
 
+void AudioManager::MixChunkDeleter::operator()(Mix_Chunk* c) const { Mix_FreeChunk(c); }
+
 AudioManager::~AudioManager()
 {
-	for (auto& s : mSoundAssets)
-	{
-		Mix_FreeChunk(s.second);
-	}
 	mSoundAssets.clear();
 	Mix_CloseAudio();
 }
@@ -72,8 +70,8 @@ SoundHandle AudioManager::PlaySound(const std::string& soundName, bool shouldLoo
 
 	//TODO: Prioritization
 
-	/*The oldest instance of the same soundName and if there is none…
-		The oldest non - looping sound and if there is none…
+	/*The oldest instance of the same soundName and if there is none
+		The oldest non - looping sound and if there is none
 		The oldest sound*/
 
 
@@ -199,25 +197,22 @@ Mix_Chunk* AudioManager::GetSound(const std::string& soundName, int chuckVolumeO
 	std::string fileName = "LocalResources/Sound/";
 	fileName += soundName;
 
-	Mix_Chunk* chunk = nullptr;
 	auto itr = mSoundAssets.find(fileName);
 	if (itr != mSoundAssets.end())
 	{
-		chunk = itr->second;
+		return itr->second.get();
 	}
-	else
+
+	MixChunkPtr chunk(Mix_LoadWAV(fileName.c_str()));
+	if (!chunk)
 	{
-		chunk = Mix_LoadWAV(fileName.c_str());
-		if (!chunk)
-		{
-			printf("AudioManager::GetSound(): Cannot load sound file named %s\n", soundName.c_str());
-			return nullptr;
-		}
-		Mix_VolumeChunk(chunk, chuckVolumeOverride);
-		mSoundAssets.emplace(fileName, chunk);
+		printf("AudioManager::GetSound(): Cannot load sound file named %s\n", soundName.c_str());
+		return nullptr;
 	}
-	
-	return chunk;
+	Mix_VolumeChunk(chunk.get(), chuckVolumeOverride);
+	Mix_Chunk* raw = chunk.get();
+	mSoundAssets.emplace(fileName, std::move(chunk));
+	return raw;
 }
 
 void AudioManager::Set3DEffect(int channelNum, Vec3 soundPos)
@@ -258,9 +253,12 @@ void AudioManager::Pause(SoundHandle sound)
 void AudioManager::Stop(SoundHandle sound)
 {
 	auto itr = mHandleMap.find(sound);
+	if (itr == mHandleMap.end())
+		return;
 
-	Mix_HaltChannel(itr->second.mChannel);
-	mChannels[sound] = 0;
+	uint8 channel = itr->second.mChannel;
+	Mix_HaltChannel(channel);
+	mChannels[channel] = 0;
 	mHandleMap.erase(itr);
 }
 

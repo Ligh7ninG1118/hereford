@@ -11,7 +11,7 @@ PlywoodWall::PlywoodWall(GameContext* gameCtx, int type)
 	Actor(gameCtx),
 	mType(type)
 {
-	mPtrRenderComp = new RenderComponent(static_cast<Actor*>(this), gameCtx->GetRenderer());
+	mPtrRenderComp = std::make_unique<RenderComponent>(static_cast<Actor*>(this), gameCtx->GetRenderer());
 	switch (mType)
 	{
 	case 1:

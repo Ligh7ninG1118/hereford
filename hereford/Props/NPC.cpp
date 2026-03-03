@@ -10,16 +10,16 @@
 NPC::NPC(GameContext* gameCtx)
 	: Actor(gameCtx)
 {
-	mPtrAnimRenderComp = new AnimatedRenderComponent(static_cast<Actor*>(this), gameCtx->GetRenderer());
+	mPtrAnimRenderComp = std::make_unique<AnimatedRenderComponent>(static_cast<Actor*>(this), gameCtx->GetRenderer());
 	mPtrAnimRenderComp->SetModel(AssetManager::LoadAsset<Model>(std::string("LocalResources/SillyDancing/Silly Dancing.fbx")));
 	mPtrAnimRenderComp->SetShader(AssetManager::LoadAsset<Shader>(std::string("Shaders/model_tex_pbr_vert.glsl*Shaders/model_tex_pbr_frag.glsl")));
 	mPtrAnimRenderComp->SetScaleOffset(Vec3(0.0125f));
 	mPtrAnimRenderComp->SetRotateOffset(Vec3(90.0f, 0.0f, 0.0f));
 	mPtrAnimRenderComp->SetRenderModeFlag(RM_EMBEDDEDTEX | RM_ANIMATED | RM_LIGHTINGANDIBL | RM_MODELMESH);
 
-	std::unique_ptr<Animator> animator = std::make_unique<Animator>(
+	auto animator = std::make_unique<Animator>(
 		Animator(Animation::LoadAnimations("LocalResources/SillyDancing/Silly Dancing.fbx", mPtrAnimRenderComp->GetModel())));
-	mPtrAnimStateMachine = new AnimationStateMachine(static_cast<Actor*>(this), std::move(animator));
+	mPtrAnimStateMachine = std::make_unique<AnimationStateMachine>(static_cast<Actor*>(this), std::move(animator));
 	mPtrAnimStateMachine->PlayAnimation(0, true);
 
 	mPtrAnimRenderComp->SetAnimator(mPtrAnimStateMachine->GetAnimator());

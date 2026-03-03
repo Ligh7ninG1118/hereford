@@ -11,11 +11,7 @@ AnimationStateMachine::AnimationStateMachine(Actor* owner, std::unique_ptr<Anima
 	mPtrAnimEvent = GameEvent::Subscribe<EventOnAnimFinished>(std::bind(&AnimationStateMachine::AnimFinishedListener, this, std::placeholders::_1));
 }
 
-AnimationStateMachine::~AnimationStateMachine()
-{
-	GameEvent::Unsubscribe(mPtrAnimEvent);
-	delete mPtrAnimEvent;
-}
+AnimationStateMachine::~AnimationStateMachine() = default;
 
 void AnimationStateMachine::Update(float deltaTime)
 {

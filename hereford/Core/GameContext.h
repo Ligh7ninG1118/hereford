@@ -21,8 +21,17 @@ public:
 	GameContext(int width, int height);
 	~GameContext();
 
-	void AddActor(class Actor* actor);
-	void RemoveActor(class Actor* actor);
+	Actor* AddActor(std::unique_ptr<Actor> actor);
+	void RemoveActor(Actor* actor);
+
+	template<typename T, typename... Args>
+	T* CreateActor(Args&&... args)
+	{
+		auto actor = std::make_unique<T>(std::forward<Args>(args)...);
+		T* raw = actor.get();
+		mActors.push_back(std::move(actor));
+		return raw;
+	}
 
 	bool Initialize();
 	void Shutdown();
@@ -52,7 +61,8 @@ private:
 
 	void OnQuitInput(EInputState state);
 
-	SDL_Window* mPtrSDLWindow;
+	struct SDLWindowDeleter { void operator()(SDL_Window* w) const { SDL_DestroyWindow(w); } };
+	std::unique_ptr<SDL_Window, SDLWindowDeleter> mPtrSDLWindow;
 	std::unique_ptr<Renderer> mPtrRenderer;
 	std::unique_ptr<PhysicsManager> mPtrPhysicsManager;
 	std::unique_ptr<AudioManager> mPtrAudioManager;
@@ -65,15 +75,15 @@ private:
 	bool mCursorMode;
 
 	bool mIsRunning;
-	bool useVerticalSync;
-	Uint32 prevTimestamp;
-	Uint32 currTimestamp;
+	bool mUseVerticalSync;
+	Uint32 mPrevTimestamp;
+	Uint32 mCurrTimestamp;
 	float mDeltaTime;
 
 	int mScreenWidth;
 	int mScreenHeight;
 
-	std::vector<Actor*> mActors;
+	std::vector<std::unique_ptr<Actor>> mActors;
 
 	hInputSub hQuitSub;
 

@@ -14,7 +14,7 @@ RangeTarget::RangeTarget(GameContext* gameCtx)
 	Actor(gameCtx),
 	hasHit(false)
 {
-	mPtrRenderComp = new RenderComponent(static_cast<Actor*>(this), gameCtx->GetRenderer());
+	mPtrRenderComp = std::make_unique<RenderComponent>(static_cast<Actor*>(this), gameCtx->GetRenderer());
 
 	mPtrRenderComp->SetModel(AssetManager::LoadAsset<Model>(std::string("LocalResources/rangedummy/model3.fbx")));
 	mPtrRenderComp->SetScaleOffset(Vec3(0.015f));
@@ -49,10 +49,10 @@ RangeTarget::RangeTarget(GameContext* gameCtx)
 	mPtrRenderComp->SetShader(shader);
 
 	PhysicsPrimitive bodyPrimitive = PhysicsPrimitive{ AABBPrimitive{Vec3(0.4f, 0.4f, 0.4f)}, Vec3(0.0f, 1.3f, 0.0f) };
-	mPtrPhysicsCompBody = new PhysicsComponent(static_cast<Actor*>(this), gameCtx->GetPhysicsManager(), bodyPrimitive);
+	mPtrPhysicsCompBody = std::make_unique<PhysicsComponent>(static_cast<Actor*>(this), gameCtx->GetPhysicsManager(), bodyPrimitive);
 
 	PhysicsPrimitive headPrimitive = PhysicsPrimitive{ AABBPrimitive{Vec3(0.15f, 0.225f, 0.15f)}, Vec3(0.0f, 1.95f, 0.0f) };
-	mPtrPhysicsCompHead = new PhysicsComponent(static_cast<Actor*>(this), gameCtx->GetPhysicsManager(), headPrimitive);
+	mPtrPhysicsCompHead = std::make_unique<PhysicsComponent>(static_cast<Actor*>(this), gameCtx->GetPhysicsManager(), headPrimitive);
 
 	mPtrAudioComponent = std::make_unique<AudioComponent>(this, gameCtx->GetAudioManager(), true);
 	mPtrAudioComponent->InitAsset("bullet_impact_metal.wav");

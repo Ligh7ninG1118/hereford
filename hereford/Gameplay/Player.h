@@ -51,11 +51,11 @@ private:
 
 
 	class Weapon* mPtrActiveWeapon;
-	std::vector<Weapon*> mWeaponList;
+	std::vector<std::unique_ptr<Weapon>> mWeaponList;
 	int mCurrentWeaponIndex = 0;
 
-	class UIAmmoIndicator* mPtrUIAmmo;
-	class UICrosshair* mPtrUICrosshair;
+	std::unique_ptr<class UIAmmoIndicator> mPtrUIAmmo;
+	std::unique_ptr<class UICrosshair> mPtrUICrosshair;
 
 	TAHandle mHCrouchTimeline;
 	DAHandle mHWeaponSwitch;

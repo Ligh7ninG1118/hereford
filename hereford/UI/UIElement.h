@@ -16,7 +16,7 @@ enum class EUIAnchorPreset
 	TOP_RIGHT,
 };
 
-class UIElement : public std::enable_shared_from_this<UIElement>
+class UIElement
 {
 public:
 	UIElement(class Renderer* inPtrRenderer, class Shader* inPtrShader);

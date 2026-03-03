@@ -1,6 +1,7 @@
 #pragma once
 #include "UIImage.h"
 #include "Util/GameEvent.h"
+#include <memory>
 
 class UIAmmoIndicator : public UIImage
 {
@@ -17,8 +18,8 @@ protected:
 	uint16 mCurrentMax;
 	
 	class WeaponComponent* mPtrWeaponComp;
-	class GameEvent::Subscription<EventOnWeaponAmmoChanged>* mWeaponAmmoChangedEvent;
-	class UIOneInTheChamber* mChamberIndicator;
+	std::unique_ptr<GameEvent::Subscription<EventOnWeaponAmmoChanged>> mWeaponAmmoChangedEvent;
+	std::unique_ptr<class UIOneInTheChamber> mChamberIndicator;
 
 };
 

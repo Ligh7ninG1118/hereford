@@ -3,6 +3,7 @@
 #include "Gameplay/IHittable.h"
 #include "Util/Reflection.h"
 #include "Util/TimelineAction.h"
+#include <memory>
 
 class RangeTarget : public Actor, public IHittable
 {
@@ -20,9 +21,9 @@ private:
 	void HitTimeline(float alpha);
 
 
-	class RenderComponent* mPtrRenderComp;
-	class PhysicsComponent* mPtrPhysicsCompBody;
-	class PhysicsComponent* mPtrPhysicsCompHead;
+	std::unique_ptr<class RenderComponent> mPtrRenderComp;
+	std::unique_ptr<class PhysicsComponent> mPtrPhysicsCompBody;
+	std::unique_ptr<class PhysicsComponent> mPtrPhysicsCompHead;
 
 	std::unique_ptr<class AudioComponent> mPtrAudioComponent;
 
