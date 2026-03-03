@@ -12,20 +12,9 @@ Actor::Actor(GameContext* game)
 	mScale(Vector3::One),
 	mRotation(Vector3::Zero)
 {
-	mGameCtx->AddActor(this);
 }
 
-Actor::~Actor()
-{
-	//printf("Actor Destructor\n");
-
-	// Using smart pointers to manage, no need for this
-	/*for (Component* pCom : mComponents)
-	{
-		delete pCom;
-	}*/
-	mGameCtx->RemoveActor(this);
-}
+Actor::~Actor() = default;
 
 void Actor::Update(float deltaTime)
 {

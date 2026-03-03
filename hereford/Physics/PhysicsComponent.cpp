@@ -5,19 +5,29 @@
 
 PhysicsComponent::PhysicsComponent(Actor* owner, class PhysicsManager& phyMgrRef, PhysicsPrimitive primitive)
 	: Component(owner),
-	m_PhysicsManager(phyMgrRef),
+	mPhysicsManager(phyMgrRef),
 	mPhyPrimitive(primitive),
+	mIsTrigger(false),
 	mUseGravity(false),
 	mMass(1.0f),
+	mVelocity(Vec3::Zero),
+	mAngVelocity(Vec3::Zero),
+	mAttemptPos(Vec3::Zero),
+	mAttemptRot(Vec3::Zero),
+	mIsGrounded(false),
 	mDrag(0.1f),
-	mAngDrag(0.0f)
+	mAngDrag(0.0f),
+	mRestitution(0.5f),
+	mFriction(0.5f),
+	mInvMass(1.0f / 1.0f),
+	mInvInertia(Mat4::Identity)
 {
-	m_PhysicsManager.AddPhysicsComponent(this);
+	mPhysicsManager.AddPhysicsComponent(this);
 }
 
 PhysicsComponent::~PhysicsComponent()
 {
-	m_PhysicsManager.RemovePhysicsComponent(this);
+	mPhysicsManager.RemovePhysicsComponent(this);
 }
 
 bool PhysicsComponent::Initialize()

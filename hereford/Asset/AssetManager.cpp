@@ -7,15 +7,11 @@ AssetManager::AssetManager()
 
 AssetManager::~AssetManager()
 {
-	printf("AssetManager Destructor\n");
-
 	mAssetsMap.clear();
 }
 
 void AssetManager::Destroy()
 {
-	printf("AssetManager Destroy\n");
-	//TODO: need to manually clear all pointers?
 	mAssetsMap.clear();
 }
 

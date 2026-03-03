@@ -11,8 +11,8 @@ public:
 
 	bool Initialize();
 
-	DirLight GetDirLight() const { return m_DirLight; }
-	PointLight GetPointLight() const { return m_PointLight; }
+	DirLight GetDirLight() const { return mDirLight; }
+	PointLight GetPointLight() const { return mPointLight; }
 	struct Vector3 GetPosition() const;
 
 
@@ -24,9 +24,9 @@ private:
 		PointLight pointLight;
 		SpotLight spotLight;
 	};*/
-	class Renderer& m_Renderer;
+	class Renderer& mRenderer;
 
-	DirLight m_DirLight;
-	PointLight m_PointLight;
+	DirLight mDirLight;
+	PointLight mPointLight;
 };
 

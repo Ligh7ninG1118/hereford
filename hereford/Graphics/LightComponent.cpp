@@ -6,31 +6,31 @@
 LightComponent::LightComponent(Actor* owner, Renderer& rendererRef)
 	:
 	Component(owner),
-	m_Renderer(rendererRef)
+	mRenderer(rendererRef)
 {
-	m_Renderer.AddLightComponent(this);
+	mRenderer.AddLightComponent(this);
 	Initialize();
 }
 
 LightComponent::~LightComponent()
 {
-	m_Renderer.RemoveLightComponent(this);
+	mRenderer.RemoveLightComponent(this);
 }
 
 bool LightComponent::Initialize()
 {
-	m_DirLight.direction = Vec3(0.3f, -0.7f, 0.5f);
-	m_DirLight.ambient = Vec3(0.1f, 0.1f, 0.1f);
-	m_DirLight.diffuse = Vec3(0.6f, 0.6f, 0.6f);
-	m_DirLight.specular = Vec3(1.0f, 1.0f, 1.0f);
+	mDirLight.direction = Vec3(0.3f, -0.7f, 0.5f);
+	mDirLight.ambient = Vec3(0.1f, 0.1f, 0.1f);
+	mDirLight.diffuse = Vec3(0.6f, 0.6f, 0.6f);
+	mDirLight.specular = Vec3(1.0f, 1.0f, 1.0f);
 
-	m_PointLight.ambient = Vec3(0.1f, 0.1f, 0.1f);
-	m_PointLight.diffuse = Vec3(0.6f, 0.6f, 0.6f);
-	m_PointLight.specular = Vec3(1.0f, 1.0f, 1.0f);
+	mPointLight.ambient = Vec3(0.1f, 0.1f, 0.1f);
+	mPointLight.diffuse = Vec3(0.6f, 0.6f, 0.6f);
+	mPointLight.specular = Vec3(1.0f, 1.0f, 1.0f);
 
-	m_PointLight.constant = 1.0f;
-	m_PointLight.linear = 0.007f;
-	m_PointLight.quadratic = 0.0002f;
+	mPointLight.constant = 1.0f;
+	mPointLight.linear = 0.007f;
+	mPointLight.quadratic = 0.0002f;
 
 	return true;
 }

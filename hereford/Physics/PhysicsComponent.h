@@ -22,7 +22,7 @@ public:
 	void AddImpulse(Vec3 impactPoint, float impulseForce);
 
 private:
-	class PhysicsManager& m_PhysicsManager;
+	class PhysicsManager& mPhysicsManager;
 
 	friend PhysicsManager;
 
@@ -45,11 +45,11 @@ private:
 	float mDrag;
 	float mAngDrag;
 
-	float restitution;
-	float friction;
-	Quat orientation;
-	float invMass;
-	Mat4 invInertia;
+	float mRestitution;
+	float mFriction;
+	Quat mOrientation;
+	float mInvMass;
+	Mat4 mInvInertia;
 
 	//drag, angleDrag
 };

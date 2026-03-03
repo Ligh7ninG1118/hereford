@@ -81,7 +81,7 @@ public:
 	bool bInstancedDraw = false;
 
 protected:
-	class Renderer& m_Renderer;
+	class Renderer& mRenderer;
 
 	ERenderLayer mRenderLayer;
 	uint16 mRenderModeFlag;

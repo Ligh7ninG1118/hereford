@@ -12,9 +12,9 @@ public:
 	void InitAsset(const std::string& assetName);
 
 	void Play(bool loop = false);
-	void Resume(bool fadeIn = false, bool fadeInDuration = 0.0f);
-	void Pause(bool fadeOut = false, bool fadeOutDuration = 0.0f);
-	void Stop(bool fadeOut = false, bool fadeOutDuration = 0.0f);
+	void Resume(bool fadeIn = false, float fadeInDuration = 0.0f);
+	void Pause(bool fadeOut = false, float fadeOutDuration = 0.0f);
+	void Stop(bool fadeOut = false, float fadeOutDuration = 0.0f);
 	ESoundState GetSoundState() const { return mAudioManager.GetSoundState(mHandle); }
 
 private:

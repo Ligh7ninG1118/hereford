@@ -19,22 +19,23 @@
 RenderComponent::RenderComponent(Actor* owner, Renderer& rendererRef, ERenderLayer renderLayer)
 	:
 	Component(owner),
-	m_Renderer(rendererRef),
+	mRenderer(rendererRef),
 	mRenderLayer(renderLayer),
 	mRenderModeFlag(0u),
 	mVAO(0),
 	mVBO(0),
+	mBoundingPrimitive(nullptr),
 	mCombinedMRTex(false),
 	mTranslateOffset(Vec3::Zero),
 	mRotateOffset(Vec3::Zero),
 	mScaleOffset(Vec3::One)
 {
-	m_Renderer.AddRenderComponent(this);
+	mRenderer.AddRenderComponent(this);
 }
 
 RenderComponent::~RenderComponent()
 {
-	m_Renderer.RemoveRenderComponent(this);
+	mRenderer.RemoveRenderComponent(this);
 }
 
 void RenderComponent::LoadTexture(const std::string& texPath, ETextureType texType)

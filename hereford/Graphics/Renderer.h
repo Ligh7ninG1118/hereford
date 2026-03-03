@@ -29,7 +29,7 @@ struct Character
 };
 
 
-class Renderer : public std::enable_shared_from_this<Renderer>
+class Renderer
 {
 public:
 	Renderer(SDL_Window* sdlWindow, class GameContext* gameContext, int width, int height);

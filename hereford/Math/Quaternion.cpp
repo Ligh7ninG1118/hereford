@@ -27,7 +27,7 @@ Quaternion Quaternion::normalized() const
 {
 	float magnitude = sqrt(mX * mX + mY * mY + mZ * mZ + mW * mW);
 
-	if (magnitude <= EPISILON)
+	if (magnitude <= EPSILON)
 		return Quaternion::Identity;
 
 	float invMag = 1.0f / magnitude;
@@ -80,10 +80,10 @@ Quaternion& Quaternion::operator=(const Quaternion& rhs)
 
 bool Quaternion::operator==(const Quaternion& rhs) const
 {
-	return abs(mX - rhs.mX) < EPISILON 
-		&& abs(mY - rhs.mY) < EPISILON 
-		&& abs(mZ - rhs.mZ) < EPISILON
-		&& abs(mW - rhs.mW) < EPISILON;
+	return abs(mX - rhs.mX) < EPSILON 
+		&& abs(mY - rhs.mY) < EPSILON 
+		&& abs(mZ - rhs.mZ) < EPSILON
+		&& abs(mW - rhs.mW) < EPSILON;
 }
 
 bool Quaternion::operator!=(const Quaternion& rhs) const

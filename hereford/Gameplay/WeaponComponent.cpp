@@ -60,7 +60,7 @@ void WeaponComponent::Update(float deltaTime)
 		mCurrentHeat -= mHeatReduceRatePerSec * deltaTime;
 
 	// Smooth crosshair transition
-	if (abs(mAccuracySpreadFactor - mTargetAccuracySpreadFactor) > EPISILON)
+	if (abs(mAccuracySpreadFactor - mTargetAccuracySpreadFactor) > EPSILON)
 		mAccuracySpreadFactor = Math::Lerp(mAccuracySpreadFactor, mTargetAccuracySpreadFactor, 0.3f);
 }
 

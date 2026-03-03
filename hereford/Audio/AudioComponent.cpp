@@ -25,7 +25,7 @@ void AudioComponent::Play(bool loop)
 	mHandle = mAudioManager.PlaySound(mSoundAssetName, loop, mIs3D, mOwner->GetPosition());
 }
 
-void AudioComponent::Resume(bool fadeIn, bool fadeInDuration)
+void AudioComponent::Resume(bool fadeIn, float fadeInDuration)
 {
 	if (mHandle == 0)
 	{
@@ -36,7 +36,7 @@ void AudioComponent::Resume(bool fadeIn, bool fadeInDuration)
 	mAudioManager.ResumeSound(mHandle, fadeIn, fadeInDuration);
 }
 
-void AudioComponent::Pause(bool fadeOut, bool fadeOutDuration)
+void AudioComponent::Pause(bool fadeOut, float fadeOutDuration)
 {
 	if (mHandle == 0)
 	{
@@ -47,7 +47,7 @@ void AudioComponent::Pause(bool fadeOut, bool fadeOutDuration)
 	mAudioManager.PauseSound(mHandle, fadeOut, fadeOutDuration);
 }
 
-void AudioComponent::Stop(bool fadeOut, bool fadeOutDuration)
+void AudioComponent::Stop(bool fadeOut, float fadeOutDuration)
 {
 	if (mHandle == 0)
 	{

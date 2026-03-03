@@ -247,16 +247,14 @@ void InputManager::Unsubscribe(EInputAction IA, hInputSub hSub)
 		return;
 	}
 
-	auto subList = itr->second;
-	for (auto it = subList.begin();it != subList.end();)
+	auto& subList = itr->second;
+	for (auto it = subList.begin(); it != subList.end(); ++it)
 	{
 		if (it->mSubHandle == hSub)
 		{
 			subList.erase(it);
-			break;
+			return;
 		}
-		else
-			it++;
 	}
 }
 

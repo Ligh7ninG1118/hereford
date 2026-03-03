@@ -11,11 +11,7 @@ TestMaster::TestMaster(GameContext* gameCtx)
 	mTestState = ETestState::START;
 }
 
-TestMaster::~TestMaster()
-{
-	GameEvent::Unsubscribe(mPtrBtnEvent);
-	delete mPtrBtnEvent;
-}
+TestMaster::~TestMaster() = default;
 
 void TestMaster::OnUpdate(float deltaTime)
 {

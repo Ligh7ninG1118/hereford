@@ -4,7 +4,7 @@
 #include "PhysicsPrimitive.h"
 #include "Core/Actor.h"
 #include <vector>
-#include <stdio.h>
+#include <cstdio>
 #include <variant>
 
 
@@ -453,5 +453,7 @@ void PhysicsManager::AddPhysicsComponent(PhysicsComponent* c)
 
 void PhysicsManager::RemovePhysicsComponent(PhysicsComponent* c)
 {
-	mPhysicsComponents.erase(std::find(mPhysicsComponents.begin(), mPhysicsComponents.end(), c));
+	auto it = std::find(mPhysicsComponents.begin(), mPhysicsComponents.end(), c);
+	if (it != mPhysicsComponents.end())
+		mPhysicsComponents.erase(it);
 }

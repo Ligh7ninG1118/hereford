@@ -31,7 +31,7 @@ private:
 				diff *= -1.0f;
 
 			mCurrentAlpha += diff;
-			if (mCurrentAlpha >= 1.0f || mCurrentAlpha <= 0.0f && !mPendingDelete)
+			if ((mCurrentAlpha >= 1.0f || mCurrentAlpha <= 0.0f) && !mPendingDelete)
 			{
 				mPendingDelete = true;
 				if(mOnEndCallback != nullptr)
